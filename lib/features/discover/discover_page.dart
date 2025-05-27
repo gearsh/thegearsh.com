@@ -1,100 +1,152 @@
-// lib/features/discover/discover_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/artist_provider.dart'; // Adjust based on your structure
+import '../../providers/artist_provider.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../widgets/bottom_nav_bar.dart';
 
 class DiscoverPage extends ConsumerWidget {
   const DiscoverPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final artistsAsync = ref.watch(artistsProvider);
+    final artistsAsync = ref.watch(artistProvider);
 
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: artistsAsync.when(
-          data: (artists) => Stack(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 80),
-                child: ListView(
-                  padding: const EdgeInsets.all(16),
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 40,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Colors.cyanAccent,
-                                    Colors.blueAccent
-                                  ],
-                                ),
-                              ),
-                              alignment: Alignment.center,
-                              child: const Text('⚡',
-                                  style: TextStyle(fontSize: 20)),
-                            ),
-                            const SizedBox(width: 12),
-                            const Text(
-                              'Gearsh',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.person, color: Colors.white),
-                          onPressed: () => context
-                              .go('/profile/ava'), // Or dynamic user profile
-                        ),
-                      ],
+              const SizedBox(height: 24),
+              // 🔥 Header (Logo + Title + Profile Icon)
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        colors: [Colors.cyanAccent, Colors.blueAccent],
+                      ),
                     ),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'Find Artists',
-                      style:
-                          TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/gearsh_logo.png',
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                    const SizedBox(height: 24),
-                    const FilterTabs(),
-                    const SizedBox(height: 24),
-                    ...artists.map((artist) => Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: ArtistCard(
-                            name: artist['name'] ?? '',
-                            genre: artist['genre'] ?? '',
-                            icon: artist['emoji'] ??
-                                '🎤', // Optional: Airtable emoji field
-                            onTap: () {
-                              final id = artist['id'] ?? '';
-                              context.go('/profile/$id');
-                            },
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Gearsh',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              const Text(
+                'Find Artists',
+                style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Filter Tabs Placeholder
+              const FilterTabs(),
+
+              const SizedBox(height: 24),
+
+              // 🔥 Artists List
+              Expanded(
+                child: artistsAsync.when(
+                  data: (artists) => ListView.builder(
+                    itemCount: artists.length,
+                    itemBuilder: (context, index) {
+                      final artist = artists[index];
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            radius: 25,
+                            child: ClipOval(
+                              child: artist['image'] != null
+                                  ? Image.network(
+                                      artist['image'][0]['url'],
+                                      fit: BoxFit.cover,
+                                      width: 50,
+                                      height: 50,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Center(
+                                          child: Text(
+                                            artist['emoji'] ?? '🎧',
+                                            style: const TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.white),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : Center(
+                                      child: Text(
+                                        artist['emoji'] ?? '🎧',
+                                        style: const TextStyle(
+                                            fontSize: 20, color: Colors.white),
+                                      ),
+                                    ),
+                            ),
                           ),
-                        )),
-                  ],
+                          title: Text(
+                            artist['name'] ?? 'Unknown',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                            artist['genre'] ?? 'Unknown Genre',
+                            style: const TextStyle(color: Colors.cyanAccent),
+                          ),
+                          //onTap: () {
+                          // final id = artist['id'] ?? '';
+                          // context.go('/profile/$id');
+                          //  },
+                          onTap: () {
+                            final id = artist['id'] ?? '';
+                            if (id.isNotEmpty) {
+                              context.go('/profile/$id');
+                            } else {
+                              print('Error: Missing artist ID!');
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, _) => Center(
+                    child: Text('Error: $e',
+                        style: const TextStyle(color: Colors.red)),
+                  ),
                 ),
               ),
-              const Align(
-                alignment: Alignment.bottomCenter,
-                child: BottomNavBar(),
-              ),
             ],
-          ),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(
-            child: Text('Error: $e', style: const TextStyle(color: Colors.red)),
           ),
         ),
       ),
@@ -131,63 +183,6 @@ class FilterTab extends StatelessWidget {
         style: TextStyle(
           color: isActive ? Colors.cyanAccent : Colors.white60,
           fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
-
-class ArtistCard extends StatelessWidget {
-  final String name;
-  final String genre;
-  final String icon;
-  final VoidCallback onTap;
-
-  const ArtistCard({
-    required this.name,
-    required this.genre,
-    required this.icon,
-    required this.onTap,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          // ignore: deprecated_member_use
-          color: Colors.white.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 180,
-              width: double.infinity,
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                gradient:
-                    LinearGradient(colors: [Colors.deepPurple, Colors.indigo]),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              child: Text(icon, style: const TextStyle(fontSize: 48)),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(name,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text(genre, style: const TextStyle(color: Colors.cyanAccent)),
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );

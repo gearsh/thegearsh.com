@@ -20,7 +20,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/profile/:id',
         builder: (context, state) {
-          final id = state.pathParameters['id'] ?? 'unknown';
+          final id = state.pathParameters['id']!;
           return ProfilePage(artistId: id);
         },
       ),
@@ -38,3 +38,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
+
+
+//GoRoute(
+  //path: '/profile/:id',
+ // builder: (context, state) {
+    
