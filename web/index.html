@@ -1,38 +1,62 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
+<p class="text-lg text-gray-400">October 3, 2025</p>
+</header>
 
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
 
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+<section id="countdown" class="flex space-x-4"></section>
 
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="$FLUTTER_BASE_HREF">
 
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="The Ultimate Artist E-Booking Service. 🎨🎶✨">
+<footer class="mt-12 text-sm text-gray-500">&copy; 2025 Gearsh</footer>
 
-  <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="gearsh_app">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+<script>
+const countdownEl = document.getElementById('countdown');
+const launchDate = new Date('October 3, 2025 00:00:00').getTime();
 
-  <title>gearsh_app</title>
-  <link rel="manifest" href="manifest.json">
-</head>
-<body>
-  <script src="flutter_bootstrap.js" async></script>
+
+function updateCountdown() {
+const now = new Date().getTime();
+const distance = launchDate - now;
+
+
+if (distance < 0) {
+countdownEl.innerHTML = '<p class="text-xl font-semibold">We are LIVE!</p>';
+clearInterval(interval);
+return;
+}
+
+
+const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+
+countdownEl.innerHTML = `
+<div class="countdown-item">
+<div class="text-2xl font-bold">${days}</div>
+<div class="text-sm">Days</div>
+</div>
+<div class="countdown-item">
+<div class="text-2xl font-bold">${hours}</div>
+<div class="text-sm">Hours</div>
+</div>
+<div class="countdown-item">
+<div class="text-2xl font-bold">${minutes}</div>
+<div class="text-sm">Minutes</div>
+</div>
+<div class="countdown-item">
+<div class="text-2xl font-bold">${seconds}</div>
+<div class="text-sm">Seconds</div>
+</div>
+`;
+}
+
+
+const interval = setInterval(updateCountdown, 1000);
+updateCountdown();
+</script>
 </body>
+
+
 </html>
