@@ -1,17 +1,37 @@
 <!DOCTYPE html>
-<p class="text-lg text-gray-400">October 3, 2025</p>
-</header>
+Book the Sound of South Africa
+</h1>
+<p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8">
+Connect directly with local artists, book talent for your event, and manage it all in one seamless experience.
+</p>
+<div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+<a href="#early-access" class="w-full sm:w-auto button-gradient text-white px-8 py-3 rounded-full font-bold shadow-xl hover:scale-105 transition-transform duration-300">
+Get Early Access
+</a>
+<a href="#features" class="w-full sm:w-auto bg-gray-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-600 transition-colors duration-300">
+Learn More
+</a>
+</div>
 
 
-<section id="countdown" class="flex space-x-4"></section>
+<!-- Countdown Timer -->
+<div class="mt-12">
+<p class="text-lg font-bold uppercase mb-4">Launching Soon</p>
+<div id="countdown" class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto"></div>
+</div>
+</div>
+</main>
 
 
-<footer class="mt-12 text-sm text-gray-500">&copy; 2025 Gearsh</footer>
+<!-- Footer -->
+<footer class="p-6 md:p-8 text-center text-gray-400">
+<p class="text-sm">&copy; 2025 Gearsh. All rights reserved.</p>
+</footer>
 
 
 <script>
 const countdownEl = document.getElementById('countdown');
-const launchDate = new Date('October 3, 2025 00:00:00').getTime();
+const launchDate = new Date("October 3, 2025 00:00:00 SAST").getTime();
 
 
 function updateCountdown() {
@@ -20,7 +40,7 @@ const distance = launchDate - now;
 
 
 if (distance < 0) {
-countdownEl.innerHTML = '<p class="text-xl font-semibold">We are LIVE!</p>';
+countdownEl.innerHTML = '<span class="text-xl md:text-2xl font-bold">The Gearsh App is LIVE!</span>';
 clearInterval(interval);
 return;
 }
@@ -33,21 +53,21 @@ const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
 
 countdownEl.innerHTML = `
-<div class="countdown-item">
-<div class="text-2xl font-bold">${days}</div>
-<div class="text-sm">Days</div>
+<div class="countdown-segment">
+<span class="text-4xl md:text-5xl font-bold">${days}</span>
+<span class="text-sm uppercase text-gray-400">Days</span>
 </div>
-<div class="countdown-item">
-<div class="text-2xl font-bold">${hours}</div>
-<div class="text-sm">Hours</div>
+<div class="countdown-segment">
+<span class="text-4xl md:text-5xl font-bold">${hours}</span>
+<span class="text-sm uppercase text-gray-400">Hours</span>
 </div>
-<div class="countdown-item">
-<div class="text-2xl font-bold">${minutes}</div>
-<div class="text-sm">Minutes</div>
+<div class="countdown-segment">
+<span class="text-4xl md:text-5xl font-bold">${minutes}</span>
+<span class="text-sm uppercase text-gray-400">Minutes</span>
 </div>
-<div class="countdown-item">
-<div class="text-2xl font-bold">${seconds}</div>
-<div class="text-sm">Seconds</div>
+<div class="countdown-segment">
+<span class="text-4xl md:text-5xl font-bold">${seconds}</span>
+<span class="text-sm uppercase text-gray-400">Seconds</span>
 </div>
 `;
 }
