@@ -1,82 +1,247 @@
 <!DOCTYPE html>
-Book the Sound of South Africa
-</h1>
-<p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8">
-Connect directly with local artists, book talent for your event, and manage it all in one seamless experience.
-</p>
-<div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-<a href="#early-access" class="w-full sm:w-auto button-gradient text-white px-8 py-3 rounded-full font-bold shadow-xl hover:scale-105 transition-transform duration-300">
-Get Early Access
-</a>
-<a href="#features" class="w-full sm:w-auto bg-gray-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-600 transition-colors duration-300">
-Learn More
-</a>
-</div>
+<html lang="en" class="scroll-smooth">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gearsh - The Ultimate Artist E-Booking Service</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #111;
+            color: #eee;
+        }
 
-<!-- Countdown Timer -->
-<div class="mt-12">
-<p class="text-lg font-bold uppercase mb-4">Launching Soon</p>
-<div id="countdown" class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto"></div>
-</div>
-</div>
-</main>
+        .gradient-text {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-image: linear-gradient(to right, #00d2ff, #3a7bd5);
+        }
 
+        .button-gradient {
+            background-image: linear-gradient(to right, #00d2ff, #3a7bd5);
+        }
 
-<!-- Footer -->
-<footer class="p-6 md:p-8 text-center text-gray-400">
-<p class="text-sm">&copy; 2025 Gearsh. All rights reserved.</p>
-</footer>
+        .countdown-segment {
+            background-color: #222;
+            border-radius: 0.75rem;
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+        }
+    </style>
+</head>
 
+<body class="antialiased">
+    <!-- Header -->
+    <header class="p-6 md:p-8 flex items-center justify-between z-10 relative">
+        <div class="flex items-center space-x-2">
+            <!-- Gearsh Logo SVG -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-white">
+                <path d="M12 21.75a9.75 9.75 0 100-19.5 9.75 9.75 0 000 19.5zM12 22.5a10.5 10.5 0 110-21 10.5 10.5 0 010 21zM9.548 10.395c-.443.208-.574.77-.282 1.157l2.844 3.755a.692.692 0 00.999.04l.216-.184c.324-.275.409-.769.191-1.144L12.56 12.046c-.208-.443-.77-.574-1.157-.282l-1.855 1.411a.692.692 0 00-.04-.999L9.548 10.395z" />
+            </svg>
+            <span class="text-xl font-bold">Gearsh</span>
+        </div>
+        <a href="#early-access" class="button-gradient text-white px-5 py-2 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg">
+            Join Waitlist
+        </a>
+    </header>
 
-<script>
-const countdownEl = document.getElementById('countdown');
-const launchDate = new Date("October 3, 2025 00:00:00 SAST").getTime();
+    <!-- Hero Section -->
+    <main class="relative z-0 min-h-screen flex flex-col items-center justify-center text-center p-6 md:p-12">
+        <div class="absolute inset-0 z-0 opacity-10" style="background-image: url('https://placehold.co/1500x1000/000/fff?text=Music+Artist+Image+Placeholder'); background-size: cover; background-position: center;"></div>
+        <div class="relative z-10 max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-6xl font-extrabold leading-tight tracking-tighter mb-4 gradient-text">
+                Book the Sound of South Africa
+            </h1>
+            <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8">
+                Connect directly with local artists, book talent for your event, and manage it all in one seamless experience.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="#early-access" class="w-full sm:w-auto button-gradient text-white px-8 py-3 rounded-full font-bold shadow-xl hover:scale-105 transition-transform duration-300">
+                    Get Early Access
+                </a>
+                <a href="#features" class="w-full sm:w-auto bg-gray-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-600 transition-colors duration-300">
+                    Learn More
+                </a>
+            </div>
+            
+            <!-- Countdown Timer -->
+            <div class="mt-12">
+                <p class="text-lg font-bold uppercase mb-4">Launching Soon</p>
+                <div id="countdown" class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+                    <!-- Timer segments will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </main>
 
+    <!-- Features Section -->
+    <section id="features" class="py-16 md:py-24 bg-neutral-900">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Features Designed for You</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1: Bookers -->
+                <div class="bg-neutral-800 p-8 rounded-2xl text-center shadow-lg">
+                    <div class="mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 mx-auto text-teal-400">
+                            <path d="M12.75 12.75a.75.75 0 01-.75.75H7.5a.75.75 0 010-1.5h4.5a.75.75 0 01.75.75zM7.5 7.5a.75.75 0 01.75-.75h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 01-.75-.75zM12.75 18a.75.75 0 01-.75.75H7.5a.75.75 0 010-1.5h4.5a.75.75 0 01.75.75z" />
+                            <path fill-rule="evenodd" d="M2.25 5.25A2.25 2.25 0 014.5 3h15A2.25 2.25 0 0121.75 5.25v13.5A2.25 2.25 0 0119.5 21h-15A2.25 2.25 0 012.25 18.75V5.25zm4.5 2.25a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5a.75.75 0 01-.75-.75zm0 4.5a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5a.75.75 0 01-.75-.75zm0 4.5a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">For Bookers</h3>
+                    <p class="text-gray-400">
+                        Discover and book verified local talent for your events with secure, in-app payments and transparent booking statuses.
+                    </p>
+                </div>
 
-function updateCountdown() {
-const now = new Date().getTime();
-const distance = launchDate - now;
+                <!-- Feature 2: Artists -->
+                <div class="bg-neutral-800 p-8 rounded-2xl text-center shadow-lg">
+                    <div class="mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 mx-auto text-teal-400">
+                            <path d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
+                            <path fill-rule="evenodd" d="M1.5 12a10.5 10.5 0 1121 0 10.5 10.5 0 01-21 0zM5.568 12.568a.75.75 0 001.06 1.06L12 8.623l5.372 5.373a.75.75 0 101.06-1.06L12.53 7.53a.75.75 0 00-1.06 0L5.568 12.568z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">For Artists</h3>
+                    <p class="text-gray-400">
+                        Get discovered by bookers, manage your schedule, and get paid securely and instantly for your gigs.
+                    </p>
+                </div>
 
+                <!-- Feature 3: Fans -->
+                <div class="bg-neutral-800 p-8 rounded-2xl text-center shadow-lg">
+                    <div class="mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12 mx-auto text-teal-400">
+                            <path d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
+                            <path fill-rule="evenodd" d="M12 3a9 9 0 00-9 9c0 1.65.348 3.23.978 4.678L2.25 21l3.54-1.284a8.96 8.96 0 003.708.971A9 9 0 0012 3zm0 18c-3.14 0-5.91-.9-8.2-2.454l-.066-.04a.75.75 0 01.375-1.314.75.75 0 01.91.433l.418.917c.5.95 1.157 1.765 1.954 2.41a.75.75 0 01-1.025.757l-.001-.001z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">For Fans</h3>
+                    <p class="text-gray-400">
+                        Follow your favorite local artists, get notified about new gigs, and discover fresh talent in your area.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-if (distance < 0) {
-countdownEl.innerHTML = '<span class="text-xl md:text-2xl font-bold">The Gearsh App is LIVE!</span>';
-clearInterval(interval);
-return;
-}
+    <!-- Waitlist Section -->
+    <section id="early-access" class="py-16 md:py-24 bg-neutral-950">
+        <div class="container mx-auto px-6 max-w-2xl text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Be the First to Know</h2>
+            <p class="text-gray-400 mb-8">
+                Join our waitlist to get exclusive updates and early access to the Gearsh app when we launch.
+            </p>
+            <form id="waitlist-form" class="space-y-4">
+                <input type="email" name="email" placeholder="Enter your email address" required class="w-full p-4 rounded-xl bg-neutral-800 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-teal-500 text-white">
+                <button type="submit" class="w-full button-gradient text-white px-8 py-4 rounded-xl font-bold shadow-xl hover:scale-105 transition-transform duration-300">
+                    Join Waitlist
+                </button>
+            </form>
+            <div id="waitlist-message" class="mt-4 text-green-400 font-semibold hidden">
+                Thank you for joining the waitlist! We'll be in touch soon.
+            </div>
+        </div>
+    </section>
 
+    <!-- Footer -->
+    <footer class="p-6 md:p-8 text-center text-gray-400">
+        <p class="text-sm">&copy; 2025 Gearsh. All rights reserved.</p>
+        <div class="flex items-center justify-center space-x-4 mt-2">
+            <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+        </div>
+    </footer>
 
-const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    <!-- JavaScript for form submission and scroll behavior -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('waitlist-form');
+            const message = document.getElementById('waitlist-message');
+            const countdownEl = document.getElementById('countdown');
 
+            // Countdown Logic
+            const launchDate = new Date("October 3, 2025 00:00:00 SAST").getTime();
+            const updateCountdown = () => {
+                const now = new Date().getTime();
+                const distance = launchDate - now;
 
-countdownEl.innerHTML = `
-<div class="countdown-segment">
-<span class="text-4xl md:text-5xl font-bold">${days}</span>
-<span class="text-sm uppercase text-gray-400">Days</span>
-</div>
-<div class="countdown-segment">
-<span class="text-4xl md:text-5xl font-bold">${hours}</span>
-<span class="text-sm uppercase text-gray-400">Hours</span>
-</div>
-<div class="countdown-segment">
-<span class="text-4xl md:text-5xl font-bold">${minutes}</span>
-<span class="text-sm uppercase text-gray-400">Minutes</span>
-</div>
-<div class="countdown-segment">
-<span class="text-4xl md:text-5xl font-bold">${seconds}</span>
-<span class="text-sm uppercase text-gray-400">Seconds</span>
-</div>
-`;
-}
+                if (distance < 0) {
+                    countdownEl.innerHTML = '<span class="text-xl md:text-2xl font-bold">The Gearsh App is LIVE!</span>';
+                    clearInterval(countdownInterval);
+                    return;
+                }
 
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-const interval = setInterval(updateCountdown, 1000);
-updateCountdown();
-</script>
+                countdownEl.innerHTML = `
+                    <div class="countdown-segment">
+                        <span class="text-4xl md:text-5xl font-bold">${days}</span>
+                        <span class="text-sm uppercase text-gray-400">Days</span>
+                    </div>
+                    <div class="countdown-segment">
+                        <span class="text-4xl md:text-5xl font-bold">${hours}</span>
+                        <span class="text-sm uppercase text-gray-400">Hours</span>
+                    </div>
+                    <div class="countdown-segment">
+                        <span class="text-4xl md:text-5xl font-bold">${minutes}</span>
+                        <span class="text-sm uppercase text-gray-400">Minutes</span>
+                    </div>
+                    <div class="countdown-segment">
+                        <span class="text-4xl md:text-5xl font-bold">${seconds}</span>
+                        <span class="text-sm uppercase text-gray-400">Seconds</span>
+                    </div>
+                `;
+            };
+
+            const countdownInterval = setInterval(updateCountdown, 1000);
+            updateCountdown();
+
+            // Form Submission Logic
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const emailInput = e.target.elements.email;
+                const email = emailInput.value;
+
+                // Replace with your Cloudflare Worker URL
+                const workerUrl = 'https://your-worker-name.your-username.workers.dev';
+
+                try {
+                    const response = await fetch(workerUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email }),
+                    });
+
+                    if (response.ok) {
+                        message.classList.remove('hidden');
+                        emailInput.value = '';
+                    } else {
+                        throw new Error('Server responded with an error.');
+                    }
+                } catch (error) {
+                    console.error('Submission failed:', error);
+                    message.classList.remove('hidden');
+                    message.classList.add('text-red-400');
+                    message.textContent = 'Oops! Something went wrong. Please try again.';
+                }
+            });
+        });
+    </script>
 </body>
-
 
 </html>
