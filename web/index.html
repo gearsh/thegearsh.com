@@ -170,7 +170,7 @@
             const countdownEl = document.getElementById('countdown');
 
             // Countdown Logic
-            const launchDate = new Date("October 3, 2025 00:00:00 SAST").getTime();
+           const launchDate = new Date("2025-10-02T22:00:00Z").getTime(); // 00:00 SAST = 22:00 UTC on Oct 2
             const updateCountdown = () => {
                 const now = new Date().getTime();
                 const distance = launchDate - now;
