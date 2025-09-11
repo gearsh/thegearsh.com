@@ -1,3 +1,5 @@
+//The Gearsh App - Artist Card
+
 import 'package:flutter/material.dart';
 import '../../models/artist.dart';
 
@@ -15,11 +17,17 @@ class ArtistCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Colors.deepPurple,
-          child: Text(artist.name[0], style: const TextStyle(color: Colors.white)),
+          backgroundImage: NetworkImage(artist.profilePictureUrl),
+          backgroundColor: Colors.transparent,
         ),
-        title: Text(artist.name, style: const TextStyle(color: Colors.white)),
-        subtitle: Text(artist.genre, style: const TextStyle(color: Colors.white70)),
+        title: Text(
+          artist.name,
+          style: const TextStyle(color: Colors.white),
+        ),
+        subtitle: Text(
+          artist.genre,
+          style: const TextStyle(color: Colors.white70),
+        ),
         trailing: ElevatedButton(
           onPressed: onTap,
           style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),

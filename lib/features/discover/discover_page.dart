@@ -1,14 +1,16 @@
+// The Gearsh App - lib/pages/discover_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/artist_provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gearsh_app/providers/artist_provider.dart';
 
 class DiscoverPage extends ConsumerWidget {
   const DiscoverPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final artistsAsync = ref.watch(artistProvider);
+    final artistsAsync = ref.watch(artistListProvider); // ✅
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -19,15 +21,14 @@ class DiscoverPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 24),
-              // 🔥 Header (Logo + Title + Profile Icon)
               Row(
                 children: [
                   Container(
                     width: 40,
                     height: 40,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: const LinearGradient(
+                      gradient: LinearGradient(
                         colors: [Colors.cyanAccent, Colors.blueAccent],
                       ),
                     ),
@@ -49,25 +50,18 @@ class DiscoverPage extends ConsumerWidget {
                   ),
                 ],
               ),
-
               const SizedBox(height: 24),
-
               const Text(
                 'Find Artists',
                 style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
-
               const SizedBox(height: 24),
-
-              // Filter Tabs Placeholder
               const FilterTabs(),
-
               const SizedBox(height: 24),
-
-              // 🔥 Artists List
               Expanded(
                 child: artistsAsync.when(
                   data: (artists) => ListView.builder(
@@ -77,7 +71,7 @@ class DiscoverPage extends ConsumerWidget {
                       return Container(
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
+                          color: Colors.white.withAlpha((0.05 * 255).toInt()),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: ListTile(
@@ -85,55 +79,33 @@ class DiscoverPage extends ConsumerWidget {
                             backgroundColor: Colors.transparent,
                             radius: 25,
                             child: ClipOval(
-                              child: artist['image'] != null
+                              child: artist.profilePictureUrl.isNotEmpty
                                   ? Image.network(
-                                      artist['image'][0]['url'],
+                                      artist.profilePictureUrl,
                                       fit: BoxFit.cover,
                                       width: 50,
                                       height: 50,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Center(
-                                          child: Text(
-                                            artist['emoji'] ?? '🎧',
-                                            style: const TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.white),
-                                          ),
-                                        );
+                                      errorBuilder: (context, error, stack) {
+                                        return const Icon(Icons.person,
+                                            color: Colors.white);
                                       },
                                     )
-                                  : Center(
-                                      child: Text(
-                                        artist['emoji'] ?? '🎧',
-                                        style: const TextStyle(
-                                            fontSize: 20, color: Colors.white),
-                                      ),
-                                    ),
+                                  : const Icon(Icons.person,
+                                      color: Colors.white),
                             ),
                           ),
                           title: Text(
-                            artist['name'] ?? 'Unknown',
+                            artist.name,
                             style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           subtitle: Text(
-                            artist['genre'] ?? 'Unknown Genre',
+                            artist.genre,
                             style: const TextStyle(color: Colors.cyanAccent),
                           ),
-                          //onTap: () {
-                          // final id = artist['id'] ?? '';
-                          // context.go('/profile/$id');
-                          //  },
-                          onTap: () {
-                            final id = artist['id'] ?? '';
-                            if (id.isNotEmpty) {
-                              context.go('/profile/$id');
-                            } else {
-                              print('Error: Missing artist ID!');
-                            }
-                          },
+                          onTap: () => context.go('/profile/${artist.id}'),
                         ),
                       );
                     },
@@ -141,8 +113,10 @@ class DiscoverPage extends ConsumerWidget {
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
                   error: (e, _) => Center(
-                    child: Text('Error: $e',
-                        style: const TextStyle(color: Colors.red)),
+                    child: Text(
+                      'Error: $e',
+                      style: const TextStyle(color: Colors.red),
+                    ),
                   ),
                 ),
               ),

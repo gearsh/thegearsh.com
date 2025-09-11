@@ -1,81 +1,65 @@
-// lib/services/airtable_service.dart
-
-//import 'dart:convert';
-//import 'package:http/http.dart' as http;
-
-//class AirtableService {
-//static const String apiKey =
-//   ''; // Replace this
-// static const String baseId = ''; //
-// static const String tableName =
-//  'Artists'; // Replace with your Airtable table name
-
-// static Future<List<Map<String, dynamic>>> fetchArtists() async {
-//const url = 'https://api.airtable.com/v0/$baseId/$tableName';
-// final response = await http.get(
-//   Uri.parse(url),
-// headers: {'Authorization': 'Bearer $apiKey'},
-//   );
-
-//   if (response.statusCode == 200) {
-//  final jsonData = jsonDecode(response.body);
-// final records = jsonData['records'] as List;
-//  return records.map((r) => r['fields'] as Map<String, dynamic>).toList();
-//   } else {
-//    throw Exception('Failed to load artists: ${response.body}');
-//  }
-//}
-//}
-
-// lib/services/airtable_service.dart
+// The Gearsh App - lib/services/airtable_service.dart
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../config/secrets.dart';
+import '../models/artist.dart';
 
 class AirtableService {
-  static const String _apiKey =
-      'pat9PYLZ3jMlj9AN2.d3ecc72334962e299bd9757bb7badbcf734de2fea1528186e112abfca9c4c4f1';
-  static const String _baseId = 'appXVEAL5jETcjmaE';
-  static const String _tableName = 'Artists';
+  static const _artistsTable = 'Artists';
+  final http.Client _client = http.Client();
 
-  Future<List<Map<String, dynamic>>> fetchArtists() async {
-    const url = 'https://api.airtable.com/v0/$_baseId/$_tableName';
-    final response = await http.get(
-      Uri.parse(url),
-      headers: {'Authorization': 'Bearer $_apiKey'},
+  Uri _buildTableUri(String table) {
+    return Uri.https(
+      'api.airtable.com',
+      '/v0/${Secrets.airtableBaseId}/$table',
     );
+  }
+
+  Uri _buildRecordUri(String table, String id) {
+    return Uri.https(
+      'api.airtable.com',
+      '/v0/${Secrets.airtableBaseId}/$table/$id',
+    );
+  }
+
+  Map<String, String> get _headers => {
+        'Authorization': 'Bearer ${Secrets.airtableApiKey}',
+        'Content-Type': 'application/json',
+      };
+
+  Future<List<Artist>> fetchArtists() async {
+    final uri = _buildTableUri(_artistsTable);
+    final response = await _client.get(uri, headers: _headers);
 
     if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-      final records = jsonData['records'] as List;
-
-      for (var record in records) {
-        print('Record ID: ${record['id']}'); // ✅ Dynamic record ID
-        print('Record fields: ${record['fields']}');
-      }
-
-      return records.map((record) {
-        final fields = record['fields'] as Map<String, dynamic>;
-        fields['id'] = record['id']; // ✅ Attach Airtable Record ID
-        return fields;
-      }).toList();
+      final data = jsonDecode(response.body);
+      final records = data['records'] as List<dynamic>;
+      return records.map((record) => Artist.fromJson(record)).toList();
     } else {
-      throw Exception('Failed to load artists: ${response.body}');
+      print(
+        'Airtable Error: ${response.statusCode}\n${response.body}',
+      );
+      throw Exception('Failed to load artists: ${response.statusCode}');
     }
   }
 
-  Future<Map<String, dynamic>> fetchArtistById(String id) async {
-    final url = 'https://api.airtable.com/v0/$_baseId/$_tableName/$id';
-    final response = await http.get(
-      Uri.parse(url),
-      headers: {'Authorization': 'Bearer $_apiKey'},
-    );
+  Future<Artist> fetchArtistById(String id) async {
+    final uri = _buildRecordUri(_artistsTable, id);
+    final response = await _client.get(uri, headers: _headers);
 
     if (response.statusCode == 200) {
-      final jsonData = jsonDecode(response.body);
-      return jsonData['fields'] as Map<String, dynamic>;
+      final record = jsonDecode(response.body);
+      return Artist.fromJson(record);
     } else {
-      throw Exception('Failed to load artist: ${response.body}');
+      print(
+        'Airtable Error [ID=$id]: ${response.statusCode}\n${response.body}',
+      );
+      throw Exception('Failed to load artist $id: ${response.statusCode}');
     }
+  }
+
+  void dispose() {
+    _client.close();
   }
 }

@@ -1,24 +1,20 @@
-// lib/providers/artist_provider.dart
-
-//import 'package:flutter_riverpod/flutter_riverpod.dart';
-//import '../services/airtable_service.dart';
-
-//final artistsProvider = FutureProvider((ref) async {
-//return AirtableService.fetchArtists();
-//});
-
-// lib/providers/artist_provider.dart
+// The Gearsh App - lib/providers/artist_provider.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/artist.dart';
 import '../services/airtable_service.dart';
 
-final artistProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+final artistListProvider = FutureProvider<List<Artist>>((ref) async {
   final airtableService = AirtableService();
-  return await airtableService.fetchArtists();
+  final artists = await airtableService.fetchArtists();
+  airtableService.dispose();
+  return artists;
 });
 
 final artistByIdProvider =
-    FutureProvider.family<Map<String, dynamic>, String>((ref, id) async {
-  final service = AirtableService();
-  return service.fetchArtistById(id);
+    FutureProvider.family<Artist, String>((ref, id) async {
+  final airtableService = AirtableService();
+  final artist = await airtableService.fetchArtistById(id);
+  airtableService.dispose();
+  return artist;
 });

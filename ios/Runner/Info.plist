@@ -34,6 +34,14 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to your camera to upload photos.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to your microphone for recording audio.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs location access for map features.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photo library for uploads.</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
