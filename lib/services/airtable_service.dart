@@ -37,9 +37,6 @@ class AirtableService {
       final records = data['records'] as List<dynamic>;
       return records.map((record) => Artist.fromJson(record)).toList();
     } else {
-      print(
-        'Airtable Error: ${response.statusCode}\n${response.body}',
-      );
       throw Exception('Failed to load artists: ${response.statusCode}');
     }
   }
@@ -52,9 +49,6 @@ class AirtableService {
       final record = jsonDecode(response.body);
       return Artist.fromJson(record);
     } else {
-      print(
-        'Airtable Error [ID=$id]: ${response.statusCode}\n${response.body}',
-      );
       throw Exception('Failed to load artist $id: ${response.statusCode}');
     }
   }
