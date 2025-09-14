@@ -1,58 +1,171 @@
-<!-- waitlist-form.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Waitlist Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gearsh Waitlist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
 </head>
-<body>
-  <h2>Join the Waitlist</h2>
-  <form id="waitlistForm">
-    <input name="user_name" placeholder="Username" required><br>
-    <input name="first_name" placeholder="First Name"><br>
-    <input name="surname" placeholder="Surname"><br>
-    <input name="email" placeholder="Email" type="email"><br>
-    <input name="contact_number" placeholder="Contact Number"><br>
-    <select name="user_type">
-      <option value="">-- Select User Type --</option>
-      <option value="Booker">Booker</option>
-      <option value="Artist">Artist</option>
-      <option value="Fan">Fan</option>
-    </select><br>
-    <input name="country" placeholder="Country" value="South Africa"><br>
-    <input name="location" placeholder="Location"><br>
-    <input name="skill_set" placeholder="Skill Set"><br>
-    <input name="date_of_birth" placeholder="Date of Birth (YYYY-MM-DD)" type="date"><br>
-    <select name="gender">
-      <option value="">-- Select Gender --</option>
-      <option value="Male">Male</option>
-      <option value="Female">Female</option>
-      <option value="Other">Other</option>
-      <option value="Prefer not to say">Prefer not to say</option>
-    </select><br>
-    <button type="submit">Submit</button>
-  </form>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
 
-  <script>
-    document.getElementById("waitlistForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const json = Object.fromEntries(formData.entries());
-      json.created_date = new Date().toISOString();
+    <!-- Modal for feedback -->
+    <div id="feedbackModal" class="modal">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full text-center">
+            <h3 id="modalTitle" class="text-2xl font-bold mb-4"></h3>
+            <p id="modalMessage" class="text-gray-700 mb-6"></p>
+            <button onclick="closeModal()" class="bg-green-700 text-white font-semibold py-2 px-6 rounded-full hover:bg-green-800 transition-colors duration-300">OK</button>
+        </div>
+    </div>
 
-      const response = await fetch("/api/waitlist", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(json)
-      });
+    <!-- Main Form Container -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 sm:p-10 w-full max-w-xl">
+        <div class="flex items-center justify-center space-x-2 mb-6">
+            <svg class="w-8 h-8 text-green-700" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM14.92 9.42L12 12.34L9.08 9.42C8.75 9.09 8.25 9.09 7.92 9.42C7.59 9.75 7.59 10.25 7.92 10.58L10.84 13.5L7.92 16.42C7.59 16.75 7.59 17.25 7.92 17.58C8.25 17.91 8.75 17.91 9.08 17.58L12 14.66L14.92 17.58C15.25 17.91 15.75 17.91 16.08 17.58C16.41 17.25 16.41 16.75 16.08 16.42L13.16 13.5L16.08 10.58C16.41 10.25 16.41 9.75 16.08 9.42C15.75 9.09 15.25 9.09 14.92 9.42V9.42Z"></path>
+            </svg>
+            <h2 class="text-3xl font-bold text-gray-800">Join the Waitlist</h2>
+        </div>
+        <p class="text-center text-gray-600 mb-8">Be the first to know when we launch! Fill out the form below to secure your spot.</p>
 
-      if (response.ok) {
-        alert("Success! You've been added to the waitlist.");
-        e.target.reset();
-      } else {
-        alert("Something went wrong. Please try again later.");
-      }
-    });
-  </script>
+        <form id="waitlistForm" class="space-y-6">
+            <div class="grid sm:grid-cols-2 gap-6">
+                <input name="user_name" type="text" placeholder="Username" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                <input name="first_name" type="text" placeholder="First Name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            <div class="grid sm:grid-cols-2 gap-6">
+                <input name="surname" type="text" placeholder="Surname" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                <input name="email" type="email" placeholder="Email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            <div>
+                <input name="contact_number" type="tel" placeholder="Contact Number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            <div>
+                <label for="user_type" class="block text-sm font-medium text-gray-700 mb-2">I am a...</label>
+                <select name="user_type" id="user_type" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option value="" disabled selected>-- Select User Type --</option>
+                    <option value="Booker">Booker</option>
+                    <option value="Artist">Artist</option>
+                    <option value="Fan">Fan</option>
+                </select>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-6">
+                <input name="country" type="text" placeholder="Country" value="South Africa" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                <input name="location" type="text" placeholder="Location" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            <div>
+                <input name="skill_set" type="text" placeholder="Skill Set (e.g. Musician, Spoken Word Artist)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            <div>
+                <label for="date_of_birth" class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                <input name="date_of_birth" type="date" placeholder="Date of Birth (YYYY-MM-DD)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            <div>
+                <label for="gender" class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                <select name="gender" id="gender" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option value="" disabled selected>-- Select Gender --</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+            </div>
+
+            <button type="submit" class="w-full bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-300 transform hover:scale-105">
+                Join the Waitlist
+            </button>
+        </form>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const showModal = (title, message) => {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = message;
+            document.getElementById('feedbackModal').style.display = 'flex';
+        };
+
+        window.closeModal = () => {
+            document.getElementById('feedbackModal').style.display = 'none';
+        };
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+
+        if (Object.keys(firebaseConfig).length > 0) {
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app);
+
+            const authenticateUser = async () => {
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            };
+
+            authenticateUser().then(() => {
+                document.getElementById("waitlistForm").addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    
+                    const userId = auth.currentUser?.uid || crypto.randomUUID();
+                    const formData = new FormData(e.target);
+                    const json = Object.fromEntries(formData.entries());
+                    json.created_date = new Date().toISOString();
+                    json.userId = userId;
+
+                    try {
+                        const userDocRef = doc(db, 'artifacts', appId, 'users', userId);
+                        await setDoc(userDocRef, {
+                            username: json.user_name,
+                            email: json.email,
+                            userType: json.user_type,
+                            created_date: json.created_date
+                        });
+                        
+                        const waitlistRef = collection(db, 'artifacts', appId, 'public', 'data', 'waitlist');
+                        await addDoc(waitlistRef, json);
+                        
+                        showModal("Success!", "You have been added to the waitlist.");
+                        e.target.reset();
+                    } catch (e) {
+                        console.error("Error adding document: ", e);
+                        showModal("Error", "Something went wrong. Please try again later.");
+                    }
+                });
+            });
+        } else {
+            document.getElementById("waitlistForm").addEventListener("submit", (e) => {
+                e.preventDefault();
+                showModal("Configuration Error", "Firebase is not configured. Please check your environment.");
+            });
+        }
+    </script>
 </body>
 </html>
