@@ -1,0 +1,58 @@
+<!-- waitlist-form.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Waitlist Form</title>
+</head>
+<body>
+  <h2>Join the Waitlist</h2>
+  <form id="waitlistForm">
+    <input name="user_name" placeholder="Username" required><br>
+    <input name="first_name" placeholder="First Name"><br>
+    <input name="surname" placeholder="Surname"><br>
+    <input name="email" placeholder="Email" type="email"><br>
+    <input name="contact_number" placeholder="Contact Number"><br>
+    <select name="user_type">
+      <option value="">-- Select User Type --</option>
+      <option value="Booker">Booker</option>
+      <option value="Artist">Artist</option>
+      <option value="Fan">Fan</option>
+    </select><br>
+    <input name="country" placeholder="Country" value="South Africa"><br>
+    <input name="location" placeholder="Location"><br>
+    <input name="skill_set" placeholder="Skill Set"><br>
+    <input name="date_of_birth" placeholder="Date of Birth (YYYY-MM-DD)" type="date"><br>
+    <select name="gender">
+      <option value="">-- Select Gender --</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+      <option value="Other">Other</option>
+      <option value="Prefer not to say">Prefer not to say</option>
+    </select><br>
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    document.getElementById("waitlistForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const json = Object.fromEntries(formData.entries());
+      json.created_date = new Date().toISOString();
+
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(json)
+      });
+
+      if (response.ok) {
+        alert("Success! You've been added to the waitlist.");
+        e.target.reset();
+      } else {
+        alert("Something went wrong. Please try again later.");
+      }
+    });
+  </script>
+</body>
+</html>
