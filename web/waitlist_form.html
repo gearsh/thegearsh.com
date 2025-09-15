@@ -116,7 +116,7 @@
       json.created_date = new Date().toISOString();
 
       try {
-        const response = await fetch("https://gearsh-waitlist-api.YOUR_SUBDOMAIN.workers.dev/api/waitlist", {
+        const response = await fetch("/api/waitlist", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(json)
