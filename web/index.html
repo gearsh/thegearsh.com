@@ -45,7 +45,6 @@
     <!-- Header -->
     <header class="p-6 md:p-8 flex items-center justify-between z-10 relative">
         <div class="flex items-center space-x-2">
-            <!-- Gearsh Logo -->
             <a href="index.html" class="flex items-center space-x-2">
                 <img src="gearsh-logo.png" alt="The Gearsh Logo" class="h-12 w-auto" />
                 <span class="text-xl font-bold">Gearsh</span>
@@ -53,30 +52,35 @@
         </div>
         <nav class="flex items-center space-x-6">
             <a href="about.html" class="hover:text-teal-400 transition-colors">About</a>
-            <a href="https://thegearsh.com/waitlist_form" class="button-gradient text-white px-5 py-2 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg">Join Waitlist</a>
+            <a href="./waitlist_form.html"
+                class="button-gradient text-white px-5 py-2 rounded-full font-semibold hover:scale-105 transition-transform duration-300 shadow-lg">Join
+                Waitlist</a>
         </nav>
-        </a>
     </header>
 
     <!-- Hero Section -->
     <main class="relative z-0 min-h-screen flex flex-col items-center justify-center text-center p-6 md:p-12">
-        <div class="absolute inset-0 z-0 opacity-10" style="background-image: url('allthestars.jpg'); background-size: cover; background-position: center;"></div>
+        <div class="absolute inset-0 z-0 opacity-10"
+            style="background-image: url('allthestars.jpg'); background-size: cover; background-position: center;"></div>
         <div class="relative z-10 max-w-4xl mx-auto">
             <h1 class="text-3xl md:text-6xl font-extrabold leading-tight tracking-tighter mb-6 gradient-text">
                 Book the Artistry of Africa
             </h1>
             <p class="mt-8 text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8 relative z-0">
-                Connect directly with local artists, book talent for your event, and manage it all in one seamless experience.
+                Connect directly with local artists, book talent for your event, and manage it all in one seamless
+                experience.
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <a href="#early-access" class="w-full sm:w-auto button-gradient text-white px-8 py-3 rounded-full font-bold shadow-xl hover:scale-105 transition-transform duration-300">
+                <a href="#early-access"
+                    class="w-full sm:w-auto button-gradient text-white px-8 py-3 rounded-full font-bold shadow-xl hover:scale-105 transition-transform duration-300">
                     Get Early Access
                 </a>
-                <a href="#features" class="w-full sm:w-auto bg-gray-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-600 transition-colors duration-300">
+                <a href="#features"
+                    class="w-full sm:w-auto bg-gray-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-600 transition-colors duration-300">
                     Learn More
                 </a>
             </div>
-            
+
             <!-- Countdown Timer -->
             <div class="mt-12">
                 <p class="text-lg font-bold uppercase mb-4">Launching Soon</p>
@@ -99,18 +103,20 @@
                     </div>
                     <h3 class="text-xl font-bold mb-2">For Bookers</h3>
                     <p class="text-gray-400">
-                        Discover and book verified local talent for your events with secure, in-app payments and transparent booking statuses.
+                        Discover and book verified local talent for your events with secure, in-app payments and
+                        transparent booking statuses.
                     </p>
                 </div>
 
                 <!-- Feature 2: Artists -->
                 <div class="bg-neutral-800 p-8 rounded-2xl text-center shadow-lg">
                     <div class="mb-4">
-                       <img src="./icons/art.png" alt="Art Icon" class="w-12 h-12 mx-auto text-teal-400" />
+                        <img src="./icons/art.png" alt="Art Icon" class="w-12 h-12 mx-auto text-teal-400" />
                     </div>
                     <h3 class="text-xl font-bold mb-2">For Artists</h3>
                     <p class="text-gray-400">
-                        Get discovered by bookers, manage your schedule, and get paid securely and instantly for your gigs.
+                        Get discovered by bookers, manage your schedule, and get paid securely and instantly for your
+                        gigs.
                     </p>
                 </div>
 
@@ -121,7 +127,8 @@
                     </div>
                     <h3 class="text-xl font-bold mb-2">For Fans</h3>
                     <p class="text-gray-400">
-                        Follow your favorite local artists, get notified about new gigs, and discover fresh talent in your area.
+                        Follow your favorite local artists, get notified about new gigs, and discover fresh talent in
+                        your area.
                     </p>
                 </div>
             </div>
@@ -135,9 +142,11 @@
             <p class="text-gray-400 mb-8">
                 Join our waitlist to get exclusive updates and early access to the Gearsh app when we launch.
             </p>
-            <form id="waitlist-form" class="space-y-4">
-                <input type="email" name="email" placeholder="Enter your email address" required class="w-full p-4 rounded-xl bg-neutral-800 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-teal-500 text-white">
-                <button type="submit" class="w-full button-gradient text-white px-8 py-4 rounded-xl font-bold shadow-xl hover:scale-105 transition-transform duration-300">
+            <form id="waitlist-form" class="space-y-4" autocomplete="on">
+                <input type="email" name="email" placeholder="Enter your email address" required autocomplete="email"
+                    class="w-full p-4 rounded-xl bg-neutral-800 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-teal-500 text-white">
+                <button type="submit"
+                    class="w-full button-gradient text-white px-8 py-4 rounded-xl font-bold shadow-xl hover:scale-105 transition-transform duration-300">
                     Join Waitlist
                 </button>
             </form>
@@ -156,7 +165,7 @@
         </div>
     </footer>
 
-    <!-- JavaScript for form submission and scroll behavior -->
+    <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('waitlist-form');
@@ -164,7 +173,7 @@
             const countdownEl = document.getElementById('countdown');
 
             // Countdown Logic
-           const launchDate = new Date("2025-10-02T22:00:00Z").getTime(); // 00:00 SAST = 22:00 UTC on Oct 2
+            const launchDate = new Date("2025-10-02T22:00:00Z").getTime();
             const updateCountdown = () => {
                 const now = new Date().getTime();
                 const distance = launchDate - now;
@@ -209,8 +218,7 @@
                 const emailInput = e.target.elements.email;
                 const email = emailInput.value;
 
-                // Replace with your Cloudflare Worker URL
-                const workerUrl = 'https://your-worker-name.your-username.workers.dev';
+                const workerUrl = 'https://your-worker-name.your-username.workers.dev'; // UPDATE THIS
 
                 try {
                     const response = await fetch(workerUrl, {
