@@ -1,294 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gearsh Waitlist</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            justify-content: center;
-            align-items: center;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gearsh Waitlist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
 
-    <!-- Modal for feedback -->
-    <div id="feedbackModal" class="modal">
-        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full text-center">
-            <h3 id="modalTitle" class="text-2xl font-bold mb-4"></h3>
-            <p id="modalMessage" class="text-gray-700 mb-6"></p>
-            <button onclick="closeModal()" class="bg-green-700 text-white font-semibold py-2 px-6 rounded-full hover:bg-green-800 transition-colors duration-300">OK</button>
-        </div>
+  <!-- Modal for feedback -->
+  <div id="feedbackModal" class="modal">
+    <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full text-center">
+      <h3 id="modalTitle" class="text-2xl font-bold mb-4"></h3>
+      <p id="modalMessage" class="text-gray-700 mb-6"></p>
+      <button onclick="closeModal()" class="bg-green-700 text-white font-semibold py-2 px-6 rounded-full hover:bg-green-800 transition-colors duration-300">OK</button>
     </div>
+  </div>
 
-    <!-- Main Form Container -->
-    <div class="bg-white rounded-2xl shadow-xl p-8 sm:p-10 w-full max-w-xl">
-        <!-- Gearsh App Logo -->
-        <div class="flex flex-col items-center justify-center space-y-4 mb-8">
-            <a href="index.html" class="flex items-center space-x-2">
-                <img src="gearsh-logo.png" alt="The Gearsh Logo" class="h-12 w-auto" />
-                <span class="text-xl font-bold">Gearsh</span>
-            </a>
-            
-            <h2 class="text-2xl font-bold text-gray-700">Join the Waitlist</h2>
-        </div>
-        <p class="text-center text-gray-600 mb-8">Be the first to know when we launch! Fill out the form below to secure your spot.</p>
-
-        <form id="waitlistForm" class="space-y-6">
-            <div class="grid sm:grid-cols-2 gap-6">
-                <input name="user_name" type="text" placeholder="Username" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                <input name="first_name" type="text" placeholder="First Name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-            </div>
-            <div class="grid sm:grid-cols-2 gap-6">
-                <input name="surname" type="text" placeholder="Surname" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                <input name="email" type="email" placeholder="Email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-            </div>
-            <div>
-                <input name="contact_number" type="tel" placeholder="Contact Number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-            </div>
-            <div>
-                <label for="user_type" class="block text-sm font-medium text-gray-700 mb-2">I am a...</label>
-                <select name="user_type" id="user_type" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                    <option value="" disabled selected>-- Select User Type --</option>
-                    <option value="Booker">Booker</option>
-                    <option value="Artist">Artist</option>
-                    <option value="Fan">Fan</option>
-                </select>
-            </div>
-            <div class="grid sm:grid-cols-2 gap-6">
-                <input name="country" type="text" placeholder="Country" value="South Africa" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                <input name="location" type="text" placeholder="Location" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-            </div>
-            <!-- Custom Multi-Select for Skill Set -->
-            <div>
-                <label for="skill_set_select" class="block text-sm font-medium text-gray-700 mb-2">Skill Set (select all that apply)</label>
-                <div class="relative">
-                    <div id="skill_set_display" class="w-full px-4 py-3 border border-gray-300 bg-white rounded-lg cursor-pointer flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-green-500">
-                        <span id="selected_skills_text" class="text-gray-500">Select skills...</span>
-                        <svg class="w-5 h-5 text-gray-400 transform transition-transform" id="dropdown_arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                    </div>
-                    <div id="skill_set_options" class="hidden absolute top-full left-0 right-0 z-10 bg-white border border-gray-300 rounded-lg mt-2 shadow-lg max-h-48 overflow-y-auto">
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="DJ" class="mr-2 rounded text-green-700 focus:ring-green-500"> DJ
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Producer" class="mr-2 rounded text-green-700 focus:ring-green-500"> Producer
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Writer" class="mr-2 rounded text-green-700 focus:ring-green-500"> Writer
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Photographer" class="mr-2 rounded text-green-700 focus:ring-green-500"> Photographer
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Designer" class="mr-2 rounded text-green-700 focus:ring-green-500"> Designer
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Videographer" class="mr-2 rounded text-green-700 focus:ring-green-500"> Videographer
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Dancer" class="mr-2 rounded text-green-700 focus:ring-green-500"> Dancer
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Host" class="mr-2 rounded text-green-700 focus:ring-green-500"> Host
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Influencer" class="mr-2 rounded text-green-700 focus:ring-green-500"> Influencer
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Stylist" class="mr-2 rounded text-green-700 focus:ring-green-500"> Stylist
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Rapper" class="mr-2 rounded text-green-700 focus:ring-green-500"> Rapper
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Videographer" class="mr-2 rounded text-green-700 focus:ring-green-500"> Videographer
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Director" class="mr-2 rounded text-green-700 focus:ring-green-500"> Director
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Actor" class="mr-2 rounded text-green-700 focus:ring-green-500"> Actor
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Model" class="mr-2 rounded text-green-700 focus:ring-green-500"> Model
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Engineer" class="mr-2 rounded text-green-700 focus:ring-green-500"> Engineer
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Animator" class="mr-2 rounded text-green-700 focus:ring-green-500"> Animator
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Choreographer" class="mr-2 rounded text-green-700 focus:ring-green-500"> Choreographer
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Make Up Artist" class="mr-2 rounded text-green-700 focus:ring-green-500"> Make Up Artist
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Trap Star" class="mr-2 rounded text-green-700 focus:ring-green-500"> Trap Star
-                        </label>
-                        <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                            <input type="checkbox" name="skill_set[]" value="Publicist" class="mr-2 rounded text-green-700 focus:ring-green-500"> Publicist
-                        </label>
-                    </div>
-                </div>
-                <input type="hidden" name="skill_set" id="hidden_skill_set">
-            </div>
-            <div>
-                <label for="date_of_birth" class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
-                <input name="date_of_birth" type="date" placeholder="Date of Birth (YYYY-MM-DD)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-            </div>
-            <div>
-                <label for="gender" class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
-                <select name="gender" id="gender" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                    <option value="" disabled selected>-- Select Gender --</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                    <option value="Prefer not to say">Prefer not to say</option>
-                </select>
-            </div>
-
-            <button type="submit" class="w-full bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-300 transform hover:scale-105">
-                Join the Waitlist
-            </button>
-        </form>
+  <!-- Main Form Container -->
+  <div class="bg-white rounded-2xl shadow-xl p-8 sm:p-10 w-full max-w-xl">
+    <!-- Gearsh App Logo -->
+    <div class="flex flex-col items-center justify-center space-y-4 mb-8">
+      <a href="index.html" class="flex items-center space-x-2">
+        <img src="gearsh-logo.png" alt="The Gearsh Logo" class="h-12 w-auto" />
+        <span class="text-xl font-bold">Gearsh</span>
+      </a>
+      <h2 class="text-2xl font-bold text-gray-700">Join the Waitlist</h2>
     </div>
+    <p class="text-center text-gray-600 mb-8">Be the first to know when we launch! Fill out the form below to secure your spot.</p>
 
-    <!-- Firebase Scripts -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <form id="waitlistForm" class="space-y-6">
+      <div class="grid sm:grid-cols-2 gap-6">
+        <input name="user_name" type="text" placeholder="Username" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+        <input name="first_name" type="text" placeholder="First Name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+      </div>
+      <div class="grid sm:grid-cols-2 gap-6">
+        <input name="surname" type="text" placeholder="Surname" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+        <input name="email" type="email" placeholder="Email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+      </div>
+      <div>
+        <input name="contact_number" type="tel" placeholder="Contact Number" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+      </div>
+      <div>
+        <label for="user_type" class="block text-sm font-medium text-gray-700 mb-2">I am a...</label>
+        <select name="user_type" id="user_type" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="" disabled selected>-- Select User Type --</option>
+          <option value="Booker">Booker</option>
+          <option value="Artist">Artist</option>
+          <option value="Fan">Fan</option>
+        </select>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-6">
+        <input name="country" type="text" placeholder="Country" value="South Africa" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+        <input name="location" type="text" placeholder="Location" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+      </div>
 
-        const showModal = (title, message) => {
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalMessage').innerText = message;
-            document.getElementById('feedbackModal').style.display = 'flex';
-        };
+      <!-- Custom Multi-Select for Skill Set -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Skill Set (select all that apply)</label>
+        <div class="relative">
+          <div id="skill_set_display" class="w-full px-4 py-3 border border-gray-300 bg-white rounded-lg cursor-pointer flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-green-500">
+            <span id="selected_skills_text" class="text-gray-500">Select skills...</span>
+            <svg class="w-5 h-5 text-gray-400 transform transition-transform" id="dropdown_arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+          <div id="skill_set_options" class="hidden absolute top-full left-0 right-0 z-10 bg-white border border-gray-300 rounded-lg mt-2 shadow-lg max-h-48 overflow-y-auto">
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="DJ" class="mr-2"> DJ</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Producer" class="mr-2"> Producer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Writer" class="mr-2"> Writer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Photographer" class="mr-2"> Photographer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Designer" class="mr-2"> Designer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Videographer" class="mr-2"> Videographer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Dancer" class="mr-2"> Dancer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Host" class="mr-2"> Host</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Influencer" class="mr-2"> Influencer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Stylist" class="mr-2"> Stylist</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Rapper" class="mr-2"> Rapper</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Director" class="mr-2"> Director</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Actor" class="mr-2"> Actor</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Model" class="mr-2"> Model</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Engineer" class="mr-2"> Engineer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Animator" class="mr-2"> Animator</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Choreographer" class="mr-2"> Choreographer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Make Up Artist" class="mr-2"> Make Up Artist</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Trap Star" class="mr-2"> Trap Star</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Publicist" class="mr-2"> Publicist</label>
+          </div>
+        </div>
+        <input type="hidden" name="skill_set" id="hidden_skill_set" required>
+      </div>
 
-        window.closeModal = () => {
-            document.getElementById('feedbackModal').style.display = 'none';
-        };
+      <div>
+        <label for="date_of_birth" class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+        <input name="date_of_birth" type="date" placeholder="Date of Birth (YYYY-MM-DD)" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+      </div>
+      <div>
+        <label for="gender" class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+        <select name="gender" id="gender" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="" disabled selected>-- Select Gender --</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+          <option value="Prefer not to say">Prefer not to say</option>
+        </select>
+      </div>
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+      <button type="submit" class="w-full bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-300 transform hover:scale-105">
+        Join the Waitlist
+      </button>
+    </form>
+  </div>
 
-        // Custom multi-select logic
-        const skillSetDisplay = document.getElementById('skill_set_display');
-        const skillSetOptions = document.getElementById('skill_set_options');
-        const selectedSkillsText = document.getElementById('selected_skills_text');
-        const dropdownArrow = document.getElementById('dropdown_arrow');
-        const hiddenSkillSet = document.getElementById('hidden_skill_set');
+  <script>
+    const skillSetDisplay = document.getElementById('skill_set_display');
+    const skillSetOptions = document.getElementById('skill_set_options');
+    const selectedSkillsText = document.getElementById('selected_skills_text');
+    const dropdownArrow = document.getElementById('dropdown_arrow');
+    const hiddenSkillSet = document.getElementById('hidden_skill_set');
 
-        const updateSelectedSkills = () => {
-            const selectedOptions = Array.from(skillSetOptions.querySelectorAll('input[type="checkbox"]:checked'));
-            const selectedValues = selectedOptions.map(input => input.value);
-            hiddenSkillSet.value = JSON.stringify(selectedValues);
-            
-            if (selectedValues.length === 0) {
-                selectedSkillsText.innerText = 'Select skills...';
-                selectedSkillsText.classList.add('text-gray-500');
-            } else {
-                selectedSkillsText.innerText = selectedValues.join(', ');
-                selectedSkillsText.classList.remove('text-gray-500');
-            }
-        };
+    const updateSelectedSkills = () => {
+      const selectedOptions = Array.from(skillSetOptions.querySelectorAll('input[type="checkbox"]:checked'));
+      const selectedValues = selectedOptions.map(input => input.value);
+      hiddenSkillSet.value = JSON.stringify(selectedValues);
+      hiddenSkillSet.required = selectedValues.length === 0;
 
-        skillSetDisplay.addEventListener('click', () => {
-            skillSetOptions.classList.toggle('hidden');
-            dropdownArrow.classList.toggle('rotate-180');
+      if (selectedValues.length === 0) {
+        selectedSkillsText.innerText = 'Select skills...';
+        selectedSkillsText.classList.add('text-gray-500');
+      } else {
+        selectedSkillsText.innerText = selectedValues.join(', ');
+        selectedSkillsText.classList.remove('text-gray-500');
+      }
+    };
+
+    skillSetDisplay.addEventListener('click', () => {
+      skillSetOptions.classList.toggle('hidden');
+      dropdownArrow.classList.toggle('rotate-180');
+    });
+
+    skillSetOptions.addEventListener('change', updateSelectedSkills);
+
+    document.addEventListener('click', (event) => {
+      if (!skillSetDisplay.contains(event.target) && !skillSetOptions.contains(event.target)) {
+        skillSetOptions.classList.add('hidden');
+        dropdownArrow.classList.remove('rotate-180');
+      }
+    });
+
+    const showModal = (title, message) => {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalMessage').innerText = message;
+      document.getElementById('feedbackModal').style.display = 'flex';
+    };
+
+    window.closeModal = () => {
+      document.getElementById('feedbackModal').style.display = 'none';
+    };
+
+    document.getElementById("waitlistForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const json = Object.fromEntries(formData.entries());
+      json.created_date = new Date().toISOString();
+
+      try {
+        json.skill_set = JSON.parse(hiddenSkillSet.value);
+      } catch (err) {
+        json.skill_set = [];
+      }
+
+      try {
+        const response = await fetch("/api/waitlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(json)
         });
 
-        skillSetOptions.addEventListener('change', () => {
-            updateSelectedSkills();
-        });
-
-        document.addEventListener('click', (event) => {
-            if (!skillSetDisplay.contains(event.target) && !skillSetOptions.contains(event.target)) {
-                skillSetOptions.classList.add('hidden');
-                dropdownArrow.classList.remove('rotate-180');
-            }
-        });
-
-        if (Object.keys(firebaseConfig).length > 0) {
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
-            const auth = getAuth(app);
-
-            const authenticateUser = async () => {
-                if (typeof __initial_auth_token !== 'undefined') {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            };
-
-            authenticateUser().then(() => {
-                document.getElementById("waitlistForm").addEventListener("submit", async (e) => {
-                    e.preventDefault();
-                    
-                    const userId = auth.currentUser?.uid || crypto.randomUUID();
-                    const formData = new FormData(e.target);
-                    const json = Object.fromEntries(formData.entries());
-                    json.created_date = new Date().toISOString();
-                    json.userId = userId;
-
-                    // Parse the skills from the hidden input
-                    try {
-                        json.skill_set = JSON.parse(hiddenSkillSet.value);
-                    } catch (err) {
-                        json.skill_set = [];
-                    }
-
-                    try {
-                        const userDocRef = doc(db, 'artifacts', appId, 'users', userId);
-                        await setDoc(userDocRef, {
-                            username: json.user_name,
-                            email: json.email,
-                            userType: json.user_type,
-                            created_date: json.created_date
-                        });
-                        
-                        const waitlistRef = collection(db, 'artifacts', appId, 'public', 'data', 'waitlist');
-                        await addDoc(waitlistRef, json);
-                        
-                        showModal("Success!", "You have been added to the waitlist.");
-                        e.target.reset();
-                        updateSelectedSkills(); // Reset the display after form submission
-                    } catch (e) {
-                        console.error("Error adding document: ", e);
-                        showModal("Error", "Something went wrong. Please try again later.");
-                    }
-                });
-            });
+        if (response.ok) {
+          showModal("Success!", "You have been added to the waitlist.");
+          e.target.reset();
+          skillSetOptions.querySelectorAll('input[type="checkbox"]').forEach(input => input.checked = false);
+          updateSelectedSkills();
         } else {
-            document.getElementById("waitlistForm").addEventListener("submit", (e) => {
-                e.preventDefault();
-                showModal("Configuration Error", "Firebase is not configured. Please check your environment.");
-            });
+          showModal("Error", "Something went wrong. Please try again later.");
         }
-    </script>
+      } catch (error) {
+        console.error(error);
+        showModal("Error", "Network issue. Please try again.");
+      }
+    });
+  </script>
 </body>
 </html>
