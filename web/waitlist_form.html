@@ -185,9 +185,9 @@
       json.created_date = new Date().toISOString();
 
       try {
-        json.skill_set = JSON.parse(hiddenSkillSet.value);
+        json.skill_set = hiddenSkillSet.value;
       } catch (err) {
-        json.skill_set = [];
+        json.skill_set = "[]";
       }
 
       try {
