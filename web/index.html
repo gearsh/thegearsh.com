@@ -71,11 +71,11 @@
                 experience.
             </p>
             <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <a href="#early-access"
+                <a href="waitlist_form.html"
                     class="w-full sm:w-auto button-gradient text-white px-8 py-3 rounded-full font-bold shadow-xl hover:scale-105 transition-transform duration-300">
                     Get Early Access
                 </a>
-                <a href="#features"
+                <a href="story-behind-gearsh.html"
                     class="w-full sm:w-auto bg-gray-700 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:bg-gray-600 transition-colors duration-300">
                     Learn More
                 </a>
@@ -213,34 +213,12 @@
             updateCountdown();
 
             // Form Submission Logic
-            form.addEventListener('submit', async (e) => {
+            form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const emailInput = e.target.elements.email;
                 const email = emailInput.value;
-
-                const workerUrl = 'https://your-worker-name.your-username.workers.dev'; // UPDATE THIS
-
-                try {
-                    const response = await fetch(workerUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ email }),
-                    });
-
-                    if (response.ok) {
-                        message.classList.remove('hidden');
-                        emailInput.value = '';
-                    } else {
-                        throw new Error('Server responded with an error.');
-                    }
-                } catch (error) {
-                    console.error('Submission failed:', error);
-                    message.classList.remove('hidden');
-                    message.classList.add('text-red-400');
-                    message.textContent = 'Oops! Something went wrong. Please try again.';
-                }
+                // Redirect to waitlist_form.html with email as a query parameter
+                window.location.href = `waitlist_form.html?email=${encodeURIComponent(email)}`;
             });
         });
     </script>

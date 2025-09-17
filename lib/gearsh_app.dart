@@ -10,6 +10,9 @@ import 'providers/global_providers.dart';
 import 'features/auth/auth_page.dart';
 import 'features/booking/booking_page.dart';
 import 'features/dashboard/dashboard_page.dart';
+import 'screens/web/landing_page.dart';
+import 'screens/web/waitlist_page.dart';
+import 'screens/web/story_page.dart';
 
 class GearshApp extends ConsumerStatefulWidget {
   const GearshApp({super.key});
@@ -45,6 +48,18 @@ class _GearshAppState extends ConsumerState<GearshApp> {
         return null;
       },
       routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const LandingPage(),
+        ),
+        GoRoute(
+          path: '/waitlist',
+          builder: (context, state) => const WaitlistPage(),
+        ),
+        GoRoute(
+          path: '/story',
+          builder: (context, state) => const StoryPage(),
+        ),
         GoRoute(
           path: '/discover',
           builder: (context, state) => const DiscoverPage(),
