@@ -2,19 +2,22 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/artist.dart';
-import '../services/airtable_service.dart';
 
 final artistListProvider = FutureProvider<List<Artist>>((ref) async {
-  final airtableService = AirtableService();
-  final artists = await airtableService.fetchArtists();
-  airtableService.dispose();
-  return artists;
+  // TODO: Replace with D1 database fetch logic
+  return [];
 });
 
 final artistByIdProvider =
     FutureProvider.family<Artist, String>((ref, id) async {
-  final airtableService = AirtableService();
-  final artist = await airtableService.fetchArtistById(id);
-  airtableService.dispose();
-  return artist;
+  // TODO: Replace with D1 database fetch logic
+  return Artist(
+    id: id,
+    name: '',
+    genre: '',
+    image: '',
+    bio: '',
+    category: '',
+    hoursWorked: 0,
+  );
 });

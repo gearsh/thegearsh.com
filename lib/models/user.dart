@@ -1,5 +1,5 @@
 class User {
-  final String id; // Airtable record ID
+  final String id;
   final String name;
   final String profilePictureUrl;
   final String genre;
@@ -20,22 +20,5 @@ class User {
     this.joinedAt,
     this.lastActive,
   });
-
-  factory User.fromAirtable(Map<String, dynamic> json) {
-    final fields = json['fields'] as Map<String, dynamic>? ?? {};
-    final attachments = (fields['ProfilePicture'] as List?) ?? [];
-    final profileUrl = attachments.isNotEmpty ? attachments.first['url'] : '';
-
-    return User(
-      id: json['id'],
-      name: fields['Name'] ?? '',
-      profilePictureUrl: profileUrl,
-      genre: fields['Genre'] ?? '',
-      location: fields['Location'] ?? '',
-      availability: List<String>.from(fields['Availability'] ?? []),
-      bio: fields['Bio'] ?? '',
-      joinedAt: DateTime.tryParse(fields['Created Time'] ?? ''),
-      lastActive: DateTime.tryParse(fields['Last Modified Time'] ?? ''),
-    );
-  }
+  // TODO: Add D1 database deserialization logic if needed
 }
