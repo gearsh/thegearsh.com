@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../widgets/gearsh_footer.dart';
 
-class StoryPage extends StatelessWidget {
-  const StoryPage({super.key});
+class AboutPage extends StatelessWidget {
+  const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class StoryPage extends StatelessWidget {
         children: const [
           Expanded(
             child: Center(
-              child: Text('Story Page (to be implemented with content)', style: TextStyle(color: Colors.white)),
+              child: Text('About Page (to be implemented)', style: TextStyle(color: Colors.white)),
             ),
           ),
           GearshFooter(),
