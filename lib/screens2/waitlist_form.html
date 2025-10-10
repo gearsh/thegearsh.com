@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gearsh Waitlist</title>
+  <link rel="icon" type="image/png" href="./favicon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    #skill_set_display, #skill_set_options {
+      background-color: #222 !important;
+      color: #eee !important;
+    }
+    #skill_set_options label {
+      background-color: #222 !important;
+      color: #eee !important;
+    }
+    #skill_set_options input[type="checkbox"] {
+      accent-color: #00d2ff;
+    }
+    input, select, textarea {
+      color: #222 !important;
+      background-color: #fff !important;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #111;
+      color: #eee;
+    }
+    .gradient-text {
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      background-image: linear-gradient(to right, #00d2ff, #3a7bd5);
+    }
+    .button-gradient {
+      background-image: linear-gradient(to right, #00d2ff, #3a7bd5);
+    }
+    /* Deepskyblue detailing for outlines and borders */
+    .deepsky-outline {
+      outline: 2px solid #00d2ff !important;
+      outline-offset: 0px;
+    }
+    .deepsky-border {
+      border: 1.5px solid #00d2ff !important;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid #00d2ff !important;
+      box-shadow: 0 0 0 2px #00d2ff33;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen flex items-center justify-center p-4">
+
+  <!-- Modal for feedback -->
+  <div id="feedbackModal" class="modal">
+    <div class="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full text-center">
+      <h3 id="modalTitle" class="text-2xl font-bold mb-4"></h3>
+      <p id="modalMessage" class="text-gray-700 mb-6"></p>
+      <button onclick="closeModal()" class="bg-green-700 text-white font-semibold py-2 px-6 rounded-full hover:bg-green-800 transition-colors duration-300">OK</button>
+    </div>
+  </div>
+
+  <!-- Main Form Container -->
+  <div class="bg-neutral-900 rounded-2xl shadow-xl p-8 sm:p-10 w-full max-w-xl deepsky-border">
+    <!-- Gearsh App Logo -->
+    <div class="flex flex-col items-center justify-center space-y-4 mb-8">
+      <a href="index.html" class="flex items-center space-x-2">
+        <img src="gearsh-logo.png" alt="The Gearsh Logo" class="h-12 w-auto" />
+        <span class="text-xl font-bold">Gearsh</span>
+      </a>
+  <h2 class="text-3xl md:text-4xl font-bold gradient-text mb-2">Join the Waitlist</h2>
+    </div>
+  <p class="text-center text-gray-400 mb-8">Be the first to know when we launch! Fill out the form below to secure your spot.</p>
+
+    <form id="waitlistForm" class="space-y-6">
+      <div class="grid sm:grid-cols-2 gap-6">
+  <input name="user_name" type="text" placeholder="Username" required class="w-full px-4 py-3 border deepsky-border rounded-lg focus:outline-none" title="This username will be reserved for you when we launch the app">
+  <input name="first_name" type="text" placeholder="First Name" class="w-full px-4 py-3 border deepsky-border rounded-lg focus:outline-none">
+      </div>
+      <div class="grid sm:grid-cols-2 gap-6">
+  <input name="surname" type="text" placeholder="Surname" class="w-full px-4 py-3 border deepsky-border rounded-lg focus:outline-none">
+  <input name="email" type="email" placeholder="Email" required class="w-full px-4 py-3 border deepsky-border rounded-lg focus:outline-none">
+      </div>
+      <div>
+  <input name="contact_number" type="tel" placeholder="Contact Number" class="w-full px-4 py-3 border deepsky-border rounded-lg focus:outline-none">
+      </div>
+      <div>
+        <label for="user_type" class="block text-sm font-medium text-gray-700 mb-2">I am a...</label>
+  <select name="user_type" id="user_type" class="w-full px-4 py-3 border deepsky-border rounded-lg focus:outline-none">
+          <option value="" disabled selected>-- Select User Type --</option>
+          <option value="Booker">Booker</option>
+          <option value="Artist">Artist</option>
+          <option value="Fan">Fan</option>
+        </select>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-6">
+  <input name="country" type="text" placeholder="Country" value="South Africa" class="w-full px-4 py-3 border deepsky-border rounded-lg focus:outline-none">
+  <input name="location" type="text" placeholder="Location" required class="w-full px-4 py-3 border deepsky-border rounded-lg focus:outline-none">
+      </div>
+
+      <!-- Custom Multi-Select for Skill Set -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Skill Set (select all that apply)</label>
+        <div class="relative">
+          <div id="skill_set_display" class="w-full px-4 py-3 border deepsky-border bg-white rounded-lg cursor-pointer flex justify-between items-center focus:outline-none">
+            <span id="selected_skills_text" class="text-gray-500">Select skills...</span>
+            <svg class="w-5 h-5 text-gray-400 transform transition-transform" id="dropdown_arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </div>
+          <div id="skill_set_options" class="hidden absolute top-full left-0 right-0 z-10 bg-white border deepsky-border rounded-lg mt-2 shadow-lg max-h-48 overflow-y-auto">
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="DJ" class="mr-2"> DJ</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Producer" class="mr-2"> Producer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Writer" class="mr-2"> Writer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Photographer" class="mr-2"> Photographer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Designer" class="mr-2"> Designer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Videographer" class="mr-2"> Videographer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Dancer" class="mr-2"> Dancer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Host" class="mr-2"> Host</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Influencer" class="mr-2"> Influencer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Stylist" class="mr-2"> Stylist</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Rapper" class="mr-2"> Rapper</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Director" class="mr-2"> Director</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Actor" class="mr-2"> Actor</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Model" class="mr-2"> Model</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Engineer" class="mr-2"> Engineer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Animator" class="mr-2"> Animator</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Choreographer" class="mr-2"> Choreographer</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Make Up Artist" class="mr-2"> Make Up Artist</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Trap Star" class="mr-2"> Trap Star</label>
+            <label class="block px-4 py-2 hover:bg-gray-100 cursor-pointer"><input type="checkbox" value="Publicist" class="mr-2"> Publicist</label>
+          </div>
+        </div>
+  <input type="hidden" name="skill_set" id="hidden_skill_set" required>
+      </div>
+
+      <div>
+        <label for="date_of_birth" class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+  <input name="date_of_birth" type="date" placeholder="Date of Birth (YYYY-MM-DD)" class="w-full px-4 py-3 border deepsky-border rounded-lg focus:outline-none">
+      </div>
+      <div>
+        <label for="gender" class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+  <select name="gender" id="gender" class="w-full px-4 py-3 border deepsky-border rounded-lg focus:outline-none">
+          <option value="" disabled selected>-- Select Gender --</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+          <option value="Prefer not to say">Prefer not to say</option>
+        </select>
+      </div>
+
+      <button type="submit" class="w-full button-gradient text-white font-bold py-3 px-6 rounded-lg shadow-md hover:scale-105 transition-transform duration-300">
+        Join the Waitlist
+      </button>
+    </form>
+  </div>
+
+  <script>
+    // Pre-fill email input if email param is present in URL
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const email = params.get('email');
+      if (email) {
+        const emailInput = document.querySelector('input[name="email"]');
+        if (emailInput) emailInput.value = email;
+      }
+    });
+    const skillSetDisplay = document.getElementById('skill_set_display');
+    const skillSetOptions = document.getElementById('skill_set_options');
+    const selectedSkillsText = document.getElementById('selected_skills_text');
+    const dropdownArrow = document.getElementById('dropdown_arrow');
+    const hiddenSkillSet = document.getElementById('hidden_skill_set');
+
+    const updateSelectedSkills = () => {
+      const selectedOptions = Array.from(skillSetOptions.querySelectorAll('input[type="checkbox"]:checked'));
+      const selectedValues = selectedOptions.map(input => input.value);
+      hiddenSkillSet.value = JSON.stringify(selectedValues);
+      hiddenSkillSet.required = selectedValues.length === 0;
+
+      if (selectedValues.length === 0) {
+        selectedSkillsText.innerText = 'Select skills...';
+        selectedSkillsText.classList.add('text-gray-500');
+      } else {
+        selectedSkillsText.innerText = selectedValues.join(', ');
+        selectedSkillsText.classList.remove('text-gray-500');
+      }
+    };
+
+    skillSetDisplay.addEventListener('click', () => {
+      skillSetOptions.classList.toggle('hidden');
+      dropdownArrow.classList.toggle('rotate-180');
+    });
+
+    skillSetOptions.addEventListener('change', updateSelectedSkills);
+
+    document.addEventListener('click', (event) => {
+      if (!skillSetDisplay.contains(event.target) && !skillSetOptions.contains(event.target)) {
+        skillSetOptions.classList.add('hidden');
+        dropdownArrow.classList.remove('rotate-180');
+      }
+    });
+
+    const showModal = (title, message) => {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalMessage').innerText = message;
+      document.getElementById('feedbackModal').style.display = 'flex';
+    };
+
+    window.closeModal = () => {
+      document.getElementById('feedbackModal').style.display = 'none';
+    };
+
+    document.getElementById("waitlistForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const json = Object.fromEntries(formData.entries());
+      json.created_date = new Date().toISOString();
+
+      try {
+        json.skill_set = hiddenSkillSet.value;
+      } catch (err) {
+        json.skill_set = "[]";
+      }
+
+      try {
+        const response = await fetch("/api/waitlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(json)
+        });
+
+        if (response.ok) {
+          showModal("Success!", "You have been added to the waitlist.");
+          e.target.reset();
+          skillSetOptions.querySelectorAll('input[type="checkbox"]').forEach(input => input.checked = false);
+          updateSelectedSkills();
+        } else {
+          showModal("Error", "Something went wrong. Please try again later.");
+        }
+      } catch (error) {
+        console.error(error);
+        showModal("Error", "Network issue. Please try again.");
+      }
+    });
+  </script>
+</body>
+</body>
+</html>

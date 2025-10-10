@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gearsh_app/screens2/waitlist_form.dart';
 import 'package:go_router/go_router.dart';
 
 import 'features/discover/discover_page.dart';
@@ -10,9 +11,10 @@ import 'providers/global_providers.dart';
 import 'features/auth/auth_page.dart';
 import 'features/booking/booking_page.dart';
 import 'features/dashboard/dashboard_page.dart';
-import 'screens/web/landing_page.dart';
-import 'screens/web/waitlist_page.dart';
+import 'screens2/landing_page.dart';
 import 'screens/web/story_page.dart';
+import 'features/profile/signup_page.dart';
+import 'features/profile/login_page.dart';
 
 class GearshApp extends ConsumerStatefulWidget {
   const GearshApp({super.key});
@@ -32,7 +34,7 @@ class _GearshAppState extends ConsumerState<GearshApp> {
 
   void _setupRouter() {
     _router = GoRouter(
-      initialLocation: '/discover',
+      initialLocation: '/landing',
       redirect: (context, state) {
         final auth = ref.read(authProvider);
         final isAuthenticated = auth == AuthState.authenticated; //
@@ -49,12 +51,12 @@ class _GearshAppState extends ConsumerState<GearshApp> {
       },
       routes: [
         GoRoute(
-          path: '/',
+          path: '/landing',
           builder: (context, state) => const LandingPage(),
         ),
         GoRoute(
-          path: '/waitlist',
-          builder: (context, state) => const WaitlistPage(),
+          path: '/signup',
+          builder: (context, state) => const SignupPage(),
         ),
         GoRoute(
           path: '/story',
@@ -85,6 +87,10 @@ class _GearshAppState extends ConsumerState<GearshApp> {
             final artistId = state.pathParameters['artistId']!;
             return ProfilePage(artistId: artistId);
           },
+        ),
+        GoRoute(
+          path: '/login',
+          builder: (context, state) => const LoginPage(),
         ),
       ],
     );
