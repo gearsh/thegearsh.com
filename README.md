@@ -17,7 +17,7 @@ Not an app, but a **portal** — into the soul of talent. 🎨🎶✨
 To summon the Gearsh realm into your device:
 
 ```sh
-git clone https://github.com/<your-org>/gearsh_app.git
+git clone https://github.com/<thegearsh.com>/gearsh_app.git
 cd gearsh_app
 flutter pub get
 flutter run

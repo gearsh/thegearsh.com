@@ -54,6 +54,7 @@ class LandingPage extends StatelessWidget {
                       ),
                     ],
                   ),
+                  // Removed the Home and About buttons for a cleaner mobile appearance
                   Row(
                     children: [
                       TextButton(

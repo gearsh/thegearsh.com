@@ -1,20 +1,9 @@
-//The Gearsh App - Profile Page
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gearsh_app/models/artist.dart';
-import 'package:gearsh_app/services/artist_service.dart';
-import 'package:gearsh_app/services/badge_service.dart';
-
-final artistByIdProvider =
-    FutureProvider.family<Artist, String>((ref, id) async {
-  final service = ArtistService(); // Use
-  return (await service.fetchArtists()).firstWhere((a) => a.id == id);
-});
+import 'package:gearsh_app/providers/artist_provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:gearsh_app/widgets/custom_app_bar.dart';
 
 class ProfilePage extends ConsumerWidget {
   final String artistId;
@@ -23,117 +12,208 @@ class ProfilePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final artistAsync = ref.watch(artistByIdProvider(artistId));
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: artistAsync.when(
-          data: (artist) {
-            final badges =
-                BadgeService.getBadges((artist.hoursWorked ?? 0).toInt());
-            return Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 60,
-                      backgroundImage:
-                          CachedNetworkImageProvider(artist.profilePictureUrl),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      artist.name,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+      appBar: const CustomAppBar(title: 'Profile'),
+      body: artistAsync.when(
+        data: (artist) {
+          if (artist == null) {
+            return const Center(child: Text('Artist not found'));
+          }
+          return DefaultTabController(
+            length: 3,
+            child: NestedScrollView(
+              headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 24),
+                      CircleAvatar(
+                        radius: 60,
+                        backgroundImage: CachedNetworkImageProvider(artist.profilePictureUrl),
                       ),
-                    ),
-                    Text(
-                      artist.genre,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 16,
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      "${NumberFormat.decimalPattern().format(artist.hoursWorked ?? 0)} Hours Earned",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF00BFFF),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: badges.map((badge) {
-                        final color = Color(int.parse(
-                            badge.colorHex.replaceFirst('#', '0xff')));
-                        return Chip(
-                          label: Text(
-                            "${badge.emoji} ${badge.name}",
-                            style: GoogleFonts.montserrat(color: Colors.white),
-                          ),
-                          backgroundColor:
-                              color.withAlpha((0.85 * 255).toInt()),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 24),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withAlpha((0.5 * 255).toInt()),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        artist.bio,
-                        style: GoogleFonts.montserrat(color: Colors.white70),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: () => context.go('/booking/${artist.id}'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF00BFFF),
-                        foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 16, horizontal: 24),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                      ),
-                      child: Text('Book Me Now',
-                          style: GoogleFonts.montserrat(
-                              fontWeight: FontWeight.bold)),
-                    ),
-                    const SizedBox(height: 12),
-                    TextButton(
-                      onPressed: () => context.go('/leaderboard'),
-                      child: Text(
-                        "See the Leaderboard",
-                        style: GoogleFonts.montserrat(
-                            color: const Color(0xFF00BFFF)),
-                      ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      Text(artist.name, style: theme.textTheme.displaySmall),
+                      Text(artist.category ?? 'N/A', style: theme.textTheme.titleLarge?.copyWith(color: theme.primaryColor)),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
+                SliverPersistentHeader(
+                  delegate: _SliverAppBarDelegate(
+                    const TabBar(
+                      tabs: [
+                        Tab(text: 'About'),
+                        Tab(text: 'Portfolio'),
+                        Tab(text: 'Reviews'),
+                      ],
+                    ),
+                  ),
+                  pinned: true,
+                ),
+              ],
+              body: TabBarView(
+                children: [
+                  _AboutTab(artist: artist),
+                  _PortfolioTab(artist: artist),
+                  _ReviewsTab(artist: artist),
+                ],
               ),
-            );
-          },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(
-            child: Text('Error: $e',
-                style: GoogleFonts.montserrat(color: Colors.red)),
+            ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Text(
+            'Error: $e',
+            style: theme.textTheme.bodyMedium?.copyWith(color: Colors.red),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
+
+  final TabBar _tabBar;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
+  }
+}
+
+class _AboutTab extends StatelessWidget {
+  final Artist artist;
+  const _AboutTab({required this.artist});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('About', style: theme.textTheme.headlineSmall),
+          const SizedBox(height: 8),
+          Text(artist.bio, style: theme.textTheme.bodyLarge),
+          const SizedBox(height: 24),
+          Text('Availability', style: theme.textTheme.headlineSmall),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(
+                artist.availability == true ? Icons.check_circle : Icons.cancel,
+                color: artist.availability == true ? Colors.green : Colors.red,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                artist.availability == true ? 'Available for booking' : 'Not currently available',
+                style: theme.textTheme.bodyLarge,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PortfolioTab extends StatelessWidget {
+  final Artist artist;
+  const _PortfolioTab({required this.artist});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    // Safely handle nullable portfolioImageUrls by falling back to an empty list
+    final images = artist.portfolioImageUrls ?? <String>[];
+    if (images.isEmpty) {
+      return Center(
+        child: Text('No portfolio images yet.', style: theme.textTheme.bodyLarge),
+      );
+    }
+
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 4,
+        mainAxisSpacing: 4,
+      ),
+      itemCount: images.length,
+      itemBuilder: (context, index) {
+        return CachedNetworkImage(
+          imageUrl: images[index],
+          fit: BoxFit.cover,
+          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+        );
+      },
+    );
+  }
+}
+
+class _ReviewsTab extends StatelessWidget {
+  final Artist artist;
+  const _ReviewsTab({required this.artist});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    if (artist.reviews.isEmpty) {
+      return Center(
+        child: Text('No reviews yet.', style: theme.textTheme.bodyLarge),
+      );
+    }
+    return ListView.builder(
+      itemCount: artist.reviews.length,
+      itemBuilder: (context, index) {
+        final review = artist.reviews[index];
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: CachedNetworkImageProvider(review.reviewerImageUrl),
+                    ),
+                    const SizedBox(width: 16),
+                    Text(review.reviewerName, style: theme.textTheme.titleLarge),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: List.generate(5, (i) => Icon(i < review.rating ? Icons.star : Icons.star_border, color: Colors.amber,)),
+                ),
+                const SizedBox(height: 8),
+                Text(review.comment, style: theme.textTheme.bodyLarge),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

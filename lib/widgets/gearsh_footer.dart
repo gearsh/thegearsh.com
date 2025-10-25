@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class GearshFooter extends StatelessWidget {
   const GearshFooter({super.key});
@@ -191,9 +192,10 @@ class _FooterLink extends StatelessWidget {
             };
             final route = routes[text];
             if (route != null) {
-              // Use GoRouter for navigation if available
+              // Normalize and use GoRouter for navigation to avoid missing leading slash
+              final normalized = route.startsWith('/') ? route : '/$route';
               // ignore: use_build_context_synchronously
-              Navigator.of(context).pushNamed(route);
+              GoRouter.of(context).go(normalized);
             } else {
               // For unknown or external links, do nothing or open in new tab
               // Optionally, use url_launcher for external URLs

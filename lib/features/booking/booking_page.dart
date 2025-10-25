@@ -1,209 +1,173 @@
-// lib/features/booking/booking_page.dart
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:gearsh_app/models/artist.dart';
+import 'package:gearsh_app/providers/artist_provider.dart';
+import 'package:gearsh_app/widgets/custom_app_bar.dart';
 
-class BookingPage extends StatefulWidget {
+class BookingPage extends ConsumerStatefulWidget {
   final String artistId;
   const BookingPage({required this.artistId, super.key});
 
   @override
-  State<BookingPage> createState() => _BookingPageState();
+  ConsumerState<BookingPage> createState() => _BookingPageState();
 }
 
-class _BookingPageState extends State<BookingPage> {
+class _BookingPageState extends ConsumerState<BookingPage> {
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = const TimeOfDay(hour: 19, minute: 0);
   final TextEditingController _locationController = TextEditingController(text: '450 Elm St');
 
   @override
   Widget build(BuildContext context) {
-    final artistName = widget.artistId == 'ava' ? 'Ava Johnson' : 'Ethan Woods';
-    final genre = widget.artistId == 'ava' ? 'DJ' : 'Indie';
+    final artistAsync = ref.watch(artistByIdProvider(widget.artistId));
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: SingleChildScrollView(
+      appBar: const CustomAppBar(title: 'Book Artist'),
+      body: artistAsync.when(
+        data: (artist) {
+          if (artist == null) {
+            return const Center(child: Text('Artist not found'));
+          }
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => context.pop(),
-                    ),
-                    const Text('Book Artist', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-                    const SizedBox(width: 40),
-                  ],
-                ),
-                const SizedBox(height: 24),
-
-                // Artist Info
-                Column(
-                  children: [
-                    Text(artistName, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                    Text(genre, style: const TextStyle(color: Colors.cyanAccent)),
-                  ],
-                ),
-                const SizedBox(height: 24),
-
-                // Date Picker
-                FormGroup(
-                  label: 'Date',
-                  child: GestureDetector(
-                    onTap: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: _selectedDate,
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2100),
-                      );
-                      if (picked != null) setState(() => _selectedDate = picked);
-                    },
-                    child: FormInput(
-                      value: DateFormat.yMMMMd().format(_selectedDate),
-                    ),
-                  ),
-                ),
-
-                // Time Picker
-                FormGroup(
-                  label: 'Start Time',
-                  child: GestureDetector(
-                    onTap: () async {
-                      final picked = await showTimePicker(
-                        context: context,
-                        initialTime: _selectedTime,
-                      );
-                      if (picked != null) setState(() => _selectedTime = picked);
-                    },
-                    child: FormInput(
-                      value: _selectedTime.format(context),
-                    ),
-                  ),
-                ),
-
-                // Location Input
-                FormGroup(
-                  label: 'Location',
-                  child: TextField(
-                    controller: _locationController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white10,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
-                      hintText: 'Enter location',
-                      hintStyle: TextStyle(color: Colors.white54),
-                    ),
-                  ),
-                ),
-
-                // Price Summary
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 24),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    // ignore: deprecated_member_use
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Column(
-                    children: [
-                      PriceRow(label: 'Instant Quote', value: '\$800'),
-                      Divider(color: Colors.white30, height: 24),
-                      PriceRow(label: 'Total', value: '\$815', isBold: true),
-                    ],
-                  ),
-                ),
-
-                // Continue Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Booking submitted!')),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.cyanAccent,
-                      foregroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: const Text('Continue'),
-                  ),
-                ),
+                Text(artist.name, style: theme.textTheme.displaySmall),
+                Text(artist.category ?? 'N/A', style: theme.textTheme.titleLarge?.copyWith(color: theme.primaryColor)),
+                const SizedBox(height: 32),
+                _buildBookingForm(context, theme, artist),
               ],
             ),
-          ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Text('Error: $e', style: theme.textTheme.bodyMedium?.copyWith(color: Colors.red)),
         ),
       ),
     );
   }
-}
 
-// Form Group Wrapper
-class FormGroup extends StatelessWidget {
-  final String label;
-  final Widget child;
-  const FormGroup({required this.label, required this.child, super.key});
+  Widget _buildBookingForm(BuildContext context, ThemeData theme, Artist artist) {
+    final instantQuote = artist.baseRate ?? 0;
+    final fee = instantQuote * 0.05; // Example 5% fee
+    final total = instantQuote + fee;
 
-  @override
-  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Date Picker
+        _buildFormGroup('Date', 
+          GestureDetector(
+            onTap: () async {
+              final picked = await showDatePicker(
+                context: context,
+                initialDate: _selectedDate,
+                firstDate: DateTime.now(),
+                lastDate: DateTime(2100),
+              );
+              if (picked != null) setState(() => _selectedDate = picked);
+            },
+            child: _buildFormInput(DateFormat.yMMMMd().format(_selectedDate)),
+          ),
+        ),
+
+        // Time Picker
+        _buildFormGroup('Start Time', 
+          GestureDetector(
+            onTap: () async {
+              final picked = await showTimePicker(
+                context: context,
+                initialTime: _selectedTime,
+              );
+              if (picked != null) setState(() => _selectedTime = picked);
+            },
+            child: _buildFormInput(_selectedTime.format(context)),
+          ),
+        ),
+
+        // Location Input
+        _buildFormGroup('Location', 
+          TextField(
+            controller: _locationController,
+            decoration: const InputDecoration(hintText: 'Enter location'),
+          ),
+        ),
+        
+        // Price Summary
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 24),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            children: [
+              _buildPriceRow('Instant Quote', NumberFormat.simpleCurrency(locale: 'en_US').format(instantQuote), theme),
+              const Divider(color: Colors.white30, height: 24),
+              _buildPriceRow('Service Fee', NumberFormat.simpleCurrency(locale: 'en_US').format(fee), theme),
+              const Divider(color: Colors.white30, height: 24),
+              _buildPriceRow('Total', NumberFormat.simpleCurrency(locale: 'en_US').format(total), theme, isBold: true),
+            ],
+          ),
+        ),
+
+        // Continue Button
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              // TODO: Implement contract generation and booking submission
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Booking request sent!')),
+              );
+              context.go('/profile/${artist.id}');
+            },
+            child: const Text('Request to Book'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFormGroup(String label, Widget child) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white70, fontSize: 14)),
+          Text(label, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 8),
           child,
         ],
       ),
     );
   }
-}
 
-// Form Input Display
-class FormInput extends StatelessWidget {
-  final String value;
-  const FormInput({required this.value, super.key});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildFormInput(String value) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white10,
+        color: Theme.of(context).inputDecorationTheme.fillColor,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Theme.of(context).primaryColor),
       ),
-      child: Text(value, style: const TextStyle(color: Colors.white)),
+      child: Text(value),
     );
   }
-}
 
-// Price Row
-class PriceRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool isBold;
-  const PriceRow({required this.label, required this.value, this.isBold = false, super.key});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildPriceRow(String label, String value, ThemeData theme, {bool isBold = false}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: TextStyle(color: Colors.white70, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
-        Text(value, style: TextStyle(color: Colors.cyanAccent, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
+        Text(label, style: theme.textTheme.bodyLarge?.copyWith(fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
+        Text(value, style: theme.textTheme.bodyLarge?.copyWith(color: theme.primaryColor, fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
       ],
     );
   }

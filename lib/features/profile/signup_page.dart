@@ -305,7 +305,7 @@ class _SignupPageState extends State<SignupPage> {
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: const Color(0xFF00d2ff)),
                             boxShadow: _showSkillDropdown
-                              ? [BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 12, offset: Offset(0, 4))]
+                              ? [BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.15), blurRadius: 12, offset: Offset(0, 4))]
                               : [],
                           ),
                           child: Row(
@@ -335,7 +335,7 @@ class _SignupPageState extends State<SignupPage> {
                           decoration: BoxDecoration(
                             color: const Color(0xFF23242A),
                             borderRadius: BorderRadius.circular(16),
-                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.18), blurRadius: 16, offset: Offset(0, 6))],
+                            boxShadow: [BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.18), blurRadius: 16, offset: Offset(0, 6))],
                             border: Border.all(color: const Color(0xFF00d2ff)),
                           ),
                           constraints: const BoxConstraints(maxHeight: 220),

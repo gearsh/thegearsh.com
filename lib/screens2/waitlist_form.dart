@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../constants.dart';
 
 class WaitlistFormPage extends StatefulWidget {
   const WaitlistFormPage({Key? key}) : super(key: key);
@@ -67,7 +68,7 @@ class _WaitlistFormPageState extends State<WaitlistFormPage> {
     };
     try {
       final response = await http.post(
-        Uri.parse('/api/waitlist'),
+        Uri.parse('$baseUrl/api/waitlist'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(data),
       );
@@ -102,265 +103,304 @@ class _WaitlistFormPageState extends State<WaitlistFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: const Color(0xFF111111),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFF212121),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Color(0xFF00d2ff), width: 1.5),
-              boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 16)],
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-            constraints: BoxConstraints(maxWidth: 500),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Logo and Title
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          bool isMobile = constraints.maxWidth < 600;
+          return Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: theme.cardTheme.color,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: theme.primaryColor, width: 1.5),
+                  boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 16)],
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).pushReplacementNamed('/');
-                        },
-                        child: Image.asset('assets/images/gearsh_logo.png', height: 48),
-                      ),
-                      const SizedBox(width: 8),
-                      const Text('Gearsh', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  ShaderMask(
-                    shaderCallback: (rect) => LinearGradient(
-                      colors: [Color(0xFF00d2ff), Color(0xFF3a7bd5)],
-                    ).createShader(rect),
-                    child: const Text(
-                      'Join the Waitlist',
-                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Be the first to know when we launch! Fill out the form below to secure your spot.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
-                  ),
-                  const SizedBox(height: 24),
-                  // Form Fields
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: _usernameController,
-                          decoration: _inputDecoration('Username'),
-                          validator: (v) => v == null || v.isEmpty ? 'Required' : null,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: TextFormField(
-                          controller: _firstNameController,
-                          decoration: _inputDecoration('First Name'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: _surnameController,
-                          decoration: _inputDecoration('Surname'),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: TextFormField(
-                          controller: _emailController,
-                          decoration: _inputDecoration('Email'),
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (v) => v == null || v.isEmpty ? 'Required' : null,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _contactController,
-                    decoration: _inputDecoration('Contact Number'),
-                    keyboardType: TextInputType.phone,
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: _userType,
-                    decoration: _inputDecoration('I am a...'),
-                    items: [
-                      DropdownMenuItem(child: Text('-- Select User Type --'), value: null),
-                      ...['Booker', 'Artist', 'Fan'].map((type) => DropdownMenuItem(child: Text(type), value: type)),
-                    ],
-                    onChanged: (v) => setState(() => _userType = v),
-                    validator: (v) => v == null ? 'Required' : null,
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: _countryController,
-                          decoration: _inputDecoration('Country'),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: TextFormField(
-                          controller: _locationController,
-                          decoration: _inputDecoration('Location'),
-                          validator: (v) => v == null || v.isEmpty ? 'Required' : null,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  // Skill Set Multi-select
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text('Skill Set (select all that apply)', style: TextStyle(fontWeight: FontWeight.w500)),
-                  ),
-                  const SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: _toggleSkillDropdown,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: Color(0xFF222222),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Color(0xFF00d2ff)),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // Logo and Title
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Expanded(
-                            child: Text(
-                              _selectedSkills.isEmpty ? 'Select skills...' : _selectedSkills.join(', '),
-                              style: TextStyle(color: _selectedSkills.isEmpty ? Colors.grey : Colors.white),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).pushReplacementNamed('/');
+                            },
+                            child: Image.asset('assets/images/gearsh_logo.png', height: 48),
                           ),
-                          Icon(_showSkillDropdown ? Icons.arrow_drop_up : Icons.arrow_drop_down, color: Colors.grey),
+                          const SizedBox(width: 8),
+                          Text('Gearsh', style: theme.textTheme.headlineSmall),
                         ],
                       ),
-                    ),
-                  ),
-                  if (_showSkillDropdown)
-                    Container(
-                      margin: EdgeInsets.only(top: 4),
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Color(0xFF222222),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Color(0xFF00d2ff)),
-                      ),
-                      constraints: BoxConstraints(maxHeight: 200),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: _skillOptions.map((skill) => CheckboxListTile(
-                            value: _selectedSkills.contains(skill),
-                            title: Text(skill, style: TextStyle(color: Colors.white)),
-                            activeColor: Color(0xFF00d2ff),
-                            checkColor: Colors.white,
-                            onChanged: (selected) => _selectSkill(skill, selected ?? false),
-                            controlAffinity: ListTileControlAffinity.leading,
-                          )).toList(),
+                      const SizedBox(height: 16),
+                      ShaderMask(
+                        shaderCallback: (rect) => LinearGradient(
+                          colors: [theme.primaryColor, theme.colorScheme.secondary],
+                        ).createShader(rect),
+                        child: Text(
+                          'Join the Waitlist',
+                          style: theme.textTheme.displayMedium,
                         ),
                       ),
-                    ),
-                  if (_selectedSkills.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text('Please select at least one skill.', style: TextStyle(color: Colors.redAccent, fontSize: 12)),
-                    ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _dobController,
-                    decoration: _inputDecoration('Date of Birth (YYYY-MM-DD)'),
-                    keyboardType: TextInputType.datetime,
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: _gender,
-                    decoration: _inputDecoration('Gender'),
-                    items: [
-                      DropdownMenuItem(child: Text('-- Select Gender --'), value: null),
-                      ...['Male', 'Female', 'Other', 'Prefer not to say'].map((g) => DropdownMenuItem(child: Text(g), value: g)),
-                    ],
-                    onChanged: (v) => setState(() => _gender = v),
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        elevation: 0,
-                      ).copyWith(
-                        backgroundColor: MaterialStateProperty.resolveWith<Color?>((states) {
-                          return null;
-                        }),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Be the first to know when we launch! Fill out the form below to secure your spot.',
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodyLarge,
                       ),
-                      onPressed: _isSubmitting ? null : _submitForm,
-                      child: Ink(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: [Color(0xFF00d2ff), Color(0xFF3a7bd5)]),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                      const SizedBox(height: 24),
+                      // Form Fields
+                      isMobile ? _buildMobileForm() : _buildDesktopForm(),
+                      const SizedBox(height: 16),
+                      // Skill Set Multi-select
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Skill Set (select all that apply)', style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500)),
+                      ),
+                      const SizedBox(height: 8),
+                      GestureDetector(
+                        onTap: _toggleSkillDropdown,
                         child: Container(
-                          alignment: Alignment.center,
-                          child: Text(
-                            _isSubmitting ? 'Submitting...' : 'Join the Waitlist',
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                          decoration: BoxDecoration(
+                            color: theme.inputDecorationTheme.fillColor,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: theme.primaryColor),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  _selectedSkills.isEmpty ? 'Select skills...' : _selectedSkills.join(', '),
+                                  style: theme.textTheme.bodyMedium?.copyWith(color: _selectedSkills.isEmpty ? Colors.grey : Colors.white),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Icon(_showSkillDropdown ? Icons.arrow_drop_up : Icons.arrow_drop_down, color: Colors.grey),
+                            ],
                           ),
                         ),
                       ),
-                    ),
+                      if (_showSkillDropdown)
+                        Container(
+                          margin: const EdgeInsets.only(top: 4),
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: theme.inputDecorationTheme.fillColor,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: theme.primaryColor),
+                          ),
+                          constraints: const BoxConstraints(maxHeight: 200),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: _skillOptions.map((skill) => CheckboxListTile(
+                                value: _selectedSkills.contains(skill),
+                                title: Text(skill, style: theme.textTheme.bodyMedium),
+                                activeColor: theme.primaryColor,
+                                checkColor: Colors.white,
+                                onChanged: (selected) => _selectSkill(skill, selected ?? false),
+                                controlAffinity: ListTileControlAffinity.leading,
+                              )).toList(),
+                            ),
+                          ),
+                        ),
+                      if (_selectedSkills.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text('Please select at least one skill.', style: theme.textTheme.bodyMedium?.copyWith(color: Colors.redAccent, fontSize: 12)),
+                        ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _dobController,
+                        decoration: _inputDecoration('Date of Birth (YYYY-MM-DD)'),
+                        keyboardType: TextInputType.datetime,
+                      ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<String>(
+                        value: _gender,
+                        decoration: _inputDecoration('Gender'),
+                        items: [
+                          const DropdownMenuItem(child: Text('-- Select Gender --'), value: null),
+                          ...['Male', 'Female', 'Other', 'Prefer not to say'].map((g) => DropdownMenuItem(child: Text(g), value: g)),
+                        ],
+                        onChanged: (v) => setState(() => _gender = v),
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _isSubmitting ? null : _submitForm,
+                          child: Text(
+                            _isSubmitting ? 'Submitting...' : 'Join the Waitlist',
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
 
+  Widget _buildMobileForm() {
+    return Column(
+      children: [
+        TextFormField(
+          controller: _usernameController,
+          decoration: _inputDecoration('Username'),
+          validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _firstNameController,
+          decoration: _inputDecoration('First Name'),
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _surnameController,
+          decoration: _inputDecoration('Surname'),
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _emailController,
+          decoration: _inputDecoration('Email'),
+          keyboardType: TextInputType.emailAddress,
+          validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _contactController,
+          decoration: _inputDecoration('Contact Number'),
+          keyboardType: TextInputType.phone,
+        ),
+        const SizedBox(height: 16),
+        DropdownButtonFormField<String>(
+          value: _userType,
+          decoration: _inputDecoration('I am a...'),
+          items: [
+            const DropdownMenuItem(child: Text('-- Select User Type --'), value: null),
+            ...['Booker', 'Artist', 'Fan'].map((type) => DropdownMenuItem(child: Text(type), value: type)),
+          ],
+          onChanged: (v) => setState(() => _userType = v),
+          validator: (v) => v == null ? 'Required' : null,
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _countryController,
+          decoration: _inputDecoration('Country'),
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _locationController,
+          decoration: _inputDecoration('Location'),
+          validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopForm() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _usernameController,
+                decoration: _inputDecoration('Username'),
+                validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: TextFormField(
+                controller: _firstNameController,
+                decoration: _inputDecoration('First Name'),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _surnameController,
+                decoration: _inputDecoration('Surname'),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: TextFormField(
+                controller: _emailController,
+                decoration: _inputDecoration('Email'),
+                keyboardType: TextInputType.emailAddress,
+                validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _contactController,
+          decoration: _inputDecoration('Contact Number'),
+          keyboardType: TextInputType.phone,
+        ),
+        const SizedBox(height: 16),
+        DropdownButtonFormField<String>(
+          value: _userType,
+          decoration: _inputDecoration('I am a...'),
+          items: [
+            const DropdownMenuItem(child: Text('-- Select User Type --'), value: null),
+            ...['Booker', 'Artist', 'Fan'].map((type) => DropdownMenuItem(child: Text(type), value: type)),
+          ],
+          onChanged: (v) => setState(() => _userType = v),
+          validator: (v) => v == null ? 'Required' : null,
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _countryController,
+                decoration: _inputDecoration('Country'),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: TextFormField(
+                controller: _locationController,
+                decoration: _inputDecoration('Location'),
+                validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   InputDecoration _inputDecoration(String label) {
+    final theme = Theme.of(context);
     return InputDecoration(
       labelText: label,
-      filled: true,
-      fillColor: Colors.white,
-      labelStyle: TextStyle(color: Color(0xFF222222)),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Color(0xFF00d2ff), width: 1.5),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Color(0xFF00d2ff), width: 2),
-      ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Color(0xFF00d2ff)),
-      ),
-      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      labelStyle: TextStyle(color: theme.inputDecorationTheme.labelStyle?.color),
+      enabledBorder: theme.inputDecorationTheme.enabledBorder,
+      focusedBorder: theme.inputDecorationTheme.focusedBorder,
+      border: theme.inputDecorationTheme.border,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     );
   }
 }

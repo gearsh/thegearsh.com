@@ -95,6 +95,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text('Gearsh Login'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => context.go('/'), // go_router pop
+        ),
+      ),//App Bar
       backgroundColor: const Color(0xFF111111),
       body: Stack(
         children: [

@@ -4,7 +4,7 @@ export async function onRequestPost(context) {
     const data = await context.request.json();
 
     const stmt = context.env.DB.prepare(`
-      INSERT INTO waitlist (
+      INSERT INTO signups (
         user_name, first_name, surname, email, contact_number, user_type,
         country, location, skill_set, date_of_birth, gender, created_date
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
