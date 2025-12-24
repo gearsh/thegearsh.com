@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Gearsh brand colors -->
+    <color name="splash_background">#020617</color>
+    <color name="primary">#0EA5E9</color>
+    <color name="primary_dark">#0284C7</color>
+    <color name="accent">#06B6D4</color>
+    <color name="slate_950">#020617</color>
+    <color name="slate_900">#0F172A</color>
+
+    <!-- Launcher icon background -->
+    <color name="ic_launcher_background">#020617</color>
+</resources>
+

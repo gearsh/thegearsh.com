@@ -103,7 +103,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
           margin: const EdgeInsets.symmetric(vertical: 24),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withOpacity(0.5),
+            color: theme.colorScheme.surface.withAlpha(128),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(

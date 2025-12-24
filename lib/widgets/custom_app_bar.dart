@@ -5,8 +5,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? actions;
   final PreferredSizeWidget? bottom;
+  final bool showBackButton;
 
-  const CustomAppBar({super.key, required this.title, this.actions, this.bottom});
+  const CustomAppBar({
+    super.key,
+    required this.title,
+    this.actions,
+    this.bottom,
+    this.showBackButton = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,31 +36,25 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
 
     // Helper to determine active state for a route prefix
-    bool _isActive(String route) {
+    bool isActive(String route) {
       if (route == '/') return currentLocation == '/' || currentLocation == '/landing';
       return currentLocation.startsWith(route);
     }
 
-    // Topnav mode buttons: Discover, Login, Manager
+    // Topnav mode buttons: Discover, Profile
     final modeButtons = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         _NavButton(
           label: 'Discover',
-          active: _isActive('/discover') || _isActive('/'),
+          active: isActive('/discover') || isActive('/'),
           onPressed: () => context.go('/discover'),
         ),
         const SizedBox(width: 8),
         _NavButton(
-          label: 'Login',
-          active: _isActive('/login'),
-          onPressed: () => context.go('/login'),
-        ),
-        const SizedBox(width: 8),
-        _NavButton(
-          label: 'Manager',
-          active: _isActive('/manager'),
-          onPressed: () => context.go('/manager'),
+          label: 'Profile',
+          active: isActive('/profile'),
+          onPressed: () => context.go('/profile/1'),
         ),
       ],
     );
@@ -77,21 +78,20 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           Expanded(child: Align(alignment: Alignment.centerLeft, child: modeButtons)),
         ],
       ),
-      leading: canPop
+      leading: showBackButton
           ? IconButton(
-              icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () => context.pop(),
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pop(),
               color: theme.primaryColor,
             )
-          : null,
-      actions: actions ?? [
-        // Keep a trailing login icon for quick access on small screens
-        IconButton(
-          icon: const Icon(Icons.login),
-          onPressed: () => GoRouter.of(context).go('/login'),
-          color: theme.primaryColor,
-        ),
-      ],
+          : canPop
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back_ios),
+                  onPressed: () => context.pop(),
+                  color: theme.primaryColor,
+                )
+              : null,
+      actions: actions ?? [],
       backgroundColor: theme.scaffoldBackgroundColor,
       elevation: 0,
       centerTitle: false,

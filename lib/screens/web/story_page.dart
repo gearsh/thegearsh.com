@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../widgets/gearsh_footer.dart';
+import '../../widgets/bottom_nav_bar.dart'; // Import BottomNavBar
 
 class StoryPage extends StatelessWidget {
   const StoryPage({super.key});
@@ -18,6 +19,7 @@ class StoryPage extends StatelessWidget {
           GearshFooter(),
         ],
       ),
+      bottomNavigationBar: const BottomNavBar(), // Add BottomNavBar to the bottom of the Scaffold
     );
   }
 }

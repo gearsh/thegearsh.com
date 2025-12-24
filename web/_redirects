@@ -1,0 +1,6 @@
+# Redirect root to onboarding
+/ /onboarding 302
+
+# Handle all routes for SPA
+/* /index.html 200
+

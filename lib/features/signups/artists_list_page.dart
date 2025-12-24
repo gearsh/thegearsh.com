@@ -58,7 +58,7 @@ class ArtistsListPage extends ConsumerWidget {
               final sur = (a['surname'] ?? '').toString();
               final username = (a['user_name'] ?? '').toString();
               final email = (a['email'] ?? '').toString();
-              final title = (first.isNotEmpty || sur.isNotEmpty) ? '$first ${sur}'.trim() : username;
+              final title = (first.isNotEmpty || sur.isNotEmpty) ? '$first $sur'.trim() : username;
 
               String? avatarUrl;
               // If your signups table contains an image/profile URL field, adjust key name here

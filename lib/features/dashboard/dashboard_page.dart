@@ -70,7 +70,7 @@ class _CalendarTab extends StatelessWidget {
       focusedDay: DateTime.now(),
       calendarStyle: CalendarStyle(
         todayDecoration: BoxDecoration(
-          color: theme.primaryColor.withOpacity(0.5),
+          color: theme.primaryColor.withAlpha(128),
           shape: BoxShape.circle,
         ),
         selectedDecoration: BoxDecoration(color: theme.primaryColor, shape: BoxShape.circle),
@@ -115,7 +115,7 @@ class _EarningsTab extends StatelessWidget {
                     dotData: FlDotData(show: false),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: theme.primaryColor.withOpacity(0.3),
+                      color: theme.primaryColor.withAlpha(77),
                     ),
                   ),
                 ],

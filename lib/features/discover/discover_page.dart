@@ -5,9 +5,25 @@ import 'package:gearsh_app/models/artist.dart';
 import 'package:gearsh_app/providers/artist_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gearsh_app/widgets/custom_app_bar.dart';
+import 'package:gearsh_app/providers/selection_provider.dart';
+import 'package:gearsh_app/widgets/bottom_nav_bar.dart';
 
-final searchQueryProvider = StateProvider<String>((ref) => '');
-final selectedCategoryProvider = StateProvider<String>((ref) => 'All');
+class SearchQueryNotifier extends Notifier<String> {
+  @override
+  String build() => '';
+
+  void update(String value) => state = value;
+}
+
+class SelectedCategoryNotifier extends Notifier<String> {
+  @override
+  String build() => 'All';
+
+  void select(String category) => state = category;
+}
+
+final searchQueryProvider = NotifierProvider<SearchQueryNotifier, String>(SearchQueryNotifier.new);
+final selectedCategoryProvider = NotifierProvider<SelectedCategoryNotifier, String>(SelectedCategoryNotifier.new);
 
 class DiscoverPage extends ConsumerWidget {
   const DiscoverPage({super.key});
@@ -94,6 +110,7 @@ class DiscoverPage extends ConsumerWidget {
           ),
         ),
       ),
+      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }
@@ -105,7 +122,7 @@ class _SearchBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     return TextField(
-      onChanged: (value) => ref.read(searchQueryProvider.notifier).state = value,
+      onChanged: (value) => ref.read(searchQueryProvider.notifier).update(value),
       style: theme.textTheme.bodyMedium,
       decoration: InputDecoration(
         hintText: 'Find Artists...',
@@ -146,7 +163,7 @@ class _CategoryFilters extends ConsumerWidget {
               selected: isSelected,
               onSelected: (selected) {
                 if (selected) {
-                  ref.read(selectedCategoryProvider.notifier).state = category;
+                  ref.read(selectedCategoryProvider.notifier).select(category);
                 }
               },
               backgroundColor: Colors.white.withAlpha(25),
@@ -211,16 +228,19 @@ class _TrendingArtists extends ConsumerWidget {
   }
 }
 
-class _TrendingArtistCard extends StatelessWidget {
+class _TrendingArtistCard extends ConsumerWidget {
   const _TrendingArtistCard({required this.artist});
 
   final Artist artist;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     return GestureDetector(
-      onTap: () => context.go('/profile/${artist.id}'),
+      onTap: () {
+        ref.read(selectedArtistIdProvider.notifier).selectArtist(artist.id);
+        context.go('/profile/${artist.id}');
+      },
       child: Container(
         width: 140,
         margin: const EdgeInsets.only(right: 16),
@@ -230,7 +250,7 @@ class _TrendingArtistCard extends StatelessWidget {
             image: CachedNetworkImageProvider(artist.profilePictureUrl),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.3),
+              Colors.black.withAlpha(77),
               BlendMode.darken,
             ),
           ),
@@ -253,16 +273,19 @@ class _TrendingArtistCard extends StatelessWidget {
   }
 }
 
-class _ArtistCard extends StatelessWidget {
+class _ArtistCard extends ConsumerWidget {
   const _ArtistCard({required this.artist});
 
   final Artist artist;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     return GestureDetector(
-      onTap: () => context.go('/profile/${artist.id}'),
+      onTap: () {
+        ref.read(selectedArtistIdProvider.notifier).selectArtist(artist.id);
+        context.go('/profile/${artist.id}');
+      },
       child: Card(
         margin: const EdgeInsets.only(bottom: 24),
         clipBehavior: Clip.antiAlias,

@@ -1,10 +1,27 @@
 name = "thegearsh-com"
-compatibility_date = "2024-09-01"
+compatibility_date = "2024-12-01"
 
 pages_build_output_dir = "./"
 
 [[d1_databases]]
-
 binding = "DB"
 database_name = "gearsh_db"
 database_id = "625dcd0a-84b7-4cce-a8b4-af6e4d3b37b0"
+
+# Headers for fonts and assets - CORS and caching
+[[headers]]
+  for = "/assets/fonts/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/canvaskit/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=31536000, immutable"

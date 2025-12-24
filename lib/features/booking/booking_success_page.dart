@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:gearsh_app/widgets/bottom_nav_bar.dart';
+
 class BookingSuccessPage extends StatelessWidget {
   const BookingSuccessPage({super.key});
 
@@ -36,6 +38,7 @@ class BookingSuccessPage extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

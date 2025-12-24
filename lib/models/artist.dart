@@ -13,6 +13,7 @@ class Artist {
   final bool? availability;
   final List<String>? skills;
   final bool? isTrending;
+  final bool? isVerified;
   final double? baseRate;
   final List<String>? portfolioImageUrls;
   final List<Review> reviews;
@@ -29,11 +30,56 @@ class Artist {
     this.availability,
     this.skills,
     this.isTrending,
+    this.isVerified,
     this.baseRate,
     this.portfolioImageUrls,
     List<Review>? reviews,
   }) : reviews = reviews ?? [];
 
+  double get averageRating {
+    if (reviews.isEmpty) {
+      return 0.0;
+    }
+    return reviews.map((r) => r.rating).reduce((a, b) => a + b) / reviews.length;
+  }
+
+  int get reviewCount => reviews.length;
+
+  double get rating => averageRating;
+
+  double? get basePrice => baseRate;
+
+  /// Factory for API response (Cloudflare Workers)
+  factory Artist.fromApiJson(Map<String, dynamic> json) {
+    return Artist(
+      id: json['artist_id'] ?? json['id'] ?? '',
+      name: json['name'] ?? json['display_name'] ?? '',
+      genre: json['genre'] ?? '',
+      bio: json['bio'] ?? '',
+      image: json['image'] ?? json['profile_picture_url'] ?? '',
+      category: json['category'],
+      hoursWorked: json['hours_worked']?.toDouble(),
+      location: json['location'],
+      availability: json['availability_status'] == 'available',
+      skills: json['skills'] is List ? List<String>.from(json['skills']) : null,
+      isTrending: json['is_trending'] == true || json['is_trending'] == 1,
+      isVerified: json['is_verified'] == true || json['is_verified'] == 1,
+      baseRate: json['base_rate']?.toDouble(),
+      portfolioImageUrls: json['portfolio_urls'] is List
+          ? List<String>.from(json['portfolio_urls'])
+          : null,
+      reviews: json['reviews'] is List
+          ? (json['reviews'] as List).map((r) => Review(
+              reviewerName: r['reviewer_name'] ?? '',
+              reviewerImageUrl: r['reviewer_image'] ?? '',
+              rating: (r['rating'] ?? 0).toDouble(),
+              comment: r['comment'] ?? '',
+            )).toList()
+          : [],
+    );
+  }
+
+  /// Factory for Airtable response (legacy)
   factory Artist.fromJson(Map<String, dynamic> json) {
     final fields = json['fields'] ?? {};
     return Artist(
@@ -52,6 +98,7 @@ class Artist {
       availability: fields['availability'],
       skills: fields['skills'] != null ? List<String>.from(fields['skills']) : null,
       isTrending: fields['isTrending'],
+      isVerified: fields['isVerified'],
       baseRate: fields['baseRate'] != null ? (fields['baseRate'] as num).toDouble() : null,
       portfolioImageUrls: fields['portfolioImageUrls'] != null ? List<String>.from(fields['portfolioImageUrls']) : null,
       reviews: fields['reviews'] != null
@@ -79,6 +126,7 @@ class Artist {
     bool? availability,
     List<String>? skills,
     bool? isTrending,
+    bool? isVerified,
     double? baseRate,
     List<String>? portfolioImageUrls,
     List<Review>? reviews,
@@ -95,6 +143,7 @@ class Artist {
       availability: availability ?? this.availability,
       skills: skills ?? this.skills,
       isTrending: isTrending ?? this.isTrending,
+      isVerified: isVerified ?? this.isVerified,
       baseRate: baseRate ?? this.baseRate,
       portfolioImageUrls: portfolioImageUrls ?? this.portfolioImageUrls,
       reviews: reviews ?? this.reviews,

@@ -4,6 +4,8 @@ import 'package:gearsh_app/models/artist.dart';
 import 'package:gearsh_app/providers/artist_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gearsh_app/widgets/custom_app_bar.dart';
+import 'package:gearsh_app/widgets/bottom_nav_bar.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfilePage extends ConsumerWidget {
   final String artistId;
@@ -36,6 +38,23 @@ class ProfilePage extends ConsumerWidget {
                       const SizedBox(height: 16),
                       Text(artist.name, style: theme.textTheme.displaySmall),
                       Text(artist.category ?? 'N/A', style: theme.textTheme.titleLarge?.copyWith(color: theme.primaryColor)),
+                      const SizedBox(height: 16),
+                      // Themed blue "Book" button matching Gearsh color palette
+                      SizedBox(
+                        width: 200,
+                        child: ElevatedButton.icon(
+                          onPressed: () => context.go('/booking/${artist.id}'),
+                          icon: const Icon(Icons.book_online),
+                          label: const Text('Book'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            elevation: 4,
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 24),
                     ],
                   ),
@@ -71,6 +90,7 @@ class ProfilePage extends ConsumerWidget {
           ),
         ),
       ),
+      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }

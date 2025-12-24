@@ -1,13 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final bookingProvider = StateNotifierProvider((ref) => BookingNotifier());
+class BookingState {
+  // TODO: Add properties to represent booking state
+}
 
-class BookingNotifier extends StateNotifier<BookingState> {
-  BookingNotifier() : super(BookingState());
+class BookingNotifier extends Notifier<BookingState> {
+  @override
+  BookingState build() => BookingState();
 
   // TODO: Add methods to manage booking state
 }
 
-class BookingState {
-  // TODO: Add properties to represent booking state
-}
+final bookingProvider = NotifierProvider<BookingNotifier, BookingState>(BookingNotifier.new);

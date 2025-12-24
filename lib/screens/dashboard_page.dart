@@ -1,6 +1,7 @@
 // lib/screens/dashboard_page.dart
 
 import 'package:flutter/material.dart';
+import 'package:gearsh_app/widgets/bottom_nav_bar.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -15,6 +16,7 @@ class DashboardPage extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontSize: 24),
         ),
       ),
+      bottomNavigationBar: BottomNavBar(),
     );
   }
 }

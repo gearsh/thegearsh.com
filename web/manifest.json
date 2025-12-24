@@ -1,13 +1,34 @@
 {
-    "name": "gearsh_app",
-    "short_name": "gearsh_app",
-    "start_url": ".",
+    "name": "Gearsh - Book Creative Talent",
+    "short_name": "Gearsh",
+    "start_url": "/",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "display_override": ["standalone", "minimal-ui"],
+    "background_color": "#020617",
+    "theme_color": "#020617",
+    "description": "Connect with DJs, photographers, videographers and more. Book creative talent instantly for your next event.",
+    "orientation": "portrait",
     "prefer_related_applications": false,
+    "scope": "/",
+    "lang": "en",
+    "categories": ["entertainment", "lifestyle", "social"],
+    "screenshots": [],
+    "shortcuts": [
+        {
+            "name": "Search Artists",
+            "short_name": "Search",
+            "description": "Find creative talent",
+            "url": "/search",
+            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "My Bookings",
+            "short_name": "Bookings",
+            "description": "View your bookings",
+            "url": "/bookings",
+            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+        }
+    ],
     "icons": [
         {
             "src": "icons/Icon-192.png",

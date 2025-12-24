@@ -4,22 +4,19 @@ import 'global_providers.dart';
 
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 
-final authControllerProvider = Provider<AuthController>((ref) {
-  final repository = ref.read(authServiceProvider);
-  final authNotifier = ref.read(authProvider.notifier);
-  return AuthController(repository, authNotifier);
-});
+class AuthControllerNotifier extends Notifier<AuthState> {
+  late AuthService _authService;
 
-class AuthController {
-  final AuthService _authService;
-  final StateController<AuthState> _authNotifier;
-
-  AuthController(this._authService, this._authNotifier);
+  @override
+  AuthState build() {
+    _authService = ref.watch(authServiceProvider);
+    return AuthState.unauthenticated;
+  }
 
   Future<void> signIn(String email, String password) async {
     try {
       await _authService.signIn(email, password);
-      _authNotifier.state = AuthState.authenticated;
+      state = AuthState.authenticated;
     } catch (e) {
       rethrow;
     }
@@ -28,7 +25,7 @@ class AuthController {
   Future<void> signUp(String email, String password) async {
     try {
       await _authService.signUp(email, password);
-      _authNotifier.state = AuthState.authenticated;
+      state = AuthState.authenticated;
     } catch (e) {
       rethrow;
     }
@@ -36,6 +33,10 @@ class AuthController {
 
   Future<void> signOut() async {
     await _authService.signOut();
-    _authNotifier.state = AuthState.unauthenticated;
+    state = AuthState.unauthenticated;
   }
 }
+
+final authControllerProvider = NotifierProvider<AuthControllerNotifier, AuthState>(
+  AuthControllerNotifier.new,
+);

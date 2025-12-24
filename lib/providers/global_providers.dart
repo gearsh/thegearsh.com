@@ -25,10 +25,22 @@ final artistProvider = Provider<List<Artist>>((ref) {
   ];
 });
 
-final authProvider =
-    StateProvider<AuthState>((ref) => AuthState.unauthenticated);
-
 enum AuthState {
   unauthenticated,
   authenticated,
 }
+
+class AuthNotifier extends Notifier<AuthState> {
+  @override
+  AuthState build() => AuthState.unauthenticated;
+
+  void signIn() {
+    state = AuthState.authenticated;
+  }
+
+  void signOut() {
+    state = AuthState.unauthenticated;
+  }
+}
+
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);

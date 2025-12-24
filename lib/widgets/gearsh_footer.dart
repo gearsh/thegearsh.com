@@ -168,7 +168,7 @@ class _FooterLink extends StatelessWidget {
             final routes = {
               'About us': '/about',
               'Visit Help Center': '/help',
-              'Book an Artist': '/waitlist',
+              'Book an Artist': '/signup',
               'Privacy': '/privacy',
               'Terms': '/terms',
               'Accessibility': '/accessibility',

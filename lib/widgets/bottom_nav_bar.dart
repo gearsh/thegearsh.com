@@ -11,15 +11,15 @@ class BottomNavBar extends StatelessWidget {
     // Extract RGB components using component accessors (.r/.g/.b)
     final surfaceColor = theme.colorScheme.surface;
     // `surfaceColor.r/g/b` are normalized doubles in [0.0, 1.0]; convert to 0-255 ints
-    final int _sr = ((surfaceColor.r * 255.0).round().clamp(0, 255)).toInt();
-    final int _sg = ((surfaceColor.g * 255.0).round().clamp(0, 255)).toInt();
-    final int _sb = ((surfaceColor.b * 255.0).round().clamp(0, 255)).toInt();
+    final int sr = ((surfaceColor.r * 255.0).round().clamp(0, 255)).toInt();
+    final int sg = ((surfaceColor.g * 255.0).round().clamp(0, 255)).toInt();
+    final int sb = ((surfaceColor.b * 255.0).round().clamp(0, 255)).toInt();
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Color.fromRGBO(_sr, _sg, _sb, 0.9),
+        color: Color.fromRGBO(sr, sg, sb, 0.9),
         borderRadius: BorderRadius.circular(25),
         border: Border.all(color: Colors.white12),
       ),
@@ -27,22 +27,28 @@ class BottomNavBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _NavItem(
-            label: 'Discover',
-            icon: Icons.search,
-            isActive: currentLocation == '/',
-            onTap: () => context.go('/'),
+            label: 'Explore',
+            icon: Icons.explore,
+            isActive: currentLocation == '/explore',
+            onTap: () => context.go('/explore'),
+          ),
+          _NavItem(
+            label: 'Messages',
+            icon: Icons.message,
+            isActive: currentLocation == '/messages',
+            onTap: () => context.go('/messages'),
+          ),
+          _NavItem(
+            label: 'Bookings',
+            icon: Icons.book,
+            isActive: currentLocation == '/bookings',
+            onTap: () => context.go('/bookings'),
           ),
           _NavItem(
             label: 'Profile',
             icon: Icons.person,
             isActive: currentLocation.contains('/profile'),
-            onTap: () => context.go('/profile/1'), // Navigate to DJ Khalid's profile for demo
-          ),
-          _NavItem(
-            label: 'Dashboard',
-            icon: Icons.dashboard,
-            isActive: currentLocation.contains('/dashboard'),
-            onTap: () => context.go('/dashboard'),
+            onTap: () => context.go('/profile'),
           ),
         ],
       ),

@@ -1,0 +1,9 @@
+# Keystore configuration for Gearsh app
+# Generate a keystore using:
+# keytool -genkey -v -keystore gearsh-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias gearsh
+
+storePassword=YOUR_STORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=gearsh
+storeFile=../keystore/gearsh-release-key.jks
+
