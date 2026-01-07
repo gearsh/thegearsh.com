@@ -128,7 +128,17 @@ class _SavedArtistsPageState extends ConsumerState<SavedArtistsPage> {
                 children: [
                   // Back button
                   GestureDetector(
-                    onTap: () => context.go('/profile-settings'),
+                    onTap: () {
+                      try {
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.go('/profile-settings');
+                        }
+                      } catch (e) {
+                        context.go('/profile-settings');
+                      }
+                    },
                     child: Container(
                       width: 44,
                       height: 44,

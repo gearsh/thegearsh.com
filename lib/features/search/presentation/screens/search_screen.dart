@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:gearsh_app/providers/search_provider.dart';
 import 'package:gearsh_app/features/search/presentation/widgets/filter_panel.dart';
 import 'package:gearsh_app/features/search/presentation/widgets/search_results_list.dart';
+import 'package:gearsh_app/widgets/gearsh_search_bar.dart';
 import 'dart:async';
 
 class SearchScreen extends ConsumerStatefulWidget {
@@ -14,7 +16,13 @@ class SearchScreen extends ConsumerStatefulWidget {
 
 class _SearchScreenState extends ConsumerState<SearchScreen> {
   final _searchController = TextEditingController();
+  final _searchFocusNode = FocusNode();
   Timer? _debounce;
+
+  // Gearsh theme colors
+  static const Color _slate900 = Color(0xFF0F172A);
+  static const Color _slate800 = Color(0xFF1E293B);
+  static const Color _sky500 = Color(0xFF0EA5E9);
 
   @override
   void initState() {
@@ -26,6 +34,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
+    _searchFocusNode.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -46,27 +55,63 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final searchHistory = ref.watch(searchHistoryProvider);
 
     return Scaffold(
+      backgroundColor: _slate900,
       appBar: AppBar(
-        title: TextField(
-          controller: _searchController,
-          autofocus: true,
-          decoration: const InputDecoration(
-            hintText: 'Search artists, categories, locations...',
-            border: InputBorder.none,
+        backgroundColor: _slate900,
+        elevation: 0,
+        leading: IconButton(
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: _slate800,
+              shape: BoxShape.circle,
+              border: Border.all(color: _sky500.withAlpha(51), width: 1),
+            ),
+            child: const Icon(Icons.arrow_back, size: 18, color: Colors.white),
           ),
-          style: const TextStyle(fontSize: 18),
+          onPressed: () {
+            try {
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              } else {
+                context.go('/');
+              }
+            } catch (e) {
+              context.go('/');
+            }
+          },
+        ),
+        title: GearshSearchBar(
+          controller: _searchController,
+          focusNode: _searchFocusNode,
+          hintText: 'Search artists, categories...',
+          autofocus: true,
+          compact: true,
+          onClear: () {
+            ref.read(searchQueryProvider.notifier).update('');
+          },
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_list),
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: _slate800,
+                shape: BoxShape.circle,
+                border: Border.all(color: _sky500.withAlpha(51), width: 1),
+              ),
+              child: const Icon(Icons.tune_rounded, size: 18, color: Colors.white),
+            ),
             onPressed: () {
               showModalBottomSheet(
                 context: context,
+                backgroundColor: _slate900,
                 builder: (context) => const FilterPanel(),
                 isScrollControlled: true,
               );
             },
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: Column(
@@ -79,12 +124,51 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   return _buildHistoryAndTrending(searchHistory);
                 }
                 if (results.isEmpty) {
-                  return const Center(child: Text('No results found.'));
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withAlpha(13),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.search_off_rounded,
+                            size: 48,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'No results found',
+                          style: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Try a different search term',
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  );
                 }
                 return SearchResultsList(results: results);
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, stack) => Center(child: Text('Error: $err')),
+              loading: () => Center(
+                child: CircularProgressIndicator(color: _sky500),
+              ),
+              error: (err, stack) => Center(
+                child: Text(
+                  'Error: $err',
+                  style: TextStyle(color: Colors.grey[400]),
+                ),
+              ),
             ),
           ),
         ],

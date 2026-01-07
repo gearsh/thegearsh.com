@@ -23,7 +23,7 @@ class GearshFooter extends StatelessWidget {
                   _footerColumn(
                     title: 'Gearsh',
                     items: [
-                      _FooterLink('Visit Help Center'),
+                      _FooterLink('Visit Help Centre'),
                     ],
                     span: isMedium ? 2 : 1,
                   ),
@@ -167,7 +167,7 @@ class _FooterLink extends StatelessWidget {
             // Simple internal navigation mapping
             final routes = {
               'About us': '/about',
-              'Visit Help Center': '/help',
+              'Visit Help Centre': '/help',
               'Book an Artist': '/signup',
               'Privacy': '/privacy',
               'Terms': '/terms',

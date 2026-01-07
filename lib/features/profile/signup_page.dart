@@ -306,7 +306,17 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           GestureDetector(
-                            onTap: _currentStep > 0 ? _prevStep : () => context.go('/onboarding'),
+                            onTap: _currentStep > 0 ? _prevStep : () {
+                              try {
+                                if (context.canPop()) {
+                                  context.pop();
+                                } else {
+                                  context.go('/onboarding');
+                                }
+                              } catch (e) {
+                                context.go('/onboarding');
+                              }
+                            },
                             child: Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(

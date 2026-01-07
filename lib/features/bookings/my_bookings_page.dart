@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/providers/auth_providers.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
 
 class MyBookingsPage extends ConsumerStatefulWidget {
   const MyBookingsPage({super.key});
@@ -187,7 +185,17 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> with SingleTick
                     children: [
                       // Back button
                       GestureDetector(
-                        onTap: () => context.go('/profile-settings'),
+                        onTap: () {
+                          try {
+                            if (context.canPop()) {
+                              context.pop();
+                            } else {
+                              context.go('/profile-settings');
+                            }
+                          } catch (e) {
+                            context.go('/profile-settings');
+                          }
+                        },
                         child: Container(
                           width: 44,
                           height: 44,

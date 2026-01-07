@@ -95,7 +95,7 @@ class AuthApiService {
     String userType = 'client',
     String? phone,
     String? location,
-    String country = 'South Africa',
+    String? country,
   }) async {
     final response = await _apiService.post(
       ApiConfig.authRegister,

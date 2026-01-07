@@ -277,7 +277,17 @@ class _LoginPageState extends ConsumerState<LoginPage>
                       Align(
                         alignment: Alignment.centerLeft,
                         child: GestureDetector(
-                          onTap: () => context.go('/onboarding'),
+                          onTap: () {
+                            try {
+                              if (context.canPop()) {
+                                context.pop();
+                              } else {
+                                context.go('/onboarding');
+                              }
+                            } catch (e) {
+                              context.go('/onboarding');
+                            }
+                          },
                           child: Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(

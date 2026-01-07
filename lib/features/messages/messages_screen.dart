@@ -53,7 +53,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
       'id': 'conv3',
       'artistId': '3',
       'artistName': 'Emtee',
-      'artistImage': 'assets/images/artists/emtee.webp',
+      'artistImage': 'assets/images/artists/emtee.png',
       'lastMessage': 'Thanks! Looking forward to working with you',
       'timestamp': '3h ago',
       'unread': 0,

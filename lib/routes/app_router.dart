@@ -1,13 +1,16 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/screens/landing_page.dart';
 import 'package:gearsh_app/screens/onboarding_page.dart';
+import 'package:gearsh_app/screens/faq_page.dart';
+import 'package:gearsh_app/screens/privacy_policy_page.dart';
+import 'package:gearsh_app/screens/terms_of_service_page.dart';
 import 'package:gearsh_app/features/error/error_page.dart';
 import 'package:gearsh_app/features/signups/artists_list_page.dart';
 import 'package:gearsh_app/features/profile/profile_page.dart';
 import 'package:gearsh_app/features/profile/artist_view_profile_page.dart';
 import 'package:gearsh_app/features/dashboard/artist_dashboard_page.dart';
+import 'package:gearsh_app/features/dashboard/artist_verification_page.dart';
+import 'package:gearsh_app/features/profile/help_center_page.dart';
 import 'package:gearsh_app/features/profile/profile_settings_page.dart';
 import 'package:gearsh_app/features/profile/edit_profile_page.dart';
 import 'package:gearsh_app/features/bookings/my_bookings_page.dart';
@@ -20,7 +23,93 @@ import 'package:gearsh_app/features/profile/signup_page.dart';
 import 'package:gearsh_app/features/profile/login_page.dart';
 import 'package:gearsh_app/features/profile/forgot_password_page.dart';
 import 'package:gearsh_app/features/profile/reset_password_page.dart';
+import 'package:gearsh_app/features/discover/discover_page.dart';
+import 'package:gearsh_app/features/discover/map_page.dart';
+import 'package:gearsh_app/features/gigs/gigs_page.dart';
+import 'package:gearsh_app/features/cart/cart_page.dart';
+import 'package:gearsh_app/features/cart/cart_checkout_page.dart';
+import 'package:gearsh_app/features/cart/cart_success_page.dart';
 import 'package:gearsh_app/services/user_role_service.dart';
+
+/// Custom page transition for smooth navigation
+CustomTransitionPage<T> buildPageWithTransition<T>({
+  required BuildContext context,
+  required GoRouterState state,
+  required Widget child,
+  TransitionType type = TransitionType.fade,
+}) {
+  return CustomTransitionPage<T>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 250),
+    reverseTransitionDuration: const Duration(milliseconds: 200),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      switch (type) {
+        case TransitionType.fade:
+          return FadeTransition(
+            opacity: CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic,
+            ),
+            child: child,
+          );
+        case TransitionType.slideUp:
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.1),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic,
+            )),
+            child: FadeTransition(
+              opacity: CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOut,
+              ),
+              child: child,
+            ),
+          );
+        case TransitionType.slideRight:
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic,
+            )),
+            child: child,
+          );
+        case TransitionType.scale:
+          return ScaleTransition(
+            scale: Tween<double>(
+              begin: 0.95,
+              end: 1.0,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic,
+            )),
+            child: FadeTransition(
+              opacity: animation,
+              child: child,
+            ),
+          );
+        case TransitionType.none:
+          return child;
+      }
+    },
+  );
+}
+
+/// Transition types for different navigation contexts
+enum TransitionType {
+  fade,
+  slideUp,
+  slideRight,
+  scale,
+  none,
+}
 
 final GoRouter router = GoRouter(
   // Both web and mobile start at onboarding
@@ -61,65 +150,181 @@ final GoRouter router = GoRouter(
     return null;
   },
   routes: [
-    // Onboarding & Auth
+    // Onboarding & Auth - use fade transition
     GoRoute(
       path: '/onboarding',
-      builder: (context, state) => const OnboardingPage(),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const OnboardingPage(),
+        type: TransitionType.fade,
+      ),
     ),
-    // Auth routes
+    // Auth routes - slide up for modal feel
     GoRoute(
       path: '/signup',
-      builder: (context, state) => const SignupPage(),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const SignupPage(),
+        type: TransitionType.slideUp,
+      ),
     ),
     GoRoute(
       path: '/login',
-      builder: (context, state) => const LoginPage(),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const LoginPage(),
+        type: TransitionType.slideUp,
+      ),
     ),
     GoRoute(
       path: '/forgot-password',
-      builder: (context, state) => const ForgotPasswordPage(),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const ForgotPasswordPage(),
+        type: TransitionType.slideRight,
+      ),
     ),
     GoRoute(
       path: '/reset-password',
-      builder: (context, state) => ResetPasswordPage(
-        token: state.uri.queryParameters['token'],
-        email: state.uri.queryParameters['email'],
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: ResetPasswordPage(
+          token: state.uri.queryParameters['token'],
+          email: state.uri.queryParameters['email'],
+        ),
+        type: TransitionType.slideRight,
       ),
     ),
-    // Search
+    // Search - slide up
     GoRoute(
       path: '/search',
-      builder: (context, state) => const SearchScreen(),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const SearchScreen(),
+        type: TransitionType.slideUp,
+      ),
     ),
-    // Main App - Home/Explore page for clients
+    // Gigs page for fans - fade for tab switching feel
+    GoRoute(
+      path: '/gigs',
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const GigsPage(),
+        type: TransitionType.fade,
+      ),
+    ),
+    // Cart pages - slide up for modal/overlay feel
+    GoRoute(
+      path: '/cart',
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const CartPage(),
+        type: TransitionType.slideUp,
+      ),
+    ),
+    GoRoute(
+      path: '/cart/checkout',
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const CartCheckoutPage(),
+        type: TransitionType.slideRight,
+      ),
+    ),
+    GoRoute(
+      path: '/cart/success',
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const CartSuccessPage(),
+        type: TransitionType.scale,
+      ),
+    ),
+    // Main App - Home/Explore page for clients - fade for instant feel
     GoRoute(
       path: '/home',
-      builder: (context, state) => const LandingPage(),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const DiscoverPage(),
+        type: TransitionType.fade,
+      ),
     ),
     GoRoute(
       path: '/',
-      builder: (context, state) => const LandingPage(),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const DiscoverPage(),
+        type: TransitionType.fade,
+      ),
+    ),
+    GoRoute(
+      path: '/discover/map',
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const MapPage(),
+        type: TransitionType.slideUp,
+      ),
     ),
     GoRoute(
       path: '/artists',
-      builder: (context, state) => const ArtistsListPage(),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const ArtistsListPage(),
+        type: TransitionType.slideRight,
+      ),
     ),
     GoRoute(
       path: '/artist/:id',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final artistId = state.pathParameters['id']!;
-        return ArtistViewProfilePage(artistId: artistId);
+        return buildPageWithTransition(
+          context: context,
+          state: state,
+          child: ArtistViewProfilePage(artistId: artistId),
+          type: TransitionType.slideRight,
+        );
       },
     ),
     GoRoute(
       path: '/profile/:id',
-      builder: (context, state) => ProfilePage(artistId: state.pathParameters['id']!),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: ProfilePage(artistId: state.pathParameters['id']!),
+        type: TransitionType.slideRight,
+      ),
     ),
 
     // Dashboard & Management
     GoRoute(
       path: '/dashboard',
-      builder: (context, state) => const ArtistDashboardPage(),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const ArtistDashboardPage(),
+        type: TransitionType.fade,
+      ),
+    ),
+    GoRoute(
+      path: '/dashboard/verification',
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const ArtistVerificationPage(),
+        type: TransitionType.slideRight,
+      ),
     ),
     GoRoute(
       path: '/manager',
@@ -131,33 +336,100 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: '/profile-settings',
-      builder: (context, state) => const ProfileSettingsPage(),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const ProfileSettingsPage(),
+        type: TransitionType.fade,
+      ),
     ),
     GoRoute(
       path: '/edit-profile',
-      builder: (context, state) => const EditProfilePage(),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const EditProfilePage(),
+        type: TransitionType.slideRight,
+      ),
     ),
     GoRoute(
       path: '/my-bookings',
-      builder: (context, state) => const MyBookingsPage(),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const MyBookingsPage(),
+        type: TransitionType.fade,
+      ),
     ),
     GoRoute(
       path: '/saved-artists',
-      builder: (context, state) => const SavedArtistsPage(),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const SavedArtistsPage(),
+        type: TransitionType.slideRight,
+      ),
+    ),
+    GoRoute(
+      path: '/help',
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const HelpCenterPage(),
+        type: TransitionType.slideRight,
+      ),
+    ),
+    GoRoute(
+      path: '/faq',
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const FAQPage(),
+        type: TransitionType.slideRight,
+      ),
+    ),
+    GoRoute(
+      path: '/privacy-policy',
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const PrivacyPolicyPage(),
+        type: TransitionType.slideRight,
+      ),
+    ),
+    GoRoute(
+      path: '/terms',
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const TermsOfServicePage(),
+        type: TransitionType.slideRight,
+      ),
     ),
 
-    // Booking Flow
+    // Booking Flow - slide right for flow progression
     GoRoute(
       path: '/booking/:id',
-      builder: (context, state) => BookingPage(artistId: state.pathParameters['id']!),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: BookingPage(artistId: state.pathParameters['id']!),
+        type: TransitionType.slideRight,
+      ),
     ),
     GoRoute(
       path: '/booking-flow/:id',
-      builder: (context, state) => BookingFlowPage(
-        artistId: state.pathParameters['id']!,
-        artistName: state.uri.queryParameters['artistName'],
-        serviceName: state.uri.queryParameters['serviceName'],
-        servicePrice: double.tryParse(state.uri.queryParameters['price'] ?? ''),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: BookingFlowPage(
+          artistId: state.pathParameters['id']!,
+          artistName: state.uri.queryParameters['artistName'],
+          serviceName: state.uri.queryParameters['serviceName'],
+          servicePrice: double.tryParse(state.uri.queryParameters['price'] ?? ''),
+          serviceId: state.uri.queryParameters['service'],
+        ),
+        type: TransitionType.slideRight,
       ),
     ),
     GoRoute(
@@ -165,10 +437,15 @@ final GoRouter router = GoRouter(
       redirect: (context, state) => '/booking-flow/${state.pathParameters['id']}',
     ),
 
-    // Messages & Bookings screens
+    // Messages & Bookings screens - fade for tab-like navigation
     GoRoute(
       path: '/messages',
-      builder: (context, state) => const MessagesPage(),
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const MessagesPage(),
+        type: TransitionType.fade,
+      ),
     ),
     GoRoute(
       path: '/bookings',
@@ -180,4 +457,3 @@ final GoRouter router = GoRouter(
     ),
   ],
 );
-

@@ -23,7 +23,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late TextEditingController _locationController;
   late TextEditingController _bioController;
 
-  bool _isLoading = false;
   bool _isSaving = false;
   String? _error;
   String? _successMessage;
@@ -33,7 +32,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   static const Color _slate900 = Color(0xFF0F172A);
   static const Color _slate800 = Color(0xFF1E293B);
   static const Color _slate400 = Color(0xFF94A3B8);
-  static const Color _slate300 = Color(0xFFCBD5E1);
   static const Color _sky500 = Color(0xFF0EA5E9);
   static const Color _sky400 = Color(0xFF38BDF8);
   static const Color _cyan500 = Color(0xFF06B6D4);
@@ -187,16 +185,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     final padding = MediaQuery.of(context).padding;
     final firebaseUser = ref.watch(currentFirebaseUserProvider);
     final photoUrl = firebaseUser?.photoURL;
 
     return Scaffold(
       body: Container(
-        width: screenWidth,
-        height: screenHeight,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -224,7 +218,17 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 children: [
                   // Back button
                   GestureDetector(
-                    onTap: () => context.go('/profile-settings'),
+                    onTap: () {
+                      try {
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.go('/profile-settings');
+                        }
+                      } catch (e) {
+                        context.go('/profile-settings');
+                      }
+                    },
                     child: Container(
                       width: 44,
                       height: 44,

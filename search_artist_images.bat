@@ -165,8 +165,6 @@ start "" "https://www.google.com/search?q=Blxckie+rapper+photo&tbm=isch"
 timeout /t 1 >nul
 start "" "https://www.google.com/search?q=Nadia+Nakai+Bragga+photo&tbm=isch"
 timeout /t 1 >nul
-start "" "https://www.google.com/search?q=Costa+Titch+Big+Flexa+photo&tbm=isch"
-timeout /t 1 >nul
 start "" "https://www.google.com/search?q=Shimza+One+Man+Show+DJ+photo&tbm=isch"
 timeout /t 1 >nul
 start "" "https://www.google.com/search?q=Sir+Trill+singer+photo&tbm=isch"
@@ -193,8 +191,6 @@ timeout /t 1 >nul
 start "" "https://www.google.com/search?q=TXC+female+DJ+duo+photo&tbm=isch"
 timeout /t 1 >nul
 start "" "https://www.google.com/search?q=Lwah+Ndlunkulu+singer+photo&tbm=isch"
-timeout /t 1 >nul
-start "" "https://www.google.com/search?q=daryana+singer+South+Africa+photo&tbm=isch"
 timeout /t 1 >nul
 start "" "https://www.google.com/search?q=Alice+Phoebe+Lou+indie+singer+photo&tbm=isch"
 timeout /t 1 >nul
@@ -223,6 +219,32 @@ start "" "https://www.google.com/search?q=Pistole+Gwijo+artist+photo&tbm=isch"
 timeout /t 1 >nul
 
 echo.
+echo Ninth batch opened! Press any key for more artists...
+pause >nul
+
+start "" "https://www.google.com/search?q=Tyla+South+African+singer+photo&tbm=isch"
+timeout /t 1 >nul
+start "" "https://www.google.com/search?q=William+Last+KRM+DJ+photo&tbm=isch"
+timeout /t 1 >nul
+start "" "https://www.google.com/search?q=DJ+Maphorisa+Kabza+De+Small+photo&tbm=isch"
+timeout /t 1 >nul
+start "" "https://www.google.com/search?q=Kabza+De+Small+amapiano+DJ+photo&tbm=isch"
+timeout /t 1 >nul
+start "" "https://www.google.com/search?q=Nasty+C+rapper+South+Africa+photo&tbm=isch"
+timeout /t 1 >nul
+start "" "https://www.google.com/search?q=Cassper+Nyovest+rapper+photo&tbm=isch"
+timeout /t 1 >nul
+start "" "https://www.google.com/search?q=Kelvin+Momo+DJ+amapiano+photo&tbm=isch"
+timeout /t 1 >nul
+start "" "https://www.google.com/search?q=Uncle+Waffles+DJ+photo&tbm=isch"
+timeout /t 1 >nul
+start "" "https://www.google.com/search?q=Black+Coffee+DJ+photo&tbm=isch"
+timeout /t 1 >nul
+start "" "https://www.google.com/search?q=A-Reece+rapper+photo&tbm=isch"
+timeout /t 1 >nul
+
+echo.
+echo Ninth batch opened! ALL ARTISTS COVERED!
 echo ========================================
 echo ALL DONE!
 echo ========================================
@@ -231,7 +253,9 @@ echo Download images and save them to:
 echo assets\images\artists\
 echo.
 echo Use these filenames:
-echo   seether.jpg, thekiffness.jpg, scottsmaphuma.jpg, dieantwoord.jpg
+echo   tyla.jpg, lastkrm.png, maphorisa.png, kabza.png, nastyc.png
+echo   cassper.png, kelvinmomo.png, waffles.png, coffee.png, areece.png
+echo   emtee.webp, seether.png, kiffness.png, antwoord.png, scotts.png
 echo   joyouscelebration.jpg, zeenxumalo.jpg, makhadzi.jpg, tylericu.jpg
 echo   mawhoo.jpg, focalistic.jpg, luckydube.jpg, sjava.jpg, mrjazziq.jpg
 echo   majorleaguedjz.jpg, deborahlukalu.jpg, masterkg.jpg, kwesta.jpg
@@ -240,18 +264,18 @@ echo   oscarmbo.jpg, pabicooper.jpg, blaqdiamond.jpg, djstokie.jpg
 echo   aka.jpg, usimamane.jpg, kharishma.jpg, babalwam.jpg, djzinhle.jpg
 echo   mellowandsleazy.jpg, mthandenisk.jpg, nontokozomkhize.jpg
 echo   nkosazanadaughter.jpg, leemckrazy.jpg, feloletee.jpg, kamomphela.jpg
-echo   dumimkokstad.jpg, nomcebozikode.jpg, bassie.jpg, samdeep.jpg
-echo   titom.jpg, mlindothevocalist.jpg, shomadjozi.jpg, youngstunna.jpg
-echo   shasha.jpg, princekaybee.jpg, mafikizolo.jpg, thesoil.jpg, ko.jpg
-echo   busta929.jpg, dlalathukzin.jpg, dbngogo.jpg, demthuda.jpg, djtira.jpg
-echo   azana.jpg, kingmonada.jpg, daliwonga.jpg, sunelmusician.jpg
-echo   shekhinah.jpg, elaine.jpg, simmy.jpg, blxckie.jpg, nadianakai.jpg
-echo   costatitch.jpg, shimza.jpg, sirtrill.jpg, kellykhumalo.jpg
-echo   boohle.jpg, masmusiq.jpg, rikyrick.jpg, benjamindube.jpg
-echo   sbitechn.jpg, meganwoods.jpg, txc.jpg, lwahndlunkulu.jpg
-echo   daryana.jpg, alicephoebelou.jpg, nomfundomoh.jpg, caiiro.jpg
-echo   toss.jpg, lebosekgobela.jpg, mduduzincube.jpg, 2point1.jpg
-echo   qtwins.jpg, malomevector.jpg, pistolegwijo.jpg
+echo   dumimkokstad.jpg, nomcebozikode.jpg, bassie.jpg, sbitechn.jpg
+echo   samdeep.jpg, titom.jpg, mlindothevocalist.jpg, shomadjozi.jpg
+echo   youngstunna.jpg, shasha.jpg, princekaybee.jpg, mafikizolo.jpg
+echo   thesoil.jpg, ko.jpg, busta929.jpg, dlalathukzin.jpg, dbngogo.jpg
+echo   demthuda.jpg, djtira.jpg, azana.jpg, kingmonada.jpg, daliwonga.jpg
+echo   sunelmusician.jpg, shekhinah.jpg, nomfundomoh.jpg, caiiro.jpg
+echo   toss.jpg, lebosekgobela.jpg, elaine.jpg, simmy.jpg, blxckie.jpg
+echo   mduduzincube.jpg, nadianakai.jpg, 2point1.jpg
+echo   shimza.jpg, qtwins.jpg, sirtrill.jpg, kellykhumalo.jpg, boohle.jpg
+echo   malomevector.jpg, masmusiq.jpg, pistolegwijo.jpg, rikyrick.jpg
+echo   benjamindube.jpg, meganwoods.jpg, txc.jpg, lwahndlunkulu.jpg
+echo   alicephoebelou.jpg
 echo.
 pause
 

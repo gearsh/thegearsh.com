@@ -20,7 +20,7 @@ class WebAuthPage extends ConsumerWidget {
           decoration: BoxDecoration(
             color: const Color(0xFF0F172A),
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: const Color(0xFF0EA5E9).withOpacity(0.2)),
+            border: Border.all(color: const Color(0xFF0EA5E9).withValues(alpha: 0.2)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -52,7 +52,9 @@ class WebAuthPage extends ConsumerWidget {
                   final email = emailController.text.trim();
                   final password = passwordController.text.trim();
                   await ref.read(authControllerProvider).signIn(email, password);
-                  context.go('/');
+                  if (context.mounted) {
+                    context.go('/');
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0EA5E9),
@@ -79,12 +81,12 @@ class WebAuthPage extends ConsumerWidget {
   InputDecoration _buildInputDecoration(String label) {
     return InputDecoration(
       labelText: label,
-      labelStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+      labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
       filled: true,
-      fillColor: const Color(0xFF020617).withOpacity(0.5),
+      fillColor: const Color(0xFF020617).withValues(alpha: 0.5),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: const Color(0xFF0EA5E9).withOpacity(0.3)),
+        borderSide: BorderSide(color: const Color(0xFF0EA5E9).withValues(alpha: 0.3)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

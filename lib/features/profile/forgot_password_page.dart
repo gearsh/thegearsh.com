@@ -193,7 +193,17 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                       Align(
                         alignment: Alignment.centerLeft,
                         child: GestureDetector(
-                          onTap: () => context.go('/login'),
+                          onTap: () {
+                            try {
+                              if (context.canPop()) {
+                                context.pop();
+                              } else {
+                                context.go('/login');
+                              }
+                            } catch (e) {
+                              context.go('/login');
+                            }
+                          },
                           child: Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(

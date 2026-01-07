@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gearsh_app/services/user_role_service.dart';
 import 'package:gearsh_app/widgets/auth_prompt.dart';
+import 'package:gearsh_app/widgets/region_selector.dart';
 import 'package:gearsh_app/providers/auth_providers.dart';
 
 class ProfileSettingsPage extends ConsumerStatefulWidget {
@@ -90,7 +91,10 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         {
           'title': 'Support',
           'items': [
-            {'icon': Icons.help_outline_rounded, 'label': 'Help Center', 'route': '/help'},
+            {'icon': Icons.help_outline_rounded, 'label': 'Help Centre', 'route': '/help'},
+            {'icon': Icons.quiz_outlined, 'label': 'FAQ & About Gearsh', 'route': '/faq'},
+            {'icon': Icons.privacy_tip_outlined, 'label': 'Privacy Policy', 'route': '/privacy-policy'},
+            {'icon': Icons.description_outlined, 'label': 'Terms & Conditions', 'route': '/terms'},
           ],
         },
       ];
@@ -116,7 +120,10 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         {
           'title': 'Support',
           'items': [
-            {'icon': Icons.help_outline_rounded, 'label': 'Help Center', 'route': '/help'},
+            {'icon': Icons.help_outline_rounded, 'label': 'Help Centre', 'route': '/help'},
+            {'icon': Icons.quiz_outlined, 'label': 'FAQ & About Gearsh', 'route': '/faq'},
+            {'icon': Icons.privacy_tip_outlined, 'label': 'Privacy Policy', 'route': '/privacy-policy'},
+            {'icon': Icons.description_outlined, 'label': 'Terms & Conditions', 'route': '/terms'},
           ],
         },
       ];
@@ -218,7 +225,17 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                 children: [
                   // Back button
                   GestureDetector(
-                    onTap: () => context.go('/'),
+                    onTap: () {
+                      try {
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.go('/');
+                        }
+                      } catch (e) {
+                        context.go('/');
+                      }
+                    },
                     child: Container(
                       width: 44,
                       height: 44,
@@ -257,6 +274,10 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                     // Profile Card
                     _buildProfileCard(context),
                     const SizedBox(height: 24),
+
+                    // Region & Currency Selector
+                    _buildRegionSection(),
+                    const SizedBox(height: 16),
 
                     // Settings Sections
                     ..._settingsSections.map((section) => _buildSettingsSection(context, section)),
@@ -571,6 +592,33 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
           ),
         ),
         const SizedBox(height: 24),
+      ],
+    );
+  }
+
+  Widget _buildRegionSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Text(
+            'Region & Currency',
+            style: const TextStyle(
+              color: _slate400,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: _slate900.withAlpha(102),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: _sky500.withAlpha(51)),
+          ),
+          child: const RegionSelectorWidget(),
+        ),
       ],
     );
   }

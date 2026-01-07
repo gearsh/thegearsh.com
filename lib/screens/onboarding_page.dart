@@ -117,10 +117,13 @@ class _OnboardingPageState extends State<OnboardingPage>
     // Set the user as guest with selected role (they can browse but need to sign up for actions)
     if (role == 'client') {
       userRoleService.setGuestRole(UserRole.client);
-      context.go('/home'); // Go to explore/home page with artists
-    } else {
+      context.go('/home'); // Go to explore/home page to book artists
+    } else if (role == 'artist') {
       userRoleService.setGuestRole(UserRole.artist);
       context.go('/dashboard'); // Go to artist dashboard
+    } else if (role == 'fan') {
+      userRoleService.setGuestRole(UserRole.fan);
+      context.go('/home'); // Go to explore/home page for gig guides
     }
   }
 
@@ -542,13 +545,13 @@ class _OnboardingPageState extends State<OnboardingPage>
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               // Logo and title
               Container(
-                width: 70,
-                height: 70,
+                width: 60,
+                height: 60,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(18),
                   border: Border.all(
                     color: _sky500.withAlpha(77),
                     width: 2,
@@ -562,7 +565,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                   ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(16),
                   child: Image.asset(
                     'assets/images/gearsh_logo.png',
                     fit: BoxFit.cover,
@@ -571,13 +574,13 @@ class _OnboardingPageState extends State<OnboardingPage>
                       child: const Icon(
                         Icons.music_note_rounded,
                         color: _sky400,
-                        size: 32,
+                        size: 28,
                       ),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               ShaderMask(
                 shaderCallback: (bounds) => const LinearGradient(
@@ -603,26 +606,33 @@ class _OnboardingPageState extends State<OnboardingPage>
                   fontSize: 15,
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
 
               // Role cards
               _buildRoleCard(
-                icon: Icons.person_search_rounded,
+                icon: Icons.event_rounded,
                 title: 'I\'m a Client',
-                description:
-                    'Find and book talented artists for your events, parties, and special occasions.',
+                description: 'Find and book talented artists for your events, parties, and special occasions.',
                 gradient: [_sky500, _cyan500],
                 onTap: () => _selectRole('client'),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
 
               _buildRoleCard(
                 icon: Icons.music_note_rounded,
                 title: 'I\'m an Artist',
-                description:
-                    'Showcase your talent, manage bookings, and grow your creative business.',
+                description: 'Showcase your talent, manage bookings, and grow your creative business.',
                 gradient: [_cyan400, _sky400],
                 onTap: () => _selectRole('artist'),
+              ),
+              const SizedBox(height: 14),
+
+              _buildRoleCard(
+                icon: Icons.favorite_rounded,
+                title: 'I\'m a Fan',
+                description: 'Follow your favourite artists, discover gigs, buy tickets and merch.',
+                gradient: [const Color(0xFF8B5CF6), const Color(0xFFA855F7)],
+                onTap: () => _selectRole('fan'),
               ),
 
               const SizedBox(height: 24),
@@ -729,9 +739,9 @@ class _OnboardingPageState extends State<OnboardingPage>
         animation: _floatingGlowController,
         builder: (context, child) {
           return Container(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(20),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -755,10 +765,10 @@ class _OnboardingPageState extends State<OnboardingPage>
             child: Row(
               children: [
                 Container(
-                  width: 64,
-                  height: 64,
+                  width: 50,
+                  height: 50,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(14),
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -773,41 +783,42 @@ class _OnboardingPageState extends State<OnboardingPage>
                   ),
                   child: Icon(
                     icon,
-                    size: 28,
+                    size: 24,
                     color: gradient[0],
                   ),
                 ),
-                const SizedBox(width: 20),
+                const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         title,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
                       Text(
                         description,
                         style: TextStyle(
-                          color: Colors.white.withAlpha(128),
-                          fontSize: 13,
-                          height: 1.4,
+                          color: Colors.white.withAlpha(153),
+                          fontSize: 12,
+                          height: 1.3,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 10),
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: 36,
+                  height: 36,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                     gradient: LinearGradient(colors: gradient),
                     boxShadow: [
                       BoxShadow(
@@ -820,7 +831,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                   child: const Icon(
                     Icons.arrow_forward_rounded,
                     color: Colors.white,
-                    size: 20,
+                    size: 18,
                   ),
                 ),
               ],

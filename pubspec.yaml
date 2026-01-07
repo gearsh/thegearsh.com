@@ -1,5 +1,5 @@
 name: gearsh_app
-description: "Gearsh - Book DJs, Photographers, Videographers & Creative Talent for Your Events"
+description: "Gearsh - The Global Marketplace to Book DJs, Photographers, Videographers & Creative Talent Worldwide"
 publish_to: 'none'
 version: 1.0.0+1
 environment:
@@ -8,6 +8,8 @@ environment:
 dependencies: 
   dio: ^5.3.2
   flutter:
+    sdk: flutter
+  flutter_web_plugins:
     sdk: flutter
   flutter_riverpod: ^3.0.3
   go_router: ^17.0.1
@@ -24,13 +26,18 @@ dependencies:
   fl_chart: ^1.1.1
   geocoding: ^4.0.0
   fuzzywuzzy: ^1.2.0
-  # Firebase (for authentication)
+  # Firebase
   firebase_core: ^3.8.1
   firebase_auth: ^5.3.4
+  firebase_crashlytics: ^4.0.1
+  firebase_analytics: ^11.0.1
   # Social Sign-In
   google_sign_in: ^6.2.1
   sign_in_with_apple: ^6.1.4
+  # Utilities
   crypto: ^3.0.6
+  url_launcher: ^6.2.1
+  package_info_plus: ^8.0.0
 
 dev_dependencies:
   flutter_test:

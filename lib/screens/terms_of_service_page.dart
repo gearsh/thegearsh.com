@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:gearsh_app/services/global_config_service.dart';
 
 class TermsOfServicePage extends StatelessWidget {
   const TermsOfServicePage({super.key});
@@ -39,7 +41,17 @@ class TermsOfServicePage extends StatelessWidget {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () {
+                        try {
+                          if (context.canPop()) {
+                            context.pop();
+                          } else {
+                            context.go('/profile-settings');
+                          }
+                        } catch (e) {
+                          context.go('/profile-settings');
+                        }
+                      },
                       child: Container(
                         width: 44,
                         height: 44,
@@ -83,7 +95,9 @@ class TermsOfServicePage extends StatelessWidget {
                       _buildLegalNotice(),
                       const SizedBox(height: 24),
                       _buildSection('1. Introduction', [
-                        'Gearsh is a digital marketplace that connects Clients with Artists for entertainment bookings. By accessing or using the Gearsh application or website, you agree to be bound by these Terms & Conditions.',
+                        'Gearsh is a global digital marketplace that connects Clients with Artists for entertainment and creative services bookings worldwide. By accessing or using the Gearsh application or website from any country, you agree to be bound by these Terms & Conditions.',
+                        '',
+                        'These Terms apply to users in all regions where Gearsh operates. Some provisions may vary based on local law requirements.',
                       ]),
                       _buildSection('2. Definitions', [
                         '• "Gearsh" refers to the Gearsh platform, including its app, website, directors, employees, and partners.',
@@ -120,11 +134,18 @@ class TermsOfServicePage extends StatelessWidget {
                       _buildSection('6. Financial Terms & Payments', [
                         '6.1 Payment Structure',
                         '1. Clients must pay 100% of the booking amount upfront through the Gearsh platform.',
-                        '2. Funds are held by Gearsh until the performance is completed.',
-                        '3. Artists receive payment after successful performance completion, less Gearsh\'s service fee (12.6%).',
+                        '2. Payments are accepted in local currencies based on your region.',
+                        '3. Funds are held by Gearsh until the performance is completed.',
+                        '4. Artists receive payment after successful performance completion, less Gearsh\'s service fee (12.6%).',
                         '',
-                        '6.2 Travel, Distance & Additional Costs',
-                        '1. Artists may define travel radius, per-kilometer fees, and accommodation requirements.',
+                        '6.2 Currency & Conversion',
+                        '1. Artists set prices in their local currency.',
+                        '2. Clients see prices converted to their selected currency.',
+                        '3. Final charges are processed in the Client\'s local currency where supported.',
+                        '4. Exchange rates are indicative and may vary at time of payment.',
+                        '',
+                        '6.3 Travel, Distance & Additional Costs',
+                        '1. Artists may define travel radius, per-kilometre fees, and accommodation requirements.',
                         '2. Gearsh calculates distance using location data and displays it via an in-app map.',
                         '3. Additional costs are automatically added to the booking total.',
                         '',
@@ -144,8 +165,13 @@ class TermsOfServicePage extends StatelessWidget {
                       ]),
                       _buildSection('8. Dispute Resolution', [
                         '1. Users must first attempt resolution via Gearsh support.',
-                        '2. Gearsh may mediate disputes.',
-                        '3. These Terms are governed by the laws of South Africa.',
+                        '2. Gearsh may mediate disputes between Clients and Artists.',
+                        '3. These Terms are governed by the laws of ${globalConfigService.getTermsJurisdiction()}.',
+                        '',
+                        'For international disputes:',
+                        '• EU users may use the EU Online Dispute Resolution platform',
+                        '• Users may have additional rights under their local consumer protection laws',
+                        '• Arbitration may be available in certain jurisdictions',
                       ]),
                       _buildSection('9. Safety & Liability', [
                         '1. Artists must perform professionally and lawfully.',
@@ -171,7 +197,11 @@ class TermsOfServicePage extends StatelessWidget {
                         'Gearsh may update these Terms at any time. Continued use constitutes acceptance of changes.',
                       ]),
                       _buildSection('13. Contact', [
-                        'For questions regarding these Terms, contact Gearsh support through the app.',
+                        'For questions regarding these Terms, contact Gearsh:',
+                        '',
+                        '• Email: legal@thegearsh.com',
+                        '• In-app: Settings > Help Centre',
+                        '• Website: thegearsh.com/terms',
                       ]),
                       const SizedBox(height: 40),
                     ],
@@ -212,7 +242,7 @@ class TermsOfServicePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'These Terms & Conditions govern the use of the Gearsh platform. This is a draft framework and must be reviewed by a qualified legal professional before public release.',
+                  'These Terms & Conditions govern the use of the Gearsh platform globally. Terms are applicable to all users worldwide and comply with international consumer protection standards. Last updated: December 2025.',
                   style: TextStyle(
                     color: Colors.white.withAlpha(179),
                     fontSize: 13,

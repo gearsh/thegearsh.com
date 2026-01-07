@@ -20,7 +20,7 @@ class _SearchBarWidgetState extends ConsumerState<SearchBarWidget> {
         style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
           hintText: 'Search by name, category, location...',
-          hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
           prefixIcon: const Icon(Icons.search, color: Colors.white70),
           filled: true,
           fillColor: const Color(0xFF0F172A),

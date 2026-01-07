@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
-import 'package:gearsh_app/widgets/auth_prompt.dart';
+import 'package:gearsh_app/services/global_config_service.dart';
 
 class ArtistDashboardPage extends StatefulWidget {
   const ArtistDashboardPage({super.key});
@@ -67,7 +66,7 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
   ];
 
   final List<Map<String, dynamic>> _recentActivity = [
-    {'color': _green400, 'text': 'Payment received - R500', 'time': '2 hours ago'},
+    {'color': _green400, 'text': 'Payment received - ${globalConfigService.formatPrice(500)}', 'time': '2 hours ago'},
     {'color': _cyan400, 'text': 'New booking request', 'time': '5 hours ago'},
     {'color': _sky400, 'text': 'Booking confirmed for Dec 10', 'time': '1 day ago'},
   ];
@@ -240,6 +239,7 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
           _buildNavItem(Icons.message_outlined, 'Messages', false, () => context.go('/messages')),
           _buildNavItem(Icons.calendar_today_outlined, 'Calendar', false, () {}),
           _buildNavItem(Icons.person_outline, 'Profile', false, () => context.go('/profile-settings')),
+          _buildNavItem(Icons.verified_user_outlined, 'Verification', false, () => context.go('/dashboard/verification')),
         ],
       ),
     );
@@ -314,7 +314,7 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
             Expanded(child: _buildStatCard(
               icon: Icons.attach_money_rounded,
               label: 'This Month',
-              value: 'R3,200',
+              value: globalConfigService.formatPrice(3200),
               trend: '+24%',
             )),
             const SizedBox(width: 12),

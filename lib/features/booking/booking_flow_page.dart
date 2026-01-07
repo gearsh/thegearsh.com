@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gearsh_app/services/user_role_service.dart';
 import 'package:gearsh_app/widgets/auth_prompt.dart';
+import 'package:gearsh_app/data/gearsh_artists.dart';
+import 'package:gearsh_app/services/payfast_service.dart';
 
 class BookingFlowPage extends StatefulWidget {
   final String artistId;
   final String? artistName;
   final String? serviceName;
   final double? servicePrice;
+  final String? serviceId;
 
   const BookingFlowPage({
     super.key,
@@ -15,6 +18,7 @@ class BookingFlowPage extends StatefulWidget {
     this.artistName,
     this.serviceName,
     this.servicePrice,
+    this.serviceId,
   });
 
   @override
@@ -35,9 +39,19 @@ class _BookingFlowPageState extends State<BookingFlowPage>
   TimeOfDay _selectedTime = const TimeOfDay(hour: 18, minute: 0);
   String _selectedCardId = 'card1';
 
+  // Saved cards for payment selection
+  final List<Map<String, String>> _savedCards = [
+    {'id': 'card1', 'brand': 'Visa', 'last4': '4242', 'expiry': '12/25'},
+    {'id': 'card2', 'brand': 'Mastercard', 'last4': '8888', 'expiry': '06/26'},
+  ];
+
   // Animation controller
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+
+  // Artist and Service data
+  GearshArtist? _artist;
+  Map<String, dynamic>? _selectedService;
 
   // Pricing
   late double _servicePrice;
@@ -51,16 +65,34 @@ class _BookingFlowPageState extends State<BookingFlowPage>
   static const Color _sky400 = Color(0xFF38BDF8);
   static const Color _cyan500 = Color(0xFF06B6D4);
 
-  // Mock saved cards
-  final List<Map<String, String>> _savedCards = [
-    {'id': 'card1', 'brand': 'Visa', 'last4': '4242', 'expiry': '12/25'},
-    {'id': 'card2', 'brand': 'Mastercard', 'last4': '8888', 'expiry': '09/26'},
-  ];
 
   @override
   void initState() {
     super.initState();
-    _servicePrice = widget.servicePrice ?? 500.0;
+
+    // Fetch artist data
+    _artist = getArtistById(widget.artistId);
+
+    // Find the selected service
+    if (_artist != null && widget.serviceId != null) {
+      for (final service in _artist!.services) {
+        if (service['id'] == widget.serviceId) {
+          _selectedService = service;
+          break;
+        }
+      }
+    }
+
+    // If no service found, use first service or default
+    if (_selectedService == null && _artist != null && _artist!.services.isNotEmpty) {
+      _selectedService = _artist!.services.first;
+    }
+
+    // Set service price from actual service data
+    _servicePrice = (_selectedService?['price'] as num?)?.toDouble() ??
+                    widget.servicePrice ??
+                    _artist?.bookingFee.toDouble() ??
+                    500.0;
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -92,8 +124,11 @@ class _BookingFlowPageState extends State<BookingFlowPage>
   double get _serviceFee => _servicePrice * _serviceFeePercentage;
   double get _total => _servicePrice + _serviceFee;
 
-  String get _artistName => widget.artistName ?? 'Artist';
-  String get _serviceName => widget.serviceName ?? 'Booking Service';
+  String get _artistName => _artist?.name ?? widget.artistName ?? 'Artist';
+  String get _serviceName => _selectedService?['name'] as String? ?? widget.serviceName ?? 'Booking Service';
+  String get _serviceDuration => _selectedService?['duration'] as String? ?? '';
+  String get _serviceDescription => _selectedService?['description'] as String? ?? '';
+  List<dynamic> get _serviceIncludes => _selectedService?['includes'] as List<dynamic>? ?? [];
 
   void _handleBack() {
     if (_currentStep == 'payment') {
@@ -107,19 +142,99 @@ class _BookingFlowPageState extends State<BookingFlowPage>
     if (_currentStep == 'details') {
       setState(() => _currentStep = 'payment');
     } else {
-      // Complete booking - navigate to success page
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BookingSuccessPage(
-            artistName: _artistName,
-            serviceName: _serviceName,
-            date: _selectedDate,
-            time: _selectedTime,
-            total: _total,
+      // Process payment with PayFast
+      _processPayFastPayment();
+    }
+  }
+
+  Future<void> _processPayFastPayment() async {
+    // Generate a unique booking ID
+    final bookingId = 'GRS-${DateTime.now().millisecondsSinceEpoch}';
+
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: _slate900,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: _sky500.withAlpha(51)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(color: _sky500),
+              const SizedBox(height: 16),
+              const Text(
+                'Redirecting to PayFast...',
+                style: TextStyle(color: Colors.white, fontSize: 14),
+              ),
+            ],
           ),
         ),
+      ),
+    );
+
+    try {
+      // Launch PayFast payment
+      final success = await PayFastService.launchPayment(
+        bookingId: bookingId,
+        amount: _total,
+        artistName: _artistName,
+        serviceName: _serviceName,
+        customerEmail: userRoleService.userEmail,
+        customerFirstName: userRoleService.userName.split(' ').first,
+        customerLastName: userRoleService.userName.split(' ').length > 1
+            ? userRoleService.userName.split(' ').last
+            : '',
       );
+
+      // Close loading dialog
+      if (mounted) Navigator.pop(context);
+
+      if (success) {
+        // Navigate to success page (payment confirmation will come via webhook)
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BookingSuccessPage(
+                artistName: _artistName,
+                serviceName: _serviceName,
+                date: _selectedDate,
+                time: _selectedTime,
+                total: _total,
+              ),
+            ),
+          );
+        }
+      } else {
+        // Show error
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not open payment page. Please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      // Close loading dialog
+      if (mounted) Navigator.pop(context);
+
+      // Show error
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Payment error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -355,7 +470,7 @@ class _BookingFlowPageState extends State<BookingFlowPage>
                     child: Text(
                       _currentStep == 'details'
                           ? 'Continue to Payment'
-                          : 'Confirm Booking Request',
+                          : 'Pay R${_total.toStringAsFixed(0)} with PayFast',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 17,
@@ -395,15 +510,38 @@ class _BookingFlowPageState extends State<BookingFlowPage>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'High-energy experience with full setup',
+                      _serviceDescription.isNotEmpty
+                          ? _serviceDescription
+                          : 'Professional service from $_artistName',
                       style: TextStyle(
                         color: Colors.white.withAlpha(153),
                         fontSize: 13,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
+                    if (_serviceDuration.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Row(
+                          children: [
+                            Icon(Icons.access_time, size: 14, color: _sky400),
+                            const SizedBox(width: 4),
+                            Text(
+                              _serviceDuration,
+                              style: const TextStyle(
+                                color: _sky400,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ),
+              const SizedBox(width: 12),
               Text(
                 'R${_servicePrice.toStringAsFixed(0)}',
                 style: const TextStyle(
@@ -466,6 +604,83 @@ class _BookingFlowPageState extends State<BookingFlowPage>
                 ),
               ),
               const SizedBox(height: 16),
+              // Service details
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _serviceName,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (_serviceDuration.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              'Duration: $_serviceDuration',
+                              style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    'R${_servicePrice.toStringAsFixed(0)}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              // What's included
+              if (_serviceIncludes.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                Text(
+                  'Includes:',
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: _serviceIncludes.map((item) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _sky500.withAlpha(26),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: _sky500.withAlpha(51)),
+                    ),
+                    child: Text(
+                      item.toString(),
+                      style: const TextStyle(
+                        color: _sky400,
+                        fontSize: 11,
+                      ),
+                    ),
+                  )).toList(),
+                ),
+              ],
+              const SizedBox(height: 16),
+              Container(
+                height: 1,
+                color: _sky500.withAlpha(51),
+              ),
+              const SizedBox(height: 12),
               _buildPriceRow('Service Price', 'R${_servicePrice.toStringAsFixed(2)}'),
               const SizedBox(height: 8),
               _buildPriceRow('Service Fee (12.6%)', 'R${_serviceFee.toStringAsFixed(2)}'),
@@ -507,9 +722,9 @@ class _BookingFlowPageState extends State<BookingFlowPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Saved cards
+        // PayFast payment info
         const Text(
-          'Saved Payment Methods',
+          'Payment Method',
           style: TextStyle(
             color: Colors.white,
             fontSize: 16,
@@ -518,51 +733,132 @@ class _BookingFlowPageState extends State<BookingFlowPage>
         ),
         const SizedBox(height: 12),
 
-        // Card list
-        ..._savedCards.map((card) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _buildPaymentCard(card),
-            )),
+        // PayFast card
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: _sky500.withAlpha(25),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: _sky500, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: _sky500.withAlpha(51),
+                blurRadius: 20,
+                spreadRadius: 0,
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.all(8),
+                child: Image.network(
+                  'https://www.payfast.co.za/assets/images/payfast_logo_colour.svg',
+                  errorBuilder: (_, __, ___) => const Icon(
+                    Icons.payment,
+                    color: _sky500,
+                    size: 32,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'PayFast',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Pay securely with card, EFT, or SnapScan',
+                      style: TextStyle(
+                        color: Colors.white.withAlpha(153),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 26,
+                height: 26,
+                decoration: const BoxDecoration(
+                  color: _sky500,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.check_rounded,
+                  color: Colors.white,
+                  size: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
 
-        // Add card button
-        GestureDetector(
-          onTap: () {
-            // TODO: Add new card flow
-          },
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: _slate900.withAlpha(102),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: _sky500.withAlpha(51)),
+        // Saved Cards Section
+        if (_savedCards.isNotEmpty) ...[
+          const Text(
+            'Saved Cards',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: _sky500.withAlpha(51),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(
-                    Icons.add_rounded,
-                    color: _sky400,
-                    size: 20,
-                  ),
+          ),
+          const SizedBox(height: 12),
+          ..._savedCards.map((card) => Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: _buildPaymentCard(card),
+          )),
+          const SizedBox(height: 8),
+        ],
+
+        // Supported payment methods
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: _slate900.withAlpha(102),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: _sky500.withAlpha(51)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Accepted Payment Methods',
+                style: TextStyle(
+                  color: Colors.white.withAlpha(179),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
                 ),
-                const SizedBox(width: 12),
-                const Text(
-                  'Add Payment Method',
-                  style: TextStyle(
-                    color: _sky400,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 12,
+                runSpacing: 8,
+                children: [
+                  _buildPaymentMethodChip('Visa', Icons.credit_card),
+                  _buildPaymentMethodChip('Mastercard', Icons.credit_card),
+                  _buildPaymentMethodChip('Instant EFT', Icons.account_balance),
+                  _buildPaymentMethodChip('SnapScan', Icons.qr_code),
+                  _buildPaymentMethodChip('Mobicred', Icons.shopping_bag),
+                ],
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 20),
@@ -588,6 +884,19 @@ class _BookingFlowPageState extends State<BookingFlowPage>
               _buildSummaryRow('Date', '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}'),
               const SizedBox(height: 8),
               _buildSummaryRow('Time', '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}'),
+              if (_locationController.text.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                _buildSummaryRow('Location', _locationController.text),
+              ],
+              const SizedBox(height: 12),
+              Container(
+                height: 1,
+                color: _sky500.withAlpha(51),
+              ),
+              const SizedBox(height: 12),
+              _buildSummaryRow('Service Price', 'R${_servicePrice.toStringAsFixed(2)}'),
+              const SizedBox(height: 6),
+              _buildSummaryRow('Service Fee (12.6%)', 'R${_serviceFee.toStringAsFixed(2)}'),
               const SizedBox(height: 12),
               Container(
                 height: 1,
@@ -620,6 +929,33 @@ class _BookingFlowPageState extends State<BookingFlowPage>
         ),
         const SizedBox(height: 16),
 
+        // Security note
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: const Color(0xFF22C55E).withAlpha(25),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFF22C55E).withAlpha(51)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.lock, color: Color(0xFF22C55E), size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Your payment is secured by PayFast with bank-level encryption.',
+                  style: TextStyle(
+                    color: Colors.white.withAlpha(179),
+                    fontSize: 12,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+
         // Terms
         Container(
           padding: const EdgeInsets.all(14),
@@ -629,7 +965,7 @@ class _BookingFlowPageState extends State<BookingFlowPage>
             border: Border.all(color: _sky500.withAlpha(25)),
           ),
           child: Text(
-            'By confirming, you agree to our Terms of Service and acknowledge that payment will be processed upon artist confirmation.',
+            'By confirming, you agree to our Terms of Service. Payment will be held securely until the artist confirms your booking.',
             style: TextStyle(
               color: Colors.white.withAlpha(153),
               fontSize: 12,
@@ -638,6 +974,32 @@ class _BookingFlowPageState extends State<BookingFlowPage>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildPaymentMethodChip(String label, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: _slate800,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: _sky500.withAlpha(51)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: _sky400, size: 16),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

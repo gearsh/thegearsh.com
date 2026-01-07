@@ -78,8 +78,7 @@ These artists need images downloaded:
 | 54 | The Soil | thesoil.jpg | [Search](https://www.google.com/search?q=The+Soil+acappella+group+photo&tbm=isch) |
 | 55 | K.O | ko.jpg | [Search](https://www.google.com/search?q=K.O+rapper+South+Africa+photo&tbm=isch) |
 | 56 | Busta 929 | busta929.jpg | [Search](https://www.google.com/search?q=Busta+929+DJ+photo&tbm=isch) |
-| 57 | daryana | daryana.jpg | [Search](https://www.google.com/search?q=daryana+singer+South+Africa+photo&tbm=isch) |
-| 58 | Alice Phoebe Lou | alicephoebelou.jpg | [Search](https://www.google.com/search?q=Alice+Phoebe+Lou+singer+photo&tbm=isch) |
+| 57 | Alice Phoebe Lou | alicephoebelou.jpg | [Search](https://www.google.com/search?q=Alice+Phoebe+Lou+singer+photo&tbm=isch) |
 | 59 | Dlala Thukzin | dlalathukzin.jpg | [Search](https://www.google.com/search?q=Dlala+Thukzin+DJ+photo&tbm=isch) |
 | 60 | DBN GOGO | dbngogo.jpg | [Search](https://www.google.com/search?q=DBN+GOGO+DJ+photo&tbm=isch) |
 | 61 | De Mthuda | demthuda.jpg | [Search](https://www.google.com/search?q=De+Mthuda+DJ+photo&tbm=isch) |
@@ -136,5 +135,5 @@ These artists need images downloaded:
 - Use royalty-free or press/promo images when possible
 - Avoid copyrighted images without permission
 - For production apps, consider licensing official photos
-- Memorial listings (Lucky Dube, AKA, Riky Rick, Costa Titch) - use respectful, iconic photos
+- Memorial listings (Lucky Dube, AKA, Riky Rick) - use respectful, iconic photos
 

@@ -128,7 +128,7 @@ class SignUpPromptSheet extends StatelessWidget {
             const SizedBox(height: 32),
 
             // Benefits
-            _buildBenefitItem(Icons.bookmark_rounded, 'Save your favorite artists'),
+            _buildBenefitItem(Icons.bookmark_rounded, 'Save your favourite artists'),
             const SizedBox(height: 12),
             _buildBenefitItem(Icons.calendar_today_rounded, 'Book services instantly'),
             const SizedBox(height: 12),
@@ -240,4 +240,3 @@ class SignUpPromptSheet extends StatelessWidget {
     );
   }
 }
-

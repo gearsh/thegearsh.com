@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gearsh_app/features/messages/messages_screen.dart';
 import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/services/global_config_service.dart';
 import 'package:gearsh_app/widgets/auth_prompt.dart';
+import 'package:gearsh_app/widgets/gearsh_search_bar.dart';
 import 'package:gearsh_app/data/gearsh_artists.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,10 +21,10 @@ class _LandingPageState extends State<LandingPage> {
   // Category list
   static const List<String> _categories = ['All', 'Pop & R&B', 'DJs', 'Hip Hop', 'Rap', 'Gospel', 'Amapiano', 'Comedy'];
 
-  // Get combined artists list (gearsh_artists + legacy)
+  // Get combined artists list (gearsh_artists + legacy) - sorted alphabetically
   List<Map<String, dynamic>> get _allArtists {
-    // Convert gearsh_artists to map format
-    final gearshList = gearshArtists.map((artist) => {
+    // Convert gearsh_artists to map format (already sorted alphabetically)
+    final gearshList = getSortedArtists().map((artist) => {
       'id': artist.id,
       'name': artist.name,
       'category': artist.category,
@@ -369,31 +371,11 @@ class _LandingPageState extends State<LandingPage> {
           // Search Bar
           GestureDetector(
             onTap: () => context.go('/search'),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: _slate800WithOpacity50,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: _skyBlueWithOpacity20,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.search,
-                    color: _whiteWithOpacity50,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    'Search artists, genres...',
-                    style: TextStyle(
-                      color: _whiteWithOpacity50,
-                      fontSize: 13,
-                    ),
-                  ),
-                ],
+            child: const AbsorbPointer(
+              child: GearshSearchBar(
+                hintText: 'Search artists, genres...',
+                compact: true,
+                showClearButton: false,
               ),
             ),
           ),
@@ -414,8 +396,8 @@ class _LandingPageState extends State<LandingPage> {
               scrollDirection: Axis.horizontal,
               children: [
                 _buildArtistCard('A-Reece', 'Hip Hop', 'assets/images/artists/a-reece.png', '1', cardWidth),
-                _buildArtistCard('Nasty C', 'Rap', 'assets/images/artists/nasty c.png', '2', cardWidth),
-                _buildArtistCard('Emtee', 'Hip Hop', 'assets/images/artists/emtee.webp', '3', cardWidth),
+                _buildArtistCard('Nasty C', 'Rap', 'assets/images/artists/nastyc.png', '2', cardWidth),
+                _buildArtistCard('Emtee', 'Hip Hop', 'assets/images/artists/emtee.png', '3', cardWidth),
               ],
             ),
           ),
@@ -820,7 +802,7 @@ class _LandingPageState extends State<LandingPage> {
       'id': 'b2',
       'artistId': '2',
       'artistName': 'Nasty C',
-      'artistImage': 'assets/images/artists/nasty c.png',
+      'artistImage': 'assets/images/artists/nastyc.png',
       'service': 'Festival Headline Set',
       'date': 'Dec 20, 2025',
       'time': '6:00 PM',
@@ -836,7 +818,7 @@ class _LandingPageState extends State<LandingPage> {
       'id': 'b3',
       'artistId': '3',
       'artistName': 'Emtee',
-      'artistImage': 'assets/images/artists/emtee.webp',
+      'artistImage': 'assets/images/artists/emtee.png',
       'service': 'Club Night Performance',
       'date': 'Oct 15, 2025',
       'price': 12000,
@@ -917,7 +899,7 @@ class _LandingPageState extends State<LandingPage> {
                   const SizedBox(width: 10),
                   Expanded(child: _buildStatBox('Completed', '12')),
                   const SizedBox(width: 10),
-                  Expanded(child: _buildStatBox('Spent', 'R87k')),
+                  Expanded(child: _buildStatBox('Spent', globalConfigService.formatPriceShort(87000))),
                 ],
               ),
               const SizedBox(height: 16),

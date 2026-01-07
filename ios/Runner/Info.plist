@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Gearsh App</string>
+	<string>Gearsh</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>gearsh_app</string>
+	<string>Gearsh</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -34,14 +34,6 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSCameraUsageDescription</key>
-	<string>This app needs access to your camera to upload photos.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app needs access to your microphone for recording audio.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs location access for map features.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to your photo library for uploads.</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -49,9 +41,56 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- Privacy Usage Descriptions -->
+	<key>NSCameraUsageDescription</key>
+	<string>Gearsh needs camera access to take profile photos and share moments from events.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Gearsh needs microphone access for voice messages and video recordings.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Gearsh needs your location to find nearby artists and show event venues on the map.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Gearsh needs photo library access to upload profile pictures and portfolio images.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Gearsh can use your contacts to help you invite friends to events.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Gearsh can add your bookings to your calendar.</string>
+	<!-- URL Schemes -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>gearsh</string>
+			</array>
+		</dict>
+	</array>
+	<!-- Associated Domains for Deep Linking -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+		<string>http</string>
+		<string>tel</string>
+		<string>mailto</string>
+	</array>
+	<!-- App Transport Security -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
+	</dict>
+	<!-- Performance -->
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<!-- Status Bar -->
+	<key>UIStatusBarHidden</key>
+	<false/>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 </dict>
 </plist>

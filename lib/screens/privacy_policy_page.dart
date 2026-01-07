@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class PrivacyPolicyPage extends StatelessWidget {
   const PrivacyPolicyPage({super.key});
@@ -39,7 +40,17 @@ class PrivacyPolicyPage extends StatelessWidget {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () {
+                        try {
+                          if (context.canPop()) {
+                            context.pop();
+                          } else {
+                            context.go('/profile-settings');
+                          }
+                        } catch (e) {
+                          context.go('/profile-settings');
+                        }
+                      },
                       child: Container(
                         width: 44,
                         height: 44,
@@ -227,15 +238,34 @@ class PrivacyPolicyPage extends StatelessWidget {
 
                       // III. Choice & Transparency
                       _buildMainSection('III. Choice & Transparency'),
-                      _buildSection('', [
-                        'Users may:',
-                        '• Access and update personal information',
-                        '• Control location permissions',
-                        '• Manage communication preferences',
-                        '• Request copies of their data',
-                        '• Request deletion or restriction of processing',
+                      _buildSection('Your Rights', [
+                        'Depending on your location, you may have the following rights:',
+                        '',
+                        '• Access your personal information',
+                        '• Correct inaccurate data',
+                        '• Delete your personal data ("right to be forgotten")',
+                        '• Restrict or object to processing',
+                        '• Data portability',
+                        '• Withdraw consent',
+                        '• Lodge a complaint with a supervisory authority',
                         '',
                         'Requests can be made via Gearsh support.',
+                      ]),
+                      _buildSection('Regional Rights', [
+                        'EU/EEA Users (GDPR):',
+                        '• All rights listed above apply',
+                        '• 30-day response time for requests',
+                        '',
+                        'California Users (CCPA):',
+                        '• Right to know what data is collected',
+                        '• Right to delete personal information',
+                        '• Right to opt-out of sale (Gearsh does not sell data)',
+                        '• Right to non-discrimination',
+                        '',
+                        'South African Users (POPIA):',
+                        '• Right to access and correction',
+                        '• Right to object to processing',
+                        '• Right to complain to the Information Regulator',
                       ]),
 
                       // IV. Legal Information
@@ -254,7 +284,17 @@ class PrivacyPolicyPage extends StatelessWidget {
                       ]),
 
                       _buildSection('C. Data Transfers', [
-                        'Gearsh may process or store data on secure servers located outside your country, subject to appropriate safeguards.',
+                        'Gearsh operates globally and may process or store data on secure servers located in different countries. When we transfer personal data internationally, we ensure appropriate safeguards are in place, including:',
+                        '',
+                        '• Standard Contractual Clauses (for EU/EEA data)',
+                        '• Adequacy decisions where applicable',
+                        '• Consent-based transfers where legally permitted',
+                        '',
+                        'Data may be processed in the following regions:',
+                        '• South Africa (primary operations)',
+                        '• European Union (for EU users)',
+                        '• United States (cloud infrastructure)',
+                        '• Other regions as necessary for service delivery',
                       ]),
 
                       _buildSection('D. Updates to This Privacy Policy', [
@@ -262,7 +302,13 @@ class PrivacyPolicyPage extends StatelessWidget {
                       ]),
 
                       _buildSection('Contact', [
-                        'For privacy-related questions or requests, contact Gearsh support through the app.',
+                        'For privacy-related questions or requests, contact Gearsh:',
+                        '',
+                        '• Email: privacy@thegearsh.com',
+                        '• In-app: Settings > Help Centre > Privacy',
+                        '• Website: thegearsh.com/privacy',
+                        '',
+                        'For EU users, you may also contact your local data protection authority.',
                       ]),
 
                       const SizedBox(height: 40),
@@ -304,7 +350,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'This Privacy Policy explains how Gearsh collects, uses, shares, and protects personal information in compliance with the Protection of Personal Information Act (POPIA) and other applicable data protection laws.',
+                  'This Privacy Policy explains how Gearsh collects, uses, shares, and protects personal information in compliance with applicable data protection laws worldwide, including GDPR (Europe), CCPA (California), POPIA (South Africa), and other regional regulations.',
                   style: TextStyle(
                     color: Colors.white.withAlpha(179),
                     fontSize: 13,

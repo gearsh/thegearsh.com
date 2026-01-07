@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
 import 'package:gearsh_app/data/gearsh_artists.dart';
+import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/providers/cart_provider.dart';
+import 'package:gearsh_app/widgets/cart_icon.dart';
 
 class ArtistViewProfilePage extends ConsumerStatefulWidget {
   final String artistId;
@@ -17,7 +19,6 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isSaved = false;
-  String? _selectedServiceId;
 
   // Color constants - Deep Sky Blue theme
   static const Color _slate950 = Color(0xFF020617);
@@ -182,7 +183,7 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
             'id': 's1',
             'name': 'Standard Set (3 hours)',
             'price': 800.0,
-            'description': 'Premium Amapiano set perfect for any event. Crowd favorites guaranteed.',
+            'description': 'Premium Amapiano set perfect for any event. Crowd favourites guaranteed.',
             'duration': '3 hours',
             'includes': ['DJ performance', 'Sound system', 'Basic lighting'],
           },
@@ -334,6 +335,10 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
   }
 
   void _toggleSaved() {
+    if (userRoleService.isGuest && !userRoleService.isLoggedIn) {
+      _showSignUpPrompt('Saved Artists');
+      return;
+    }
     setState(() => _isSaved = !_isSaved);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -345,18 +350,171 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
   }
 
   void _bookService(Map<String, dynamic> service) {
-    setState(() => _selectedServiceId = service['id']);
-    context.go('/booking-flow/${widget.artistId}?service=${service['id']}');
+    if (userRoleService.isGuest && !userRoleService.isLoggedIn) {
+      _showSignUpPrompt('Booking');
+    } else {
+      context.go('/booking-flow/${widget.artistId}?service=${service['id']}');
+    }
   }
 
   void _contactArtist() {
-    context.go('/messages');
+    if (userRoleService.isGuest && !userRoleService.isLoggedIn) {
+      _showSignUpPrompt('Messages');
+    } else {
+      context.go('/messages');
+    }
+  }
+
+  void _showSignUpPrompt(String feature) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: _slate900,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          border: Border.all(color: _sky500.withAlpha(51), width: 1),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Icon
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: _sky500.withAlpha(26),
+                shape: BoxShape.circle,
+                border: Border.all(color: _sky500.withAlpha(51), width: 1),
+              ),
+              child: Icon(
+                feature == 'Booking'
+                    ? Icons.calendar_today
+                    : feature == 'Saved Artists'
+                        ? Icons.favorite
+                        : Icons.chat_bubble,
+                color: _sky400,
+                size: 32,
+              ),
+            ),
+            const SizedBox(height: 20),
+            // Title
+            Text(
+              'Sign Up to Access $feature',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            // Description
+            Text(
+              feature == 'Booking'
+                  ? 'Create an account to book artists and manage your events.'
+                  : feature == 'Saved Artists'
+                      ? 'Create an account to save your favourite artists.'
+                      : 'Create an account to message artists directly.',
+              style: TextStyle(
+                color: Colors.grey[400],
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 28),
+            // Sign Up Button
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+                context.go('/signup');
+              },
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(colors: [_sky500, _cyan500]),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _sky500.withAlpha(77),
+                      blurRadius: 20,
+                      spreadRadius: 0,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Text(
+                    'Sign Up Free',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Login Button
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+                context.go('/login');
+              },
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: _slate800, width: 1),
+                ),
+                child: Center(
+                  child: Text(
+                    'Already have an account? Log In',
+                    style: TextStyle(
+                      color: Colors.white.withAlpha(204),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Continue exploring
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Continue Exploring',
+                style: TextStyle(
+                  color: Colors.grey[500],
+                  fontSize: 14,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final padding = MediaQuery.of(context).padding;
     final data = _artistData;
     final isAvailable = data['isAvailable'] as bool;
 
@@ -381,10 +539,16 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
                   backgroundColor: _slate950,
                   leading: GestureDetector(
                     onTap: () {
-                      if (context.canPop()) {
-                        context.pop();
-                      } else {
-                        context.go('/home');
+                      if (!mounted) return;
+                      try {
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.go('/');
+                        }
+                      } catch (e) {
+                        // Fallback navigation
+                        context.go('/');
                       }
                     },
                     child: Container(
@@ -397,6 +561,15 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
                     ),
                   ),
                   actions: [
+                    // Cart icon
+                    Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: _slate900.withAlpha(200),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const CartIconButton(size: 22),
+                    ),
                     GestureDetector(
                       onTap: _toggleSaved,
                       child: Container(
@@ -781,6 +954,10 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
   }
 
   Widget _buildServiceCard(Map<String, dynamic> service, bool isAvailable) {
+    final double price = service['price'] as double;
+    final double serviceFee = price * 0.126; // 12.6% service fee
+    final double total = price + serviceFee;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -805,13 +982,25 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
                   ),
                 ),
               ),
-              Text(
-                'R${(service['price'] as double).toStringAsFixed(0)}',
-                style: const TextStyle(
-                  color: _sky400,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'R${price.toStringAsFixed(0)}',
+                    style: const TextStyle(
+                      color: _sky400,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '+ R${serviceFee.toStringAsFixed(0)} fee',
+                    style: TextStyle(
+                      color: Colors.white.withAlpha(128),
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -858,31 +1047,196 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
               );
             }).toList(),
           ),
-          const SizedBox(height: 16),
-          // Book Button
-          GestureDetector(
-            onTap: isAvailable ? () => _bookService(service) : null,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                gradient: isAvailable
-                    ? const LinearGradient(colors: [_sky500, _cyan500])
-                    : null,
-                color: isAvailable ? null : _slate800,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Text(
-                  isAvailable ? 'Select & Book' : 'Not Available',
+          const SizedBox(height: 12),
+          // Total Price Row
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: _sky500.withAlpha(25),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Total (incl. 12.6% service fee)',
                   style: TextStyle(
-                    color: isAvailable ? Colors.white : _slate400,
-                    fontWeight: FontWeight.w600,
+                    color: Colors.white.withAlpha(179),
+                    fontSize: 12,
+                  ),
+                ),
+                Text(
+                  'R${total.toStringAsFixed(0)}',
+                  style: const TextStyle(
+                    color: _sky400,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Action Buttons Row
+          Row(
+            children: [
+              // Add to Cart Button
+              Expanded(
+                child: _buildAddToCartButton(service, isAvailable),
+              ),
+              const SizedBox(width: 12),
+              // Book Now Button
+              Expanded(
+                child: GestureDetector(
+                  onTap: isAvailable ? () => _bookService(service) : null,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      gradient: isAvailable
+                          ? const LinearGradient(colors: [_sky500, _cyan500])
+                          : null,
+                      color: isAvailable ? null : _slate800,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: Text(
+                        isAvailable ? 'Book Now' : 'Not Available',
+                        style: TextStyle(
+                          color: isAvailable ? Colors.white : _slate400,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAddToCartButton(Map<String, dynamic> service, bool isAvailable) {
+    // Try to get artist from database, or create from mock data
+    GearshArtist? foundArtist = getArtistById(widget.artistId);
+
+    // If not found in database, create a GearshArtist from mock data
+    final GearshArtist artist;
+    if (foundArtist != null) {
+      artist = foundArtist;
+    } else {
+      final data = _artistData;
+      artist = GearshArtist(
+        id: widget.artistId,
+        name: data['name'] as String,
+        username: data['username'] as String? ?? '@${(data['name'] as String).toLowerCase().replaceAll(' ', '')}',
+        image: data['avatar'] as String? ?? 'assets/images/placeholder.png',
+        category: data['category'] as String,
+        subcategories: List<String>.from(data['subcategories'] ?? []),
+        location: data['location'] as String? ?? 'Unknown',
+        rating: (data['rating'] as num?)?.toDouble() ?? 4.5,
+        reviewCount: data['reviewCount'] as int? ?? 0,
+        completedGigs: data['completedGigs'] as int? ?? 0,
+        responseTime: data['responseTime'] as String? ?? '< 1 hour',
+        isVerified: data['isVerified'] as bool? ?? false,
+        isAvailable: data['isAvailable'] as bool? ?? true,
+        bio: data['bio'] as String? ?? '',
+        bookingFee: 500, // Default booking fee
+        highlights: List<String>.from(data['highlights'] ?? []),
+        services: List<Map<String, dynamic>>.from(data['services'] ?? []),
+        discography: [],
+        upcomingGigs: [],
+        merch: [],
+      );
+    }
+
+    if (!isAvailable) {
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: _slate800,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: _slate800),
+        ),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.shopping_cart_outlined, color: _slate400, size: 18),
+              const SizedBox(width: 6),
+              Text(
+                'Add to Cart',
+                style: TextStyle(color: _slate400, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final isInCart = ref.watch(cartProvider).hasItem(artist.id, service['id'] as String);
+
+    return GestureDetector(
+      onTap: () {
+        if (isInCart) {
+          // Go to cart
+          context.go('/cart');
+        } else {
+          // Add to cart
+          ref.read(cartActionsProvider).addFromArtistService(artist, service);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text('${service['name']} added to cart'),
+                  ),
+                ],
+              ),
+              backgroundColor: _sky500,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              action: SnackBarAction(
+                label: 'View Cart',
+                textColor: Colors.white,
+                onPressed: () => context.go('/cart'),
+              ),
+            ),
+          );
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: isInCart ? _green500.withAlpha(26) : _slate900,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isInCart ? _green500 : _sky500.withAlpha(77),
+          ),
+        ),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                isInCart ? Icons.check_circle : Icons.add_shopping_cart,
+                color: isInCart ? _green500 : _sky400,
+                size: 18,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                isInCart ? 'In Cart' : 'Add to Cart',
+                style: TextStyle(
+                  color: isInCart ? _green500 : _sky400,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

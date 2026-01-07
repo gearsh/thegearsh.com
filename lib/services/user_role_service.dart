@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 enum UserRole {
   client,
   artist,
+  fan,
 }
 
 /// Service for managing the current user's role and authentication state
@@ -25,6 +26,7 @@ class UserRoleService extends ChangeNotifier {
   bool get requiresSignUp => _isGuest && !_isLoggedIn;
   bool get isClient => _currentRole == UserRole.client;
   bool get isArtist => _currentRole == UserRole.artist;
+  bool get isFan => _currentRole == UserRole.fan;
   String get userName => _userName;
   String get userEmail => _userEmail;
 

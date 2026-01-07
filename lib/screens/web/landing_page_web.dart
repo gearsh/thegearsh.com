@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class WebLandingPage extends StatefulWidget {
-  const WebLandingPage({Key? key}) : super(key: key);
+  const WebLandingPage({super.key});
 
   @override
   State<WebLandingPage> createState() => _WebLandingPageState();
@@ -48,7 +48,7 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
-                  colors: [_cyan500.withOpacity(0.15), Colors.transparent],
+                  colors: [_cyan500.withValues(alpha: 0.15), Colors.transparent],
                 ),
               ),
             ),
@@ -68,7 +68,7 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
-                  colors: [_sky500.withOpacity(0.2), Colors.transparent],
+                  colors: [_sky500.withValues(alpha: 0.2), Colors.transparent],
                 ),
               ),
             ),
@@ -85,7 +85,7 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
         children: [
           Divider(
             height: 1.5,
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
           ),
           const SizedBox(height: 24),
           Row(
@@ -93,7 +93,7 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
             children: [
               Text(
                 '© 2025 Gearsh. All rights reserved.',
-                style: TextStyle(color: Colors.white.withOpacity(0.5)),
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
               ),
               Row(
                 children: [
@@ -101,7 +101,7 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
                     onPressed: () {},
                     child: Text(
                       'Privacy',
-                      style: TextStyle(color: Colors.white.withOpacity(0.7)),
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
                     ),
                   ),
                   const SizedBox(width: 20),
@@ -109,7 +109,7 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
                     onPressed: () {},
                     child: Text(
                       'Terms',
-                      style: TextStyle(color: Colors.white.withOpacity(0.7)),
+                      style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
                     ),
                   ),
                 ],
@@ -136,7 +136,7 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        border: Border.all(color: gradient[0].withOpacity(0.2), width: 1.5),
+        border: Border.all(color: gradient[0].withValues(alpha: 0.2), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,7 +162,7 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
           Text(
             description,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               height: 1.5,
               fontSize: 16,
             ),
@@ -236,7 +236,7 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
                 Text(
                   'Connect with DJs, photographers, videographers and more. Book instantly for your next event.',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 18,
                     height: 1.6,
                   ),
@@ -258,7 +258,7 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
                       onPressed: () {},
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
-                        side: BorderSide(color: _sky500.withOpacity(0.5)),
+                        side: BorderSide(color: _sky500.withValues(alpha: 0.5)),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       child: const Text('I\'m an Artist', style: TextStyle(color: Colors.white, fontSize: 16)),
@@ -307,7 +307,7 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
-                      colors: [_sky500.withOpacity(0.3), Colors.transparent],
+                      colors: [_sky500.withValues(alpha: 0.3), Colors.transparent],
                     ),
                   ),
                 ),
