@@ -1,0 +1,2 @@
+C:/Users/admin/StudioProjects/thegearsh.com/android/app/.cxx/debug/1h2u5z4a/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/admin/StudioProjects/thegearsh.com/android/app/.cxx/debug/1h2u5z4a/x86_64/CMakeFiles/rebuild_cache.dir
