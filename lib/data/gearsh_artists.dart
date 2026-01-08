@@ -58,6 +58,209 @@ class GearshArtist {
 
 // Featured verified artists on Gearsh
 const List<GearshArtist> gearshArtists = [
+  // FEATURED FIRST: Rix Elton (moved here)
+  GearshArtist(
+    id: 'rix-elton',
+    name: 'Rix Elton',
+    username: '@rixelton',
+    category: 'Amapiano',
+    subcategories: ['Amapiano', 'DJ', 'Producer'],
+    location: 'Johannesburg, SA',
+    rating: 4.3,
+    reviewCount: 120,
+    completedGigs: 50,
+    responseTime: '< 24 hours',
+    image: 'assets/images/artists/rixelton.jpg',
+    isVerified: true,
+    isAvailable: true,
+    bio: 'A rising Amapiano DJ and producer known for deep log drum grooves and crowd-moving sets. Available for clubs, festivals and private events.',
+    bookingFee: 20000,
+    bookingFeeUSD: 1100.0,
+    highlights: [
+      'Rising Amapiano talent',
+      'Club & festival DJ',
+      'Signature log-drums',
+    ],
+    services: [
+      {
+        'id': 's1',
+        'name': 'Club Set (2 hours)',
+        'price': 20000.0,
+        'description': 'High-energy Amapiano DJ set tailored for clubs.',
+        'duration': '2 hours',
+        'includes': ['DJ performance', 'Custom playlist', 'Crowd interaction'],
+      },
+      {
+        'id': 's2',
+        'name': 'Festival Slot (1 hour)',
+        'price': 35000.0,
+        'description': 'Packed festival set with full production support.',
+        'duration': '1 hour',
+        'includes': ['Festival performance', 'MC support', 'Back-to-back options'],
+      },
+    ],
+  ),
+  // FEATURED: ZJ90
+  GearshArtist(
+    id: 'zj90',
+    name: 'ZJ90',
+    username: '@zj90',
+    category: 'DJ',
+    subcategories: ['DJ', 'House', 'Amapiano'],
+    location: 'Johannesburg, SA',
+    rating: 4.5,
+    reviewCount: 200,
+    completedGigs: 120,
+    responseTime: '< 12 hours',
+    image: 'assets/images/artists/ZJ90.jpg',
+    isVerified: true,
+    isAvailable: true,
+    bio: 'Dynamic female DJ known for electrifying sets that blend house, amapiano and afrobeats. A crowd favourite at clubs and festivals across South Africa.',
+    bookingFee: 25000,
+    bookingFeeUSD: 1400.0,
+    highlights: [
+      'Electrifying DJ sets',
+      'House & Amapiano specialist',
+      'Festival performer',
+      'Female DJ icon',
+    ],
+    services: [
+      {
+        'id': 's1',
+        'name': 'Club Set (2 hours)',
+        'price': 25000.0,
+        'description': 'High-energy DJ set blending house and amapiano.',
+        'duration': '2 hours',
+        'includes': ['DJ performance', 'Custom playlist', 'Crowd interaction'],
+      },
+      {
+        'id': 's2',
+        'name': 'Festival Performance',
+        'price': 40000.0,
+        'description': 'Premium festival set with full production.',
+        'duration': '1.5 hours',
+        'includes': ['Festival performance', 'Full production', 'Meet & greet'],
+      },
+      {
+        'id': 's3',
+        'name': 'Private Event',
+        'price': 35000.0,
+        'description': 'Exclusive private event DJ set.',
+        'duration': '3 hours',
+        'includes': ['DJ performance', 'Custom setlist', 'Photo ops'],
+      },
+    ],
+  ),
+  // FEATURED: Empress Ngqama
+  GearshArtist(
+    id: 'empress-ngqama',
+    name: 'Empress Ngqama',
+    username: '@empressngqama',
+    category: 'Afro-Soul',
+    subcategories: ['Afro-Soul', 'Reggae', 'Soul'],
+    location: 'Eastern Cape, SA',
+    rating: 4.6,
+    reviewCount: 180,
+    completedGigs: 95,
+    responseTime: '< 24 hours',
+    image: 'assets/images/artists/empress-ngqama.jpg',
+    isVerified: true,
+    isAvailable: true,
+    bio: 'A soulful songstress blending Afro-soul with reggae influences. Her powerful vocals and uplifting lyrics create a unique sound that touches hearts and moves crowds.',
+    bookingFee: 22000,
+    bookingFeeUSD: 1200.0,
+    highlights: [
+      'Soulful vocalist',
+      'Reggae-infused sound',
+      'Uplifting performances',
+      'Cultural storyteller',
+    ],
+    services: [
+      {
+        'id': 's1',
+        'name': 'Live Performance (1 hour)',
+        'price': 22000.0,
+        'description': 'Soulful live performance with full band.',
+        'duration': '1 hour',
+        'includes': ['Live performance', 'Original songs', 'Crowd interaction'],
+      },
+      {
+        'id': 's2',
+        'name': 'Festival Set',
+        'price': 35000.0,
+        'description': 'Premium festival performance with full production.',
+        'duration': '1.5 hours',
+        'includes': ['Live performance', 'Full band', 'Meet & greet'],
+      },
+      {
+        'id': 's3',
+        'name': 'Private Event',
+        'price': 30000.0,
+        'description': 'Intimate private event with acoustic or full band option.',
+        'duration': '2 hours',
+        'includes': ['Live performance', 'Custom setlist', 'Photo session'],
+      },
+    ],
+  ),
+  // FEATURED: Dripmaker
+  GearshArtist(
+    id: 'dripmaker',
+    name: 'Dripmaker',
+    username: '@dripmaker',
+    category: 'Fashion Designer',
+    subcategories: ['Fashion Designer', 'Stylist', 'Clothing'],
+    location: 'Thohoyandou, SA',
+    rating: 4.5,
+    reviewCount: 250,
+    completedGigs: 180,
+    responseTime: '< 12 hours',
+    image: 'assets/images/artists/dripmaker.png',
+    isVerified: true,
+    isAvailable: true,
+    bio: 'Creative fashion designer crafting unique streetwear and custom pieces. Known for bold designs that make a statement. Clothing available for purchase starting from R300.',
+    bookingFee: 300,
+    bookingFeeUSD: 17.0,
+    highlights: [
+      'Custom streetwear',
+      'Bold designs',
+      'Affordable fashion',
+      'Made-to-order pieces',
+    ],
+    services: [
+      {
+        'id': 's1',
+        'name': 'Custom T-Shirt',
+        'price': 300.0,
+        'description': 'Custom designed t-shirt with your choice of graphics.',
+        'duration': '3-5 days',
+        'includes': ['Custom design', 'Quality fabric', 'Delivery'],
+      },
+      {
+        'id': 's2',
+        'name': 'Custom Hoodie',
+        'price': 550.0,
+        'description': 'Premium custom hoodie with unique Dripmaker design.',
+        'duration': '5-7 days',
+        'includes': ['Custom design', 'Premium fabric', 'Embroidery option'],
+      },
+      {
+        'id': 's3',
+        'name': 'Full Outfit Design',
+        'price': 1500.0,
+        'description': 'Complete custom outfit design and creation.',
+        'duration': '2-3 weeks',
+        'includes': ['Consultation', 'Design', 'Multiple pieces', 'Fitting'],
+      },
+      {
+        'id': 's4',
+        'name': 'Styling Session',
+        'price': 800.0,
+        'description': 'Personal styling consultation and wardrobe advice.',
+        'duration': '2 hours',
+        'includes': ['Style assessment', 'Outfit recommendations', 'Shopping list'],
+      },
+    ],
+  ),
   GearshArtist(
     id: 'tyla',
     name: 'Tyla',
@@ -70,7 +273,7 @@ const List<GearshArtist> gearshArtists = [
     completedGigs: 450,
     responseTime: 'Via management',
     image: 'assets/images/artists/tyla.jpg',
-    isVerified: true,
+    isVerified: false, // Removed from featured list
     isAvailable: true,
     bio: 'Grammy-winning pop and R&B singer who rose to fame with her hit "Water". Her energetic performances and smooth vocals make her a sought-after act for premium events worldwide.',
     bookingFee: 150000,
@@ -1021,6 +1224,47 @@ const List<GearshArtist> gearshArtists = [
         'description': 'Extended set with full backing.',
         'duration': '1 hour',
         'includes': ['Live performance', 'Extended set', 'Meet & greet'],
+      },
+    ],
+  ),
+  GearshArtist(
+    id: 'rix-elton',
+    name: 'Rix Elton',
+    username: '@rixelton',
+    category: 'Amapiano',
+    subcategories: ['Amapiano', 'DJ', 'Producer'],
+    location: 'Johannesburg, SA',
+    rating: 4.3,
+    reviewCount: 120,
+    completedGigs: 50,
+    responseTime: '< 24 hours',
+    image: 'assets/images/artists/rixelton.jpg',
+    isVerified: true,
+    isAvailable: true,
+    bio: 'A rising Amapiano DJ and producer known for deep log drum grooves and crowd-moving sets. Available for clubs, festivals and private events.',
+    bookingFee: 20000,
+    bookingFeeUSD: 1100.0,
+    highlights: [
+      'Rising Amapiano talent',
+      'Club & festival DJ',
+      'Signature log-drums',
+    ],
+    services: [
+      {
+        'id': 's1',
+        'name': 'Club Set (2 hours)',
+        'price': 20000.0,
+        'description': 'High-energy Amapiano DJ set tailored for clubs.',
+        'duration': '2 hours',
+        'includes': ['DJ performance', 'Custom playlist', 'Crowd interaction'],
+      },
+      {
+        'id': 's2',
+        'name': 'Festival Slot (1 hour)',
+        'price': 35000.0,
+        'description': 'Packed festival set with full production support.',
+        'duration': '1 hour',
+        'includes': ['Festival performance', 'MC support', 'Back-to-back options'],
       },
     ],
   ),
@@ -3476,7 +3720,7 @@ const List<GearshArtist> gearshArtists = [
     ],
   ),
   GearshArtist(
-    id: 'nomfundo-moh',
+    id: 'nomfundomoh',
     name: 'Nomfundo Moh',
     username: '@nomfundomoh',
     category: 'Afro-Soul',
@@ -4183,41 +4427,74 @@ const List<GearshArtist> gearshArtists = [
   ),
 ];
 
-// Helper function to get sorted artists list (alphabetically by name)
+// Helper: get an artist by id
+GearshArtist? getArtistById(String id) {
+  try {
+    return gearshArtists.firstWhere((a) => a.id == id);
+  } catch (e) {
+    return null;
+  }
+}
+
+// Helper: sorted list of artists (by name)
 List<GearshArtist> getSortedArtists() {
   final sorted = List<GearshArtist>.from(gearshArtists);
   sorted.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
   return sorted;
 }
 
-// Helper function to get artist by ID
-GearshArtist? getArtistById(String id) {
-  try {
-    return gearshArtists.firstWhere((artist) => artist.id == id);
-  } catch (e) {
-    return null;
-  }
-}
-
-// Get all available artists (sorted alphabetically)
+// Helper: all available artists
 List<GearshArtist> getAvailableArtists() {
-  final available = gearshArtists.where((artist) => artist.isAvailable).toList();
+  final available = gearshArtists.where((a) => a.isAvailable).toList();
   available.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
   return available;
 }
 
-// Get artists by category (sorted alphabetically)
+// Helper: get artists by category or subcategory (case-insensitive)
 List<GearshArtist> getArtistsByCategory(String category) {
-  List<GearshArtist> filtered;
-  if (category == 'All') {
-    filtered = List<GearshArtist>.from(gearshArtists);
-  } else {
-    filtered = gearshArtists.where((artist) =>
-      artist.category == category ||
-      artist.subcategories.contains(category)
-    ).toList();
-  }
+  if (category == 'All') return List<GearshArtist>.from(gearshArtists);
+  final filtered = gearshArtists.where((a) =>
+    a.category.toLowerCase() == category.toLowerCase() ||
+    a.subcategories.any((s) => s.toLowerCase() == category.toLowerCase())
+  ).toList();
   filtered.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
   return filtered;
+}
+
+// Helper: get a deduplicated list of artists (removes duplicates by ID)
+List<GearshArtist> uniqueArtists([List<GearshArtist>? artists]) {
+  final source = artists ?? gearshArtists;
+  final seen = <String>{};
+  final unique = <GearshArtist>[];
+  for (final artist in source) {
+    if (!seen.contains(artist.id)) {
+      seen.add(artist.id);
+      unique.add(artist);
+    }
+  }
+  return unique;
+}
+
+// Helper: get unique featured artists (high rating, verified)
+List<GearshArtist> getUniqueFeaturedArtists({int limit = 10}) {
+  final featured = uniqueArtists()
+      .where((a) => a.isVerified && a.rating >= 4.4)
+      .take(limit)
+      .toList();
+  return featured;
+}
+
+// Helper: get unique trending artists
+List<GearshArtist> getUniqueTrendingArtists({int limit = 15}) {
+  final trending = uniqueArtists()
+      .where((a) => a.isAvailable && a.rating >= 4.0)
+      .take(limit)
+      .toList();
+  return trending;
+}
+
+// Helper: get unique new additions (last items in list)
+List<GearshArtist> getUniqueNewArtists({int limit = 10}) {
+  return uniqueArtists().reversed.take(limit).toList();
 }
 

@@ -120,23 +120,23 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     'Baker': 'Events & Services',
   };
 
-  // Get artists grouped by main category
+  // Get artists grouped by main category (deduplicated)
   Map<String, List<GearshArtist>> get artistsByMainCategory {
     final Map<String, List<GearshArtist>> grouped = {};
     for (final category in mainCategories.keys) {
       grouped[category] = [];
     }
-    for (final artist in gearshArtists) {
+    for (final artist in uniqueArtists()) {
       final mainCategory = categoryMapping[artist.category] ?? 'Music';
       grouped[mainCategory]?.add(artist);
     }
     return grouped;
   }
 
-  // Get artists grouped by category (original)
+  // Get artists grouped by category (deduplicated)
   Map<String, List<GearshArtist>> get artistsByGenre {
     final Map<String, List<GearshArtist>> grouped = {};
-    for (final artist in gearshArtists) {
+    for (final artist in uniqueArtists()) {
       if (!grouped.containsKey(artist.category)) {
         grouped[artist.category] = [];
       }
@@ -145,26 +145,21 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     return grouped;
   }
 
-  // Get featured artists (high rating, verified)
+  // Get featured artists (high rating, verified) - deduplicated
   List<GearshArtist> get featuredArtists {
-    return gearshArtists
-        .where((a) => a.isVerified && a.rating >= 4.4)
-        .take(10)
-        .toList();
+    return getUniqueFeaturedArtists(limit: 10);
   }
 
-  // Get trending artists
+  // Get trending artists - deduplicated
   List<GearshArtist> get trendingArtists {
-    return gearshArtists
-        .where((a) => a.isAvailable && a.rating >= 4.0)
-        .take(15)
-        .toList()
-      ..shuffle();
+    final trending = getUniqueTrendingArtists(limit: 15);
+    trending.shuffle();
+    return trending;
   }
 
-  // Get new additions (last items in list, assuming newer)
+  // Get new additions (last items in list, assuming newer) - deduplicated
   List<GearshArtist> get newArtists {
-    return gearshArtists.reversed.take(10).toList();
+    return getUniqueNewArtists(limit: 10);
   }
 
   @override
@@ -256,6 +251,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
   }
 
   Widget _buildActiveSearchBar(ThemeData theme) {
+    // Compact, robust active search bar used when the search is active
     const Color sky500 = Color(0xFF0EA5E9);
     const Color sky400 = Color(0xFF38BDF8);
     const Color cyan500 = Color(0xFF06B6D4);
@@ -834,7 +830,8 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
               ),
               TextButton(
                 onPressed: () {
-                  ref.read(searchQueryProvider.notifier).update(genre);
+                  // Navigate to category page to show all artists in this genre
+                  context.go('/category/${Uri.encodeComponent(genre)}');
                 },
                 child: Text(
                   'See all',

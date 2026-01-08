@@ -25,22 +25,31 @@ import 'package:gearsh_app/features/profile/forgot_password_page.dart';
 import 'package:gearsh_app/features/profile/reset_password_page.dart';
 import 'package:gearsh_app/features/discover/discover_page.dart';
 import 'package:gearsh_app/features/discover/map_page.dart';
+import '../features/discover/category_artists_page.dart';
 import 'package:gearsh_app/features/gigs/gigs_page.dart';
 import 'package:gearsh_app/features/cart/cart_page.dart';
 import 'package:gearsh_app/features/cart/cart_checkout_page.dart';
 import 'package:gearsh_app/features/cart/cart_success_page.dart';
 import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/widgets/swipe_back_wrapper.dart';
 
 /// Custom page transition for smooth navigation
+/// All pages are wrapped with EdgeSwipeBackWrapper for swipe-right-to-go-back
 CustomTransitionPage<T> buildPageWithTransition<T>({
   required BuildContext context,
   required GoRouterState state,
   required Widget child,
   TransitionType type = TransitionType.fade,
+  bool enableSwipeBack = true,
 }) {
+  // Wrap the child with swipe back functionality
+  final wrappedChild = enableSwipeBack
+      ? EdgeSwipeBackWrapper(child: child)
+      : child;
+
   return CustomTransitionPage<T>(
     key: state.pageKey,
-    child: child,
+    child: wrappedChild,
     transitionDuration: const Duration(milliseconds: 250),
     reverseTransitionDuration: const Duration(milliseconds: 200),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -293,6 +302,18 @@ final GoRouter router = GoRouter(
           context: context,
           state: state,
           child: ArtistViewProfilePage(artistId: artistId),
+          type: TransitionType.slideRight,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/category/:name',
+      pageBuilder: (context, state) {
+        final name = state.pathParameters['name']!;
+        return buildPageWithTransition(
+          context: context,
+          state: state,
+          child: categoryArtistsPageBuilder(name),
           type: TransitionType.slideRight,
         );
       },
