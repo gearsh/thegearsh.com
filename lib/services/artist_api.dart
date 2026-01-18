@@ -274,7 +274,7 @@ class ArtistApiService {
           });
           break;
         case 'bookings':
-          artists.sort((a, b) => b.completedGigs.compareTo(a.completedGigs));
+          artists.sort((a, b) => b.hoursBooked.compareTo(a.hoursBooked));
           break;
         default:
           // Default: sort by rating

@@ -32,6 +32,37 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
   static const Color _green500 = Color(0xFF22C55E);
   static const Color _red500 = Color(0xFFEF4444);
 
+  // Categories that use "Portfolio" instead of "Discography"
+  static const List<String> _visualArtistCategories = [
+    'Fashion Designer',
+    'Visual Artist',
+    'Painter',
+    'Graphic Designer',
+    'Photographer',
+    'Muralist',
+    'Illustrator',
+    'Sculptor',
+    'Tattoo Artist',
+    'Makeup Artist',
+    'Stylist',
+  ];
+
+  bool get _isVisualArtist {
+    final category = _artistData['category'] as String? ?? '';
+    return _visualArtistCategories.contains(category);
+  }
+
+  String get _portfolioTabLabel {
+    final category = _artistData['category'] as String? ?? '';
+    if (category == 'Fashion Designer' || category == 'Stylist') return 'Designs';
+    if (category == 'Photographer') return 'Gallery';
+    if (category == 'Muralist' || category == 'Painter' || category == 'Visual Artist') return 'Murals';
+    if (category == 'Tattoo Artist') return 'Tattoos';
+    if (category == 'Makeup Artist') return 'Looks';
+    if (_isVisualArtist) return 'Portfolio';
+    return 'Discography';
+  }
+
   // Get artist data - first check gearsh_artists, then fallback to mock data
   Map<String, dynamic> get _artistData {
     // First check the gearsh_artists database
@@ -45,7 +76,10 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
         'location': gearshArtist.location,
         'rating': gearshArtist.rating,
         'reviewCount': gearshArtist.reviewCount,
-        'completedGigs': gearshArtist.completedGigs,
+        'hoursBooked': gearshArtist.hoursBooked,
+        'masteryInfo': gearshArtist.masteryInfo,
+        'masteryProgress': gearshArtist.masteryProgress,
+        'hoursToMastery': gearshArtist.hoursToMastery,
         'responseTime': gearshArtist.responseTime,
         'headerImage': gearshArtist.image,
         'avatar': gearshArtist.image,
@@ -55,6 +89,7 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
         'highlights': gearshArtist.highlights,
         'equipment': [],
         'services': gearshArtist.services,
+        'discography': gearshArtist.discography,
         'gallery': [],
         'reviews': [],
       };
@@ -70,7 +105,7 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
         'location': 'Johannesburg, SA',
         'rating': 4.9,
         'reviewCount': 156,
-        'completedGigs': 324,
+        'hoursBooked': 324,
         'responseTime': '< 1 hour',
         'headerImage': 'assets/images/artists/kunye.png',
         'avatar': 'assets/images/artists/kunye.png',
@@ -159,7 +194,7 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
         'location': 'Pretoria, SA',
         'rating': 4.9,
         'reviewCount': 203,
-        'completedGigs': 456,
+        'hoursBooked': 456,
         'responseTime': '< 2 hours',
         'headerImage': 'assets/images/artists/P9-Kabza-de-Small.webp',
         'avatar': 'assets/images/artists/P9-Kabza-de-Small.webp',
@@ -219,7 +254,7 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
         'location': 'Johannesburg, SA',
         'rating': 4.8,
         'reviewCount': 178,
-        'completedGigs': 289,
+        'hoursBooked': 289,
         'responseTime': '< 24 hours',
         'headerImage': 'assets/images/artists/Cassper Nyovest Fill Up FNB Station 1.jpg',
         'avatar': 'assets/images/artists/Cassper Nyovest Fill Up FNB Station 1.jpg',
@@ -259,7 +294,7 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
         'location': 'Compton, USA',
         'rating': 5.0,
         'reviewCount': 320,
-        'completedGigs': 500,
+        'hoursBooked': 500,
         'responseTime': 'Via management',
         'headerImage': 'assets/images/artists/kendrick.png',
         'avatar': 'assets/images/artists/kendrick.png',
@@ -305,7 +340,7 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
       'location': 'South Africa',
       'rating': 4.5,
       'reviewCount': 0,
-      'completedGigs': 0,
+      'hoursBooked': 0,
       'responseTime': '< 24 hours',
       'headerImage': 'assets/images/gearsh_logo.png',
       'avatar': 'assets/images/gearsh_logo.png',
@@ -323,7 +358,7 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     // Check if artist is saved
     _isSaved = true; // Mock - replace with actual saved state
   }
@@ -769,10 +804,16 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
                               _buildDivider(),
                               _buildStatItem('${data['reviewCount']}', 'Reviews', Icons.chat_bubble_outline, _sky400),
                               _buildDivider(),
-                              _buildStatItem('${data['completedGigs']}', 'Gigs', Icons.celebration_outlined, _green500),
+                              _buildHoursStatItem(data),
                             ],
                           ),
                         ),
+
+                        // Mastery Progress Bar
+                        if (data['masteryInfo'] != null) ...[
+                          const SizedBox(height: 16),
+                          _buildMasteryProgressCard(data),
+                        ],
                         const SizedBox(height: 24),
 
                         // Action Buttons
@@ -830,6 +871,31 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
                   ),
                 ),
 
+                // Bio section (Twitter-like)
+                if (data['bio'] != null && (data['bio'] as String).isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+                      decoration: BoxDecoration(
+                        color: _slate900,
+                        border: Border(
+                          bottom: BorderSide(color: _sky500.withAlpha(40)),
+                        ),
+                      ),
+                      child: Text(
+                        data['bio'],
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          height: 1.5,
+                        ),
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+
                 // Tab Bar
                 SliverPersistentHeader(
                   pinned: true,
@@ -840,11 +906,10 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
                       unselectedLabelColor: _slate400,
                       indicatorColor: _sky500,
                       indicatorWeight: 3,
-                      tabs: const [
-                        Tab(text: 'Services'),
-                        Tab(text: 'About'),
-                        Tab(text: 'Gallery'),
-                        Tab(text: 'Reviews'),
+                      tabs: [
+                        const Tab(text: 'Services'),
+                        Tab(text: _portfolioTabLabel),
+                        const Tab(text: 'Reviews'),
                       ],
                     ),
                   ),
@@ -856,8 +921,7 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
                     controller: _tabController,
                     children: [
                       _buildServicesTab(data),
-                      _buildAboutTab(data),
-                      _buildGalleryTab(data),
+                      _buildDiscographyTab(data),
                       _buildReviewsTab(data),
                     ],
                   ),
@@ -924,6 +988,212 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
     );
   }
 
+  Widget _buildHoursStatItem(Map<String, dynamic> data) {
+    final hours = data['hoursBooked'] as int? ?? 0;
+    final masteryInfo = data['masteryInfo'] as MasteryInfo?;
+    final icon = masteryInfo?.icon ?? '🌱';
+
+    return Column(
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(icon, style: const TextStyle(fontSize: 16)),
+            const SizedBox(width: 4),
+            Text(
+              _formatHours(hours),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Hours',
+          style: TextStyle(color: Colors.white.withAlpha(128), fontSize: 12),
+        ),
+      ],
+    );
+  }
+
+  String _formatHours(int hours) {
+    if (hours >= 1000) {
+      return '${(hours / 1000).toStringAsFixed(1)}K';
+    }
+    return hours.toString();
+  }
+
+  Widget _buildMasteryProgressCard(Map<String, dynamic> data) {
+    final hours = data['hoursBooked'] as int? ?? 0;
+    final masteryInfo = data['masteryInfo'] as MasteryInfo?;
+    final progress = data['masteryProgress'] as double? ?? 0.0;
+    final hoursToMastery = data['hoursToMastery'] as int? ?? 10000;
+
+    if (masteryInfo == null) return const SizedBox.shrink();
+
+    final progressColor = _getMasteryColor(masteryInfo.level);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            progressColor.withAlpha(26),
+            _slate800.withAlpha(128),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: progressColor.withAlpha(77)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title row
+          Row(
+            children: [
+              Text(masteryInfo.icon, style: const TextStyle(fontSize: 24)),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      masteryInfo.title,
+                      style: TextStyle(
+                        color: progressColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      hours >= 10000
+                          ? '🎉 Mastery Achieved!'
+                          : '$hoursToMastery hours to mastery',
+                      style: TextStyle(
+                        color: Colors.white.withAlpha(179),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: progressColor.withAlpha(51),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: progressColor.withAlpha(128)),
+                ),
+                child: Text(
+                  '$hours / 10,000',
+                  style: TextStyle(
+                    color: progressColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Progress bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: Stack(
+              children: [
+                Container(
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: _slate800,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+                FractionallySizedBox(
+                  widthFactor: progress,
+                  child: Container(
+                    height: 12,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [progressColor, progressColor.withAlpha(179)],
+                      ),
+                      borderRadius: BorderRadius.circular(6),
+                      boxShadow: [
+                        BoxShadow(
+                          color: progressColor.withAlpha(102),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          // Milestones
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildMilestone('🌱', 0, hours),
+              _buildMilestone('🚀', 100, hours),
+              _buildMilestone('🔥', 500, hours),
+              _buildMilestone('💎', 2000, hours),
+              _buildMilestone('⭐', 5000, hours),
+              _buildMilestone('🏆', 7500, hours),
+              _buildMilestone('👑', 10000, hours),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMilestone(String emoji, int milestone, int currentHours) {
+    final reached = currentHours >= milestone;
+    return Column(
+      children: [
+        Text(
+          emoji,
+          style: TextStyle(
+            fontSize: reached ? 16 : 12,
+            color: reached ? null : Colors.white.withAlpha(77),
+          ),
+        ),
+        Text(
+          milestone >= 1000 ? '${milestone ~/ 1000}K' : '$milestone',
+          style: TextStyle(
+            color: reached ? Colors.white : Colors.white.withAlpha(77),
+            fontSize: 9,
+            fontWeight: reached ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Color _getMasteryColor(MasteryLevel level) {
+    switch (level) {
+      case MasteryLevel.newcomer:
+        return const Color(0xFF22C55E); // Green
+      case MasteryLevel.rising:
+        return const Color(0xFF0EA5E9); // Sky blue
+      case MasteryLevel.established:
+        return const Color(0xFFF97316); // Orange
+      case MasteryLevel.professional:
+        return const Color(0xFF8B5CF6); // Purple
+      case MasteryLevel.expert:
+        return const Color(0xFFEAB308); // Yellow
+      case MasteryLevel.master:
+        return const Color(0xFFEC4899); // Pink
+      case MasteryLevel.legend:
+        return const Color(0xFFFFD700); // Gold
+    }
+  }
+
   Widget _buildServicesTab(Map<String, dynamic> data) {
     final services = data['services'] as List;
 
@@ -954,7 +1224,13 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
   }
 
   Widget _buildServiceCard(Map<String, dynamic> service, bool isAvailable) {
-    final double price = service['price'] as double;
+    final double price = (service['price'] as num).toDouble();
+    final double? originalPrice = service['originalPrice'] != null
+        ? (service['originalPrice'] as num).toDouble()
+        : null;
+    final int? discountPercent = service['discountPercent'] as int?;
+    final bool hasDiscount = originalPrice != null && discountPercent != null && discountPercent > 0;
+
     final double serviceFee = price * 0.126; // 12.6% service fee
     final double total = price + serviceFee;
 
@@ -964,11 +1240,30 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
       decoration: BoxDecoration(
         color: _slate800.withAlpha(128),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _sky500.withAlpha(51)),
+        border: Border.all(color: hasDiscount ? _green500.withAlpha(77) : _sky500.withAlpha(51)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Discount badge at top
+          if (hasDiscount) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEF4444),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '$discountPercent% OFF - LIMITED TIME',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -985,14 +1280,35 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    'R${price.toStringAsFixed(0)}',
-                    style: const TextStyle(
-                      color: _sky400,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  // Show discount pricing if available
+                  if (hasDiscount) ...[
+                    Text(
+                      'R${originalPrice!.toStringAsFixed(0)}',
+                      style: TextStyle(
+                        color: _slate400,
+                        fontSize: 14,
+                        decoration: TextDecoration.lineThrough,
+                        decorationColor: _slate400,
+                        decorationThickness: 2,
+                      ),
                     ),
-                  ),
+                    Text(
+                      'R${price.toStringAsFixed(0)}',
+                      style: const TextStyle(
+                        color: _green500,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ] else
+                    Text(
+                      'R${price.toStringAsFixed(0)}',
+                      style: const TextStyle(
+                        color: _sky400,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   Text(
                     '+ R${serviceFee.toStringAsFixed(0)} fee',
                     style: TextStyle(
@@ -1137,7 +1453,7 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
         location: data['location'] as String? ?? 'Unknown',
         rating: (data['rating'] as num?)?.toDouble() ?? 4.5,
         reviewCount: data['reviewCount'] as int? ?? 0,
-        completedGigs: data['completedGigs'] as int? ?? 0,
+        hoursBooked: data['hoursBooked'] as int? ?? 0,
         responseTime: data['responseTime'] as String? ?? '< 1 hour',
         isVerified: data['isVerified'] as bool? ?? false,
         isAvailable: data['isAvailable'] as bool? ?? true,
@@ -1241,104 +1557,23 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
     );
   }
 
-  Widget _buildAboutTab(Map<String, dynamic> data) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Bio
-          Text(
-            data['bio'],
-            style: TextStyle(
-              color: Colors.white.withAlpha(204),
-              fontSize: 15,
-              height: 1.6,
-            ),
-          ),
-          const SizedBox(height: 24),
 
-          // Highlights
-          if ((data['highlights'] as List).isNotEmpty) ...[
-            const Text(
-              'Highlights',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            ...((data['highlights'] as List).map((highlight) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Row(
-                children: [
-                  const Icon(Icons.check_circle, color: _sky500, size: 20),
-                  const SizedBox(width: 12),
-                  Text(
-                    highlight,
-                    style: TextStyle(color: Colors.white.withAlpha(204), fontSize: 15),
-                  ),
-                ],
-              ),
-            ))),
-            const SizedBox(height: 24),
-          ],
+  Widget _buildDiscographyTab(Map<String, dynamic> data) {
+    final discography = data['discography'] as List<dynamic>? ?? [];
 
-          // Equipment
-          if ((data['equipment'] as List).isNotEmpty) ...[
-            const Text(
-              'Equipment',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: (data['equipment'] as List).map((item) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: _slate800,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: _sky500.withAlpha(51)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.speaker, color: _sky400, size: 16),
-                      const SizedBox(width: 8),
-                      Text(
-                        item,
-                        style: TextStyle(color: Colors.white.withAlpha(204), fontSize: 13),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGalleryTab(Map<String, dynamic> data) {
-    final gallery = data['gallery'] as List;
-
-    if (gallery.isEmpty) {
+    if (discography.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.photo_library_outlined, color: _slate400, size: 48),
+            Icon(
+              _isVisualArtist ? Icons.photo_library_outlined : Icons.album_outlined,
+              color: _slate400,
+              size: 48,
+            ),
             const SizedBox(height: 16),
             Text(
-              'No photos yet',
+              _isVisualArtist ? 'No portfolio available' : 'No discography available',
               style: TextStyle(color: Colors.white.withAlpha(128)),
             ),
           ],
@@ -1346,6 +1581,88 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
       );
     }
 
+    // Check if this is a visual artist
+    if (_isVisualArtist) {
+      return _buildPortfolioContent(discography);
+    }
+
+    // Group by type for musicians
+    final albums = discography.where((d) => d['type'] == 'Album').toList();
+    final eps = discography.where((d) => d['type'] == 'EP').toList();
+    final singles = discography.where((d) => d['type'] == 'Single').toList();
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Albums section
+          if (albums.isNotEmpty) ...[
+            _buildDiscographySection('Albums', albums, Icons.album_rounded),
+            const SizedBox(height: 24),
+          ],
+          // EPs section
+          if (eps.isNotEmpty) ...[
+            _buildDiscographySection('EPs', eps, Icons.library_music_rounded),
+            const SizedBox(height: 24),
+          ],
+          // Singles section
+          if (singles.isNotEmpty) ...[
+            _buildDiscographySection('Singles', singles, Icons.music_note_rounded),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPortfolioContent(List<dynamic> portfolio) {
+    final category = _artistData['category'] as String? ?? '';
+
+    // Group portfolio items by type for visual artists
+    final collections = portfolio.where((d) => d['type'] == 'Collection').toList();
+    final pieces = portfolio.where((d) => d['type'] == 'Piece' || d['type'] == 'Design').toList();
+    final projects = portfolio.where((d) => d['type'] == 'Project' || d['type'] == 'Commission').toList();
+    final murals = portfolio.where((d) => d['type'] == 'Mural').toList();
+
+    // If not categorized, show as grid gallery
+    if (collections.isEmpty && pieces.isEmpty && projects.isEmpty && murals.isEmpty) {
+      return _buildPortfolioGallery(portfolio);
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (collections.isNotEmpty) ...[
+            _buildPortfolioSection(
+              category == 'Fashion Designer' ? 'Collections' : 'Collections',
+              collections,
+              Icons.collections_rounded,
+            ),
+            const SizedBox(height: 24),
+          ],
+          if (pieces.isNotEmpty) ...[
+            _buildPortfolioSection(
+              category == 'Fashion Designer' ? 'Designs' : 'Pieces',
+              pieces,
+              category == 'Fashion Designer' ? Icons.checkroom_rounded : Icons.brush_rounded,
+            ),
+            const SizedBox(height: 24),
+          ],
+          if (murals.isNotEmpty) ...[
+            _buildPortfolioSection('Murals', murals, Icons.format_paint_rounded),
+            const SizedBox(height: 24),
+          ],
+          if (projects.isNotEmpty) ...[
+            _buildPortfolioSection('Projects', projects, Icons.work_rounded),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPortfolioGallery(List<dynamic> items) {
     return GridView.builder(
       padding: const EdgeInsets.all(20),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -1353,20 +1670,563 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
       ),
-      itemCount: gallery.length,
+      itemCount: items.length,
       itemBuilder: (context, index) {
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Image.asset(
-            gallery[index],
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
-              color: _slate800,
-              child: const Icon(Icons.image, color: _slate400),
+        final item = items[index] as Map<String, dynamic>;
+        return GestureDetector(
+          onTap: () => _showPortfolioDetails(item),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: _sky500.withAlpha(51)),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    item['image'] ?? _artistData['avatar'],
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: _slate800,
+                      child: Icon(Icons.image_outlined, color: _sky500.withAlpha(128), size: 40),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.transparent, Colors.black.withAlpha(204)],
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            item['title'] ?? 'Untitled',
+                            style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (item['year'] != null)
+                            Text(
+                              item['year'].toString(),
+                              style: TextStyle(color: Colors.white.withAlpha(179), fontSize: 11),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildDiscographySection(String title, List<dynamic> items, IconData icon) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, color: _sky400, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: _sky500.withAlpha(51),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '${items.length}',
+                style: const TextStyle(color: _sky400, fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ...items.map((item) => _buildDiscographyItem(item as Map<String, dynamic>)),
+      ],
+    );
+  }
+
+  Widget _buildPortfolioSection(String title, List<dynamic> items, IconData icon) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, color: _sky400, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: _sky500.withAlpha(51),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '${items.length}',
+                style: const TextStyle(color: _sky400, fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ...items.map((item) => _buildPortfolioItem(item as Map<String, dynamic>)),
+      ],
+    );
+  }
+
+  Widget _buildDiscographyItem(Map<String, dynamic> item) {
+    final type = item['type'] as String? ?? 'Album';
+    final isAlbum = type == 'Album';
+    final isEP = type == 'EP';
+
+    return GestureDetector(
+      onTap: () => _showAlbumDetails(item),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: _slate900.withAlpha(102),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: _sky500.withAlpha(51)),
+        ),
+        child: Row(
+          children: [
+            // Album art
+            Container(
+              width: isAlbum ? 72 : 60,
+              height: isAlbum ? 72 : 60,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: _sky500.withAlpha(77)),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(11),
+                child: Image.asset(
+                  item['image'] ?? _artistData['avatar'],
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    color: _slate800,
+                    child: Icon(Icons.album, color: _sky500.withAlpha(128), size: 32),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            // Details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item['title'] ?? 'Untitled',
+                    style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: isAlbum
+                              ? _sky500.withAlpha(38)
+                              : isEP
+                                  ? const Color(0xFF8B5CF6).withAlpha(38)
+                                  : _green500.withAlpha(38),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isAlbum
+                                ? _sky500.withAlpha(77)
+                                : isEP
+                                    ? const Color(0xFF8B5CF6).withAlpha(77)
+                                    : _green500.withAlpha(77),
+                          ),
+                        ),
+                        child: Text(
+                          type,
+                          style: TextStyle(
+                            color: isAlbum ? _sky400 : isEP ? const Color(0xFF8B5CF6) : _green500,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      if (item['year'] != null)
+                        Text(
+                          item['year'].toString(),
+                          style: TextStyle(color: Colors.white.withAlpha(153), fontSize: 12),
+                        ),
+                      if (item['tracks'] != null) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          '• ${item['tracks']} tracks',
+                          style: TextStyle(color: Colors.white.withAlpha(128), fontSize: 12),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.play_circle_outline, color: _sky400.withAlpha(179), size: 28),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPortfolioItem(Map<String, dynamic> item) {
+    final type = item['type'] as String? ?? 'Piece';
+    final isCollection = type == 'Collection';
+
+    return GestureDetector(
+      onTap: () => _showPortfolioDetails(item),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: _slate900.withAlpha(102),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: _sky500.withAlpha(51)),
+        ),
+        child: Row(
+          children: [
+            // Portfolio image
+            Container(
+              width: isCollection ? 80 : 70,
+              height: isCollection ? 80 : 70,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: _sky500.withAlpha(77)),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(11),
+                child: Image.asset(
+                  item['image'] ?? _artistData['avatar'],
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    color: _slate800,
+                    child: Icon(
+                      isCollection ? Icons.collections : Icons.image,
+                      color: _sky500.withAlpha(128),
+                      size: 32,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            // Details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item['title'] ?? 'Untitled',
+                    style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: isCollection ? _sky500.withAlpha(38) : const Color(0xFF8B5CF6).withAlpha(38),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isCollection ? _sky500.withAlpha(77) : const Color(0xFF8B5CF6).withAlpha(77),
+                          ),
+                        ),
+                        child: Text(
+                          type,
+                          style: TextStyle(
+                            color: isCollection ? _sky400 : const Color(0xFF8B5CF6),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      if (item['year'] != null)
+                        Text(
+                          item['year'].toString(),
+                          style: TextStyle(color: Colors.white.withAlpha(153), fontSize: 12),
+                        ),
+                    ],
+                  ),
+                  if (item['description'] != null) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      item['description'],
+                      style: TextStyle(color: Colors.white.withAlpha(153), fontSize: 12),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  if (item['pieces'] != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      '${item['pieces']} pieces',
+                      style: TextStyle(color: _sky400.withAlpha(179), fontSize: 12),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Icon(Icons.arrow_forward_ios_rounded, color: Colors.white.withAlpha(77), size: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAlbumDetails(Map<String, dynamic> album) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.75,
+        decoration: const BoxDecoration(
+          color: _slate900,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(color: Colors.white.withAlpha(77), borderRadius: BorderRadius.circular(2)),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: _sky500.withAlpha(77)),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: Image.asset(
+                              album['image'] ?? _artistData['avatar'],
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(
+                                color: _slate800,
+                                child: const Icon(Icons.album, color: _sky500, size: 48),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                album['title'] ?? 'Untitled',
+                                style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                _artistData['name'],
+                                style: TextStyle(color: Colors.white.withAlpha(179), fontSize: 16),
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: _sky500.withAlpha(38),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: _sky500.withAlpha(77)),
+                                    ),
+                                    child: Text(
+                                      album['type'] ?? 'Album',
+                                      style: const TextStyle(color: _sky400, fontSize: 12, fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                  if (album['year'] != null) ...[
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      album['year'].toString(),
+                                      style: TextStyle(color: Colors.white.withAlpha(153), fontSize: 14),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (album['tracks'] != null) ...[
+                      const SizedBox(height: 24),
+                      Text(
+                        '${album['tracks']} Tracks',
+                        style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPortfolioDetails(Map<String, dynamic> item) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.85,
+        decoration: const BoxDecoration(
+          color: _slate900,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(color: Colors.white.withAlpha(77), borderRadius: BorderRadius.circular(2)),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    Container(
+                      width: double.infinity,
+                      height: 300,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: _sky500.withAlpha(51)),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.asset(
+                          item['image'] ?? _artistData['avatar'],
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            color: _slate800,
+                            child: Icon(Icons.image_outlined, color: _sky500.withAlpha(128), size: 64),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item['title'] ?? 'Untitled',
+                            style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: _sky500.withAlpha(38),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: _sky500.withAlpha(77)),
+                                ),
+                                child: Text(
+                                  item['type'] ?? 'Piece',
+                                  style: const TextStyle(color: _sky400, fontSize: 12, fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                              if (item['year'] != null) ...[
+                                const SizedBox(width: 12),
+                                Icon(Icons.calendar_today_outlined, color: Colors.white.withAlpha(153), size: 14),
+                                const SizedBox(width: 4),
+                                Text(
+                                  item['year'].toString(),
+                                  style: TextStyle(color: Colors.white.withAlpha(153), fontSize: 13),
+                                ),
+                              ],
+                            ],
+                          ),
+                          if (item['description'] != null) ...[
+                            const SizedBox(height: 16),
+                            Text(
+                              item['description'],
+                              style: TextStyle(color: Colors.white.withAlpha(204), fontSize: 15, height: 1.5),
+                            ),
+                          ],
+                          if (item['pieces'] != null) ...[
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                const Icon(Icons.grid_view_rounded, color: _sky400, size: 18),
+                                const SizedBox(width: 6),
+                                Text(
+                                  '${item['pieces']} pieces in this collection',
+                                  style: const TextStyle(color: _sky400, fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ],
+                          const SizedBox(height: 40),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

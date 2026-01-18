@@ -26,6 +26,16 @@ class SearchFiltersNotifier extends Notifier<SearchFilters> {
     state = state.copyWith(categories: categories);
   }
 
+  void toggleCategory(String category) {
+    final newCategories = Set<String>.from(state.categories);
+    if (newCategories.contains(category)) {
+      newCategories.remove(category);
+    } else {
+      newCategories.add(category);
+    }
+    state = state.copyWith(categories: newCategories);
+  }
+
   void setMinRating(double rating) {
     state = state.copyWith(minRating: rating);
   }
@@ -49,13 +59,29 @@ class SearchFiltersNotifier extends Notifier<SearchFilters> {
 
 final searchFiltersProvider = NotifierProvider<SearchFiltersNotifier, SearchFilters>(SearchFiltersNotifier.new);
 
+// New: Provider for Gearsh search results (uses GearshArtist)
+final gearshSearchResultsProvider = FutureProvider<List<GearshSearchResult>>((ref) async {
+  final query = ref.watch(searchQueryProvider);
+  final filters = ref.watch(searchFiltersProvider);
+  final searchService = ref.read(searchServiceProvider);
+
+  return searchService.searchArtists(query: query, filters: filters);
+});
+
+// Legacy provider for backward compatibility
 final searchResultsProvider = FutureProvider<List<SearchResult>>((ref) async {
   final query = ref.watch(searchQueryProvider);
   final filters = ref.watch(searchFiltersProvider);
   final searchService = ref.read(searchServiceProvider);
 
-  // Debouncing logic could be added here if not handled in the UI
-  return searchService.searchArtists(query: query, filters: filters);
+  return searchService.searchArtistsLegacy(query: query, filters: filters);
+});
+
+// Provider for autocomplete suggestions
+final searchSuggestionsProvider = Provider<List<SearchSuggestion>>((ref) {
+  final query = ref.watch(searchQueryProvider);
+  final searchService = ref.read(searchServiceProvider);
+  return searchService.getAutocompleteSuggestions(query);
 });
 
 // Notifier for search history
@@ -75,7 +101,8 @@ class SearchHistoryNotifier extends Notifier<List<String>> {
   }
 
   Future<void> addSearchTerm(String term) async {
-    final lowercasedTerm = term.toLowerCase();
+    if (term.trim().isEmpty) return;
+    final lowercasedTerm = term.toLowerCase().trim();
     final newState = [
       lowercasedTerm,
       ...state.where((t) => t != lowercasedTerm),
@@ -88,6 +115,12 @@ class SearchHistoryNotifier extends Notifier<List<String>> {
     await prefs.setStringList(_historyKey, state);
   }
 
+  Future<void> removeSearchTerm(String term) async {
+    state = state.where((t) => t != term.toLowerCase()).toList();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_historyKey, state);
+  }
+
   Future<void> clearHistory() async {
     state = [];
     final prefs = await SharedPreferences.getInstance();
@@ -96,3 +129,8 @@ class SearchHistoryNotifier extends Notifier<List<String>> {
 }
 
 final searchHistoryProvider = NotifierProvider<SearchHistoryNotifier, List<String>>(SearchHistoryNotifier.new);
+
+// Provider for popular/trending searches
+final popularSearchesProvider = Provider<List<String>>((ref) {
+  return SearchService.popularSearches;
+});
