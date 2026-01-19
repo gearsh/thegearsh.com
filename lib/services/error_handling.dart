@@ -1,7 +1,6 @@
-/// Gearsh Backend Error Handling
-/// Centralized error types and handling for consistent error management
+// Gearsh Backend Error Handling
+// Centralized error types and handling for consistent error management
 
-import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 
@@ -59,39 +58,32 @@ class GearshException implements Exception {
 /// Network-related errors
 class NetworkException extends GearshException {
   const NetworkException({
-    String message = 'Network error occurred',
-    dynamic originalError,
+    super.message = 'Network error occurred',
+    super.originalError,
   }) : super(
-    message: message,
     code: 'network_error',
-    originalError: originalError,
   );
 }
 
 /// Timeout errors
 class TimeoutException extends GearshException {
   const TimeoutException({
-    String message = 'Request timed out',
-    dynamic originalError,
+    super.message = 'Request timed out',
+    super.originalError,
   }) : super(
-    message: message,
     code: 'timeout',
-    originalError: originalError,
   );
 }
 
 /// Authentication errors
 class AuthException extends GearshException {
   const AuthException({
-    required String message,
+    required super.message,
     String? code,
-    int? statusCode,
-    dynamic originalError,
+    super.statusCode,
+    super.originalError,
   }) : super(
-    message: message,
     code: code ?? 'auth_error',
-    statusCode: statusCode,
-    originalError: originalError,
   );
 
   factory AuthException.unauthorized() => const AuthException(
@@ -136,14 +128,12 @@ class ValidationException extends GearshException {
   final Map<String, String>? fieldErrors;
 
   const ValidationException({
-    required String message,
+    required super.message,
     this.fieldErrors,
-    dynamic originalError,
+    super.originalError,
   }) : super(
-    message: message,
     code: 'validation_error',
     statusCode: 400,
-    originalError: originalError,
   );
 
   String? getFieldError(String field) => fieldErrors?[field];
@@ -152,14 +142,12 @@ class ValidationException extends GearshException {
 /// Server errors
 class ServerException extends GearshException {
   const ServerException({
-    String message = 'Server error occurred',
+    super.message = 'Server error occurred',
     int? statusCode,
-    dynamic originalError,
+    super.originalError,
   }) : super(
-    message: message,
     code: 'server_error',
     statusCode: statusCode ?? 500,
-    originalError: originalError,
   );
 }
 
@@ -168,27 +156,23 @@ class RateLimitException extends GearshException {
   final Duration? retryAfter;
 
   const RateLimitException({
-    String message = 'Too many requests',
+    super.message = 'Too many requests',
     this.retryAfter,
-    dynamic originalError,
+    super.originalError,
   }) : super(
-    message: message,
     code: 'rate_limited',
     statusCode: 429,
-    originalError: originalError,
   );
 }
 
 /// Not found errors
 class NotFoundException extends GearshException {
   const NotFoundException({
-    String message = 'Resource not found',
-    dynamic originalError,
+    super.message = 'Resource not found',
+    super.originalError,
   }) : super(
-    message: message,
     code: 'not_found',
     statusCode: 404,
-    originalError: originalError,
   );
 }
 

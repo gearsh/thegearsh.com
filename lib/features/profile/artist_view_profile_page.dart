@@ -28,6 +28,7 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
   static const Color _sky500 = Color(0xFF0EA5E9);
   static const Color _sky400 = Color(0xFF38BDF8);
   static const Color _cyan500 = Color(0xFF06B6D4);
+  static const Color _cyan400 = Color(0xFF22D3EE);
   static const Color _yellow500 = Color(0xFFEAB308);
   static const Color _green500 = Color(0xFF22C55E);
   static const Color _red500 = Color(0xFFEF4444);
@@ -682,12 +683,16 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
                                 children: [
                                   Row(
                                     children: [
-                                      Text(
-                                        data['name'],
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.bold,
+                                      Flexible(
+                                        child: Text(
+                                          data['name'],
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 28,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                       if (data['isVerified'] == true) ...[
@@ -816,56 +821,8 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
                         ],
                         const SizedBox(height: 24),
 
-                        // Action Buttons
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: GestureDetector(
-                                onTap: isAvailable && (data['services'] as List).isNotEmpty
-                                    ? () => _showServicesBottomSheet(data)
-                                    : null,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  decoration: BoxDecoration(
-                                    gradient: isAvailable
-                                        ? const LinearGradient(colors: [_sky500, _cyan500])
-                                        : null,
-                                    color: isAvailable ? null : _slate800,
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      isAvailable ? 'Book Now' : 'Not Available',
-                                      style: TextStyle(
-                                        color: isAvailable ? Colors.white : _slate400,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: _contactArtist,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  decoration: BoxDecoration(
-                                    color: _slate800,
-                                    borderRadius: BorderRadius.circular(14),
-                                    border: Border.all(color: _sky500.withAlpha(77)),
-                                  ),
-                                  child: const Center(
-                                    child: Icon(Icons.chat_bubble_outline, color: _sky400),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        // Action Buttons - Role-specific
+                        _buildRoleSpecificActions(data, isAvailable),
                       ],
                     ),
                   ),
@@ -1018,6 +975,232 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
       ],
     );
   }
+
+  /// Build role-specific action buttons
+  Widget _buildRoleSpecificActions(Map<String, dynamic> data, bool isAvailable) {
+    final isClient = userRoleService.isClient;
+    final isFan = userRoleService.isFan;
+    final isArtist = userRoleService.isArtist;
+    final isGuest = userRoleService.isGuest;
+
+    // CLIENT: Book Now + Message
+    if (isClient) {
+      return Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: GestureDetector(
+              onTap: isAvailable && (data['services'] as List).isNotEmpty
+                  ? () => _showServicesBottomSheet(data)
+                  : null,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  gradient: isAvailable
+                      ? const LinearGradient(colors: [_sky500, _cyan500])
+                      : null,
+                  color: isAvailable ? null : _slate800,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.calendar_today_rounded,
+                        color: isAvailable ? Colors.white : _slate400,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        isAvailable ? 'Book Now' : 'Not Available',
+                        style: TextStyle(
+                          color: isAvailable ? Colors.white : _slate400,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: GestureDetector(
+              onTap: _contactArtist,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  color: _slate800,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: _sky500.withAlpha(77)),
+                ),
+                child: const Center(
+                  child: Icon(Icons.chat_bubble_outline, color: _sky400),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    // FAN: Follow + Gigs + Share
+    if (isFan) {
+      return Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: GestureDetector(
+              onTap: () {
+                if (isGuest) {
+                  _showSignUpPrompt('Follow');
+                } else {
+                  setState(() => _isSaved = !_isSaved);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(_isSaved ? 'Following ${data['name']}!' : 'Unfollowed'),
+                      backgroundColor: _isSaved ? _green500 : _slate800,
+                    ),
+                  );
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  gradient: _isSaved
+                      ? null
+                      : const LinearGradient(colors: [Color(0xFF8B5CF6), Color(0xFFA855F7)]),
+                  color: _isSaved ? _slate800 : null,
+                  borderRadius: BorderRadius.circular(14),
+                  border: _isSaved ? Border.all(color: const Color(0xFF8B5CF6).withAlpha(77)) : null,
+                ),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        _isSaved ? Icons.favorite : Icons.favorite_border,
+                        color: _isSaved ? const Color(0xFFA855F7) : Colors.white,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _isSaved ? 'Following' : 'Follow',
+                        style: TextStyle(
+                          color: _isSaved ? const Color(0xFFA855F7) : Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => context.go('/gigs'),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  color: _slate800,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: _sky500.withAlpha(77)),
+                ),
+                child: const Center(
+                  child: Icon(Icons.event_rounded, color: _sky400),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    // ARTIST: View services + Connect (networking)
+    if (isArtist) {
+      return Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: GestureDetector(
+              onTap: () {
+                if (isGuest) {
+                  _showSignUpPrompt('Connect');
+                } else {
+                  setState(() => _isSaved = !_isSaved);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(_isSaved ? 'Connected with ${data['name']}!' : 'Disconnected'),
+                      backgroundColor: _isSaved ? _cyan500 : _slate800,
+                    ),
+                  );
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  gradient: _isSaved
+                      ? null
+                      : const LinearGradient(colors: [_cyan500, _sky500]),
+                  color: _isSaved ? _slate800 : null,
+                  borderRadius: BorderRadius.circular(14),
+                  border: _isSaved ? Border.all(color: _cyan500.withAlpha(77)) : null,
+                ),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        _isSaved ? Icons.people : Icons.person_add_rounded,
+                        color: _isSaved ? _cyan400 : Colors.white,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _isSaved ? 'Connected' : 'Connect',
+                        style: TextStyle(
+                          color: _isSaved ? _cyan400 : Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: GestureDetector(
+              onTap: _contactArtist,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  color: _slate800,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: _sky500.withAlpha(77)),
+                ),
+                child: const Center(
+                  child: Icon(Icons.chat_bubble_outline, color: _sky400),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    // Default fallback (shouldn't happen)
+    return const SizedBox.shrink();
+  }
+
 
   String _formatHours(int hours) {
     if (hours >= 1000) {
@@ -1283,7 +1466,7 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
                   // Show discount pricing if available
                   if (hasDiscount) ...[
                     Text(
-                      'R${originalPrice!.toStringAsFixed(0)}',
+                      'R${originalPrice.toStringAsFixed(0)}',
                       style: TextStyle(
                         color: _slate400,
                         fontSize: 14,

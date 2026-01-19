@@ -1,9 +1,8 @@
-/// Gearsh Booking API Service
-/// Complete booking management with proper error handling
+// Gearsh Booking API Service
+// Complete booking management with proper error handling
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gearsh_app/services/api_client.dart';
-import 'package:gearsh_app/services/error_handling.dart';
 
 /// Provider for booking API service
 final bookingApiServiceProvider = Provider((ref) {

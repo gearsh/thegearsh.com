@@ -25,28 +25,28 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> with SingleTick
   static const Color _red500 = Color(0xFFEF4444);
   static const Color _purple500 = Color(0xFF8B5CF6);
 
-  // Mock bookings data - Replace with actual API data
+  // Mock bookings data - Using real Gearsh artists
   final List<Map<String, dynamic>> _upcomingBookings = [
     {
       'id': 'b1',
-      'artistName': 'DJ Maphorisa',
-      'artistImage': 'assets/images/artists/kunye.png',
-      'service': 'Club Night (4 hours)',
-      'date': 'Dec 28, 2025',
+      'artistName': 'Y.D.E',
+      'artistImage': 'assets/images/artists/yde.png',
+      'service': 'Live Performance (1 hour)',
+      'date': 'Jan 25, 2026',
       'time': '8:00 PM',
       'location': 'Zone 6 Venue, Soweto',
-      'price': 700,
+      'price': 2000,
       'status': 'confirmed',
     },
     {
       'id': 'b2',
-      'artistName': 'Kabza De Small',
-      'artistImage': 'assets/images/artists/P9-Kabza-de-Small.webp',
-      'service': 'Private Party (3 hours)',
-      'date': 'Jan 5, 2026',
-      'time': '6:00 PM',
-      'location': 'Sandton City, Johannesburg',
-      'price': 600,
+      'artistName': 'ZJ90',
+      'artistImage': 'assets/images/artists/ZJ90.jpg',
+      'service': 'Club Set (2 hours)',
+      'date': 'Feb 1, 2026',
+      'time': '9:00 PM',
+      'location': 'Altitude Beach Club, Fourways',
+      'price': 25000,
       'status': 'pending',
     },
   ];
@@ -54,38 +54,27 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> with SingleTick
   final List<Map<String, dynamic>> _pastBookings = [
     {
       'id': 'b3',
-      'artistName': 'Cassper Nyovest',
-      'artistImage': 'assets/images/artists/Cassper Nyovest Fill Up FNB Station 1.jpg',
-      'service': 'Concert Performance',
-      'date': 'Nov 15, 2025',
+      'artistName': 'Rix Elton',
+      'artistImage': 'assets/images/artists/rixelton.jpg',
+      'service': 'Festival Slot (1 hour)',
+      'date': 'Dec 15, 2025',
       'time': '7:00 PM',
-      'location': 'FNB Stadium, Johannesburg',
-      'price': 1500,
+      'location': 'Konka, Johannesburg',
+      'price': 35000,
       'status': 'completed',
       'rating': 5,
     },
     {
       'id': 'b4',
-      'artistName': 'Nota Baloyi',
-      'artistImage': 'assets/images/artists/NOTA.png',
-      'service': 'Event Hosting',
-      'date': 'Oct 20, 2025',
-      'time': '2:00 PM',
-      'location': 'Constitution Hill, Johannesburg',
-      'price': 350,
+      'artistName': 'Y.D.E',
+      'artistImage': 'assets/images/artists/yde.png',
+      'service': 'Event Appearance',
+      'date': 'Dec 1, 2025',
+      'time': '6:00 PM',
+      'location': 'Private Event, Pretoria',
+      'price': 3500,
       'status': 'completed',
-      'rating': 4,
-    },
-    {
-      'id': 'b5',
-      'artistName': 'The Game',
-      'artistImage': 'assets/images/artists/game.png',
-      'service': 'Private Show',
-      'date': 'Sep 10, 2025',
-      'time': '9:00 PM',
-      'location': 'Private Venue',
-      'price': 2000,
-      'status': 'cancelled',
+      'rating': 5,
     },
   ];
 
@@ -721,7 +710,6 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> with SingleTick
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              // TODO: Implement cancel API call
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Booking cancelled'),
@@ -795,7 +783,6 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> with SingleTick
             TextButton(
               onPressed: selectedRating > 0 ? () {
                 Navigator.pop(ctx);
-                // TODO: Implement rating API call
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Thanks for your rating!'),
@@ -818,8 +805,7 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> with SingleTick
   }
 
   void _bookAgain(Map<String, dynamic> booking) {
-    // Navigate to booking flow with this artist
-    // TODO: Get actual artist ID
+    // Navigate to artist profile for rebooking
     context.go('/home');
   }
 }

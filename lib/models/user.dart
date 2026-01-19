@@ -20,5 +20,4 @@ class User {
     this.joinedAt,
     this.lastActive,
   });
-  // TODO: Add D1 database deserialization logic if needed
 }

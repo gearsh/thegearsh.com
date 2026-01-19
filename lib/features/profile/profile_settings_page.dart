@@ -33,6 +33,13 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
   Map<String, dynamic> _getUserData() {
     final firebaseUser = ref.read(currentFirebaseUserProvider);
 
+    String roleName = 'Client';
+    if (userRoleService.isArtist) {
+      roleName = 'Artist';
+    } else if (userRoleService.isFan) {
+      roleName = 'Fan';
+    }
+
     if (firebaseUser != null) {
       final displayName = firebaseUser.displayName ?? '';
       final nameParts = displayName.split(' ');
@@ -42,7 +49,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         'email': firebaseUser.email ?? '',
         'phone': firebaseUser.phoneNumber ?? '',
         'photoUrl': firebaseUser.photoURL,
-        'role': userRoleService.isArtist ? 'Artist' : 'Client',
+        'role': roleName,
         'isEmailVerified': firebaseUser.emailVerified,
       };
     }
@@ -56,7 +63,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
       'email': userRoleService.userEmail,
       'phone': '',
       'photoUrl': null,
-      'role': userRoleService.isArtist ? 'Artist' : 'Client',
+      'role': roleName,
       'isEmailVerified': false,
     };
   }
@@ -98,6 +105,35 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
           ],
         },
       ];
+    } else if (userRoleService.isFan) {
+      // Fan settings - Focus on following artists and events
+      return [
+        {
+          'title': 'Following',
+          'items': [
+            {'icon': Icons.favorite_outline_rounded, 'label': 'Artists I Follow', 'route': '/saved-artists'},
+            {'icon': Icons.event_outlined, 'label': 'Upcoming Gigs', 'route': '/gigs'},
+            {'icon': Icons.notifications_active_outlined, 'label': 'Event Alerts', 'route': '/notifications'},
+          ],
+        },
+        {
+          'title': 'Account',
+          'items': [
+            {'icon': Icons.person_outline_rounded, 'label': 'Edit Profile', 'route': '/edit-profile'},
+            {'icon': Icons.notifications_outlined, 'label': 'Notifications', 'route': '/notifications'},
+            {'icon': Icons.shield_outlined, 'label': 'Privacy & Security', 'route': '/privacy'},
+          ],
+        },
+        {
+          'title': 'Support',
+          'items': [
+            {'icon': Icons.help_outline_rounded, 'label': 'Help Centre', 'route': '/help'},
+            {'icon': Icons.quiz_outlined, 'label': 'FAQ & About Gearsh', 'route': '/faq'},
+            {'icon': Icons.privacy_tip_outlined, 'label': 'Privacy Policy', 'route': '/privacy-policy'},
+            {'icon': Icons.description_outlined, 'label': 'Terms & Conditions', 'route': '/terms'},
+          ],
+        },
+      ];
     } else {
       // Client settings
       return [
@@ -106,6 +142,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
           'items': [
             {'icon': Icons.calendar_today_outlined, 'label': 'My Bookings', 'route': '/my-bookings'},
             {'icon': Icons.favorite_outline_rounded, 'label': 'Saved Artists', 'route': '/saved-artists'},
+            {'icon': Icons.shopping_cart_outlined, 'label': 'My Cart', 'route': '/cart'},
           ],
         },
         {

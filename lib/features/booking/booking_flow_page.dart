@@ -446,12 +446,12 @@ class _BookingFlowPageState extends State<BookingFlowPage>
             // Bottom button
             Positioned(
               bottom: padding.bottom + 20,
-              left: 20,
-              right: 20,
+              left: 16,
+              right: 16,
               child: GestureDetector(
                 onTap: _handleContinue,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  padding: EdgeInsets.symmetric(vertical: screenWidth < 360 ? 14 : 18),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [_sky500, _cyan500],
@@ -467,14 +467,20 @@ class _BookingFlowPageState extends State<BookingFlowPage>
                     ],
                   ),
                   child: Center(
-                    child: Text(
-                      _currentStep == 'details'
-                          ? 'Continue to Payment'
-                          : 'Pay R${_total.toStringAsFixed(0)} with PayFast',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          _currentStep == 'details'
+                              ? 'Continue to Payment'
+                              : 'Pay R${_total.toStringAsFixed(0)} with PayFast',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: screenWidth < 360 ? 15 : 17,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ),

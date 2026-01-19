@@ -4,12 +4,10 @@ import 'package:gearsh_app/data/gearsh_artists.dart';
 import 'package:gearsh_app/models/search_models.dart';
 import 'package:gearsh_app/models/artist.dart';
 
-final searchServiceProvider = Provider((ref) => SearchService(ref));
+final searchServiceProvider = Provider((ref) => SearchService());
 
 class SearchService {
-  final Ref _ref;
-
-  SearchService(this._ref);
+  SearchService();
 
   // Popular search suggestions - Emerging Artists FIRST (Free to Book!)
   static const List<String> popularSearches = [

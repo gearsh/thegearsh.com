@@ -1,5 +1,5 @@
-/// Gearsh Auth State Management
-/// Centralized authentication state with Riverpod
+// Gearsh Auth State Management
+// Centralized authentication state with Riverpod
 
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';

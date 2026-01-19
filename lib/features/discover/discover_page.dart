@@ -464,7 +464,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                 colors: [Color(0xFF38BDF8), Color(0xFF22D3EE)],
               ).createShader(bounds),
               child: Text(
-                _getGreeting(),
+                'Discover Talent',
                 style: theme.textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   letterSpacing: -0.5,
@@ -474,7 +474,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Discover ${gearshArtists.length}+ South African artists',
+              '${gearshArtists.length}+ verified artists ready to book',
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: Colors.white60,
               ),
@@ -485,12 +485,6 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     );
   }
 
-  String _getGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
-  }
 
   Widget _buildSearchBar(ThemeData theme) {
     return GearshSearchBar(

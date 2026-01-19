@@ -1,5 +1,5 @@
-/// Gearsh Authentication API Service
-/// Complete auth management with Firebase + Backend sync
+// Gearsh Authentication API Service
+// Complete auth management with Firebase + Backend sync
 
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';

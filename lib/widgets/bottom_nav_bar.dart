@@ -182,6 +182,7 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final String currentLocation = GoRouter.of(context).routerDelegate.currentConfiguration.last.matchedLocation;
     final bool isLoggedIn = userRoleService.isLoggedIn;
+    final bool isArtist = userRoleService.isArtist;
     final bool isFan = userRoleService.isFan;
     final bool isGuest = userRoleService.isGuest && !isLoggedIn;
 
@@ -208,6 +209,7 @@ class BottomNavBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
+          // Explore - For all users (Clients & Fans discover artists, Artists browse competitors)
           _NavItem(
             label: 'Explore',
             icon: Icons.explore_outlined,
@@ -215,21 +217,42 @@ class BottomNavBar extends StatelessWidget {
             isActive: currentLocation == '/' || currentLocation == '/home',
             onTap: () => context.go('/'),
           ),
-          _NavItem(
-            label: 'Messages',
-            icon: Icons.chat_bubble_outline,
-            activeIcon: Icons.chat_bubble,
-            isActive: currentLocation == '/messages',
-            onTap: () {
-              if (isGuest) {
-                _showSignUpPrompt(context, 'Messages');
-              } else {
-                context.go('/messages');
-              }
-            },
-          ),
-          // Show Gigs for Fans, Bookings for Clients
+
+          // Role-specific second tab
+          if (isArtist)
+            // Artists: Dashboard to manage bookings & earnings
+            _NavItem(
+              label: 'Dashboard',
+              icon: Icons.dashboard_outlined,
+              activeIcon: Icons.dashboard,
+              isActive: currentLocation == '/artist-dashboard',
+              onTap: () {
+                if (isGuest) {
+                  _showSignUpPrompt(context, 'Dashboard');
+                } else {
+                  context.go('/artist-dashboard');
+                }
+              },
+            )
+          else
+            // Clients & Fans: Messages
+            _NavItem(
+              label: 'Messages',
+              icon: Icons.chat_bubble_outline,
+              activeIcon: Icons.chat_bubble,
+              isActive: currentLocation == '/messages',
+              onTap: () {
+                if (isGuest) {
+                  _showSignUpPrompt(context, 'Messages');
+                } else {
+                  context.go('/messages');
+                }
+              },
+            ),
+
+          // Role-specific third tab
           if (isFan)
+            // Fans: Browse Gigs & Events
             _NavItem(
               label: 'Gigs',
               icon: Icons.event_outlined,
@@ -237,7 +260,23 @@ class BottomNavBar extends StatelessWidget {
               isActive: currentLocation == '/gigs',
               onTap: () => context.go('/gigs'),
             )
+          else if (isArtist)
+            // Artists: Messages from clients
+            _NavItem(
+              label: 'Messages',
+              icon: Icons.chat_bubble_outline,
+              activeIcon: Icons.chat_bubble,
+              isActive: currentLocation == '/messages',
+              onTap: () {
+                if (isGuest) {
+                  _showSignUpPrompt(context, 'Messages');
+                } else {
+                  context.go('/messages');
+                }
+              },
+            )
           else
+            // Clients: My Bookings
             _NavItem(
               label: 'Bookings',
               icon: Icons.calendar_today_outlined,
@@ -251,6 +290,8 @@ class BottomNavBar extends StatelessWidget {
                 }
               },
             ),
+
+          // Profile - For all users
           _NavItem(
             label: 'Profile',
             icon: Icons.person_outline,
@@ -351,8 +392,8 @@ class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin 
           duration: const Duration(milliseconds: 180),
           curve: Curves.easeOutCubic,
           padding: EdgeInsets.symmetric(
-            horizontal: widget.isActive ? 18 : 14,
-            vertical: 10,
+            horizontal: widget.isActive ? 14 : 10,
+            vertical: 8,
           ),
           decoration: BoxDecoration(
             gradient: widget.isActive

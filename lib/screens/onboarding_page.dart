@@ -358,101 +358,109 @@ class _OnboardingPageState extends State<OnboardingPage>
   Widget _buildOnboardingSlide(int index) {
     final data = _onboardingData[index];
     final isCurrentPage = _currentPage == index;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenHeight < 700 || screenWidth < 360;
 
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 300),
       opacity: isCurrentPage ? 1.0 : 0.5,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Animated icon container
-            AnimatedBuilder(
-              animation: _floatingGlowController,
-              builder: (context, child) {
-                final value = _floatingGlowController.value;
-                return Transform.translate(
-                  offset: Offset(0, 8 * math.sin(value * math.pi)),
-                  child: child,
-                );
-              },
-              child: Container(
-                width: 140,
-                height: 140,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      (data['gradient'] as List<Color>)[0].withAlpha(51),
-                      (data['gradient'] as List<Color>)[1].withAlpha(25),
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 20 : 32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: isSmallScreen ? 20 : 40),
+              // Animated icon container
+              AnimatedBuilder(
+                animation: _floatingGlowController,
+                builder: (context, child) {
+                  final value = _floatingGlowController.value;
+                  return Transform.translate(
+                    offset: Offset(0, 8 * math.sin(value * math.pi)),
+                    child: child,
+                  );
+                },
+                child: Container(
+                  width: isSmallScreen ? 100 : 140,
+                  height: isSmallScreen ? 100 : 140,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        (data['gradient'] as List<Color>)[0].withAlpha(51),
+                        (data['gradient'] as List<Color>)[1].withAlpha(25),
+                      ],
+                    ),
+                    border: Border.all(
+                      color: (data['gradient'] as List<Color>)[0].withAlpha(77),
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: (data['gradient'] as List<Color>)[0].withAlpha(51),
+                        blurRadius: 40,
+                        spreadRadius: 0,
+                      ),
                     ],
                   ),
-                  border: Border.all(
-                    color: (data['gradient'] as List<Color>)[0].withAlpha(77),
-                    width: 2,
+                  child: Icon(
+                    data['icon'] as IconData,
+                    size: isSmallScreen ? 40 : 56,
+                    color: (data['gradient'] as List<Color>)[0],
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: (data['gradient'] as List<Color>)[0].withAlpha(51),
-                      blurRadius: 40,
-                      spreadRadius: 0,
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  data['icon'] as IconData,
-                  size: 56,
-                  color: (data['gradient'] as List<Color>)[0],
                 ),
               ),
-            ),
-            const SizedBox(height: 48),
+              SizedBox(height: isSmallScreen ? 24 : 48),
 
-            // Title with gradient
-            ShaderMask(
-              shaderCallback: (bounds) => LinearGradient(
-                colors: data['gradient'] as List<Color>,
-              ).createShader(bounds),
-              child: Text(
-                data['title'] as String,
+              // Title with gradient
+              ShaderMask(
+                shaderCallback: (bounds) => LinearGradient(
+                  colors: data['gradient'] as List<Color>,
+                ).createShader(bounds),
+                child: Text(
+                  data['title'] as String,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isSmallScreen ? 22 : 28,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+              ),
+              SizedBox(height: isSmallScreen ? 8 : 12),
+
+              // Subtitle
+              Text(
+                data['subtitle'] as String,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
+                style: TextStyle(
+                  color: Colors.white.withAlpha(153),
+                  fontSize: isSmallScreen ? 14 : 16,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.3,
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
+              SizedBox(height: isSmallScreen ? 16 : 24),
 
-            // Subtitle
-            Text(
-              data['subtitle'] as String,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white.withAlpha(153),
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.3,
+              // Description
+              Text(
+                data['description'] as String,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white.withAlpha(128),
+                  fontSize: isSmallScreen ? 13 : 15,
+                  height: 1.6,
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-
-            // Description
-            Text(
-              data['description'] as String,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white.withAlpha(128),
-                fontSize: 15,
-                height: 1.6,
-              ),
-            ),
-          ],
+              SizedBox(height: isSmallScreen ? 20 : 40),
+            ],
+          ),
         ),
       ),
     );
@@ -531,6 +539,10 @@ class _OnboardingPageState extends State<OnboardingPage>
   }
 
   Widget _buildRoleSelectionScreen(EdgeInsets padding) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenHeight < 700 || screenWidth < 360;
+
     return FadeTransition(
       opacity: _roleSelectionController,
       child: SlideTransition(
@@ -542,16 +554,16 @@ class _OnboardingPageState extends State<OnboardingPage>
           curve: Curves.easeOut,
         )),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 16 : 24),
           child: Column(
             children: [
-              const SizedBox(height: 24),
+              SizedBox(height: isSmallScreen ? 16 : 24),
               // Logo and title
               Container(
-                width: 60,
-                height: 60,
+                width: isSmallScreen ? 48 : 60,
+                height: isSmallScreen ? 48 : 60,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(isSmallScreen ? 14 : 18),
                   border: Border.all(
                     color: _sky500.withAlpha(77),
                     width: 2,
@@ -565,48 +577,48 @@ class _OnboardingPageState extends State<OnboardingPage>
                   ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
                   child: Image.asset(
                     'assets/images/gearsh_logo.png',
                     fit: BoxFit.cover,
                     errorBuilder: (_, __, ___) => Container(
                       color: _slate800,
-                      child: const Icon(
+                      child: Icon(
                         Icons.music_note_rounded,
                         color: _sky400,
-                        size: 28,
+                        size: isSmallScreen ? 22 : 28,
                       ),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: isSmallScreen ? 14 : 20),
 
               ShaderMask(
                 shaderCallback: (bounds) => const LinearGradient(
                   colors: [_sky400, _cyan400],
                 ).createShader(bounds),
-                child: const Text(
+                child: Text(
                   'Join Gearsh',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 28,
+                    fontSize: isSmallScreen ? 22 : 28,
                     fontWeight: FontWeight.bold,
                     letterSpacing: -0.5,
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: isSmallScreen ? 6 : 8),
 
               Text(
                 'Choose how you want to use Gearsh',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white.withAlpha(153),
-                  fontSize: 15,
+                  fontSize: isSmallScreen ? 13 : 15,
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: isSmallScreen ? 16 : 24),
 
               // Role cards
               _buildRoleCard(
@@ -616,7 +628,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                 gradient: [_sky500, _cyan500],
                 onTap: () => _selectRole('client'),
               ),
-              const SizedBox(height: 14),
+              SizedBox(height: isSmallScreen ? 10 : 14),
 
               _buildRoleCard(
                 icon: Icons.music_note_rounded,
@@ -625,7 +637,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                 gradient: [_cyan400, _sky400],
                 onTap: () => _selectRole('artist'),
               ),
-              const SizedBox(height: 14),
+              SizedBox(height: isSmallScreen ? 10 : 14),
 
               _buildRoleCard(
                 icon: Icons.favorite_rounded,
@@ -635,7 +647,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                 onTap: () => _selectRole('fan'),
               ),
 
-              const SizedBox(height: 24),
+              SizedBox(height: isSmallScreen ? 16 : 24),
 
               // Sign In option
               Row(
@@ -733,15 +745,18 @@ class _OnboardingPageState extends State<OnboardingPage>
     required List<Color> gradient,
     required VoidCallback onTap,
   }) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 360;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedBuilder(
         animation: _floatingGlowController,
         builder: (context, child) {
           return Container(
-            padding: const EdgeInsets.all(18),
+            padding: EdgeInsets.all(isSmallScreen ? 12 : 18),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(isSmallScreen ? 16 : 20),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -765,10 +780,10 @@ class _OnboardingPageState extends State<OnboardingPage>
             child: Row(
               children: [
                 Container(
-                  width: 50,
-                  height: 50,
+                  width: isSmallScreen ? 40 : 50,
+                  height: isSmallScreen ? 40 : 50,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(isSmallScreen ? 10 : 14),
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -783,11 +798,11 @@ class _OnboardingPageState extends State<OnboardingPage>
                   ),
                   child: Icon(
                     icon,
-                    size: 24,
+                    size: isSmallScreen ? 20 : 24,
                     color: gradient[0],
                   ),
                 ),
-                const SizedBox(width: 14),
+                SizedBox(width: isSmallScreen ? 10 : 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -795,30 +810,34 @@ class _OnboardingPageState extends State<OnboardingPage>
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16,
+                          fontSize: isSmallScreen ? 14 : 16,
                           fontWeight: FontWeight.w600,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: isSmallScreen ? 2 : 4),
                       Text(
                         description,
                         style: TextStyle(
                           color: Colors.white.withAlpha(153),
-                          fontSize: 12,
+                          fontSize: isSmallScreen ? 11 : 12,
                           height: 1.3,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: isSmallScreen ? 6 : 10),
                 Container(
-                  width: 36,
-                  height: 36,
+                  width: isSmallScreen ? 30 : 36,
+                  height: isSmallScreen ? 30 : 36,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(isSmallScreen ? 8 : 10),
                     gradient: LinearGradient(colors: gradient),
                     boxShadow: [
                       BoxShadow(
@@ -828,10 +847,10 @@ class _OnboardingPageState extends State<OnboardingPage>
                       ),
                     ],
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.arrow_forward_rounded,
                     color: Colors.white,
-                    size: 18,
+                    size: isSmallScreen ? 16 : 18,
                   ),
                 ),
               ],

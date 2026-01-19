@@ -1,5 +1,5 @@
-/// Gearsh API Client
-/// Production-grade HTTP client with retry logic, interceptors, and error handling
+// Gearsh API Client
+// Production-grade HTTP client with retry logic, interceptors, and error handling
 
 import 'dart:async';
 import 'dart:convert';
@@ -71,7 +71,7 @@ class ApiResult<T> {
   /// Execute callback if success
   void whenSuccess(void Function(T data) callback) {
     if (isSuccess && data != null) {
-      callback(data!);
+      callback(data as T);
     }
   }
 
@@ -85,14 +85,14 @@ class ApiResult<T> {
   /// Map the result
   ApiResult<R> map<R>(R Function(T) mapper) {
     if (isSuccess && data != null) {
-      return ApiResult.success(mapper(data!), statusCode: statusCode, headers: headers);
+      return ApiResult.success(mapper(data as T), statusCode: statusCode, headers: headers);
     }
     return ApiResult.failure(error ?? const GearshException(message: 'Unknown error'), statusCode: statusCode);
   }
 
   /// Get data or throw
   T getOrThrow() {
-    if (isSuccess && data != null) return data!;
+    if (isSuccess && data != null) return data as T;
     throw error ?? const GearshException(message: 'Unknown error');
   }
 
@@ -108,6 +108,7 @@ class GearshApiClient {
   final String _baseUrl = ApiConfig.apiBaseUrl;
 
   String? _authToken;
+  // ignore: unused_field - Reserved for future token refresh implementation
   String? _refreshToken;
 
   // Request interceptors
@@ -199,7 +200,7 @@ class GearshApiClient {
       }
 
       // Check if should retry
-      if (attempts < config.maxRetries && (lastError?.isRetryable ?? false)) {
+      if (attempts < config.maxRetries && lastError.isRetryable) {
         attempts++;
         final delay = config.retryDelay * attempts; // Exponential backoff
         if (kDebugMode) {

@@ -27,71 +27,77 @@ class _MessagesScreenState extends State<MessagesScreen> {
   static const Color _sky400 = Color(0xFF38BDF8);
   static const Color _cyan500 = Color(0xFF06B6D4);
 
-  // Mock conversations data
+  // Mock conversations data - Using real Gearsh artists
   static const List<Map<String, dynamic>> _conversations = [
     {
       'id': 'conv1',
-      'artistId': '1',
-      'artistName': 'A-Reece',
-      'artistImage': 'assets/images/artists/a-reece.png',
-      'lastMessage': "Sounds great! I'll be there at 6 PM",
+      'artistId': 'yde',
+      'artistName': 'Y.D.E',
+      'artistImage': 'assets/images/artists/yde.png',
+      'lastMessage': "Thanks for the booking! I'll be ready at 6 PM 🎤",
       'timestamp': '2m ago',
       'unread': 2,
       'online': true,
     },
     {
       'id': 'conv2',
-      'artistId': '2',
-      'artistName': 'Nasty C',
-      'artistImage': 'assets/images/artists/nasty c.png',
-      'lastMessage': 'I can provide extra sound equipment',
+      'artistId': 'zj90',
+      'artistName': 'ZJ90',
+      'artistImage': 'assets/images/artists/ZJ90.jpg',
+      'lastMessage': 'I can bring my full DJ setup with lighting',
       'timestamp': '1h ago',
-      'unread': 0,
-      'online': false,
-    },
-    {
-      'id': 'conv3',
-      'artistId': '3',
-      'artistName': 'Emtee',
-      'artistImage': 'assets/images/artists/emtee.png',
-      'lastMessage': 'Thanks! Looking forward to working with you',
-      'timestamp': '3h ago',
       'unread': 0,
       'online': true,
     },
+    {
+      'id': 'conv3',
+      'artistId': 'rix-elton',
+      'artistName': 'Rix Elton',
+      'artistImage': 'assets/images/artists/rixelton.jpg',
+      'lastMessage': 'Looking forward to the event! The Amapiano set is ready 🔥',
+      'timestamp': '3h ago',
+      'unread': 0,
+      'online': false,
+    },
   ];
 
-  // Mock chat messages
+  // Mock chat messages - Demo conversation
   static const List<Map<String, dynamic>> _chatMessages = [
     {
       'id': 'm1',
       'sender': 'them',
-      'text': 'Hi! Thanks for booking me for your event',
+      'text': 'Hi! Thanks for booking me through Gearsh 🎵',
       'timestamp': '10:30 AM',
     },
     {
       'id': 'm2',
       'sender': 'me',
-      'text': 'Excited to have you! What equipment do you need?',
+      'text': 'Excited to have you at our event! What equipment do you need?',
       'timestamp': '10:32 AM',
     },
     {
       'id': 'm3',
       'sender': 'them',
-      'text': "I'll bring my full setup. Just need access to power outlets and a stage",
+      'text': "I'll bring my full setup - just need access to power outlets near the stage",
       'timestamp': '10:35 AM',
     },
     {
       'id': 'm4',
       'sender': 'me',
-      'text': 'Perfect! We have everything ready',
+      'text': 'Perfect! We have 4 power outlets ready. Anything else you need?',
       'timestamp': '10:37 AM',
     },
     {
       'id': 'm5',
       'sender': 'them',
-      'text': "Sounds great! I'll be there at 6 PM",
+      'text': "That's everything! I'll arrive at 5 PM for setup. Can't wait! 🔥",
       'timestamp': '10:40 AM',
+    },
+    {
+      'id': 'm6',
+      'sender': 'me',
+      'text': 'Amazing! See you then 🙌',
+      'timestamp': '10:42 AM',
     },
   ];
 
@@ -255,14 +261,19 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        conv['artistName'],
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: hasUnread ? FontWeight.w600 : FontWeight.w500,
+                      Expanded(
+                        child: Text(
+                          conv['artistName'],
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: hasUnread ? FontWeight.w600 : FontWeight.w500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      const SizedBox(width: 8),
                       Text(
                         conv['timestamp'],
                         style: TextStyle(

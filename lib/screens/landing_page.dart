@@ -36,73 +36,9 @@ class _LandingPageState extends State<LandingPage> {
       'isVerified': artist.isVerified,
     }).toList();
 
-    // Combine with legacy artists
-    return [...gearshList, ..._legacyArtists];
+    // Return only real Gearsh artists
+    return gearshList;
   }
-
-  // Legacy artist data (will be migrated to gearsh_artists)
-  static const List<Map<String, dynamic>> _legacyArtists = [
-    {
-      'id': '4',
-      'name': 'DJ Maphorisa',
-      'category': 'DJ',
-      'image': 'assets/images/artists/kunye.png',
-      'rating': 4.7,
-      'reviews': 156,
-      'price': 700,
-      'location': 'Johannesburg, SA',
-    },
-    {
-      'id': '5',
-      'name': 'Kabza De Small',
-      'category': 'DJ',
-      'image': 'assets/images/artists/P9-Kabza-de-Small.webp',
-      'rating': 4.9,
-      'reviews': 203,
-      'price': 800,
-      'location': 'Pretoria, SA',
-    },
-    {
-      'id': '6',
-      'name': 'Cassper Nyovest',
-      'category': 'Hip Hop',
-      'image': 'assets/images/artists/Cassper Nyovest Fill Up FNB Station 1.jpg',
-      'rating': 4.8,
-      'reviews': 178,
-      'price': 550,
-      'location': 'Johannesburg, SA',
-    },
-    {
-      'id': '7',
-      'name': 'The Game',
-      'category': 'Hip Hop',
-      'image': 'assets/images/artists/game.png',
-      'rating': 4.6,
-      'reviews': 145,
-      'price': 900,
-      'location': 'Los Angeles, USA',
-    },
-    {
-      'id': '8',
-      'name': 'Kendrick Lamar',
-      'category': 'Rap',
-      'image': 'assets/images/artists/kendrick.png',
-      'rating': 5.0,
-      'reviews': 320,
-      'price': 1500,
-      'location': 'Compton, USA',
-    },
-    {
-      'id': '9',
-      'name': 'Nota Baloyi',
-      'category': 'Host',
-      'image': 'assets/images/artists/NOTA.png',
-      'rating': 4.5,
-      'reviews': 89,
-      'price': 350,
-      'location': 'Johannesburg, SA',
-    },
-  ];
 
   // Color constants to avoid repetition and deprecation warnings
   static const Color _skyBlue = Color(0xFF38BDF8);

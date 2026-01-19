@@ -30,50 +30,51 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
     {'id': 'services', 'label': 'Services'},
   ];
 
-  // Mock data
+  // Mock data - Demo data for app store screenshots (generic client names)
   final List<Map<String, dynamic>> _bookingRequests = [
     {
       'id': 'req1',
-      'clientName': 'Sarah Johnson',
-      'clientImage': 'assets/images/artists/a-reece.png',
-      'service': 'Club Night (4 hours)',
-      'date': 'Dec 10, 2025',
+      'clientName': 'Thabo M.',
+      'clientImage': 'assets/images/gearsh_logo.png',
+      'service': 'Club Night DJ Set (4 hours)',
+      'date': 'Jan 25, 2026',
       'time': '8:00 PM',
-      'price': 500,
+      'price': 2500,
     },
     {
       'id': 'req2',
-      'clientName': 'Michael Chen',
-      'clientImage': 'assets/images/artists/nasty c.png',
-      'service': 'Wedding DJ Package',
-      'date': 'Dec 18, 2025',
-      'time': '4:00 PM',
-      'price': 800,
+      'clientName': 'Lerato K.',
+      'clientImage': 'assets/images/gearsh_logo.png',
+      'service': 'Birthday Party Performance',
+      'date': 'Feb 1, 2026',
+      'time': '6:00 PM',
+      'price': 3500,
     },
   ];
 
   final List<Map<String, dynamic>> _upcomingEvents = [
-    {'id': 'e1', 'date': '25', 'day': 'Mon', 'month': 'Nov', 'event': 'Corporate Event', 'time': '6:00 PM'},
-    {'id': 'e2', 'date': '28', 'day': 'Thu', 'month': 'Nov', 'event': 'Wedding Reception', 'time': '5:00 PM'},
-    {'id': 'e3', 'date': '3', 'day': 'Tue', 'month': 'Dec', 'event': 'Club Night', 'time': '9:00 PM'},
+    {'id': 'e1', 'date': '25', 'day': 'Sat', 'month': 'Jan', 'event': 'Club Night @ Altitude', 'time': '8:00 PM'},
+    {'id': 'e2', 'date': '1', 'day': 'Sat', 'month': 'Feb', 'event': 'Private Birthday Party', 'time': '6:00 PM'},
+    {'id': 'e3', 'date': '14', 'day': 'Sat', 'month': 'Feb', 'event': 'Valentine\'s Day Event', 'time': '7:00 PM'},
   ];
 
   final List<Map<String, dynamic>> _services = [
-    {'id': 's1', 'name': 'Club Night (4 hours)', 'price': 500, 'status': 'active'},
-    {'id': 's2', 'name': 'Wedding DJ Package', 'price': 800, 'status': 'active'},
-    {'id': 's3', 'name': 'Corporate Event', 'price': 700, 'status': 'active'},
-    {'id': 's4', 'name': 'Private Party (2 hours)', 'price': 300, 'status': 'inactive'},
+    {'id': 's1', 'name': 'Club Night (4 hours)', 'price': 2500, 'status': 'active'},
+    {'id': 's2', 'name': 'Private Event Package', 'price': 4000, 'status': 'active'},
+    {'id': 's3', 'name': 'Festival Performance', 'price': 6000, 'status': 'active'},
+    {'id': 's4', 'name': 'Studio Session (2 hours)', 'price': 1500, 'status': 'active'},
   ];
 
   final List<Map<String, dynamic>> _recentActivity = [
-    {'color': _green400, 'text': 'Payment received - ${globalConfigService.formatPrice(500)}', 'time': '2 hours ago'},
-    {'color': _cyan400, 'text': 'New booking request', 'time': '5 hours ago'},
-    {'color': _sky400, 'text': 'Booking confirmed for Dec 10', 'time': '1 day ago'},
+    {'color': _green400, 'text': 'Payment received - ${globalConfigService.formatPrice(2500)}', 'time': '2 hours ago'},
+    {'color': _cyan400, 'text': 'New booking request from Thabo M.', 'time': '5 hours ago'},
+    {'color': _sky400, 'text': 'Booking confirmed for Jan 25', 'time': '1 day ago'},
+    {'color': _yellow400, 'text': '5-star review received ⭐', 'time': '2 days ago'},
   ];
 
   // Calendar state
-  DateTime _currentMonth = DateTime(2025, 11, 1);
-  final List<int> _eventDays = [25, 28];
+  DateTime _currentMonth = DateTime(2026, 1, 1);
+  final List<int> _eventDays = [25, 1];
 
   @override
   void initState() {
@@ -305,83 +306,121 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
   }
 
   Widget _buildOverviewTab() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 360;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        // Earnings Stats
-        Row(
-          children: [
-            Expanded(child: _buildStatCard(
-              icon: Icons.attach_money_rounded,
-              label: 'This Month',
-              value: globalConfigService.formatPrice(3200),
-              trend: '+24%',
-            )),
-            const SizedBox(width: 12),
-            Expanded(child: _buildStatCard(
-              icon: Icons.calendar_today_rounded,
-              label: 'Total Bookings',
-              value: '47',
-              trend: '+12%',
-            )),
-          ],
+        // Earnings Stats - Use Flexible layout for small screens
+        LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth < 320) {
+              // Stack vertically on very small screens
+              return Column(
+                children: [
+                  _buildStatCard(
+                    icon: Icons.attach_money_rounded,
+                    label: 'This Month',
+                    value: globalConfigService.formatPrice(3200),
+                    trend: '+24%',
+                  ),
+                  const SizedBox(height: 12),
+                  _buildStatCard(
+                    icon: Icons.calendar_today_rounded,
+                    label: 'Bookings',
+                    value: '47',
+                    trend: '+12%',
+                  ),
+                ],
+              );
+            }
+            return Row(
+              children: [
+                Expanded(child: _buildStatCard(
+                  icon: Icons.attach_money_rounded,
+                  label: 'This Month',
+                  value: globalConfigService.formatPrice(3200),
+                  trend: '+24%',
+                )),
+                const SizedBox(width: 10),
+                Expanded(child: _buildStatCard(
+                  icon: Icons.calendar_today_rounded,
+                  label: 'Bookings',
+                  value: '47',
+                  trend: '+12%',
+                )),
+              ],
+            );
+          },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: isSmallScreen ? 12 : 16),
 
-        // Quick Stats
-        Row(
+        // Quick Stats - Wrap for small screens
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
           children: [
-            Expanded(child: _buildQuickStat(
-              icon: Icons.access_time_rounded,
-              iconColor: _yellow400,
-              value: '2',
-              label: 'Pending',
-            )),
-            const SizedBox(width: 12),
-            Expanded(child: _buildQuickStat(
-              icon: Icons.check_circle_outline_rounded,
-              iconColor: _green400,
-              value: '8',
-              label: 'Confirmed',
-            )),
-            const SizedBox(width: 12),
-            Expanded(child: _buildQuickStat(
-              icon: Icons.people_outline_rounded,
-              iconColor: _cyan400,
-              value: '34',
-              label: 'Clients',
-            )),
+            SizedBox(
+              width: (screenWidth - 56) / 3,
+              child: _buildQuickStat(
+                icon: Icons.access_time_rounded,
+                iconColor: _yellow400,
+                value: '2',
+                label: 'Pending',
+              ),
+            ),
+            SizedBox(
+              width: (screenWidth - 56) / 3,
+              child: _buildQuickStat(
+                icon: Icons.check_circle_outline_rounded,
+                iconColor: _green400,
+                value: '8',
+                label: 'Confirmed',
+              ),
+            ),
+            SizedBox(
+              width: (screenWidth - 56) / 3,
+              child: _buildQuickStat(
+                icon: Icons.people_outline_rounded,
+                iconColor: _cyan400,
+                value: '34',
+                label: 'Clients',
+              ),
+            ),
           ],
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: isSmallScreen ? 16 : 24),
 
         // Upcoming Events
-        const Text(
+        Text(
           'Upcoming Events',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 18,
+            fontSize: isSmallScreen ? 16 : 18,
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 12),
         ..._upcomingEvents.map((event) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.only(bottom: 10),
           child: _buildEventCard(event),
         )),
-        const SizedBox(height: 16),
+        SizedBox(height: isSmallScreen ? 12 : 16),
 
         // Recent Activity
-        const Text(
+        Text(
           'Recent Activity',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 18,
+            fontSize: isSmallScreen ? 16 : 18,
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 12),
         _buildActivityCard(),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -392,8 +431,11 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
     required String value,
     required String trend,
   }) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 360;
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -403,7 +445,7 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
             _cyan500.withAlpha(51),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
         border: Border.all(color: _sky500.withAlpha(77)),
       ),
       child: Column(
@@ -411,36 +453,44 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
         children: [
           Row(
             children: [
-              Icon(icon, color: _sky400, size: 18),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  color: Colors.white.withAlpha(153),
-                  fontSize: 13,
+              Icon(icon, color: _sky400, size: isSmallScreen ? 16 : 18),
+              SizedBox(width: isSmallScreen ? 4 : 8),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: Colors.white.withAlpha(153),
+                    fontSize: isSmallScreen ? 11 : 13,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
+          SizedBox(height: isSmallScreen ? 8 : 12),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              value,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: isSmallScreen ? 22 : 28,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: isSmallScreen ? 2 : 4),
           Row(
             children: [
-              const Icon(Icons.trending_up_rounded, color: _green400, size: 14),
-              const SizedBox(width: 4),
+              Icon(Icons.trending_up_rounded, color: _green400, size: isSmallScreen ? 12 : 14),
+              SizedBox(width: isSmallScreen ? 2 : 4),
               Text(
                 trend,
-                style: const TextStyle(
+                style: TextStyle(
                   color: _green400,
-                  fontSize: 13,
+                  fontSize: isSmallScreen ? 11 : 13,
                   fontWeight: FontWeight.w500,
                 ),
               ),

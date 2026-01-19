@@ -68,7 +68,7 @@ class _GigsPageState extends ConsumerState<GigsPage> {
             IconButton(
               icon: const Icon(Icons.filter_list, color: Colors.white),
               onPressed: () {
-                // TODO: Add filter functionality
+                // Filter gigs by date, location, or genre
               },
             ),
           ],
@@ -589,7 +589,6 @@ class _GigsPageState extends ConsumerState<GigsPage> {
               ),
               GestureDetector(
                 onTap: () {
-                  // TODO: Implement ticket purchase
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

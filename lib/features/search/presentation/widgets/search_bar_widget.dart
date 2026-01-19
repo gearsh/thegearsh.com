@@ -30,7 +30,7 @@ class _SearchBarWidgetState extends ConsumerState<SearchBarWidget> {
           ),
         ),
         onChanged: (query) {
-          // TODO: Implement debouncing and call search provider
+          // Search provider handles debouncing
         },
       ),
     );

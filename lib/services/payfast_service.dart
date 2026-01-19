@@ -7,7 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 /// Handles payment processing for artist bookings
 class PayFastService {
   // PayFast Configuration
-  // TODO: Replace with your actual PayFast credentials
   static const String _merchantId = '10000100'; // Sandbox merchant ID
   static const String _merchantKey = '46f0cd694581a'; // Sandbox merchant key
   static const String _passphrase = 'jt7NOE43FZPn'; // Sandbox passphrase

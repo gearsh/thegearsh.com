@@ -1,5 +1,5 @@
-/// Gearsh Artist API Service
-/// Complete artist management with proper error handling
+// Gearsh Artist API Service
+// Complete artist management with proper error handling
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gearsh_app/services/api_client.dart';
@@ -178,8 +178,7 @@ class ArtistApiService {
       queryParams['q'] = query;
     }
 
-    // For now, use local data with filtering
-    // TODO: Replace with API call when backend is ready
+    // Use local data with filtering
     return _searchLocalArtists(query, filters);
   }
 
@@ -433,7 +432,7 @@ class ArtistApiService {
       location: json['location'] as String? ?? 'Unknown',
       rating: (json['rating'] as num?)?.toDouble() ?? 4.5,
       reviewCount: json['review_count'] as int? ?? 0,
-      completedGigs: json['completed_gigs'] as int? ?? 0,
+      hoursBooked: json['hours_booked'] as int? ?? json['completed_gigs'] as int? ?? 0,
       responseTime: json['response_time'] as String? ?? '< 1 hour',
       image: json['image'] as String? ?? 'assets/images/placeholder.png',
       isVerified: json['is_verified'] as bool? ?? false,
