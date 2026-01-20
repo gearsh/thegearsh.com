@@ -32,14 +32,14 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
 
   DateTime? _dateOfBirth;
   String? _gender;
-  String? _userType; // 'client', 'artist', or 'fan'
+  String? _userType;
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
   String? _error;
   bool _success = false;
-  int _currentStep = 0; // 0: Profile Type, 1: Basic Info, 2: Profile Details, 3: Security
+  int _currentStep = 0;
 
   late AnimationController _floatingGlowController;
   late AnimationController _fadeController;
@@ -117,14 +117,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
   }
 
   void _nextStep() {
-    // Validate profile type selection on step 0
-    if (_currentStep == 0 && _userType == null) {
-      setState(() => _error = 'Please select a profile type');
-      return;
-    }
-    setState(() => _error = null);
-
-    if (_currentStep < 3) {
+    if (_currentStep < 2) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
@@ -203,21 +196,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
           // Log in the user with their info
           final fullName = '${_firstNameController.text.trim()} ${_surnameController.text.trim()}';
           final email = _emailController.text.trim();
-
-          // Map user type to role
-          UserRole role;
-          switch (_userType) {
-            case 'artist':
-              role = UserRole.artist;
-              break;
-            case 'fan':
-              role = UserRole.fan;
-              break;
-            case 'client':
-            default:
-              role = UserRole.client;
-              break;
-          }
+          final role = _userType == 'artist' ? UserRole.artist : UserRole.client;
 
           userRoleService.login(
             role: role,
@@ -236,17 +215,10 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
           // Navigate to appropriate page after short delay
           Future.delayed(const Duration(seconds: 2), () {
             if (mounted) {
-              switch (_userType) {
-                case 'artist':
-                  context.go('/dashboard');
-                  break;
-                case 'fan':
-                  context.go('/'); // Fans go to home to browse artists
-                  break;
-                case 'client':
-                default:
-                  context.go('/'); // Clients go to home to book artists
-                  break;
+              if (role == UserRole.artist) {
+                context.go('/dashboard');
+              } else {
+                context.go('/');
               }
             }
           });
@@ -361,7 +333,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                           ),
                           // Step indicator
                           Row(
-                            children: List.generate(4, (index) => _buildStepIndicator(index)),
+                            children: List.generate(3, (index) => _buildStepIndicator(index)),
                           ),
                           const SizedBox(width: 46), // Balance the layout
                         ],
@@ -402,7 +374,6 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                             _buildStep1(),
                             _buildStep2(),
                             _buildStep3(),
-                            _buildStep4(),
                           ],
                         ),
                       ),
@@ -465,7 +436,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                           GestureDetector(
                             onTap: _isLoading
                                 ? null
-                                : (_currentStep == 3 ? _signUp : _nextStep),
+                                : (_currentStep == 2 ? _signUp : _nextStep),
                             child: Container(
                               width: double.infinity,
                               padding: const EdgeInsets.symmetric(vertical: 18),
@@ -495,7 +466,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            _currentStep == 3 ? 'Create Account' : 'Continue',
+                                            _currentStep == 2 ? 'Create Account' : 'Continue',
                                             style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 17,
@@ -505,7 +476,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                                           ),
                                           const SizedBox(width: 8),
                                           Icon(
-                                            _currentStep == 3
+                                            _currentStep == 2
                                                 ? Icons.check_rounded
                                                 : Icons.arrow_forward_rounded,
                                             color: Colors.white,
@@ -560,13 +531,11 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
   String _getStepTitle() {
     switch (_currentStep) {
       case 0:
-        return 'Step 1: Profile Type';
+        return 'Step 1: Basic Information';
       case 1:
-        return 'Step 2: Basic Information';
+        return 'Step 2: Profile Details';
       case 2:
-        return 'Step 3: Profile Details';
-      case 3:
-        return 'Step 4: Security';
+        return 'Step 3: Security';
       default:
         return '';
     }
@@ -590,206 +559,6 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
   }
 
   Widget _buildStep1() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'How will you use Gearsh?',
-            style: TextStyle(
-              color: Colors.white.withAlpha(200),
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // Client Profile Card
-          _buildProfileTypeCard(
-            type: 'client',
-            icon: Icons.business_center_outlined,
-            title: 'Client / Booker',
-            description: 'Book artists for events, parties, and projects. Browse talent and manage your bookings.',
-            features: ['Book artists', 'Manage events', 'Direct messaging'],
-            color: const Color(0xFF3B82F6), // Blue
-          ),
-          const SizedBox(height: 16),
-
-          // Artist Profile Card
-          _buildProfileTypeCard(
-            type: 'artist',
-            icon: Icons.mic_external_on_outlined,
-            title: 'Artist / Creative',
-            description: 'Showcase your talent, get discovered, and receive bookings from clients worldwide.',
-            features: ['Create portfolio', 'Get booked', 'Earn income'],
-            color: const Color(0xFF8B5CF6), // Purple
-          ),
-          const SizedBox(height: 16),
-
-          // Fan Profile Card
-          _buildProfileTypeCard(
-            type: 'fan',
-            icon: Icons.favorite_outline_rounded,
-            title: 'Fan / Supporter',
-            description: 'Follow your favorite artists, stay updated on their events, and support their journey.',
-            features: ['Follow artists', 'Event updates', 'Exclusive content'],
-            color: const Color(0xFFEC4899), // Pink
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProfileTypeCard({
-    required String type,
-    required IconData icon,
-    required String title,
-    required String description,
-    required List<String> features,
-    required Color color,
-  }) {
-    final isSelected = _userType == type;
-
-    return GestureDetector(
-      onTap: () {
-        setState(() => _userType = type);
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: isSelected
-              ? LinearGradient(
-                  colors: [color.withAlpha(40), color.withAlpha(20)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
-              : null,
-          color: isSelected ? null : _slate800.withAlpha(128),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? color : _sky500.withAlpha(51),
-            width: isSelected ? 2 : 1.5,
-          ),
-          boxShadow: isSelected
-              ? [BoxShadow(color: color.withAlpha(30), blurRadius: 20, spreadRadius: 0)]
-              : null,
-        ),
-        child: Row(
-          children: [
-            // Icon
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: isSelected ? color.withAlpha(40) : _slate900,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(icon, color: isSelected ? color : _sky400, size: 28),
-            ),
-            const SizedBox(width: 16),
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          title,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      if (isSelected) ...[
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: color,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Text(
-                            'Selected',
-                            style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      color: Colors.white.withAlpha(150),
-                      fontSize: 13,
-                      height: 1.4,
-                    ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 6,
-                    children: features.map((feature) => Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: isSelected ? color.withAlpha(30) : _slate900,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.check_circle_outline,
-                            size: 12,
-                            color: isSelected ? color : _sky400.withAlpha(150),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            feature,
-                            style: TextStyle(
-                              color: isSelected ? Colors.white.withAlpha(200) : Colors.white.withAlpha(130),
-                              fontSize: 11,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )).toList(),
-                  ),
-                ],
-              ),
-            ),
-            // Selection indicator
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected ? color : Colors.transparent,
-                border: Border.all(
-                  color: isSelected ? color : Colors.white.withAlpha(80),
-                  width: 2,
-                ),
-              ),
-              child: isSelected
-                  ? const Icon(Icons.check, color: Colors.white, size: 16)
-                  : null,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStep2() {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -843,43 +612,21 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
     );
   }
 
-  Widget _buildStep3() {
+  Widget _buildStep2() {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Profile type indicator
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            margin: const EdgeInsets.only(bottom: 20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  _getProfileColor().withAlpha(30),
-                  _getProfileColor().withAlpha(10),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: _getProfileColor().withAlpha(60)),
-            ),
-            child: Row(
-              children: [
-                Icon(_getProfileIcon(), color: _getProfileColor(), size: 20),
-                const SizedBox(width: 10),
-                Text(
-                  'Setting up your ${_getProfileTypeName()} profile',
-                  style: TextStyle(
-                    color: Colors.white.withAlpha(200),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
+          // User type dropdown
+          _buildDropdownField(
+            label: 'I am a...',
+            value: _userType,
+            icon: Icons.badge_outlined,
+            items: ['Booker', 'Artist', 'Fan'],
+            onChanged: (v) => setState(() => _userType = v),
           ),
-
-          // Location fields (for all types)
+          const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
@@ -902,164 +649,94 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
             ],
           ),
           const SizedBox(height: 16),
-
-          // Artist-specific fields
-          if (_userType == 'artist') ...[
-            Text(
-              'Your Skills & Talents',
-              style: TextStyle(color: Colors.white.withAlpha(179), fontSize: 13, fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(height: 8),
-            GestureDetector(
-              onTap: _toggleSkillDropdown,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                decoration: BoxDecoration(
-                  color: _slate800.withAlpha(128),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: _sky500.withAlpha(51), width: 1.5),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.auto_awesome_rounded, color: _sky400.withAlpha(179), size: 20),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        _selectedSkills.isEmpty ? 'Select your skills...' : _selectedSkills.join(', '),
-                        style: TextStyle(
-                          color: _selectedSkills.isEmpty ? Colors.white.withAlpha(128) : Colors.white,
-                          fontSize: 15,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    AnimatedRotation(
-                      turns: _showSkillDropdown ? 0.5 : 0.0,
-                      duration: const Duration(milliseconds: 250),
-                      child: Icon(Icons.expand_more_rounded, color: Colors.white.withAlpha(128)),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            AnimatedCrossFade(
-              firstChild: const SizedBox.shrink(),
-              secondChild: Container(
-                margin: const EdgeInsets.only(top: 8),
-                padding: const EdgeInsets.all(12),
-                constraints: const BoxConstraints(maxHeight: 180),
-                decoration: BoxDecoration(
-                  color: _slate800,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: _sky500.withAlpha(51)),
-                ),
-                child: SingleChildScrollView(
-                  child: Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _skillOptions.map((skill) {
-                      final isSelected = _selectedSkills.contains(skill);
-                      return GestureDetector(
-                        onTap: () => _selectSkill(skill, !isSelected),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                          decoration: BoxDecoration(
-                            gradient: isSelected
-                                ? const LinearGradient(colors: [_sky500, _cyan500])
-                                : null,
-                            color: isSelected ? null : _slate900,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: isSelected ? Colors.transparent : _sky500.withAlpha(51),
-                            ),
-                          ),
-                          child: Text(
-                            skill,
-                            style: TextStyle(
-                              color: isSelected ? Colors.white : Colors.white.withAlpha(179),
-                              fontSize: 12,
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-              crossFadeState: _showSkillDropdown ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-              duration: const Duration(milliseconds: 250),
-            ),
-            const SizedBox(height: 16),
-          ],
-
-          // Client-specific fields
-          if (_userType == 'client') ...[
-            Container(
-              padding: const EdgeInsets.all(16),
+          // Skills multi-select
+          Text(
+            'Skills (select all that apply)',
+            style: TextStyle(color: Colors.white.withAlpha(179), fontSize: 13, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 8),
+          GestureDetector(
+            onTap: _toggleSkillDropdown,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                color: const Color(0xFF3B82F6).withAlpha(15),
+                color: _slate800.withAlpha(128),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFF3B82F6).withAlpha(40)),
+                border: Border.all(color: _sky500.withAlpha(51), width: 1.5),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.business_outlined, color: const Color(0xFF3B82F6), size: 20),
-                      const SizedBox(width: 10),
-                      Text(
-                        'As a Client you can:',
-                        style: TextStyle(color: Colors.white.withAlpha(200), fontSize: 14, fontWeight: FontWeight.w600),
+                  Icon(Icons.auto_awesome_rounded, color: _sky400.withAlpha(179), size: 20),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      _selectedSkills.isEmpty ? 'Select skills...' : _selectedSkills.join(', '),
+                      style: TextStyle(
+                        color: _selectedSkills.isEmpty ? Colors.white.withAlpha(128) : Colors.white,
+                        fontSize: 15,
                       ),
-                    ],
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  const SizedBox(height: 12),
-                  _buildFeatureItem('Browse and discover talented artists'),
-                  _buildFeatureItem('Book artists for events and projects'),
-                  _buildFeatureItem('Message artists directly'),
-                  _buildFeatureItem('Manage your bookings'),
+                  AnimatedRotation(
+                    turns: _showSkillDropdown ? 0.5 : 0.0,
+                    duration: const Duration(milliseconds: 250),
+                    child: Icon(Icons.expand_more_rounded, color: Colors.white.withAlpha(128)),
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-          ],
-
-          // Fan-specific fields
-          if (_userType == 'fan') ...[
-            Container(
-              padding: const EdgeInsets.all(16),
+          ),
+          AnimatedCrossFade(
+            firstChild: const SizedBox.shrink(),
+            secondChild: Container(
+              margin: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.all(12),
+              constraints: const BoxConstraints(maxHeight: 180),
               decoration: BoxDecoration(
-                color: const Color(0xFFEC4899).withAlpha(15),
+                color: _slate800,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFEC4899).withAlpha(40)),
+                border: Border.all(color: _sky500.withAlpha(51)),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.favorite_rounded, color: const Color(0xFFEC4899), size: 20),
-                      const SizedBox(width: 10),
-                      Text(
-                        'As a Fan you can:',
-                        style: TextStyle(color: Colors.white.withAlpha(200), fontSize: 14, fontWeight: FontWeight.w600),
+              child: SingleChildScrollView(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _skillOptions.map((skill) {
+                    final isSelected = _selectedSkills.contains(skill);
+                    return GestureDetector(
+                      onTap: () => _selectSkill(skill, !isSelected),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          gradient: isSelected
+                              ? const LinearGradient(colors: [_sky500, _cyan500])
+                              : null,
+                          color: isSelected ? null : _slate900,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: isSelected ? Colors.transparent : _sky500.withAlpha(51),
+                          ),
+                        ),
+                        child: Text(
+                          skill,
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.white.withAlpha(179),
+                            fontSize: 12,
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  _buildFeatureItem('Follow your favorite artists'),
-                  _buildFeatureItem('Get notified about new releases'),
-                  _buildFeatureItem('Stay updated on events'),
-                  _buildFeatureItem('Support artists you love'),
-                ],
+                    );
+                  }).toList(),
+                ),
               ),
             ),
-            const SizedBox(height: 16),
-          ],
-
-          // Date of birth (for all)
+            crossFadeState: _showSkillDropdown ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 250),
+          ),
+          const SizedBox(height: 16),
+          // Date of birth
           GestureDetector(
             onTap: () async {
               final picked = await showDatePicker(
@@ -1119,64 +796,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
     );
   }
 
-  Widget _buildFeatureItem(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Icon(Icons.check_circle, color: Colors.white.withAlpha(150), size: 16),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(color: Colors.white.withAlpha(170), fontSize: 13),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Color _getProfileColor() {
-    switch (_userType) {
-      case 'client':
-        return const Color(0xFF3B82F6); // Blue
-      case 'artist':
-        return const Color(0xFF8B5CF6); // Purple
-      case 'fan':
-        return const Color(0xFFEC4899); // Pink
-      default:
-        return _sky500;
-    }
-  }
-
-  IconData _getProfileIcon() {
-    switch (_userType) {
-      case 'client':
-        return Icons.business_center_outlined;
-      case 'artist':
-        return Icons.mic_external_on_outlined;
-      case 'fan':
-        return Icons.favorite_outline_rounded;
-      default:
-        return Icons.person_outline;
-    }
-  }
-
-  String _getProfileTypeName() {
-    switch (_userType) {
-      case 'client':
-        return 'Client';
-      case 'artist':
-        return 'Artist';
-      case 'fan':
-        return 'Fan';
-      default:
-        return 'Profile';
-    }
-  }
-
-  Widget _buildStep4() {
+  Widget _buildStep3() {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
