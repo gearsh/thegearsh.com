@@ -39,6 +39,8 @@ dependencies:
   url_launcher: ^6.2.1
   package_info_plus: ^8.0.0
   image_picker: ^1.0.7
+  # Apple Pay
+  pay: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -80,3 +82,4 @@ flutter:
     - assets/images/artists/
     - assets/images/artists/rixelton.jpg
     - assets/images/artists/dripmaker.png
+    - assets/payment/

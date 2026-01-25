@@ -1,6 +1,32 @@
-# Redirect root to onboarding
-/ /onboarding 302
+# Landing page is now root index.html
+# Legal pages
+/privacy-policy /landing/privacy-policy.html 200
+/terms-and-conditions /landing/terms-and-conditions.html 200
+/account-deletion /landing/account-deletion.html 200
 
-# Handle all routes for SPA
-/* /index.html 200
+# Flutter App routes - serve flutter-app.html
+/app/* /flutter-app.html 200
+/onboarding /flutter-app.html 200
+/login /flutter-app.html 200
+/signup /flutter-app.html 200
+/home /flutter-app.html 200
+/dashboard /flutter-app.html 200
+/profile/* /flutter-app.html 200
+/artist/* /flutter-app.html 200
+/booking/* /flutter-app.html 200
+/messages /flutter-app.html 200
+/gigs /flutter-app.html 200
+/cart/* /flutter-app.html 200
+/search /flutter-app.html 200
+/my-bookings /flutter-app.html 200
+/edit-profile /flutter-app.html 200
+/profile-settings /flutter-app.html 200
+/category/* /flutter-app.html 200
+/help /flutter-app.html 200
+/faq /flutter-app.html 200
+/saved-artists /flutter-app.html 200
+/artist-dashboard /flutter-app.html 200
+/notifications /flutter-app.html 200
+
+# Root serves landing page (index.html)
 

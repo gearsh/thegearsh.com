@@ -1,0 +1,13 @@
+{
+  "provider": "apple_pay",
+  "data": {
+    "merchantIdentifier": "merchant.com.gearsh.app",
+    "displayName": "Gearsh",
+    "merchantCapabilities": ["3DS", "debit", "credit"],
+    "supportedNetworks": ["visa", "masterCard", "amex", "discover"],
+    "countryCode": "ZA",
+    "currencyCode": "ZAR",
+    "requiredBillingContactFields": ["emailAddress", "name"],
+    "requiredShippingContactFields": []
+  }
+}

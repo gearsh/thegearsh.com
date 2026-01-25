@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/screens/onboarding_page.dart';
+import 'package:gearsh_app/screens/premium_onboarding.dart';
 import 'package:gearsh_app/screens/faq_page.dart';
 import 'package:gearsh_app/screens/privacy_policy_page.dart';
 import 'package:gearsh_app/screens/terms_of_service_page.dart';
@@ -30,6 +30,7 @@ import 'package:gearsh_app/features/gigs/gigs_page.dart';
 import 'package:gearsh_app/features/cart/cart_page.dart';
 import 'package:gearsh_app/features/cart/cart_checkout_page.dart';
 import 'package:gearsh_app/features/cart/cart_success_page.dart';
+import 'package:gearsh_app/features/admin/import_twitter_artists_page.dart';
 import 'package:gearsh_app/services/user_role_service.dart';
 import 'package:gearsh_app/widgets/swipe_back_wrapper.dart';
 
@@ -121,7 +122,7 @@ enum TransitionType {
 }
 
 final GoRouter router = GoRouter(
-  // Both web and mobile start at onboarding
+  // Start with onboarding
   initialLocation: '/onboarding',
   errorBuilder: (context, state) => ErrorPage(error: state.error),
   // Redirect based on user state
@@ -165,7 +166,7 @@ final GoRouter router = GoRouter(
       pageBuilder: (context, state) => buildPageWithTransition(
         context: context,
         state: state,
-        child: const OnboardingPage(),
+        child: const GearshPremiumOnboarding(),
         type: TransitionType.fade,
       ),
     ),
@@ -345,6 +346,16 @@ final GoRouter router = GoRouter(
         state: state,
         child: const ArtistVerificationPage(),
         type: TransitionType.slideRight,
+      ),
+    ),
+    // Admin - Import Twitter Artists
+    GoRoute(
+      path: '/admin/import-twitter',
+      pageBuilder: (context, state) => buildPageWithTransition(
+        context: context,
+        state: state,
+        child: const ImportTwitterArtistsPage(),
+        type: TransitionType.slideUp,
       ),
     ),
     GoRoute(

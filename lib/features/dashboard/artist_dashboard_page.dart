@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gearsh_app/services/global_config_service.dart';
+import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/data/gearsh_artists.dart';
 
-class ArtistDashboardPage extends StatefulWidget {
+class ArtistDashboardPage extends ConsumerStatefulWidget {
   const ArtistDashboardPage({super.key});
 
   @override
-  State<ArtistDashboardPage> createState() => _ArtistDashboardPageState();
+  ConsumerState<ArtistDashboardPage> createState() => _ArtistDashboardPageState();
 }
 
-class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
+class _ArtistDashboardPageState extends ConsumerState<ArtistDashboardPage> {
   String _activeTab = 'overview';
 
   // Color constants - Deep Sky Blue theme
@@ -30,57 +33,136 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
     {'id': 'services', 'label': 'Services'},
   ];
 
-  // Mock data - Demo data for app store screenshots (generic client names)
-  final List<Map<String, dynamic>> _bookingRequests = [
-    {
-      'id': 'req1',
-      'clientName': 'Thabo M.',
-      'clientImage': 'assets/images/gearsh_logo.png',
-      'service': 'Club Night DJ Set (4 hours)',
-      'date': 'Jan 25, 2026',
-      'time': '8:00 PM',
-      'price': 2500,
-    },
-    {
-      'id': 'req2',
-      'clientName': 'Lerato K.',
-      'clientImage': 'assets/images/gearsh_logo.png',
-      'service': 'Birthday Party Performance',
-      'date': 'Feb 1, 2026',
-      'time': '6:00 PM',
-      'price': 3500,
-    },
-  ];
+  // Get artist data for the logged-in user
+  GearshArtist? get _artistProfile {
+    // Try to match by username or email
+    final userName = userRoleService.userName.toLowerCase();
+    final userEmail = userRoleService.userEmail.toLowerCase();
 
-  final List<Map<String, dynamic>> _upcomingEvents = [
-    {'id': 'e1', 'date': '25', 'day': 'Sat', 'month': 'Jan', 'event': 'Club Night @ Altitude', 'time': '8:00 PM'},
-    {'id': 'e2', 'date': '1', 'day': 'Sat', 'month': 'Feb', 'event': 'Private Birthday Party', 'time': '6:00 PM'},
-    {'id': 'e3', 'date': '14', 'day': 'Sat', 'month': 'Feb', 'event': 'Valentine\'s Day Event', 'time': '7:00 PM'},
-  ];
+    for (final artist in gearshArtists) {
+      final artistUsername = artist.username.replaceAll('@', '').toLowerCase();
+      if (artistUsername == userName ||
+          artistUsername == userEmail.split('@').first ||
+          artist.name.toLowerCase() == userName) {
+        return artist;
+      }
+    }
+    return null;
+  }
 
-  final List<Map<String, dynamic>> _services = [
-    {'id': 's1', 'name': 'Club Night (4 hours)', 'price': 2500, 'status': 'active'},
-    {'id': 's2', 'name': 'Private Event Package', 'price': 4000, 'status': 'active'},
-    {'id': 's3', 'name': 'Festival Performance', 'price': 6000, 'status': 'active'},
-    {'id': 's4', 'name': 'Studio Session (2 hours)', 'price': 1500, 'status': 'active'},
-  ];
+  // Demo booking requests (will be fetched from backend in production)
+  List<Map<String, dynamic>> get _bookingRequests {
+    final artist = _artistProfile;
+    if (artist == null) {
+      return [
+        {
+          'id': 'req1',
+          'clientName': 'Thabo M.',
+          'clientImage': 'assets/images/gearsh_logo.png',
+          'service': 'Live Performance (1 hour)',
+          'date': 'Jan 28, 2026',
+          'time': '8:00 PM',
+          'price': 2500,
+          'status': 'pending',
+        },
+      ];
+    }
+
+    // Generate demo requests based on artist's services
+    final services = artist.services;
+    if (services.isEmpty) return [];
+
+    return [
+      {
+        'id': 'req1',
+        'clientName': 'Thabo M.',
+        'clientImage': 'assets/images/gearsh_logo.png',
+        'service': services.isNotEmpty ? services[0]['name'] : 'Booking',
+        'date': 'Jan 28, 2026',
+        'time': '8:00 PM',
+        'price': services.isNotEmpty ? (services[0]['price'] as num).toInt() : artist.bookingFee,
+        'status': 'pending',
+      },
+      {
+        'id': 'req2',
+        'clientName': 'Lerato K.',
+        'clientImage': 'assets/images/gearsh_logo.png',
+        'service': services.length > 1 ? services[1]['name'] : 'Booking',
+        'date': 'Feb 5, 2026',
+        'time': '6:00 PM',
+        'price': services.length > 1 ? (services[1]['price'] as num).toInt() : artist.bookingFee,
+        'status': 'pending',
+      },
+    ];
+  }
+
+  List<Map<String, dynamic>> get _upcomingEvents {
+    final artist = _artistProfile;
+    if (artist != null && artist.upcomingGigs.isNotEmpty) {
+      return artist.upcomingGigs.map((gig) {
+        final date = DateTime.tryParse(gig['date'] ?? '') ?? DateTime.now();
+        return {
+          'id': gig['title'],
+          'date': date.day.toString(),
+          'day': _getDayName(date.weekday),
+          'month': _getMonthName(date.month),
+          'event': gig['title'],
+          'time': gig['time'] ?? 'TBA',
+          'venue': gig['venue'],
+        };
+      }).toList();
+    }
+
+    return [
+      {'id': 'e1', 'date': '28', 'day': 'Tue', 'month': 'Jan', 'event': 'Upcoming Booking', 'time': '8:00 PM'},
+    ];
+  }
+
+  List<Map<String, dynamic>> get _services {
+    final artist = _artistProfile;
+    if (artist != null) {
+      return artist.services.map((s) => {
+        'id': s['id'],
+        'name': s['name'],
+        'price': (s['price'] as num).toInt(),
+        'status': 'active',
+      }).toList();
+    }
+
+    return [
+      {'id': 's1', 'name': 'Standard Booking', 'price': 2500, 'status': 'active'},
+    ];
+  }
+
+  String _getDayName(int weekday) {
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    return days[weekday - 1];
+  }
+
+  String _getMonthName(int month) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months[month - 1];
+  }
+
+  // Get event days for calendar highlighting
+  List<int> get _eventDays {
+    return _upcomingEvents.map((e) {
+      final dateStr = e['date'] as String?;
+      return int.tryParse(dateStr ?? '') ?? 0;
+    }).where((d) => d > 0).toList();
+  }
 
   final List<Map<String, dynamic>> _recentActivity = [
-    {'color': _green400, 'text': 'Payment received - ${globalConfigService.formatPrice(2500)}', 'time': '2 hours ago'},
-    {'color': _cyan400, 'text': 'New booking request from Thabo M.', 'time': '5 hours ago'},
-    {'color': _sky400, 'text': 'Booking confirmed for Jan 25', 'time': '1 day ago'},
-    {'color': _yellow400, 'text': '5-star review received ⭐', 'time': '2 days ago'},
+    {'color': _green400, 'text': 'Profile created successfully!', 'time': 'Just now'},
+    {'color': _cyan400, 'text': 'Welcome to Gearsh!', 'time': '1 min ago'},
   ];
 
   // Calendar state
-  DateTime _currentMonth = DateTime(2026, 1, 1);
-  final List<int> _eventDays = [25, 1];
+  DateTime _currentMonth = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    // Guest artists can view dashboard, but will be prompted to sign up for actions
-    // No redirect needed - they selected artist role in onboarding
   }
 
   @override
@@ -120,24 +202,85 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
                   ),
                   child: Column(
                     children: [
-                      // Title row
+                      // Artist Profile Header
                       Row(
                         children: [
+                          // Profile Avatar
+                          GestureDetector(
+                            onTap: () {
+                              final artist = _artistProfile;
+                              if (artist != null) {
+                                context.go('/artist/${artist.id}');
+                              }
+                            },
+                            child: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: _sky500.withAlpha(128), width: 2),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: _sky500.withAlpha(51),
+                                    blurRadius: 10,
+                                  ),
+                                ],
+                              ),
+                              child: ClipOval(
+                                child: _artistProfile != null
+                                    ? Image.asset(
+                                        _artistProfile!.image,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) => Container(
+                                          decoration: const BoxDecoration(
+                                            gradient: LinearGradient(colors: [_sky500, _cyan500]),
+                                          ),
+                                          child: const Icon(Icons.person, color: Colors.white, size: 28),
+                                        ),
+                                      )
+                                    : Container(
+                                        decoration: const BoxDecoration(
+                                          gradient: LinearGradient(colors: [_sky500, _cyan500]),
+                                        ),
+                                        child: const Icon(Icons.person, color: Colors.white, size: 28),
+                                      ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Artist Dashboard',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                Row(
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        _artistProfile?.name ?? userRoleService.userName,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    if (_artistProfile?.isVerified == true) ...[
+                                      const SizedBox(width: 6),
+                                      Container(
+                                        padding: const EdgeInsets.all(2),
+                                        decoration: const BoxDecoration(
+                                          color: _sky500,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(Icons.check, color: Colors.white, size: 10),
+                                      ),
+                                    ],
+                                  ],
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  'Manage your bookings & earnings',
+                                  _artistProfile?.username ?? '@${userRoleService.userEmail.split('@').first}',
                                   style: TextStyle(
                                     color: Colors.white.withAlpha(153),
                                     fontSize: 13,
@@ -146,20 +289,74 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
                               ],
                             ),
                           ),
+                          // Mastery Badge
+                          if (_artistProfile != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [_sky500.withAlpha(51), _cyan500.withAlpha(51)],
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: _sky500.withAlpha(77)),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    _artistProfile!.masteryInfo.icon,
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    _artistProfile!.masteryInfo.title,
+                                    style: const TextStyle(
+                                      color: _sky400,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          const SizedBox(width: 8),
+                          // Twitter Import button (admin only - for @gearsh)
+                          if (userRoleService.userEmail.contains('gearsh') ||
+                              _artistProfile?.username == '@gearsh')
+                            GestureDetector(
+                              onTap: () => context.go('/admin/import-twitter'),
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF1DA1F2).withAlpha(26),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: const Color(0xFF1DA1F2).withAlpha(77)),
+                                ),
+                                child: const Icon(
+                                  Icons.people_alt_outlined,
+                                  color: Color(0xFF1DA1F2),
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          if (userRoleService.userEmail.contains('gearsh') ||
+                              _artistProfile?.username == '@gearsh')
+                            const SizedBox(width: 8),
                           GestureDetector(
                             onTap: () => context.go('/profile-settings'),
                             child: Container(
-                              width: 44,
-                              height: 44,
+                              width: 40,
+                              height: 40,
                               decoration: BoxDecoration(
                                 color: _slate900.withAlpha(128),
-                                borderRadius: BorderRadius.circular(22),
+                                borderRadius: BorderRadius.circular(20),
                                 border: Border.all(color: _sky500.withAlpha(77)),
                               ),
                               child: const Icon(
                                 Icons.settings_outlined,
                                 color: Colors.white,
-                                size: 22,
+                                size: 20,
                               ),
                             ),
                           ),
@@ -308,11 +505,22 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
   Widget _buildOverviewTab() {
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 360;
+    final artist = _artistProfile;
+
+    // Calculate stats based on artist profile
+    final hoursBooked = artist?.hoursBooked ?? 0;
+    final pendingRequests = _bookingRequests.where((r) => r['status'] == 'pending').length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Mastery Progress Card (if artist exists)
+        if (artist != null) ...[
+          _buildMasteryProgressCard(artist),
+          const SizedBox(height: 16),
+        ],
+
         // Earnings Stats - Use Flexible layout for small screens
         LayoutBuilder(
           builder: (context, constraints) {
@@ -321,17 +529,17 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
               return Column(
                 children: [
                   _buildStatCard(
-                    icon: Icons.attach_money_rounded,
-                    label: 'This Month',
-                    value: globalConfigService.formatPrice(3200),
-                    trend: '+24%',
+                    icon: Icons.access_time_filled_rounded,
+                    label: 'Hours Booked',
+                    value: hoursBooked.toString(),
+                    trend: artist?.masteryInfo.title ?? 'Newcomer',
                   ),
                   const SizedBox(height: 12),
                   _buildStatCard(
-                    icon: Icons.calendar_today_rounded,
-                    label: 'Bookings',
-                    value: '47',
-                    trend: '+12%',
+                    icon: Icons.star_rounded,
+                    label: 'Rating',
+                    value: artist?.rating.toStringAsFixed(1) ?? '0.0',
+                    trend: '${artist?.reviewCount ?? 0} reviews',
                   ),
                 ],
               );
@@ -339,17 +547,17 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
             return Row(
               children: [
                 Expanded(child: _buildStatCard(
-                  icon: Icons.attach_money_rounded,
-                  label: 'This Month',
-                  value: globalConfigService.formatPrice(3200),
-                  trend: '+24%',
+                  icon: Icons.access_time_filled_rounded,
+                  label: 'Hours Booked',
+                  value: hoursBooked.toString(),
+                  trend: artist?.masteryInfo.title ?? 'Newcomer',
                 )),
                 const SizedBox(width: 10),
                 Expanded(child: _buildStatCard(
-                  icon: Icons.calendar_today_rounded,
-                  label: 'Bookings',
-                  value: '47',
-                  trend: '+12%',
+                  icon: Icons.star_rounded,
+                  label: 'Rating',
+                  value: artist?.rating.toStringAsFixed(1) ?? '0.0',
+                  trend: '${artist?.reviewCount ?? 0} reviews',
                 )),
               ],
             );
@@ -367,7 +575,7 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
               child: _buildQuickStat(
                 icon: Icons.access_time_rounded,
                 iconColor: _yellow400,
-                value: '2',
+                value: pendingRequests.toString(),
                 label: 'Pending',
               ),
             ),
@@ -376,17 +584,17 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
               child: _buildQuickStat(
                 icon: Icons.check_circle_outline_rounded,
                 iconColor: _green400,
-                value: '8',
-                label: 'Confirmed',
+                value: _services.length.toString(),
+                label: 'Services',
               ),
             ),
             SizedBox(
               width: (screenWidth - 56) / 3,
               child: _buildQuickStat(
-                icon: Icons.people_outline_rounded,
+                icon: Icons.attach_money_rounded,
                 iconColor: _cyan400,
-                value: '34',
-                label: 'Clients',
+                value: globalConfigService.formatPrice((artist?.bookingFee ?? 0).toDouble()),
+                label: 'Base Rate',
               ),
             ),
           ],
@@ -394,19 +602,35 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
         SizedBox(height: isSmallScreen ? 16 : 24),
 
         // Upcoming Events
-        Text(
-          'Upcoming Events',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: isSmallScreen ? 16 : 18,
-            fontWeight: FontWeight.w600,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Upcoming Events',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: isSmallScreen ? 16 : 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            if (_upcomingEvents.isEmpty)
+              Text(
+                'No events yet',
+                style: TextStyle(
+                  color: Colors.white.withAlpha(102),
+                  fontSize: 12,
+                ),
+              ),
+          ],
         ),
         const SizedBox(height: 12),
-        ..._upcomingEvents.map((event) => Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: _buildEventCard(event),
-        )),
+        if (_upcomingEvents.isEmpty)
+          _buildEmptyState('No upcoming events', 'Your bookings will appear here')
+        else
+          ..._upcomingEvents.map((event) => Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: _buildEventCard(event),
+          )),
         SizedBox(height: isSmallScreen ? 12 : 16),
 
         // Recent Activity
@@ -522,9 +746,10 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
             value,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 2),
           Text(
@@ -532,6 +757,133 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
             style: TextStyle(
               color: Colors.white.withAlpha(153),
               fontSize: 11,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMasteryProgressCard(GearshArtist artist) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            _sky500.withAlpha(26),
+            _cyan500.withAlpha(26),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _sky500.withAlpha(77)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                artist.masteryInfo.icon,
+                style: const TextStyle(fontSize: 24),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '10,000 Hours Mastery',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      '${artist.hoursBooked.toStringAsFixed(0)} / 10,000 hours',
+                      style: TextStyle(
+                        color: Colors.white.withAlpha(153),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(colors: [_sky500, _cyan500]),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  artist.masteryInfo.title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // Progress bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: artist.masteryProgress,
+              backgroundColor: _slate800,
+              valueColor: const AlwaysStoppedAnimation<Color>(_sky500),
+              minHeight: 8,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            artist.isMaster
+                ? '🏆 You have achieved LEGEND status!'
+                : '${artist.hoursToMastery} hours to reach Legend status',
+            style: TextStyle(
+              color: artist.isMaster ? _yellow400 : Colors.white.withAlpha(128),
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(String title, String subtitle) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: _slate900.withAlpha(77),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _sky500.withAlpha(26)),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.event_available_outlined,
+            color: Colors.white.withAlpha(77),
+            size: 40,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: TextStyle(
+              color: Colors.white.withAlpha(153),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: TextStyle(
+              color: Colors.white.withAlpha(102),
+              fontSize: 12,
             ),
           ),
         ],
@@ -860,7 +1212,7 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${_getMonthName(_currentMonth.month)} ${_currentMonth.year}',
+                    '${_getMonthNameFull(_currentMonth.month)} ${_currentMonth.year}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -1165,7 +1517,7 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
     );
   }
 
-  String _getMonthName(int month) {
+  String _getMonthNameFull(int month) {
     const months = [
       'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'

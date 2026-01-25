@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gearsh_app/services/user_role_service.dart';
 import 'package:gearsh_app/widgets/auth_prompt.dart';
 import 'package:gearsh_app/widgets/region_selector.dart';
@@ -326,6 +327,10 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                     // Logout Button
                     const SizedBox(height: 16),
                     _buildLogoutButton(context),
+
+                    // Delete Account Button
+                    const SizedBox(height: 12),
+                    _buildDeleteAccountButton(context),
 
                     // App Info
                     const SizedBox(height: 24),
@@ -737,6 +742,160 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
     );
   }
 
+  Widget _buildDeleteAccountButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _showDeleteAccountDialog(context),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: _red500.withAlpha(51)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.delete_forever_rounded, color: _red500.withAlpha(153), size: 20),
+            const SizedBox(width: 8),
+            Text(
+              'Delete Account',
+              style: TextStyle(
+                color: _red500.withAlpha(179),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _DeleteAccountSheet(
+        onConfirm: (password) => _handleDeleteAccount(ctx, password),
+      ),
+    );
+  }
+
+  Future<void> _handleDeleteAccount(BuildContext context, String password) async {
+    // Show loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const Center(
+        child: CircularProgressIndicator(color: _sky500),
+      ),
+    );
+
+    try {
+      // Get current user from Firebase Auth
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        Navigator.pop(context); // Close loading
+        _showErrorSnackbar(context, 'No user logged in');
+        return;
+      }
+
+      // Get email credential
+      final email = user.email;
+      if (email == null) {
+        Navigator.pop(context); // Close loading
+        _showErrorSnackbar(context, 'User email not found');
+        return;
+      }
+
+      // Re-authenticate
+      final credential = EmailAuthProvider.credential(
+        email: email,
+        password: password,
+      );
+
+      await user.reauthenticateWithCredential(credential);
+
+      // Delete user account from Firebase
+      await user.delete();
+
+      // Clear local data
+      userRoleService.logout();
+
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+
+      // Close the bottom sheet if still open
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+
+      // Navigate to onboarding
+      if (context.mounted) {
+        _showSuccessSnackbar(context, 'Your account has been permanently deleted');
+        context.go('/onboarding');
+      }
+    } catch (e) {
+      // Close loading
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+
+      String errorMessage = 'Failed to delete account';
+      if (e.toString().contains('wrong-password')) {
+        errorMessage = 'Incorrect password. Please try again.';
+      } else if (e.toString().contains('requires-recent-login')) {
+        errorMessage = 'Please logout and login again before deleting your account.';
+      } else if (e.toString().contains('network')) {
+        errorMessage = 'Network error. Please check your connection.';
+      }
+
+      if (context.mounted) {
+        _showErrorSnackbar(context, errorMessage);
+      }
+    }
+  }
+
+  void _showErrorSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: _red500,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.all(16),
+      ),
+    );
+  }
+
+  void _showSuccessSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.all(16),
+      ),
+    );
+  }
+
   Widget _buildAppInfo() {
     return Center(
       child: Column(
@@ -754,6 +913,311 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
             style: TextStyle(
               color: _slate600,
               fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Delete Account Confirmation Sheet
+class _DeleteAccountSheet extends StatefulWidget {
+  final Function(String password) onConfirm;
+
+  const _DeleteAccountSheet({required this.onConfirm});
+
+  @override
+  State<_DeleteAccountSheet> createState() => _DeleteAccountSheetState();
+}
+
+class _DeleteAccountSheetState extends State<_DeleteAccountSheet> {
+  final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _confirmDelete = false;
+  String? _errorText;
+
+  static const Color _slate950 = Color(0xFF020617);
+  static const Color _slate900 = Color(0xFF0F172A);
+  static const Color _slate400 = Color(0xFF94A3B8);
+  static const Color _sky500 = Color(0xFF0EA5E9);
+  static const Color _red500 = Color(0xFFEF4444);
+  static const Color _red400 = Color(0xFFF87171);
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+
+    return Container(
+      padding: EdgeInsets.only(bottom: bottomPadding),
+      decoration: BoxDecoration(
+        color: _slate900,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border.all(color: _red500.withAlpha(51)),
+      ),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Warning Icon
+              Container(
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  color: _red500.withAlpha(26),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.warning_rounded,
+                  color: _red500,
+                  size: 36,
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Title
+              const Text(
+                'Delete Account',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Warning Text
+              Text(
+                'This action is permanent and cannot be undone. All your data, including your profile, bookings, and messages will be permanently deleted.',
+                style: TextStyle(
+                  color: _slate400,
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+
+              // What will be deleted
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: _red500.withAlpha(13),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: _red500.withAlpha(51)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'This will delete:',
+                      style: TextStyle(
+                        color: _red400,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildDeleteItem('Your profile information'),
+                    _buildDeleteItem('All booking history'),
+                    _buildDeleteItem('Messages and conversations'),
+                    _buildDeleteItem('Saved artists and preferences'),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Password Input
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Enter your password to confirm',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      hintText: 'Password',
+                      hintStyle: TextStyle(color: _slate400),
+                      errorText: _errorText,
+                      filled: true,
+                      fillColor: _slate950,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: _slate400.withAlpha(77)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: _slate400.withAlpha(77)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: _sky500),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: _red500),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                          color: _slate400,
+                        ),
+                        onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              // Confirmation Checkbox
+              GestureDetector(
+                onTap: () => setState(() => _confirmDelete = !_confirmDelete),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 22,
+                      height: 22,
+                      decoration: BoxDecoration(
+                        color: _confirmDelete ? _red500 : Colors.transparent,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: _confirmDelete ? _red500 : _slate400,
+                          width: 2,
+                        ),
+                      ),
+                      child: _confirmDelete
+                          ? const Icon(Icons.check, color: Colors.white, size: 16)
+                          : null,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'I understand this action is permanent',
+                        style: TextStyle(
+                          color: _slate400,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 28),
+
+              // Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          color: _slate950,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: _slate400.withAlpha(77)),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: _confirmDelete && _passwordController.text.isNotEmpty
+                          ? () {
+                              if (_passwordController.text.length < 6) {
+                                setState(() => _errorText = 'Password must be at least 6 characters');
+                                return;
+                              }
+                              Navigator.pop(context);
+                              widget.onConfirm(_passwordController.text);
+                            }
+                          : null,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          color: _confirmDelete && _passwordController.text.isNotEmpty
+                              ? _red500
+                              : _red500.withAlpha(77),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Permanently Delete',
+                            style: TextStyle(
+                              color: _confirmDelete && _passwordController.text.isNotEmpty
+                                  ? Colors.white
+                                  : Colors.white54,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeleteItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Icon(Icons.remove_circle_outline, color: _red400, size: 16),
+          const SizedBox(width: 10),
+          Text(
+            text,
+            style: TextStyle(
+              color: _slate400,
+              fontSize: 13,
             ),
           ),
         ],

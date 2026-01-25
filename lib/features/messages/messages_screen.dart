@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gearsh_app/widgets/block_report_widgets.dart';
 
 class MessagesScreen extends StatefulWidget {
   final Function(String)? onOpenChat;
@@ -404,7 +405,27 @@ class _MessagesScreenState extends State<MessagesScreen> {
               const SizedBox(width: 8),
               _buildChatHeaderButton(Icons.videocam_outlined),
               const SizedBox(width: 8),
-              _buildChatHeaderButton(Icons.more_vert_rounded),
+              // Block/Report button (required for App Store compliance)
+              GestureDetector(
+                onTap: () => showBlockReportMenu(
+                  context,
+                  userId: conv['artistId'] ?? '',
+                  userName: conv['artistName'] ?? 'User',
+                ),
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: _slate900.withAlpha(128),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.more_vert_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+              ),
             ],
           ),
         ),

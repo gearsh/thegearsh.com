@@ -1,9 +1,12 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gearsh_app/services/user_role_service.dart';
 import 'package:gearsh_app/widgets/auth_prompt.dart';
 import 'package:gearsh_app/data/gearsh_artists.dart';
 import 'package:gearsh_app/services/payfast_service.dart';
+import 'package:gearsh_app/widgets/apple_pay_button.dart';
 
 class BookingFlowPage extends StatefulWidget {
   final String artistId;
@@ -56,6 +59,9 @@ class _BookingFlowPageState extends State<BookingFlowPage>
   // Pricing
   late double _servicePrice;
   static const double _serviceFeePercentage = 0.126; // 12.6% service fee
+
+  // Payment processing state
+  bool _isProcessing = false;
 
   // Color constants - Deep Sky Blue theme
   static const Color _slate950 = Color(0xFF020617);
@@ -487,6 +493,24 @@ class _BookingFlowPageState extends State<BookingFlowPage>
                 ),
               ),
             ),
+            // Apple Pay processing overlay
+            if (_isProcessing)
+              Container(
+                color: _slate950.withAlpha(200),
+                child: const Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(color: _sky500),
+                      SizedBox(height: 16),
+                      Text(
+                        'Processing Apple Pay...',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -833,6 +857,48 @@ class _BookingFlowPageState extends State<BookingFlowPage>
           const SizedBox(height: 8),
         ],
 
+        // Apple Pay button (iOS only)
+        if (!kIsWeb && Platform.isIOS) ...[
+          GearshApplePayButton(
+            bookingId: 'booking_${DateTime.now().millisecondsSinceEpoch}',
+            amount: _servicePrice,
+            artistName: _artist?.name ?? widget.artistName ?? 'Artist',
+            serviceName: _selectedService?['name'] ?? widget.serviceName ?? 'Booking',
+            serviceFee: _servicePrice * _serviceFeePercentage,
+            onPaymentStarted: () {
+              setState(() => _isProcessing = true);
+            },
+            onPaymentComplete: (result) {
+              setState(() => _isProcessing = false);
+              if (result.success) {
+                context.go('/cart/success?booking_id=${result.transactionId}');
+              } else if (result.error != null && !result.error!.contains('cancelled')) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(result.error!),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(child: Container(height: 1, color: _sky500.withAlpha(38))),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'or pay with card',
+                  style: TextStyle(color: Colors.white.withAlpha(128), fontSize: 13),
+                ),
+              ),
+              Expanded(child: Container(height: 1, color: _sky500.withAlpha(38))),
+            ],
+          ),
+          const SizedBox(height: 16),
+        ],
+
         // Supported payment methods
         Container(
           padding: const EdgeInsets.all(16),
@@ -862,6 +928,8 @@ class _BookingFlowPageState extends State<BookingFlowPage>
                   _buildPaymentMethodChip('Instant EFT', Icons.account_balance),
                   _buildPaymentMethodChip('SnapScan', Icons.qr_code),
                   _buildPaymentMethodChip('Mobicred', Icons.shopping_bag),
+                  if (!kIsWeb && Platform.isIOS)
+                    _buildPaymentMethodChip('Apple Pay', Icons.apple),
                 ],
               ),
             ],

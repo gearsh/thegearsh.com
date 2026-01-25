@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Deletion - Gearsh</title>
+    <meta name="description" content="Request deletion of your Gearsh account and associated data.">
+    <meta name="theme-color" content="#020617">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00BFFF;
+            --primary-dark: #0099CC;
+            --white: #FFFFFF;
+            --gray-100: #F3F4F6;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+            --slate-950: #020617;
+            --red-500: #EF4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--slate-950);
+            color: var(--gray-300);
+            line-height: 1.8;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(2, 6, 23, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 191, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), #33CCFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .back-link {
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover { color: var(--primary); }
+
+        .content {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 8rem 2rem 4rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            color: var(--gray-400);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--white);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        p { margin-bottom: 1rem; }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li { margin-bottom: 0.5rem; }
+
+        a { color: var(--primary); }
+
+        .warning-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .warning-box h3 {
+            color: var(--red-500);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .warning-box svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .method-card {
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .method-card h3 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .method-card .icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 191, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .method-card .icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+
+        .steps {
+            counter-reset: step;
+        }
+
+        .steps li {
+            counter-increment: step;
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .email-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--red-500), #DC2626);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .email-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+        }
+
+        .email-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .info-box {
+            background: rgba(0, 191, 255, 0.1);
+            border-left: 3px solid var(--primary);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .footer {
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--gray-800);
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .content { padding: 6rem 1.5rem 3rem; }
+            .method-card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="logo">Gearsh</a>
+            <a href="/" class="back-link">← Back to Home</a>
+        </div>
+    </nav>
+
+    <main class="content">
+        <h1>Account Deletion</h1>
+        <p class="subtitle">We're sorry to see you go. Here's how to delete your Gearsh account and data.</p>
+
+        <div class="warning-box">
+            <h3>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                Important: This action is permanent
+            </h3>
+            <p style="margin-bottom: 0;">Once your account is deleted, all your data will be permanently removed and cannot be recovered. This includes your profile, booking history, messages, and any other information associated with your account.</p>
+        </div>
+
+        <h2>How to Delete Your Account</h2>
+        <p>You can delete your Gearsh account using either of the following methods:</p>
+
+        <div class="method-card">
+            <h3>
+                <div class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                        <line x1="12" y1="18" x2="12.01" y2="18"/>
+                    </svg>
+                </div>
+                Method 1: Delete from the App
+            </h3>
+            <p>The easiest way to delete your account is directly from the Gearsh app:</p>
+            <ol class="steps">
+                <li>Open the Gearsh app on your device</li>
+                <li>Go to <strong>Profile</strong> → <strong>Settings</strong></li>
+                <li>Scroll down to <strong>Account</strong> section</li>
+                <li>Tap <strong>Delete Account</strong></li>
+                <li>Confirm your decision by entering your password</li>
+                <li>Tap <strong>Permanently Delete</strong> to confirm</li>
+            </ol>
+        </div>
+
+        <div class="method-card">
+            <h3>
+                <div class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                </div>
+                Method 2: Request via Email
+            </h3>
+            <p>If you cannot access the app, you can request account deletion by email:</p>
+            <ol class="steps">
+                <li>Send an email to <a href="mailto:support@gearsh.com">support@gearsh.com</a></li>
+                <li>Use the subject line: <strong>"Account Deletion Request"</strong></li>
+                <li>Include the email address associated with your Gearsh account</li>
+                <li>We will verify your identity and process your request within 7 business days</li>
+            </ol>
+
+            <a href="mailto:support@gearsh.com?subject=Account%20Deletion%20Request&body=I%20would%20like%20to%20request%20the%20deletion%20of%20my%20Gearsh%20account.%0A%0AAccount%20email%3A%20%5BYour%20email%20here%5D%0A%0APlease%20delete%20all%20my%20data%20permanently." class="email-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                Send Deletion Request
+            </a>
+        </div>
+
+        <h2>What Gets Deleted</h2>
+        <p>When you delete your account, the following data will be permanently removed:</p>
+        <ul>
+            <li>Your profile information (name, photo, bio, etc.)</li>
+            <li>All booking history</li>
+            <li>Messages and conversations</li>
+            <li>Reviews you've written</li>
+            <li>Saved artists and preferences</li>
+            <li>Payment method information</li>
+            <li>All associated data and activity</li>
+        </ul>
+
+        <div class="info-box">
+            <strong>Note:</strong> Some information may be retained as required by law or for legitimate business purposes (such as financial transaction records for tax purposes). This retained data will be anonymized and cannot be linked back to you.
+        </div>
+
+        <h2>Before You Delete</h2>
+        <p>Consider the following before deleting your account:</p>
+        <ul>
+            <li><strong>Active Bookings:</strong> Complete or cancel any pending bookings first</li>
+            <li><strong>Pending Payments:</strong> Ensure all payments have been processed</li>
+            <li><strong>Download Your Data:</strong> Request a copy of your data before deletion</li>
+            <li><strong>Alternative:</strong> You can temporarily deactivate instead of permanently deleting</li>
+        </ul>
+
+        <h2>Questions?</h2>
+        <p>If you have any questions about account deletion or need assistance, please contact our support team:</p>
+        <p><strong>Email:</strong> <a href="mailto:support@gearsh.com">support@gearsh.com</a></p>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Gearsh. All rights reserved.</p>
+    </footer>
+</body>
+</html>

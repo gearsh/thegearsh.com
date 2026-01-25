@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math' as math;
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,6 +39,8 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
+  bool _isAppleLoading = false;
   String? _error;
   bool _success = false;
   int _currentStep = 0;
@@ -59,9 +63,12 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
     'DJ', 'Producer', 'Writer', 'Photographer', 'Designer', 'Videographer',
     'Dancer', 'Host', 'Influencer', 'Stylist', 'Rapper', 'Director', 'Actor',
     'Model', 'Engineer', 'Animator', 'Choreographer', 'Make Up Artist',
-    'Trap Star', 'Publicist'
+    'Mural Artist', 'Painter', 'Graphic Designer', 'Sculptor', 'Singer',
+    'Musician', 'Band', 'Comedian', 'MC', 'Publicist',
   ];
   final List<String> _selectedSkills = [];
+  final List<String> _customSkills = []; // User-added custom skills
+  final TextEditingController _customSkillController = TextEditingController();
   bool _showSkillDropdown = false;
 
   @override
@@ -96,6 +103,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
     _locationController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _customSkillController.dispose();
     _floatingGlowController.dispose();
     _fadeController.dispose();
     _pageController.dispose();
@@ -116,7 +124,110 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
     });
   }
 
+  void _addCustomSkill() {
+    final skill = _customSkillController.text.trim();
+    if (skill.isNotEmpty &&
+        !_skillOptions.contains(skill) &&
+        !_customSkills.contains(skill)) {
+      setState(() {
+        _customSkills.add(skill);
+        _selectedSkills.add(skill);
+        _customSkillController.clear();
+      });
+    }
+  }
+
+  void _removeCustomSkill(String skill) {
+    setState(() {
+      _customSkills.remove(skill);
+      _selectedSkills.remove(skill);
+    });
+  }
+
+  void _showAddCustomSkillDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: _slate900,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: _sky500.withAlpha(51)),
+        ),
+        title: const Text(
+          'Add Custom Skill',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Can\'t find your skill? Add it here!',
+              style: TextStyle(color: Colors.white.withAlpha(153), fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _customSkillController,
+              style: const TextStyle(color: Colors.white),
+              textCapitalization: TextCapitalization.words,
+              decoration: InputDecoration(
+                hintText: 'e.g. Beatboxer, Graffiti Artist...',
+                hintStyle: TextStyle(color: Colors.white.withAlpha(77)),
+                filled: true,
+                fillColor: _slate800,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: _sky500),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              _customSkillController.clear();
+              Navigator.pop(ctx);
+            },
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white.withAlpha(153)),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              _addCustomSkill();
+              Navigator.pop(ctx);
+            },
+            child: const Text(
+              'Add Skill',
+              style: TextStyle(color: _sky400, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _nextStep() {
+    // Validate current step before proceeding
+    if (_currentStep == 1) {
+      // Step 2: Profile Details - ensure user type is selected
+      if (_userType == null) {
+        setState(() => _error = 'Please select how you want to join Gearsh');
+        return;
+      }
+      if (_countryController.text.isEmpty || _locationController.text.isEmpty) {
+        setState(() => _error = 'Please enter your country and city');
+        return;
+      }
+    }
+
+    setState(() => _error = null);
+
     if (_currentStep < 2) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
@@ -196,7 +307,21 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
           // Log in the user with their info
           final fullName = '${_firstNameController.text.trim()} ${_surnameController.text.trim()}';
           final email = _emailController.text.trim();
-          final role = _userType == 'artist' ? UserRole.artist : UserRole.client;
+
+          // Map user type selection to UserRole
+          UserRole role;
+          switch (_userType?.toLowerCase()) {
+            case 'artist':
+              role = UserRole.artist;
+              break;
+            case 'fan':
+              role = UserRole.fan;
+              break;
+            case 'client':
+            default:
+              role = UserRole.client;
+              break;
+          }
 
           userRoleService.login(
             role: role,
@@ -215,10 +340,16 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
           // Navigate to appropriate page after short delay
           Future.delayed(const Duration(seconds: 2), () {
             if (mounted) {
-              if (role == UserRole.artist) {
-                context.go('/dashboard');
-              } else {
-                context.go('/');
+              switch (role) {
+                case UserRole.artist:
+                  // Artists go to their dashboard to set up their profile
+                  context.go('/dashboard');
+                case UserRole.fan:
+                  // Fans go to discover artists
+                  context.go('/');
+                case UserRole.client:
+                  // Clients go to browse and book artists
+                  context.go('/');
               }
             }
           });
@@ -234,6 +365,78 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
           _error = 'Something went wrong. Please try again later.';
         });
         debugPrint('Signup error: $e');
+      }
+    }
+  }
+
+  /// Sign up with Google
+  Future<void> _signUpWithGoogle() async {
+    setState(() {
+      _isGoogleLoading = true;
+      _error = null;
+    });
+
+    try {
+      final result = await ref.read(authControllerProvider).signInWithGoogle();
+
+      if (!mounted) return;
+
+      if (result.success && result.user != null) {
+        userRoleService.login(
+          role: UserRole.client, // Default to client for social signup
+          name: result.user!.displayName ?? result.user!.email?.split('@').first ?? 'User',
+          email: result.user!.email ?? '',
+        );
+
+        context.go('/');
+      } else {
+        setState(() {
+          _error = result.error ?? 'Failed to sign up with Google';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to sign up with Google';
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isGoogleLoading = false);
+      }
+    }
+  }
+
+  /// Sign up with Apple
+  Future<void> _signUpWithApple() async {
+    setState(() {
+      _isAppleLoading = true;
+      _error = null;
+    });
+
+    try {
+      final result = await ref.read(authControllerProvider).signInWithApple();
+
+      if (!mounted) return;
+
+      if (result.success && result.user != null) {
+        userRoleService.login(
+          role: UserRole.client, // Default to client for social signup
+          name: result.user!.displayName ?? result.user!.email?.split('@').first ?? 'User',
+          email: result.user!.email ?? '',
+        );
+
+        context.go('/');
+      } else {
+        setState(() {
+          _error = result.error ?? 'Failed to sign up with Apple';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to sign up with Apple';
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isAppleLoading = false);
       }
     }
   }
@@ -489,6 +692,48 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                           ),
                           const SizedBox(height: 20),
 
+                          // Or divider
+                          Row(
+                            children: [
+                              Expanded(child: Container(height: 1, color: _sky500.withAlpha(38))),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  'or continue with',
+                                  style: TextStyle(color: Colors.white.withAlpha(128), fontSize: 13),
+                                ),
+                              ),
+                              Expanded(child: Container(height: 1, color: _sky500.withAlpha(38))),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Social signup buttons
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildSocialButton(
+                                  icon: Icons.g_mobiledata_rounded,
+                                  label: 'Google',
+                                  isLoading: _isGoogleLoading,
+                                  onTap: _signUpWithGoogle,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              // Only show Apple button on iOS/macOS or web
+                              if (!kIsWeb && Platform.isIOS || !kIsWeb && Platform.isMacOS || kIsWeb)
+                                Expanded(
+                                  child: _buildSocialButton(
+                                    icon: Icons.apple_rounded,
+                                    label: 'Apple',
+                                    isLoading: _isAppleLoading,
+                                    onTap: _signUpWithApple,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+
                           // Sign in link
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -618,15 +863,33 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // User type dropdown
-          _buildDropdownField(
-            label: 'I am a...',
-            value: _userType,
-            icon: Icons.badge_outlined,
-            items: ['Booker', 'Artist', 'Fan'],
-            onChanged: (v) => setState(() => _userType = v),
+          // User type selection cards
+          Text(
+            'I am joining as a...',
+            style: TextStyle(color: Colors.white.withAlpha(179), fontSize: 14, fontWeight: FontWeight.w600),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
+          _buildUserTypeCard(
+            type: 'Artist',
+            icon: Icons.mic_external_on_rounded,
+            description: 'I want to get booked for gigs and showcase my talent',
+            color: const Color(0xFF8B5CF6),
+          ),
+          const SizedBox(height: 10),
+          _buildUserTypeCard(
+            type: 'Client',
+            icon: Icons.event_rounded,
+            description: 'I want to book artists for events and projects',
+            color: _sky500,
+          ),
+          const SizedBox(height: 10),
+          _buildUserTypeCard(
+            type: 'Fan',
+            icon: Icons.favorite_rounded,
+            description: 'I want to discover and follow amazing artists',
+            color: const Color(0xFFEC4899),
+          ),
+          const SizedBox(height: 20),
           Row(
             children: [
               Expanded(
@@ -648,93 +911,180 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          // Skills multi-select
-          Text(
-            'Skills (select all that apply)',
-            style: TextStyle(color: Colors.white.withAlpha(179), fontSize: 13, fontWeight: FontWeight.w500),
-          ),
-          const SizedBox(height: 8),
-          GestureDetector(
-            onTap: _toggleSkillDropdown,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: BoxDecoration(
-                color: _slate800.withAlpha(128),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: _sky500.withAlpha(51), width: 1.5),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.auto_awesome_rounded, color: _sky400.withAlpha(179), size: 20),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      _selectedSkills.isEmpty ? 'Select skills...' : _selectedSkills.join(', '),
-                      style: TextStyle(
-                        color: _selectedSkills.isEmpty ? Colors.white.withAlpha(128) : Colors.white,
-                        fontSize: 15,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  AnimatedRotation(
-                    turns: _showSkillDropdown ? 0.5 : 0.0,
-                    duration: const Duration(milliseconds: 250),
-                    child: Icon(Icons.expand_more_rounded, color: Colors.white.withAlpha(128)),
-                  ),
-                ],
-              ),
+          // Only show skills if Artist is selected
+          if (_userType == 'Artist') ...[
+            const SizedBox(height: 16),
+            // Skills multi-select
+            Text(
+              'Skills (select all that apply)',
+              style: TextStyle(color: Colors.white.withAlpha(179), fontSize: 13, fontWeight: FontWeight.w500),
             ),
-          ),
-          AnimatedCrossFade(
-            firstChild: const SizedBox.shrink(),
-            secondChild: Container(
-              margin: const EdgeInsets.only(top: 8),
-              padding: const EdgeInsets.all(12),
-              constraints: const BoxConstraints(maxHeight: 180),
-              decoration: BoxDecoration(
-                color: _slate800,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: _sky500.withAlpha(51)),
-              ),
-              child: SingleChildScrollView(
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: _skillOptions.map((skill) {
-                    final isSelected = _selectedSkills.contains(skill);
-                    return GestureDetector(
-                      onTap: () => _selectSkill(skill, !isSelected),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                        decoration: BoxDecoration(
-                          gradient: isSelected
-                              ? const LinearGradient(colors: [_sky500, _cyan500])
-                              : null,
-                          color: isSelected ? null : _slate900,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: isSelected ? Colors.transparent : _sky500.withAlpha(51),
-                          ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: _toggleSkillDropdown,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                decoration: BoxDecoration(
+                  color: _slate800.withAlpha(128),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: _sky500.withAlpha(51), width: 1.5),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.auto_awesome_rounded, color: _sky400.withAlpha(179), size: 20),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        _selectedSkills.isEmpty ? 'Select skills...' : _selectedSkills.join(', '),
+                        style: TextStyle(
+                          color: _selectedSkills.isEmpty ? Colors.white.withAlpha(128) : Colors.white,
+                          fontSize: 15,
                         ),
-                        child: Text(
-                          skill,
-                          style: TextStyle(
-                            color: isSelected ? Colors.white : Colors.white.withAlpha(179),
-                            fontSize: 12,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                          ),
-                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    );
-                  }).toList(),
+                    ),
+                    AnimatedRotation(
+                      turns: _showSkillDropdown ? 0.5 : 0.0,
+                      duration: const Duration(milliseconds: 250),
+                      child: Icon(Icons.expand_more_rounded, color: Colors.white.withAlpha(128)),
+                    ),
+                  ],
                 ),
               ),
             ),
-            crossFadeState: _showSkillDropdown ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-            duration: const Duration(milliseconds: 250),
-          ),
+            AnimatedCrossFade(
+              firstChild: const SizedBox.shrink(),
+              secondChild: Container(
+                margin: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.all(12),
+                constraints: const BoxConstraints(maxHeight: 220),
+                decoration: BoxDecoration(
+                  color: _slate800,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: _sky500.withAlpha(51)),
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Custom skills (user-added)
+                      if (_customSkills.isNotEmpty) ...[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text(
+                            'Your Custom Skills',
+                            style: TextStyle(
+                              color: _cyan400,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: _customSkills.map((skill) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(colors: [Color(0xFF8B5CF6), Color(0xFFA855F7)]),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    skill,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  GestureDetector(
+                                    onTap: () => _removeCustomSkill(skill),
+                                    child: const Icon(Icons.close, color: Colors.white70, size: 14),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(height: 12),
+                        Divider(color: _sky500.withAlpha(51), height: 1),
+                        const SizedBox(height: 12),
+                      ],
+                      // Predefined skills
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          // Add Custom Skill button
+                          GestureDetector(
+                            onTap: _showAddCustomSkillDialog,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: _cyan400, width: 1.5),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.add_rounded, color: _cyan400, size: 16),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Add Custom',
+                                    style: TextStyle(
+                                      color: _cyan400,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          // Predefined skill options
+                          ..._skillOptions.map((skill) {
+                            final isSelected = _selectedSkills.contains(skill);
+                            return GestureDetector(
+                              onTap: () => _selectSkill(skill, !isSelected),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                decoration: BoxDecoration(
+                                  gradient: isSelected
+                                      ? const LinearGradient(colors: [_sky500, _cyan500])
+                                      : null,
+                                  color: isSelected ? null : _slate900,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: isSelected ? Colors.transparent : _sky500.withAlpha(51),
+                                  ),
+                                ),
+                                child: Text(
+                                  skill,
+                                  style: TextStyle(
+                                    color: isSelected ? Colors.white : Colors.white.withAlpha(179),
+                                    fontSize: 12,
+                                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              crossFadeState: _showSkillDropdown ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+              duration: const Duration(milliseconds: 250),
+            ),
+          ],
           const SizedBox(height: 16),
           // Date of birth
           GestureDetector(
@@ -927,6 +1277,93 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
     );
   }
 
+  Widget _buildUserTypeCard({
+    required String type,
+    required IconData icon,
+    required String description,
+    required Color color,
+  }) {
+    final isSelected = _userType == type;
+    return GestureDetector(
+      onTap: () => setState(() => _userType = type),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected ? color.withAlpha(26) : _slate800.withAlpha(128),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? color : _sky500.withAlpha(51),
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: isSelected ? [
+            BoxShadow(
+              color: color.withAlpha(51),
+              blurRadius: 12,
+              spreadRadius: 0,
+            ),
+          ] : null,
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: isSelected ? color.withAlpha(51) : _slate900,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: isSelected ? color : Colors.white.withAlpha(153),
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    type,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.white.withAlpha(204),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      color: Colors.white.withAlpha(128),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected ? color : Colors.transparent,
+                border: Border.all(
+                  color: isSelected ? color : Colors.white.withAlpha(77),
+                  width: 2,
+                ),
+              ),
+              child: isSelected
+                  ? const Icon(Icons.check, color: Colors.white, size: 16)
+                  : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildDropdownField({
     required String label,
     required String? value,
@@ -1010,6 +1447,51 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
         },
       ),
     ];
+  }
+
+  Widget _buildSocialButton({
+    required IconData icon,
+    required String label,
+    required bool isLoading,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: isLoading ? null : onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: _slate800.withAlpha(128),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: _sky500.withAlpha(51)),
+        ),
+        child: Center(
+          child: isLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(icon, color: Colors.white, size: 24),
+                    const SizedBox(width: 8),
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+        ),
+      ),
+    );
   }
 }
 
