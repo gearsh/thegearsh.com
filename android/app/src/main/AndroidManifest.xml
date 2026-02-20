@@ -15,13 +15,14 @@
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 
-    <!-- Storage - For all Android versions -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- Storage - For Android versions below 13 only -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
 
-    <!-- Media - Android 13+ (Granular permissions) -->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <!-- Note: READ_MEDIA_IMAGES and READ_MEDIA_VIDEO removed - using Android Photo Picker instead -->
+    <!-- Photo Picker doesn't require these permissions on Android 13+ -->
+
+    <!-- Media - Android 13+ (Only audio if needed for other features) -->
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
     <!-- ==================== AUDIO & MICROPHONE ==================== -->
@@ -61,7 +62,6 @@
 
     <application
         android:label="@string/app_name"
-        android:name="io.flutter.app.FlutterApplication"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="false"
         android:networkSecurityConfig="@xml/network_security_config"
