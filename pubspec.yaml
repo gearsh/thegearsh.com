@@ -4,7 +4,6 @@ publish_to: 'none'
 version: 1.0.0+1
 environment:
   sdk: '>=3.4.4 <4.0.0'
-
 dependencies: 
   dio: ^5.3.2
   flutter:
@@ -26,20 +25,16 @@ dependencies:
   fl_chart: ^1.1.1
   geocoding: ^4.0.0
   fuzzywuzzy: ^1.2.0
-  # Firebase
   firebase_core: ^3.8.1
   firebase_auth: ^5.3.4
   firebase_crashlytics: ^4.0.1
   firebase_analytics: ^11.0.1
-  # Social Sign-In
   google_sign_in: ^6.2.1
   sign_in_with_apple: ^6.1.4
-  # Utilities
   crypto: ^3.0.6
   url_launcher: ^6.2.1
   package_info_plus: ^8.0.0
   image_picker: ^1.0.7
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -47,10 +42,7 @@ dev_dependencies:
   freezed: ^3.0.6 
   json_serializable: ^6.7.1 
   flutter_launcher_icons: ^0.14.1
-
-  flutter_lints: ^6.0.0
-
-# App Icon Configuration
+  flutter_lints: ^5.0.0
 flutter_launcher_icons:
   android: true
   ios: true
@@ -64,10 +56,7 @@ flutter_launcher_icons:
   windows:
     generate: true
     image_path: "assets/images/gearsh_logo.png"
-
-
 flutter:
-
   uses-material-design: true
   assets:
     - assets/images/gearsh_logo.png
