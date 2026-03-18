@@ -29,7 +29,7 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/build/
+
 
 # Symbolication related
 app.*.symbols
@@ -55,7 +55,7 @@ lib/config/secrets.dart
 .packages
 .pub-cache/
 .pub/
-build/
+
 coverage/
 # For library packages, don’t commit the pubspec.lock file.
 # Regenerating the pubspec.lock file lets you test your package against the latest compatible versions of its dependencies.
@@ -122,7 +122,6 @@ lib/secrets.dart
 .env.*
 
 # Build outputs
-build/
 *.apk
 *.aab
 *.ipa
