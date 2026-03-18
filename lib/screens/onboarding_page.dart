@@ -45,7 +45,7 @@ class _OnboardingPageState extends State<OnboardingPage>
   final PageController _pageController = PageController();
   int _currentPage = 0;
   bool _showRoleSelection = false;
-  bool _hasSwipped = false;
+  bool _hasSwiped = false;
 
   // Press-state tracking for scale-on-tap
   bool _buttonPressed = false;
@@ -156,7 +156,7 @@ class _OnboardingPageState extends State<OnboardingPage>
     );
 
     // Generate particles
-    final rng = math.Random(42);
+    final random = math.Random(42);
     final particleColors = [
       _sky400,
       _sky500,
@@ -168,13 +168,13 @@ class _OnboardingPageState extends State<OnboardingPage>
     ];
     _particles = List.generate(20, (_) {
       return _Particle(
-        baseX: rng.nextDouble(),
-        baseY: rng.nextDouble(),
-        size: 1.5 + rng.nextDouble() * 2.5,
-        opacity: 0.15 + rng.nextDouble() * 0.35,
-        phaseOffset: rng.nextDouble(),
-        amplitude: 0.03 + rng.nextDouble() * 0.05,
-        color: particleColors[rng.nextInt(particleColors.length)],
+        baseX: random.nextDouble(),
+        baseY: random.nextDouble(),
+        size: 1.5 + random.nextDouble() * 2.5,
+        opacity: 0.15 + random.nextDouble() * 0.35,
+        phaseOffset: random.nextDouble(),
+        amplitude: 0.03 + random.nextDouble() * 0.05,
+        color: particleColors[random.nextInt(particleColors.length)],
       );
     });
   }
@@ -196,13 +196,13 @@ class _OnboardingPageState extends State<OnboardingPage>
   void _onPageChanged(int page) {
     setState(() {
       _currentPage = page;
-      if (page > 0) _hasSwipped = true;
+      if (page > 0) _hasSwiped = true;
     });
   }
 
   void _nextPage() {
     if (_currentPage < _onboardingData.length - 1) {
-      setState(() => _hasSwipped = true);
+      setState(() => _hasSwiped = true);
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
@@ -465,7 +465,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                 children: [
                   AnimatedOpacity(
                     duration: const Duration(milliseconds: 400),
-                    opacity: (!_hasSwipped && _currentPage == 0) ? 1.0 : 0.0,
+                    opacity: (!_hasSwiped && _currentPage == 0) ? 1.0 : 0.0,
                     child: _buildSwipeHint(),
                   ),
                   const SizedBox(height: 8),
