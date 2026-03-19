@@ -823,7 +823,7 @@ class _SignupPageState extends ConsumerState<SignupPage>
       color: _slate800.withAlpha(100), borderRadius: BorderRadius.circular(14),
       border: Border.all(color: _border)),
     child: DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         prefixIcon: Icon(icon, color: _skyL.withAlpha(140), size: 18),
         border: InputBorder.none, labelText: label,
