@@ -207,8 +207,9 @@ class _OnboardingPageState extends State<OnboardingPage>
               ),
               const Spacer(),
               if (isWide) ...[
-                _navTextBtn('About'),
-                _navTextBtn('Discover'),
+                _navTextBtn('For Artists', () => context.go('/join')),
+                _navTextBtn('Terms', () => context.go('/terms')),
+                _navTextBtn('Privacy', () => context.go('/privacy-policy')),
                 const SizedBox(width: 12),
               ],
               _navPill('Sign in', () => context.go('/login')),
@@ -219,12 +220,15 @@ class _OnboardingPageState extends State<OnboardingPage>
     ),
   );
 
-  Widget _navTextBtn(String label) => TextButton(
-    onPressed: () {},
-    child: Text(label,
-      style: const TextStyle(
-        fontSize: 14, fontWeight: FontWeight.w400,
-        color: _muted, letterSpacing: 0.2,
+  Widget _navTextBtn(String label, VoidCallback onTap) => MouseRegion(
+    cursor: SystemMouseCursors.click,
+    child: TextButton(
+      onPressed: onTap,
+      child: Text(label,
+        style: const TextStyle(
+          fontSize: 14, fontWeight: FontWeight.w400,
+          color: _muted, letterSpacing: 0.2,
+        ),
       ),
     ),
   );
