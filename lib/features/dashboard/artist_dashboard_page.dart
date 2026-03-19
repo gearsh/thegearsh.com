@@ -13,14 +13,11 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
   String _activeTab = 'overview';
 
   static const Color _bg      = Color(0xFF020617);
-  static const Color _bg2     = Color(0xFF0F172A);
   static const Color _surface = Color(0xFF111827);
-  static const Color _slate800 = Color(0xFF1E293B);
   static const Color _sky     = Color(0xFF0EA5E9);
   static const Color _skyL    = Color(0xFF38BDF8);
   static const Color _cyan    = Color(0xFF06B6D4);
   static const Color _border  = Color(0x12FFFFFF);
-  static const Color _green   = Color(0xFF4ADE80);
   static const Color _amber   = Color(0xFFFBBF24);
 
   final List<Map<String, String>> _tabs = [
