@@ -12,7 +12,9 @@ import 'package:gearsh_app/services/user_role_service.dart';
 import 'package:gearsh_app/providers/auth_providers.dart';
 
 class SignupPage extends ConsumerStatefulWidget {
-  const SignupPage({super.key});
+  final String? initialRole;
+  final String? initialTier;
+  const SignupPage({super.key, this.initialRole, this.initialTier});
 
   @override
   ConsumerState<SignupPage> createState() => _SignupPageState();
@@ -40,6 +42,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
   String? _error;
   bool _success = false;
   int _currentStep = 0;
+  String _selectedTier = 'basic'; // basic | standard | premium
 
   late AnimationController _floatingGlowController;
   late AnimationController _fadeController;
@@ -67,6 +70,18 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
   @override
   void initState() {
     super.initState();
+    // Pre-fill from query params (e.g. /signup?role=artist&tier=standard)
+    if (widget.initialRole != null) {
+      // Map query param to dropdown value (Booker/Artist/Fan)
+      final r = widget.initialRole!.toLowerCase();
+      if (r == 'artist') _userType = 'Artist';
+      else if (r == 'fan') _userType = 'Fan';
+      else if (r == 'client' || r == 'booker') _userType = 'Booker';
+      else _userType = widget.initialRole;
+    }
+    if (widget.initialTier != null) {
+      _selectedTier = widget.initialTier!;
+    }
     _floatingGlowController = AnimationController(
       duration: const Duration(seconds: 4),
       vsync: this,
@@ -196,7 +211,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
           // Log in the user with their info
           final fullName = '${_firstNameController.text.trim()} ${_surnameController.text.trim()}';
           final email = _emailController.text.trim();
-          final role = _userType == 'artist' ? UserRole.artist : UserRole.client;
+          final role = _userType?.toLowerCase() == 'artist' ? UserRole.artist : UserRole.client;
 
           userRoleService.login(
             role: role,
@@ -258,6 +273,7 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
         body: jsonEncode({
           'firebase_uid': user.uid,
           'user_type': _userType,
+          'subscription_tier': _selectedTier,
           'contact_number': _contactNumberController.text.trim(),
           'country': _countryController.text.trim(),
           'location': _locationController.text.trim(),
@@ -361,6 +377,59 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
                       _getStepTitle(),
                       style: TextStyle(color: Colors.white.withAlpha(128), fontSize: 14),
                     ),
+                    // Show selected tier if coming from /join
+                    if (_userType == 'Artist' && _selectedTier != 'basic') ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: _selectedTier == 'premium'
+                              ? const Color(0xFFF59E0B).withAlpha(20)
+                              : _sky500.withAlpha(20),
+                          border: Border.all(
+                            color: _selectedTier == 'premium'
+                                ? const Color(0xFFF59E0B).withAlpha(77)
+                                : _sky500.withAlpha(77),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _selectedTier == 'premium' ? Icons.star_rounded : Icons.verified,
+                              size: 16,
+                              color: _selectedTier == 'premium'
+                                  ? const Color(0xFFFBBF24)
+                                  : _sky400,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${_selectedTier[0].toUpperCase()}${_selectedTier.substring(1)} plan · ${_selectedTier == 'standard' ? 'R500/mo' : 'R5 000/mo'}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: _selectedTier == 'premium'
+                                    ? const Color(0xFFFBBF24)
+                                    : _sky400,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              onTap: () => context.go('/join?tier=$_selectedTier'),
+                              child: Text('Change',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white.withAlpha(90),
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 24),
 
                     // Form pages
@@ -1012,4 +1081,3 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
     ];
   }
 }
-
