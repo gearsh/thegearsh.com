@@ -11,6 +11,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Remove stale build artifacts from web/
+        run: |
+          rm -f web/main.dart.js
+          rm -f web/flutter_bootstrap.js
+          rm -f web/flutter_service_worker.js
+          rm -f web/flutter.js
+          rm -f web/version.json
+          rm -rf web/canvaskit
+          rm -rf web/assets
+
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
