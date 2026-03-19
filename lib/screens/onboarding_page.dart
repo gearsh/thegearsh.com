@@ -229,22 +229,25 @@ class _OnboardingPageState extends State<OnboardingPage>
     ),
   );
 
-  Widget _navPill(String label, VoidCallback onTap) => GestureDetector(
-    onTap: onTap,
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(100),
-        gradient: const LinearGradient(
-          colors: [_sky, _cyan],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+  Widget _navPill(String label, VoidCallback onTap) => MouseRegion(
+    cursor: SystemMouseCursors.click,
+    child: GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          gradient: const LinearGradient(
+            colors: [_sky, _cyan],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
         ),
-      ),
-      child: Text(label,
-        style: const TextStyle(
-          fontSize: 13, fontWeight: FontWeight.w600,
-          color: Colors.white, letterSpacing: 0.3,
+        child: Text(label,
+          style: const TextStyle(
+            fontSize: 13, fontWeight: FontWeight.w600,
+            color: Colors.white, letterSpacing: 0.3,
+          ),
         ),
       ),
     ),
@@ -758,9 +761,11 @@ class _OnboardingPageState extends State<OnboardingPage>
   );
 
   Widget _catCard(String img, String name, String sub, {required double height}) =>
-      GestureDetector(
-        onTap: () => context.go('/home'),
-        child: Container(
+      MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: () => context.go('/home'),
+          child: Container(
           height: height,
           width: double.infinity,
           decoration: BoxDecoration(
@@ -826,6 +831,7 @@ class _OnboardingPageState extends State<OnboardingPage>
             ],
           ),
         ),
+      ),
       );
 
   // ── SOCIAL PROOF ──────────────────────────────────────────
@@ -1021,12 +1027,15 @@ class _OnboardingPageState extends State<OnboardingPage>
                 color: Colors.white.withAlpha(90),
               ),
             ),
-            GestureDetector(
-              onTap: () => context.go('/login'),
-              child: const Text('Sign in',
-                style: TextStyle(
-                  fontSize: 13, fontWeight: FontWeight.w600,
-                  color: _skyL,
+            MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () => context.go('/login'),
+                child: const Text('Sign in',
+                  style: TextStyle(
+                    fontSize: 13, fontWeight: FontWeight.w600,
+                    color: _skyL,
+                  ),
                 ),
               ),
             ),
@@ -1038,9 +1047,11 @@ class _OnboardingPageState extends State<OnboardingPage>
 
   Widget _roleCard(String idx, IconData icon, String name, String desc,
       String action, VoidCallback onTap) =>
-      GestureDetector(
-        onTap: onTap,
-        child: Container(
+      MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
           padding: const EdgeInsets.all(36),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1096,6 +1107,7 @@ class _OnboardingPageState extends State<OnboardingPage>
             ],
           ),
         ),
+        ),
       );
 
   // ── BOTTOM CTA ────────────────────────────────────────────
@@ -1147,14 +1159,17 @@ class _OnboardingPageState extends State<OnboardingPage>
               color: Colors.white.withAlpha(51),
             ),
           ),
-          GestureDetector(
-            onTap: () => context.go('/terms'),
-            child: const Text('Terms of Service',
-              style: TextStyle(
-                fontSize: 11, fontWeight: FontWeight.w300,
-                color: _skyL,
-                decoration: TextDecoration.underline,
-                decorationColor: _skyL,
+          MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: () => context.go('/terms'),
+              child: const Text('Terms of Service',
+                style: TextStyle(
+                  fontSize: 11, fontWeight: FontWeight.w300,
+                  color: _skyL,
+                  decoration: TextDecoration.underline,
+                  decorationColor: _skyL,
+                ),
               ),
             ),
           ),
@@ -1164,14 +1179,17 @@ class _OnboardingPageState extends State<OnboardingPage>
               color: Colors.white.withAlpha(51),
             ),
           ),
-          GestureDetector(
-            onTap: () => context.go('/privacy-policy'),
-            child: const Text('Privacy Policy',
-              style: TextStyle(
-                fontSize: 11, fontWeight: FontWeight.w300,
-                color: _skyL,
-                decoration: TextDecoration.underline,
-                decorationColor: _skyL,
+          MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: () => context.go('/privacy-policy'),
+              child: const Text('Privacy Policy',
+                style: TextStyle(
+                  fontSize: 11, fontWeight: FontWeight.w300,
+                  color: _skyL,
+                  decoration: TextDecoration.underline,
+                  decorationColor: _skyL,
+                ),
               ),
             ),
           ),
@@ -1225,53 +1243,62 @@ class _OnboardingPageState extends State<OnboardingPage>
           ),
   );
 
-  Widget _footerLink(String label, String route) => GestureDetector(
-    onTap: () => context.go(route),
-    child: Text(label,
-      style: TextStyle(
-        fontSize: 11, fontWeight: FontWeight.w300,
-        color: Colors.white.withAlpha(64), letterSpacing: 0.5,
+  Widget _footerLink(String label, String route) => MouseRegion(
+    cursor: SystemMouseCursors.click,
+    child: GestureDetector(
+      onTap: () => context.go(route),
+      child: Text(label,
+        style: TextStyle(
+          fontSize: 11, fontWeight: FontWeight.w300,
+          color: Colors.white.withAlpha(64), letterSpacing: 0.5,
+        ),
       ),
     ),
   );
 
   // ── SHARED BUTTONS ────────────────────────────────────────
-  Widget _ctaPrimary(String label, VoidCallback onTap) => GestureDetector(
-    onTap: onTap,
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 15),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(100),
-        gradient: const LinearGradient(
-          colors: [_sky, _cyan],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+  Widget _ctaPrimary(String label, VoidCallback onTap) => MouseRegion(
+    cursor: SystemMouseCursors.click,
+    child: GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 15),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          gradient: const LinearGradient(
+            colors: [_sky, _cyan],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+            BoxShadow(color: _sky.withAlpha(40), blurRadius: 16, offset: const Offset(0, 4)),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(color: _sky.withAlpha(40), blurRadius: 16, offset: const Offset(0, 4)),
-        ],
-      ),
-      child: Text(label,
-        style: const TextStyle(
-          fontSize: 14, fontWeight: FontWeight.w600,
-          color: Colors.white, letterSpacing: 0.3,
+        child: Text(label,
+          style: const TextStyle(
+            fontSize: 14, fontWeight: FontWeight.w600,
+            color: Colors.white, letterSpacing: 0.3,
+          ),
         ),
       ),
     ),
   );
 
-  Widget _ctaSecondary(String label, VoidCallback onTap) => GestureDetector(
-    onTap: onTap,
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 15),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: Colors.white.withAlpha(38)),
-      ),
-      child: Text(label,
-        style: const TextStyle(
-          fontSize: 14, fontWeight: FontWeight.w400,
-          color: Colors.white, letterSpacing: 0.3,
+  Widget _ctaSecondary(String label, VoidCallback onTap) => MouseRegion(
+    cursor: SystemMouseCursors.click,
+    child: GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 15),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(color: Colors.white.withAlpha(38)),
+        ),
+        child: Text(label,
+          style: const TextStyle(
+            fontSize: 14, fontWeight: FontWeight.w400,
+            color: Colors.white, letterSpacing: 0.3,
+          ),
         ),
       ),
     ),
@@ -1350,49 +1377,52 @@ class _OnboardingPageState extends State<OnboardingPage>
   }
 
   Widget _sheetRoleBtn(IconData icon, String title, String sub, VoidCallback onTap) =>
-      GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: _border),
-            color: _bg.withAlpha(128),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 40, height: 40,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: _sky.withAlpha(15),
-                  border: Border.all(color: _sky.withAlpha(40)),
+      MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: _border),
+              color: _bg.withAlpha(128),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40, height: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: _sky.withAlpha(15),
+                    border: Border.all(color: _sky.withAlpha(40)),
+                  ),
+                  child: Center(child: Icon(icon, color: _skyL, size: 20)),
                 ),
-                child: Center(child: Icon(icon, color: _skyL, size: 20)),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title,
-                      style: const TextStyle(
-                        fontSize: 15, fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title,
+                        style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    Text(sub,
-                      style: TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.w300,
-                        color: Colors.white.withAlpha(115),
+                      Text(sub,
+                        style: TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w300,
+                          color: Colors.white.withAlpha(115),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Icon(Icons.arrow_forward_ios, size: 14,
-                color: _skyL.withAlpha(150)),
-            ],
+                Icon(Icons.arrow_forward_ios, size: 14,
+                  color: _skyL.withAlpha(150)),
+              ],
+            ),
           ),
         ),
       );
