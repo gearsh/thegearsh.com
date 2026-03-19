@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/services/global_config_service.dart';
+import 'package:gearsh_app/services/user_role_service.dart';
 
 class ArtistDashboardPage extends StatefulWidget {
   const ArtistDashboardPage({super.key});
@@ -12,1165 +12,449 @@ class ArtistDashboardPage extends StatefulWidget {
 class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
   String _activeTab = 'overview';
 
-  // Color constants - Deep Sky Blue theme
-  static const Color _slate950 = Color(0xFF020617);
-  static const Color _slate900 = Color(0xFF0F172A);
+  static const Color _bg      = Color(0xFF020617);
+  static const Color _bg2     = Color(0xFF0F172A);
+  static const Color _surface = Color(0xFF111827);
   static const Color _slate800 = Color(0xFF1E293B);
-  static const Color _sky500 = Color(0xFF0EA5E9);
-  static const Color _sky400 = Color(0xFF38BDF8);
-  static const Color _cyan500 = Color(0xFF06B6D4);
-  static const Color _green400 = Color(0xFF4ADE80);
-  static const Color _yellow400 = Color(0xFFFACC15);
-  static const Color _cyan400 = Color(0xFF22D3EE);
+  static const Color _sky     = Color(0xFF0EA5E9);
+  static const Color _skyL    = Color(0xFF38BDF8);
+  static const Color _cyan    = Color(0xFF06B6D4);
+  static const Color _border  = Color(0x12FFFFFF);
+  static const Color _green   = Color(0xFF4ADE80);
+  static const Color _amber   = Color(0xFFFBBF24);
 
   final List<Map<String, String>> _tabs = [
     {'id': 'overview', 'label': 'Overview'},
-    {'id': 'requests', 'label': 'Requests'},
+    {'id': 'bookings', 'label': 'Bookings'},
     {'id': 'calendar', 'label': 'Calendar'},
     {'id': 'services', 'label': 'Services'},
   ];
 
-  // Mock data - Demo data for app store screenshots (generic client names)
-  final List<Map<String, dynamic>> _bookingRequests = [
-    {
-      'id': 'req1',
-      'clientName': 'Thabo M.',
-      'clientImage': 'assets/images/gearsh_logo.png',
-      'service': 'Club Night DJ Set (4 hours)',
-      'date': 'Jan 25, 2026',
-      'time': '8:00 PM',
-      'price': 2500,
-    },
-    {
-      'id': 'req2',
-      'clientName': 'Lerato K.',
-      'clientImage': 'assets/images/gearsh_logo.png',
-      'service': 'Birthday Party Performance',
-      'date': 'Feb 1, 2026',
-      'time': '6:00 PM',
-      'price': 3500,
-    },
-  ];
-
-  final List<Map<String, dynamic>> _upcomingEvents = [
-    {'id': 'e1', 'date': '25', 'day': 'Sat', 'month': 'Jan', 'event': 'Club Night @ Altitude', 'time': '8:00 PM'},
-    {'id': 'e2', 'date': '1', 'day': 'Sat', 'month': 'Feb', 'event': 'Private Birthday Party', 'time': '6:00 PM'},
-    {'id': 'e3', 'date': '14', 'day': 'Sat', 'month': 'Feb', 'event': 'Valentine\'s Day Event', 'time': '7:00 PM'},
-  ];
-
-  final List<Map<String, dynamic>> _services = [
-    {'id': 's1', 'name': 'Club Night (4 hours)', 'price': 2500, 'status': 'active'},
-    {'id': 's2', 'name': 'Private Event Package', 'price': 4000, 'status': 'active'},
-    {'id': 's3', 'name': 'Festival Performance', 'price': 6000, 'status': 'active'},
-    {'id': 's4', 'name': 'Studio Session (2 hours)', 'price': 1500, 'status': 'active'},
-  ];
-
-  final List<Map<String, dynamic>> _recentActivity = [
-    {'color': _green400, 'text': 'Payment received - ${globalConfigService.formatPrice(2500)}', 'time': '2 hours ago'},
-    {'color': _cyan400, 'text': 'New booking request from Thabo M.', 'time': '5 hours ago'},
-    {'color': _sky400, 'text': 'Booking confirmed for Jan 25', 'time': '1 day ago'},
-    {'color': _yellow400, 'text': '5-star review received ⭐', 'time': '2 days ago'},
-  ];
-
-  // Calendar state
-  DateTime _currentMonth = DateTime(2026, 1, 1);
-  final List<int> _eventDays = [25, 1];
-
-  @override
-  void initState() {
-    super.initState();
-    // Guest artists can view dashboard, but will be prompted to sign up for actions
-    // No redirect needed - they selected artist role in onboarding
-  }
+  Widget _click({required Widget child, VoidCallback? onTap}) =>
+      MouseRegion(cursor: SystemMouseCursors.click,
+        child: GestureDetector(onTap: onTap, child: child));
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     final padding = MediaQuery.of(context).padding;
+    final w = MediaQuery.of(context).size.width;
+    final isWide = w >= 900;
+    final hPad = isWide ? 80.0 : 20.0;
 
     return Scaffold(
-      body: Container(
-        width: screenWidth,
-        height: screenHeight,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [_slate950, _slate900, _slate950],
-          ),
-        ),
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                // Header
-                Container(
-                  padding: EdgeInsets.only(
-                    top: padding.top + 16,
-                    left: 20,
-                    right: 20,
-                    bottom: 0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _slate950.withAlpha(242),
-                    border: Border(
-                      bottom: BorderSide(color: _sky500.withAlpha(51)),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      // Title row
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Artist Dashboard',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  'Manage your bookings & earnings',
-                                  style: TextStyle(
-                                    color: Colors.white.withAlpha(153),
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () => context.go('/profile-settings'),
-                            child: Container(
-                              width: 44,
-                              height: 44,
-                              decoration: BoxDecoration(
-                                color: _slate900.withAlpha(128),
-                                borderRadius: BorderRadius.circular(22),
-                                border: Border.all(color: _sky500.withAlpha(77)),
-                              ),
-                              child: const Icon(
-                                Icons.settings_outlined,
-                                color: Colors.white,
-                                size: 22,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      // Tabs
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: _tabs.map((tab) {
-                            final isActive = _activeTab == tab['id'];
-                            return GestureDetector(
-                              onTap: () => setState(() => _activeTab = tab['id']!),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                      color: isActive ? _sky500 : Colors.transparent,
-                                      width: 2,
-                                    ),
-                                  ),
-                                ),
-                                child: Text(
-                                  tab['label']!,
-                                  style: TextStyle(
-                                    color: isActive ? _sky400 : Colors.white.withAlpha(153),
-                                    fontSize: 14,
-                                    fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
+      backgroundColor: _bg,
+      body: Column(children: [
+        Container(
+          padding: EdgeInsets.only(top: padding.top + 16, left: hPad, right: hPad, bottom: 0),
+          decoration: BoxDecoration(
+            color: _bg.withAlpha(245),
+            border: Border(bottom: BorderSide(color: _border))),
+          child: Column(children: [
+            Row(children: [
+              Expanded(child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Welcome, ${_firstName()}',
+                    style: const TextStyle(fontFamily: 'Syne', fontSize: 22,
+                      fontWeight: FontWeight.w700, color: Colors.white)),
+                  const SizedBox(height: 2),
+                  Text(
+                    userRoleService.isLoggedIn
+                        ? 'Your artist dashboard'
+                        : 'Set up your artist profile to start getting booked',
+                    style: TextStyle(fontSize: 13, color: Colors.white.withAlpha(100))),
                 ],
-              ),
-            ),
-
-            // Content
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
-                child: _buildTabContent(),
-              ),
-            ),
-          ],
-        ),
-            // Bottom Navigation Bar
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: _buildBottomNav(padding),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNav(EdgeInsets padding) {
-    return Container(
-      height: 80 + padding.bottom,
-      padding: EdgeInsets.only(bottom: padding.bottom),
-      decoration: BoxDecoration(
-        color: _slate950.withAlpha(242),
-        border: Border(
-          top: BorderSide(color: _sky500.withAlpha(51)),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(Icons.dashboard_outlined, 'Dashboard', true, () {}),
-          _buildNavItem(Icons.message_outlined, 'Messages', false, () => context.go('/messages')),
-          _buildNavItem(Icons.calendar_today_outlined, 'Calendar', false, () {}),
-          _buildNavItem(Icons.person_outline, 'Profile', false, () => context.go('/profile-settings')),
-          _buildNavItem(Icons.verified_user_outlined, 'Verification', false, () => context.go('/dashboard/verification')),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isSelected, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? _sky400 : Colors.white.withAlpha(102),
-              size: 24,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? _sky400 : Colors.white.withAlpha(102),
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-              ),
-            ),
-            if (isSelected)
-              Container(
-                margin: const EdgeInsets.only(top: 4),
-                width: 4,
-                height: 4,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [_sky500, _cyan500]),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: _sky500.withAlpha(179),
-                      blurRadius: 8,
-                    ),
-                  ],
+              )),
+              _click(
+                onTap: () => context.go('/profile-settings'),
+                child: Container(
+                  width: 40, height: 40,
+                  decoration: BoxDecoration(color: _surface, shape: BoxShape.circle,
+                    border: Border.all(color: _border)),
+                  child: Center(child: Text(_initials(),
+                    style: const TextStyle(fontFamily: 'Syne', fontSize: 13,
+                      fontWeight: FontWeight.w700, color: _skyL))),
                 ),
               ),
-          ],
+            ]),
+            const SizedBox(height: 16),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(children: _tabs.map((tab) {
+                final isActive = _activeTab == tab['id'];
+                return _click(
+                  onTap: () => setState(() => _activeTab = tab['id']!),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(border: Border(bottom: BorderSide(
+                      color: isActive ? _sky : Colors.transparent, width: 2))),
+                    child: Text(tab['label']!,
+                      style: TextStyle(
+                        color: isActive ? _skyL : Colors.white.withAlpha(80),
+                        fontSize: 14,
+                        fontWeight: isActive ? FontWeight.w600 : FontWeight.w400)),
+                  ),
+                );
+              }).toList()),
+            ),
+          ]),
         ),
-      ),
+        Expanded(child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(hPad, 24, hPad, 120),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: isWide ? 800 : double.infinity),
+            child: _buildTabContent()),
+        )),
+      ]),
+      bottomNavigationBar: _buildBottomNav(padding),
     );
+  }
+
+  String _firstName() {
+    final name = userRoleService.userName;
+    if (name == 'Guest User') { return 'Artist'; }
+    return name.split(' ').first;
+  }
+
+  String _initials() {
+    final name = userRoleService.userName;
+    if (name == 'Guest User') { return 'A'; }
+    final parts = name.split(' ');
+    if (parts.length >= 2) { return '${parts[0][0]}${parts[1][0]}'.toUpperCase(); }
+    return parts[0][0].toUpperCase();
   }
 
   Widget _buildTabContent() {
     switch (_activeTab) {
-      case 'overview':
-        return _buildOverviewTab();
-      case 'requests':
-        return _buildRequestsTab();
-      case 'calendar':
-        return _buildCalendarTab();
-      case 'services':
-        return _buildServicesTab();
-      default:
-        return _buildOverviewTab();
+      case 'overview': return _buildOverview();
+      case 'bookings': return _buildBookings();
+      case 'calendar': return _buildCalendar();
+      case 'services': return _buildServices();
+      default: return _buildOverview();
     }
   }
 
-  Widget _buildOverviewTab() {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 360;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Earnings Stats - Use Flexible layout for small screens
-        LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth < 320) {
-              // Stack vertically on very small screens
-              return Column(
-                children: [
-                  _buildStatCard(
-                    icon: Icons.attach_money_rounded,
-                    label: 'This Month',
-                    value: globalConfigService.formatPrice(3200),
-                    trend: '+24%',
-                  ),
-                  const SizedBox(height: 12),
-                  _buildStatCard(
-                    icon: Icons.calendar_today_rounded,
-                    label: 'Bookings',
-                    value: '47',
-                    trend: '+12%',
-                  ),
-                ],
-              );
-            }
-            return Row(
-              children: [
-                Expanded(child: _buildStatCard(
-                  icon: Icons.attach_money_rounded,
-                  label: 'This Month',
-                  value: globalConfigService.formatPrice(3200),
-                  trend: '+24%',
-                )),
-                const SizedBox(width: 10),
-                Expanded(child: _buildStatCard(
-                  icon: Icons.calendar_today_rounded,
-                  label: 'Bookings',
-                  value: '47',
-                  trend: '+12%',
-                )),
-              ],
-            );
-          },
-        ),
-        SizedBox(height: isSmallScreen ? 12 : 16),
-
-        // Quick Stats - Wrap for small screens
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            SizedBox(
-              width: (screenWidth - 56) / 3,
-              child: _buildQuickStat(
-                icon: Icons.access_time_rounded,
-                iconColor: _yellow400,
-                value: '2',
-                label: 'Pending',
-              ),
-            ),
-            SizedBox(
-              width: (screenWidth - 56) / 3,
-              child: _buildQuickStat(
-                icon: Icons.check_circle_outline_rounded,
-                iconColor: _green400,
-                value: '8',
-                label: 'Confirmed',
-              ),
-            ),
-            SizedBox(
-              width: (screenWidth - 56) / 3,
-              child: _buildQuickStat(
-                icon: Icons.people_outline_rounded,
-                iconColor: _cyan400,
-                value: '34',
-                label: 'Clients',
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: isSmallScreen ? 16 : 24),
-
-        // Upcoming Events
-        Text(
-          'Upcoming Events',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: isSmallScreen ? 16 : 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 12),
-        ..._upcomingEvents.map((event) => Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: _buildEventCard(event),
-        )),
-        SizedBox(height: isSmallScreen ? 12 : 16),
-
-        // Recent Activity
-        Text(
-          'Recent Activity',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: isSmallScreen ? 16 : 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 12),
-        _buildActivityCard(),
+  Widget _buildOverview() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      if (!userRoleService.isLoggedIn) ...[
+        _buildSignupPrompt(),
         const SizedBox(height: 20),
       ],
-    );
-  }
+      _buildSetupChecklist(),
+      const SizedBox(height: 28),
+      Row(children: [
+        Expanded(child: _statCard(Icons.calendar_today_rounded, 'Bookings', '0')),
+        const SizedBox(width: 12),
+        Expanded(child: _statCard(Icons.attach_money_rounded, 'Earnings', 'R0')),
+        const SizedBox(width: 12),
+        Expanded(child: _statCard(Icons.visibility_outlined, 'Views', '0')),
+      ]),
+      const SizedBox(height: 28),
+      const Text('Recent Activity', style: TextStyle(fontFamily: 'Syne',
+        fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white)),
+      const SizedBox(height: 12),
+      _emptyState(Icons.notifications_none_rounded, 'No activity yet',
+        'When clients view your profile, send booking requests, or leave reviews \u2014 it\'ll show up here.'),
+    ],
+  );
 
-  Widget _buildStatCard({
-    required IconData icon,
-    required String label,
-    required String value,
-    required String trend,
-  }) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 360;
-
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            _sky500.withAlpha(51),
-            _cyan500.withAlpha(51),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
-        border: Border.all(color: _sky500.withAlpha(77)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: _sky400, size: isSmallScreen ? 16 : 18),
-              SizedBox(width: isSmallScreen ? 4 : 8),
-              Expanded(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: Colors.white.withAlpha(153),
-                    fontSize: isSmallScreen ? 11 : 13,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: isSmallScreen ? 8 : 12),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              value,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: isSmallScreen ? 22 : 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          SizedBox(height: isSmallScreen ? 2 : 4),
-          Row(
-            children: [
-              Icon(Icons.trending_up_rounded, color: _green400, size: isSmallScreen ? 12 : 14),
-              SizedBox(width: isSmallScreen ? 2 : 4),
-              Text(
-                trend,
-                style: TextStyle(
-                  color: _green400,
-                  fontSize: isSmallScreen ? 11 : 13,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQuickStat({
-    required IconData icon,
-    required Color iconColor,
-    required String value,
-    required String label,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: _slate900.withAlpha(102),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _sky500.withAlpha(51)),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: iconColor, size: 22),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: TextStyle(
-              color: Colors.white.withAlpha(153),
-              fontSize: 11,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEventCard(Map<String, dynamic> event) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: _slate900.withAlpha(102),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _sky500.withAlpha(51)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [_sky500.withAlpha(51), _cyan500.withAlpha(51)],
-              ),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: _sky500.withAlpha(77)),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  event['date'],
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  event['month'],
-                  style: const TextStyle(
-                    color: _sky400,
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  event['event'],
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${event['day']} • ${event['time']}',
-                  style: TextStyle(
-                    color: Colors.white.withAlpha(153),
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActivityCard() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: _slate900.withAlpha(102),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _sky500.withAlpha(51)),
-      ),
-      child: Column(
-        children: _recentActivity.map((activity) {
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: activity != _recentActivity.last ? 14 : 0,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  margin: const EdgeInsets.only(top: 6),
-                  decoration: BoxDecoration(
-                    color: activity['color'] as Color,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: (activity['color'] as Color).withAlpha(204),
-                        blurRadius: 8,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        activity['text'] as String,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        activity['time'] as String,
-                        style: TextStyle(
-                          color: Colors.white.withAlpha(102),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildRequestsTab() {
-    return Column(
-      children: _bookingRequests.map((request) => Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: _buildRequestCard(request),
-      )).toList(),
-    );
-  }
-
-  Widget _buildRequestCard(Map<String, dynamic> request) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: _slate900.withAlpha(102),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _sky500.withAlpha(51)),
-      ),
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: _sky500.withAlpha(77), width: 2),
-                ),
-                child: ClipOval(
-                  child: Image.asset(
-                    request['clientImage'],
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: _slate800,
-                      child: const Icon(Icons.person, color: _sky400, size: 28),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      request['clientName'],
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      request['service'],
-                      style: TextStyle(
-                        color: Colors.white.withAlpha(153),
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.calendar_today_outlined, color: _sky400, size: 14),
-                        const SizedBox(width: 6),
-                        Text(
-                          '${request['date']} • ${request['time']}',
-                          style: TextStyle(
-                            color: Colors.white.withAlpha(179),
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Icon(Icons.attach_money_rounded, color: _sky400, size: 14),
-                        const SizedBox(width: 6),
-                        Text(
-                          'R${request['price']}',
-                          style: const TextStyle(
-                            color: _sky400,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  onTap: () {
-                    // Accept booking
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [_sky500, _cyan500],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: _sky500.withAlpha(77),
-                          blurRadius: 15,
-                          spreadRadius: 0,
-                        ),
-                      ],
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'Accept',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () {
-                    // Decline booking
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    decoration: BoxDecoration(
-                      color: _slate900.withAlpha(128),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: _sky500.withAlpha(77)),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Decline',
-                        style: TextStyle(
-                          color: Colors.white.withAlpha(179),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCalendarTab() {
-    final daysInMonth = DateTime(_currentMonth.year, _currentMonth.month + 1, 0).day;
-    final firstDayOfWeek = DateTime(_currentMonth.year, _currentMonth.month, 1).weekday % 7;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Calendar Card
-        Container(
-          padding: const EdgeInsets.all(16),
+  Widget _buildSignupPrompt() => Container(
+    padding: const EdgeInsets.all(24),
+    decoration: BoxDecoration(
+      gradient: LinearGradient(colors: [_sky.withAlpha(20), _cyan.withAlpha(10)],
+        begin: Alignment.topLeft, end: Alignment.bottomRight),
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: _sky.withAlpha(64))),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
+        Container(width: 44, height: 44,
           decoration: BoxDecoration(
-            color: _slate900.withAlpha(102),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: _sky500.withAlpha(51)),
-          ),
-          child: Column(
-            children: [
-              // Month header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    '${_getMonthName(_currentMonth.month)} ${_currentMonth.year}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => setState(() {
-                          _currentMonth = DateTime(_currentMonth.year, _currentMonth.month - 1);
-                        }),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: _slate900.withAlpha(128),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: _sky500.withAlpha(77)),
-                          ),
-                          child: const Text('‹', style: TextStyle(color: Colors.white, fontSize: 16)),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: () => setState(() {
-                          _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + 1);
-                        }),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: _slate900.withAlpha(128),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: _sky500.withAlpha(77)),
-                          ),
-                          child: const Text('›', style: TextStyle(color: Colors.white, fontSize: 16)),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Day headers
-              Row(
-                children: ['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day) => Expanded(
-                  child: Center(
-                    child: Text(
-                      day,
-                      style: TextStyle(
-                        color: Colors.white.withAlpha(153),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                )).toList(),
-              ),
-              const SizedBox(height: 8),
-              // Calendar grid
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  childAspectRatio: 1,
-                  crossAxisSpacing: 4,
-                  mainAxisSpacing: 4,
-                ),
-                itemCount: firstDayOfWeek + daysInMonth,
-                itemBuilder: (context, index) {
-                  if (index < firstDayOfWeek) {
-                    return const SizedBox();
-                  }
-                  final day = index - firstDayOfWeek + 1;
-                  final hasEvent = _eventDays.contains(day);
-                  return Container(
-                    decoration: BoxDecoration(
-                      gradient: hasEvent
-                          ? const LinearGradient(colors: [_sky500, _cyan500])
-                          : null,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: hasEvent
-                          ? [BoxShadow(color: _sky500.withAlpha(102), blurRadius: 15)]
-                          : null,
-                    ),
-                    child: Center(
-                      child: Text(
-                        '$day',
-                        style: TextStyle(
-                          color: hasEvent ? Colors.white : Colors.white.withAlpha(179),
-                          fontSize: 14,
-                          fontWeight: hasEvent ? FontWeight.w600 : FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
+            gradient: const LinearGradient(colors: [_sky, _cyan]),
+            borderRadius: BorderRadius.circular(12)),
+          child: const Icon(Icons.rocket_launch_rounded, color: Colors.white, size: 22)),
+        const SizedBox(width: 14),
+        const Expanded(child: Text('Create your account to go live',
+          style: TextStyle(fontFamily: 'Syne', fontSize: 17,
+            fontWeight: FontWeight.w700, color: Colors.white))),
+      ]),
+      const SizedBox(height: 12),
+      Text('You\'re browsing as a guest. Sign up to create your artist profile, receive bookings, and start earning.',
+        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300,
+          color: Colors.white.withAlpha(140), height: 1.6)),
+      const SizedBox(height: 16),
+      _click(
+        onTap: () => context.go('/join'),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 13),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(colors: [_sky, _cyan]),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [BoxShadow(color: _sky.withAlpha(40), blurRadius: 12, offset: const Offset(0, 4))]),
+          child: const Text('Sign up as an artist',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
         ),
-        const SizedBox(height: 20),
+      ),
+    ]),
+  );
 
-        // Scheduled Events
-        const Text(
-          'Scheduled Events',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+  Widget _buildSetupChecklist() => Container(
+    padding: const EdgeInsets.all(24),
+    decoration: BoxDecoration(color: _surface, borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: _border)),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
+        const Text('Get started', style: TextStyle(fontFamily: 'Syne', fontSize: 17,
+          fontWeight: FontWeight.w700, color: Colors.white)),
+        const Spacer(),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(color: _sky.withAlpha(15),
+            borderRadius: BorderRadius.circular(100),
+            border: Border.all(color: _sky.withAlpha(40))),
+          child: Text('0 / 4 complete', style: TextStyle(fontSize: 11,
+            fontWeight: FontWeight.w500, color: _skyL.withAlpha(180))),
         ),
-        const SizedBox(height: 12),
-        ..._upcomingEvents.map((event) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: _slate900.withAlpha(102),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: _sky500.withAlpha(51)),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [_sky500.withAlpha(51), _cyan500.withAlpha(51)],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: _sky500.withAlpha(77)),
-                  ),
-                  child: Center(
-                    child: Text(
-                      event['date'],
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        event['event'],
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        event['time'],
-                        style: TextStyle(
-                          color: Colors.white.withAlpha(153),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+      ]),
+      const SizedBox(height: 6),
+      Text('Complete these steps to get your profile live and start receiving bookings.',
+        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300,
+          color: Colors.white.withAlpha(90), height: 1.5)),
+      const SizedBox(height: 20),
+      _checkItem(Icons.person_outline_rounded, 'Complete your profile',
+        'Add your bio, photo, and contact details', 'Edit profile',
+        () => context.go('/edit-profile')),
+      _checkItem(Icons.photo_library_outlined, 'Upload portfolio',
+        'Show clients your best work', 'Add photos',
+        () => context.go('/edit-profile')),
+      _checkItem(Icons.sell_outlined, 'Set your services & pricing',
+        'Define what you offer and your rates', 'Add services',
+        () => setState(() => _activeTab = 'services')),
+      _checkItem(Icons.verified_outlined, 'Get verified',
+        'Verified artists get 3x more bookings', 'Start verification',
+        () => context.go('/dashboard/verification'), isLast: true),
+    ]),
+  );
+
+  Widget _checkItem(IconData icon, String title, String desc, String action,
+      VoidCallback onTap, {bool isLast = false}) => Column(children: [
+    Padding(
+      padding: const EdgeInsets.symmetric(vertical: 14),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(width: 38, height: 38,
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),
+            color: _sky.withAlpha(10), border: Border.all(color: _border)),
+          child: Icon(icon, color: _skyL.withAlpha(160), size: 18)),
+        const SizedBox(width: 14),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(title, style: const TextStyle(fontSize: 14,
+            fontWeight: FontWeight.w600, color: Colors.white)),
+          const SizedBox(height: 2),
+          Text(desc, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300,
+            color: Colors.white.withAlpha(80))),
+        ])),
+        const SizedBox(width: 10),
+        _click(onTap: onTap, child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: _sky.withAlpha(64)), color: _sky.withAlpha(10)),
+          child: Text(action, style: const TextStyle(fontSize: 12,
+            fontWeight: FontWeight.w500, color: _skyL)),
         )),
-      ],
-    );
-  }
+      ]),
+    ),
+    if (!isLast) Container(height: 1, color: _border),
+  ]);
 
-  Widget _buildServicesTab() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Header
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'My Services',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                // Add service
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+  Widget _statCard(IconData icon, String label, String value) => Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(color: _surface, borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: _border)),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Icon(icon, color: _skyL.withAlpha(120), size: 18),
+      const SizedBox(height: 12),
+      Text(value, style: const TextStyle(fontFamily: 'Syne', fontSize: 22,
+        fontWeight: FontWeight.w700, color: Colors.white)),
+      const SizedBox(height: 2),
+      Text(label, style: TextStyle(fontSize: 11, color: Colors.white.withAlpha(80))),
+    ]),
+  );
+
+  Widget _emptyState(IconData icon, String title, String desc) => Container(
+    padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
+    decoration: BoxDecoration(color: _surface, borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: _border)),
+    child: Center(child: Column(children: [
+      Container(width: 56, height: 56,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: _sky.withAlpha(10),
+          border: Border.all(color: _sky.withAlpha(40))),
+        child: Icon(icon, color: _skyL.withAlpha(100), size: 24)),
+      const SizedBox(height: 16),
+      Text(title, style: const TextStyle(fontFamily: 'Syne', fontSize: 16,
+        fontWeight: FontWeight.w600, color: Colors.white)),
+      const SizedBox(height: 6),
+      Text(desc, textAlign: TextAlign.center, style: TextStyle(fontSize: 13,
+        fontWeight: FontWeight.w300, color: Colors.white.withAlpha(80), height: 1.5)),
+    ])),
+  );
+
+  Widget _buildBookings() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text('Booking Requests', style: TextStyle(fontFamily: 'Syne',
+        fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white)),
+      const SizedBox(height: 16),
+      _emptyState(Icons.inbox_rounded, 'No booking requests',
+        'When clients send you booking requests, they\'ll appear here. Complete your profile to start getting discovered.'),
+    ],
+  );
+
+  Widget _buildCalendar() {
+    final now = DateTime.now();
+    final daysInMonth = DateTime(now.year, now.month + 1, 0).day;
+    final firstDayOfWeek = DateTime(now.year, now.month, 1).weekday % 7;
+    const months = ['January','February','March','April','May','June',
+      'July','August','September','October','November','December'];
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(color: _surface, borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: _border)),
+        child: Column(children: [
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text('${months[now.month - 1]} ${now.year}',
+              style: const TextStyle(fontFamily: 'Syne', fontSize: 17,
+                fontWeight: FontWeight.w600, color: Colors.white)),
+            Row(children: [
+              Icon(Icons.circle, size: 8, color: _sky),
+              const SizedBox(width: 6),
+              Text('Today', style: TextStyle(fontSize: 12, color: Colors.white.withAlpha(80))),
+            ]),
+          ]),
+          const SizedBox(height: 16),
+          Row(children: ['S','M','T','W','T','F','S'].map((d) => Expanded(
+            child: Center(child: Text(d, style: TextStyle(
+              fontSize: 12, color: Colors.white.withAlpha(60), fontWeight: FontWeight.w500)))
+          )).toList()),
+          const SizedBox(height: 8),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7, childAspectRatio: 1, crossAxisSpacing: 4, mainAxisSpacing: 4),
+            itemCount: firstDayOfWeek + daysInMonth,
+            itemBuilder: (context, index) {
+              if (index < firstDayOfWeek) { return const SizedBox(); }
+              final day = index - firstDayOfWeek + 1;
+              final isToday = day == now.day;
+              return Container(
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [_sky500, _cyan500]),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: _sky500.withAlpha(77),
-                      blurRadius: 15,
-                    ),
-                  ],
-                ),
-                child: const Text(
-                  'Add Service',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-
-        // Services list
-        ..._services.map((service) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: _buildServiceCard(service),
-        )),
-      ],
-    );
-  }
-
-  Widget _buildServiceCard(Map<String, dynamic> service) {
-    final isActive = service['status'] == 'active';
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: _slate900.withAlpha(102),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _sky500.withAlpha(51)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  service['name'],
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'R${service['price']}',
-                  style: const TextStyle(
-                    color: _sky400,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: isActive
-                  ? _green400.withAlpha(51)
-                  : _slate800.withAlpha(128),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isActive
-                    ? _green400.withAlpha(77)
-                    : Colors.white.withAlpha(51),
-              ),
-            ),
-            child: Text(
-              isActive ? 'Active' : 'Inactive',
-              style: TextStyle(
-                color: isActive ? _green400 : Colors.white.withAlpha(153),
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          GestureDetector(
-            onTap: () {
-              // Edit service
+                  gradient: isToday ? const LinearGradient(colors: [_sky, _cyan]) : null,
+                  borderRadius: BorderRadius.circular(8)),
+                child: Center(child: Text('$day', style: TextStyle(
+                  color: isToday ? Colors.white : Colors.white.withAlpha(140),
+                  fontSize: 13, fontWeight: isToday ? FontWeight.w600 : FontWeight.w400))),
+              );
             },
-            child: Icon(
-              Icons.settings_outlined,
-              color: Colors.white.withAlpha(153),
-              size: 20,
-            ),
           ),
-        ],
+        ]),
       ),
-    );
+      const SizedBox(height: 24),
+      const Text('Upcoming Events', style: TextStyle(fontFamily: 'Syne',
+        fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white)),
+      const SizedBox(height: 12),
+      _emptyState(Icons.event_outlined, 'No upcoming events',
+        'Confirmed bookings will appear on your calendar automatically.'),
+    ]);
   }
 
-  String _getMonthName(int month) {
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return months[month - 1];
-  }
+  Widget _buildServices() => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(children: [
+        const Text('My Services', style: TextStyle(fontFamily: 'Syne',
+          fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white)),
+        const Spacer(),
+        _click(onTap: () {},
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(colors: [_sky, _cyan]),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [BoxShadow(color: _sky.withAlpha(30), blurRadius: 12, offset: const Offset(0, 3))]),
+            child: const Row(mainAxisSize: MainAxisSize.min, children: [
+              Icon(Icons.add_rounded, color: Colors.white, size: 16),
+              SizedBox(width: 6),
+              Text('Add Service', style: TextStyle(fontSize: 13,
+                fontWeight: FontWeight.w600, color: Colors.white)),
+            ]),
+          ),
+        ),
+      ]),
+      const SizedBox(height: 16),
+      _emptyState(Icons.sell_outlined, 'No services listed',
+        'Add your services and pricing so clients know what you offer.'),
+      const SizedBox(height: 20),
+      Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(color: _sky.withAlpha(8),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: _sky.withAlpha(30))),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Icon(Icons.lightbulb_outline, color: _amber, size: 18),
+            const SizedBox(width: 10),
+            const Text('Service ideas', style: TextStyle(fontSize: 14,
+              fontWeight: FontWeight.w600, color: Colors.white)),
+          ]),
+          const SizedBox(height: 12),
+          _serviceIdea('Club Night DJ Set', '4 hours', 'R2,500'),
+          _serviceIdea('Wedding Photography', 'Full day', 'R8,000'),
+          _serviceIdea('Event Videography', '6 hours + edit', 'R5,000'),
+          _serviceIdea('MC / Event Host', '3 hours', 'R3,000'),
+        ]),
+      ),
+    ],
+  );
+
+  Widget _serviceIdea(String name, String dur, String price) => Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: Row(children: [
+      Container(width: 4, height: 4,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: _skyL.withAlpha(100))),
+      const SizedBox(width: 10),
+      Expanded(child: Text(name, style: TextStyle(fontSize: 13, color: Colors.white.withAlpha(140)))),
+      Text(dur, style: TextStyle(fontSize: 12, color: Colors.white.withAlpha(60))),
+      const SizedBox(width: 12),
+      Text(price, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: _skyL)),
+    ]),
+  );
+
+  Widget _buildBottomNav(EdgeInsets padding) => Container(
+    height: 72 + padding.bottom,
+    padding: EdgeInsets.only(bottom: padding.bottom),
+    decoration: BoxDecoration(color: _bg.withAlpha(245),
+      border: Border(top: BorderSide(color: _border))),
+    child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+      _navItem(Icons.dashboard_rounded, 'Dashboard', true, () {}),
+      _navItem(Icons.chat_bubble_outline, 'Messages', false, () => context.go('/messages')),
+      _navItem(Icons.person_outline, 'Profile', false, () => context.go('/profile-settings')),
+      _navItem(Icons.verified_outlined, 'Verify', false, () => context.go('/dashboard/verification')),
+    ]),
+  );
+
+  Widget _navItem(IconData icon, String label, bool active, VoidCallback onTap) =>
+      _click(onTap: onTap, child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Icon(icon, color: active ? _skyL : Colors.white.withAlpha(60), size: 22),
+        const SizedBox(height: 4),
+        Text(label, style: TextStyle(color: active ? _skyL : Colors.white.withAlpha(60),
+          fontSize: 11, fontWeight: active ? FontWeight.w600 : FontWeight.w400)),
+        if (active) ...[
+          const SizedBox(height: 4),
+          Container(width: 4, height: 4,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(colors: [_sky, _cyan]), shape: BoxShape.circle)),
+        ],
+      ]));
 }
-
