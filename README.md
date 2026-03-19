@@ -22,3 +22,5 @@ Most Innovative Solution
 
 ## Note
 For demo and judging purposes only. This build does not include backend integration or full authentication.
+
+Written by Nhlanhla Collins Mahlangu
