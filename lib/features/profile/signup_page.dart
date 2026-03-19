@@ -495,6 +495,42 @@ class _SignupPageState extends ConsumerState<SignupPage>
             items: ['Booker', 'Artist', 'Fan'],
             onChanged: (v) => setState(() => _userType = v),
           ),
+          // Tier selection — appears when Artist is selected
+          if (_userType == 'Artist') ...[
+            const SizedBox(height: 18),
+            Text('Choose your plan',
+              style: TextStyle(
+                color: Colors.white.withAlpha(140), fontSize: 12,
+                fontWeight: FontWeight.w500)),
+            const SizedBox(height: 10),
+            _tierOption(
+              tier: 'basic', name: 'Basic', price: 'Free',
+              desc: 'Get listed, receive bookings',
+              icon: Icons.rocket_launch_outlined,
+            ),
+            const SizedBox(height: 8),
+            _tierOption(
+              tier: 'standard', name: 'Standard', price: 'R500/mo',
+              desc: 'Priority search, verified badge, analytics',
+              icon: Icons.verified_outlined,
+              isPopular: true,
+            ),
+            const SizedBox(height: 8),
+            _tierOption(
+              tier: 'premium', name: 'Premium', price: 'R5 000/mo',
+              desc: 'Zero commission, homepage feature, account manager',
+              icon: Icons.star_rounded,
+              isPremium: true,
+            ),
+            const SizedBox(height: 4),
+            _click(
+              onTap: () => context.go('/join?tier=$_selectedTier'),
+              child: Text('Compare plans in detail →',
+                style: TextStyle(
+                  fontSize: 11, color: _skyL.withAlpha(180),
+                  fontWeight: FontWeight.w400)),
+            ),
+          ],
           const SizedBox(height: 14),
           Row(children: [
             Expanded(child: TextFormField(
@@ -836,4 +872,89 @@ class _SignupPageState extends ConsumerState<SignupPage>
       validator: (v) => v == null ? 'Required' : null,
     ),
   );
+
+  Widget _tierOption({
+    required String tier, required String name, required String price,
+    required String desc, IconData? icon,
+    bool isPopular = false, bool isPremium = false,
+  }) {
+    final sel = _selectedTier == tier;
+    final Color accent = isPremium ? _gold : _sky;
+    final Color accentL = isPremium ? _goldL : _skyL;
+    return _click(
+      onTap: () => setState(() => _selectedTier = tier),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          color: sel ? accent.withAlpha(13) : Colors.transparent,
+          border: Border.all(
+            color: sel ? accent.withAlpha(128) : _border,
+            width: sel ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            // Radio indicator
+            Container(
+              width: 20, height: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: sel ? accentL : Colors.white.withAlpha(40), width: 2),
+                gradient: sel ? LinearGradient(colors: [accent, accentL]) : null,
+              ),
+              child: sel ? const Center(
+                child: Icon(Icons.check, color: Colors.white, size: 12),
+              ) : null,
+            ),
+            const SizedBox(width: 14),
+            // Info
+            Expanded(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(children: [
+                  Text(name, style: TextStyle(
+                    fontSize: 14, fontWeight: FontWeight.w600,
+                    color: sel ? Colors.white : Colors.white.withAlpha(180))),
+                  if (isPopular) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(colors: [_sky, _cyan]),
+                        borderRadius: BorderRadius.circular(4)),
+                      child: const Text('POPULAR', style: TextStyle(
+                        fontSize: 8, fontWeight: FontWeight.w700,
+                        color: Colors.white, letterSpacing: 1)),
+                    ),
+                  ],
+                  if (isPremium) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [_gold, _goldL]),
+                        borderRadius: BorderRadius.circular(4)),
+                      child: const Text('PRO', style: TextStyle(
+                        fontSize: 8, fontWeight: FontWeight.w700,
+                        color: Colors.black, letterSpacing: 1)),
+                    ),
+                  ],
+                ]),
+                const SizedBox(height: 2),
+                Text(desc, style: TextStyle(
+                  fontSize: 11, color: Colors.white.withAlpha(80))),
+              ],
+            )),
+            // Price
+            Text(price, style: TextStyle(
+              fontFamily: 'Syne', fontSize: 14, fontWeight: FontWeight.w700,
+              color: sel ? accentL : Colors.white.withAlpha(100))),
+          ],
+        ),
+      ),
+    );
+  }
 }
