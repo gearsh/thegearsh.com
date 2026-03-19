@@ -19,14 +19,14 @@
 
   <!-- Open Graph / Social Media -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://thegearsh-com.pages.dev/">
+  <meta property="og:url" content="https://thegearsh.com/">
   <meta property="og:title" content="Gearsh - Book Creative Talent">
   <meta property="og:description" content="Connect with DJs, photographers, videographers and more. Book instantly for your next event.">
-  <meta property="og:image" content="https://thegearsh-com.pages.dev/icons/Icon-512.png">
+  <meta property="og:image" content="https://thegearsh.com/icons/Icon-512.png">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://thegearsh-com.pages.dev/">
+  <meta name="twitter:url" content="https://thegearsh.com/">
   <meta name="twitter:title" content="Gearsh - Book Creative Talent">
   <meta name="twitter:description" content="Connect with DJs, photographers, videographers and more. Book instantly for your next event.">
 
@@ -53,12 +53,10 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 
-
   <title>Gearsh - Book Creative Talent</title>
   <link rel="manifest" href="manifest.json">
 
   <style>
-    /* Reset and base styles for mobile-first experience */
     * {
       -webkit-tap-highlight-color: transparent;
       -webkit-touch-callout: none;
@@ -74,13 +72,10 @@
       height: 100%;
       overflow: hidden;
       background-color: #020617;
-      /* Prevent pull-to-refresh on mobile */
       overscroll-behavior: none;
-      /* Safe area support for notched devices */
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
 
-    /* Prevent text selection in the app */
     body {
       -webkit-user-select: none;
       -moz-user-select: none;
@@ -88,7 +83,6 @@
       user-select: none;
     }
 
-    /* Allow text selection in input fields */
     input, textarea {
       -webkit-user-select: text;
       -moz-user-select: text;
@@ -96,7 +90,6 @@
       user-select: text;
     }
 
-    /* Loading spinner styles */
     .loading-container {
       position: fixed;
       top: 0;
@@ -131,12 +124,10 @@
       margin-top: 16px;
     }
 
-    /* Hide scrollbars but keep functionality */
     ::-webkit-scrollbar {
       display: none;
     }
 
-    /* Smooth scrolling */
     * {
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
@@ -144,16 +135,14 @@
   </style>
 </head>
 <body>
-  <!-- Loading screen shown while Flutter loads -->
   <div id="loading" class="loading-container">
     <div class="spinner"></div>
     <p class="loading-text">Loading Gearsh...</p>
   </div>
 
-  <script src="flutter_bootstrap.js" async></script>
+  <script src="flutter_bootstrap.js?v=2" async></script>
 
   <script>
-    // Hide loading screen when Flutter is ready
     window.addEventListener('flutter-first-frame', function() {
       const loading = document.getElementById('loading');
       if (loading) {
