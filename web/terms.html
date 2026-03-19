@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms & Conditions — Gearsh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0b0b0f;
+      --surface: #13131a;
+      --border: #1e1e2e;
+      --gold: #c9a84c;
+      --gold-dim: #8a6e30;
+      --text: #e8e6df;
+      --muted: #7a7870;
+      --accent: #d4a843;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.75;
+      min-height: 100vh;
+    }
+
+    /* ── Noise texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    /* ── Header ── */
+    header {
+      position: relative;
+      z-index: 1;
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 0 0;
+      overflow: hidden;
+    }
+
+    .header-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 2rem 2.5rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+      margin-bottom: 2.5rem;
+    }
+    .back-link:hover { color: var(--gold); }
+    .back-link svg { width: 14px; height: 14px; }
+
+    .wordmark {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    .meta {
+      font-size: 0.82rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    .legal-notice {
+      margin-top: 1.6rem;
+      padding: 0.9rem 1.1rem;
+      background: rgba(201, 168, 76, 0.07);
+      border-left: 2px solid var(--gold-dim);
+      border-radius: 2px;
+      font-size: 0.82rem;
+      color: #a09060;
+      font-style: italic;
+    }
+
+    /* ── TOC ── */
+    nav.toc {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 0.3rem 1.5rem;
+    }
+
+    .toc-grid a {
+      font-size: 0.83rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+    .toc-grid a:hover { color: var(--gold); }
+    .toc-grid a .num {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      color: var(--gold-dim);
+      min-width: 1.4rem;
+    }
+
+    /* ── Main content ── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 4rem 2rem 6rem;
+    }
+
+    section {
+      margin-bottom: 4rem;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    section:nth-child(1)  { animation-delay: 0.05s; }
+    section:nth-child(2)  { animation-delay: 0.1s; }
+    section:nth-child(3)  { animation-delay: 0.15s; }
+    section:nth-child(4)  { animation-delay: 0.2s; }
+    section:nth-child(5)  { animation-delay: 0.25s; }
+    section:nth-child(6)  { animation-delay: 0.3s; }
+    section:nth-child(7)  { animation-delay: 0.35s; }
+    section:nth-child(8)  { animation-delay: 0.4s; }
+    section:nth-child(9)  { animation-delay: 0.45s; }
+    section:nth-child(10) { animation-delay: 0.5s; }
+    section:nth-child(11) { animation-delay: 0.55s; }
+    section:nth-child(12) { animation-delay: 0.6s; }
+    section:nth-child(13) { animation-delay: 0.65s; }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: none; }
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+      min-width: 2rem;
+    }
+
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: var(--text);
+    }
+
+    h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin: 1.6rem 0 0.7rem;
+    }
+
+    p {
+      font-size: 0.93rem;
+      color: #c8c4ba;
+      margin-bottom: 0.8rem;
+    }
+
+    ul {
+      list-style: none;
+      margin: 0.4rem 0 0.8rem;
+      padding: 0;
+    }
+
+    ul li {
+      font-size: 0.93rem;
+      color: #c8c4ba;
+      padding: 0.35rem 0 0.35rem 1.4rem;
+      position: relative;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    ul li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--gold-dim);
+      font-size: 0.75rem;
+    }
+
+    ul li strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .note {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.03);
+      border-left: 2px solid var(--border);
+      border-radius: 2px;
+      font-size: 0.83rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-brand {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+
+    /* ── Scroll progress bar ── */
+    #progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+      width: 0%;
+      z-index: 100;
+      transition: width 0.1s linear;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.9rem; }
+      .toc-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<header>
+  <div class="header-inner">
+    <a href="/" class="back-link">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M10 12L6 8l4-4"/>
+      </svg>
+      Back to Gearsh
+    </a>
+    <div class="wordmark">Gearsh</div>
+    <h1>Terms &amp; Conditions</h1>
+    <p class="meta">Effective upon platform use &nbsp;·&nbsp; South African Law Applies</p>
+    <div class="legal-notice">
+      Legal Notice: These Terms &amp; Conditions govern the use of the Gearsh platform. This is a draft framework and must be reviewed by a qualified legal professional before public release.
+    </div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Table of contents">
+  <div class="toc-label">Contents</div>
+  <div class="toc-grid">
+    <a href="#s1"><span class="num">01</span>Introduction</a>
+    <a href="#s2"><span class="num">02</span>Definitions</a>
+    <a href="#s3"><span class="num">03</span>Registration &amp; Account Rules</a>
+    <a href="#s4"><span class="num">04</span>User Conduct &amp; Platform Policy</a>
+    <a href="#s5"><span class="num">05</span>Rights of Gearsh &amp; Termination</a>
+    <a href="#s6"><span class="num">06</span>Financial Terms &amp; Payments</a>
+    <a href="#s7"><span class="num">07</span>Cancellations &amp; Refunds</a>
+    <a href="#s8"><span class="num">08</span>Dispute Resolution</a>
+    <a href="#s9"><span class="num">09</span>Safety &amp; Liability</a>
+    <a href="#s10"><span class="num">10</span>Artist Obligations</a>
+    <a href="#s11"><span class="num">11</span>Client Obligations</a>
+    <a href="#s12"><span class="num">12</span>Amendments</a>
+    <a href="#s13"><span class="num">13</span>Contact</a>
+  </div>
+</nav>
+
+<main>
+
+  <section id="s1">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Introduction</h2>
+    </div>
+    <p>Gearsh is a digital marketplace that connects Clients with Artists for entertainment bookings. By accessing or using the Gearsh application or website, you agree to be bound by these Terms &amp; Conditions.</p>
+  </section>
+
+  <section id="s2">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Definitions</h2>
+    </div>
+    <ul>
+      <li><strong>"Gearsh"</strong> refers to the Gearsh platform, including its app, website, directors, employees, and partners.</li>
+      <li><strong>"Artist"</strong> refers to performers or entertainers offering services through Gearsh.</li>
+      <li><strong>"Client"</strong> refers to individuals or entities booking Artists.</li>
+      <li><strong>"User"</strong> refers collectively to Artists and Clients.</li>
+    </ul>
+  </section>
+
+  <section id="s3">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Registration &amp; Account Rules</h2>
+    </div>
+    <ul>
+      <li>Users must be at least <strong>18 years old</strong> and legally able to enter contracts.</li>
+      <li>All information provided during registration must be accurate and current.</li>
+      <li>Gearsh may require <strong>identity verification</strong> using legal documents.</li>
+      <li>Verified users may display a <strong>verification tick</strong>.</li>
+      <li>Users are responsible for maintaining account security.</li>
+    </ul>
+    <div class="note">Gearsh reserves the right to suspend or terminate accounts that provide false information.</div>
+  </section>
+
+  <section id="s4">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>User Conduct &amp; Platform Policy</h2>
+    </div>
+    <p>Users may not:</p>
+    <ul>
+      <li>Misrepresent identity or services</li>
+      <li>Bypass Gearsh's payment system</li>
+      <li>Engage in fraud, abuse, or harassment</li>
+      <li>Use the platform for unlawful purposes</li>
+    </ul>
+    <div class="note">Violation may result in suspension, termination, or loss of funds.</div>
+  </section>
+
+  <section id="s5">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Rights of Gearsh &amp; Termination</h2>
+    </div>
+    <p>Gearsh may:</p>
+    <ul>
+      <li>Suspend or terminate any User account for breach of these Terms.</li>
+      <li>Remove content or listings that violate policy.</li>
+      <li>Withhold or delay payouts in cases of disputes, fraud, or safety concerns.</li>
+    </ul>
+    <div class="note">Users may close their accounts, subject to existing bookings and disputes.</div>
+  </section>
+
+  <section id="s6">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Financial Terms &amp; Payments</h2>
+    </div>
+
+    <h3>6.1 Payment Structure</h3>
+    <ul>
+      <li>Clients must pay <strong>100% of the booking amount upfront</strong> through the Gearsh platform.</li>
+      <li>Funds are held by Gearsh until the performance is completed.</li>
+      <li>Artists receive payment <strong>after successful performance completion</strong>, less Gearsh's service fee.</li>
+    </ul>
+
+    <h3>6.2 Travel, Distance &amp; Additional Costs</h3>
+    <ul>
+      <li>Artists may define travel radius, per-kilometer fees, and accommodation requirements.</li>
+      <li>Gearsh calculates distance using location data and displays it via an in-app map.</li>
+      <li>Additional costs are automatically added to the booking total.</li>
+    </ul>
+    <p>Clients are responsible for all agreed additional expenses.</p>
+  </section>
+
+  <section id="s7">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>Cancellations &amp; Refunds</h2>
+    </div>
+
+    <h3>7.1 Client Cancellations</h3>
+    <ul>
+      <li>Refund eligibility depends on cancellation timing.</li>
+      <li>Cancellation terms are displayed at checkout.</li>
+      <li>Late cancellations may result in partial or no refund.</li>
+    </ul>
+
+    <h3>7.2 Artist Cancellations</h3>
+    <ul>
+      <li>Artists who cancel without valid reason may face penalties, including suspension or loss of payout.</li>
+      <li>Artists may be required to assist in finding a replacement.</li>
+    </ul>
+    <div class="note">Gearsh reserves discretion in issuing refunds.</div>
+  </section>
+
+  <section id="s8">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2>Dispute Resolution</h2>
+    </div>
+    <ul>
+      <li>Users must first attempt resolution via Gearsh support.</li>
+      <li>Gearsh may mediate disputes.</li>
+      <li>These Terms are governed by the laws of <strong>South Africa</strong>.</li>
+    </ul>
+  </section>
+
+  <section id="s9">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <h2>Safety &amp; Liability</h2>
+    </div>
+    <ul>
+      <li>Artists must perform professionally and lawfully.</li>
+      <li>Clients must provide a safe event environment.</li>
+      <li>Gearsh is not responsible for injuries, damages, or losses arising from events.</li>
+      <li>Safety incidents must be reported promptly.</li>
+    </ul>
+  </section>
+
+  <section id="s10">
+    <div class="section-header">
+      <span class="section-num">10</span>
+      <h2>Artist Obligations</h2>
+    </div>
+    <p>Artists agree to:</p>
+    <ul>
+      <li>Honour confirmed bookings</li>
+      <li>Perform as agreed</li>
+      <li>Avoid off-platform payments</li>
+    </ul>
+    <div class="note">Failure may result in penalties or account termination.</div>
+  </section>
+
+  <section id="s11">
+    <div class="section-header">
+      <span class="section-num">11</span>
+      <h2>Client Obligations</h2>
+    </div>
+    <p>Clients agree to:</p>
+    <ul>
+      <li>Provide accurate event details</li>
+      <li>Ensure venue access and safety</li>
+      <li>Pay all fees upfront</li>
+    </ul>
+  </section>
+
+  <section id="s12">
+    <div class="section-header">
+      <span class="section-num">12</span>
+      <h2>Amendments</h2>
+    </div>
+    <p>Gearsh may update these Terms at any time. Continued use of the platform constitutes acceptance of any changes.</p>
+  </section>
+
+  <section id="s13">
+    <div class="section-header">
+      <span class="section-num">13</span>
+      <h2>Contact</h2>
+    </div>
+    <p>For questions regarding these Terms &amp; Conditions, contact Gearsh support through the app.</p>
+  </section>
+
+</main>
+
+<footer>
+  <span class="footer-brand">Gearsh</span>
+  <div class="footer-links">
+    <a href="/privacy.html">Privacy Policy</a>
+    <a href="/terms.html" aria-current="page">Terms &amp; Conditions</a>
+  </div>
+</footer>
+
+<script>
+  const bar = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+    bar.style.width = Math.min(pct, 100) + '%';
+  }, { passive: true });
+</script>
+
+</body>
+</html>
