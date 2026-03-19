@@ -58,6 +58,19 @@ flutter_launcher_icons:
     image_path: "assets/images/gearsh_logo.png"
 flutter:
   uses-material-design: true
+  fonts:
+    - family: Syne
+      fonts:
+        - asset: assets/fonts/Syne-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Syne-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Syne-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Syne-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Syne-ExtraBold.ttf
+          weight: 800
   assets:
     - assets/images/gearsh_logo.png
     - assets/images/storyboard.png
@@ -69,3 +82,4 @@ flutter:
     - assets/images/artists/
     - assets/images/artists/rixelton.jpg
     - assets/images/artists/dripmaker.png
+    - assets/fonts/
