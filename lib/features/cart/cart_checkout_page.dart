@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,10 +21,17 @@ class _CartCheckoutPageState extends ConsumerState<CartCheckoutPage>
   bool _isProcessing = false;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
+  late final TapGestureRecognizer _termsTapRecognizer;
+  late final TapGestureRecognizer _privacyTapRecognizer;
 
   @override
   void initState() {
     super.initState();
+    _termsTapRecognizer = TapGestureRecognizer()
+      ..onTap = () => context.go('/terms');
+    _privacyTapRecognizer = TapGestureRecognizer()
+      ..onTap = () => context.go('/privacy');
+
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
@@ -37,6 +45,8 @@ class _CartCheckoutPageState extends ConsumerState<CartCheckoutPage>
 
   @override
   void dispose() {
+    _termsTapRecognizer.dispose();
+    _privacyTapRecognizer.dispose();
     _fadeController.dispose();
     super.dispose();
   }
@@ -510,10 +520,20 @@ class _CartCheckoutPageState extends ConsumerState<CartCheckoutPage>
     return Text.rich(
       TextSpan(
         style: TextStyle(color: Colors.grey[500], fontSize: 12, height: 1.5),
-        children: const [
+        children: [
           TextSpan(text: 'By completing this payment, you agree to our '),
-          TextSpan(text: 'Terms of Service', style: TextStyle(color: GearshColors.sky400, fontWeight: FontWeight.w500)),
-          TextSpan(text: '. Payments will be held securely until artists confirm your bookings.'),
+          TextSpan(
+            text: 'Terms of Service',
+            style: const TextStyle(color: GearshColors.sky400, fontWeight: FontWeight.w500),
+            recognizer: _termsTapRecognizer,
+          ),
+          const TextSpan(text: ' and '),
+          TextSpan(
+            text: 'Privacy Policy',
+            style: const TextStyle(color: GearshColors.sky400, fontWeight: FontWeight.w500),
+            recognizer: _privacyTapRecognizer,
+          ),
+          const TextSpan(text: '. Payments will be held securely until artists confirm your bookings.'),
         ],
       ),
       textAlign: TextAlign.center,

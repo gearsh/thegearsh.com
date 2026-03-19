@@ -135,8 +135,8 @@ final GoRouter router = GoRouter(
                         state.matchedLocation == '/forgot-password' ||
                         state.matchedLocation.startsWith('/reset-password');
     final isLegalRoute = state.matchedLocation == '/terms' ||
-                         state.matchedLocation == '/privacy-policy' ||
-                         state.matchedLocation == '/privacy';
+                         state.matchedLocation == '/privacy' ||
+                         state.matchedLocation == '/privacy-policy';
     final isHomeOrDashboard = state.matchedLocation == '/' ||
                                state.matchedLocation == '/dashboard' ||
                                state.matchedLocation == '/home';
@@ -151,13 +151,8 @@ final GoRouter router = GoRouter(
       return null; // Allow navigation
     }
 
-    // Allow auth routes always
-    if (isAuthRoute) {
-      return null;
-    }
-
-    // Allow legal/public routes always (accessible from onboarding)
-    if (isLegalRoute) {
+    // Allow auth and legal routes always
+    if (isAuthRoute || isLegalRoute) {
       return null;
     }
 
@@ -444,6 +439,10 @@ final GoRouter router = GoRouter(
         child: const PrivacyPolicyPage(),
         type: TransitionType.slideRight,
       ),
+    ),
+    GoRoute(
+      path: '/privacy',
+      redirect: (context, state) => '/privacy-policy',
     ),
     GoRoute(
       path: '/terms',
