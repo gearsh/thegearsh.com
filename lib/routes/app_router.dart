@@ -132,6 +132,9 @@ final GoRouter router = GoRouter(
     final isAuthRoute = state.matchedLocation == '/login' ||
                         state.matchedLocation == '/signup' ||
                         state.matchedLocation == '/join' ||
+                        state.matchedLocation == '/terms' ||
+                        state.matchedLocation == '/privacy-policy' ||
+                        state.matchedLocation == '/faq' ||
                         state.matchedLocation == '/forgot-password' ||
                         state.matchedLocation.startsWith('/reset-password');
     final isHomeOrDashboard = state.matchedLocation == '/' ||
