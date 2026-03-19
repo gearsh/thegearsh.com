@@ -74,10 +74,15 @@ class _SignupPageState extends ConsumerState<SignupPage> with TickerProviderStat
     if (widget.initialRole != null) {
       // Map query param to dropdown value (Booker/Artist/Fan)
       final r = widget.initialRole!.toLowerCase();
-      if (r == 'artist') _userType = 'Artist';
-      else if (r == 'fan') _userType = 'Fan';
-      else if (r == 'client' || r == 'booker') _userType = 'Booker';
-      else _userType = widget.initialRole;
+      if (r == 'artist') {
+        _userType = 'Artist';
+      } else if (r == 'fan') {
+        _userType = 'Fan';
+      } else if (r == 'client' || r == 'booker') {
+        _userType = 'Booker';
+      } else {
+        _userType = widget.initialRole;
+      }
     }
     if (widget.initialTier != null) {
       _selectedTier = widget.initialTier!;
