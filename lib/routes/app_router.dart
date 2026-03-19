@@ -134,6 +134,9 @@ final GoRouter router = GoRouter(
                         state.matchedLocation == '/join' ||
                         state.matchedLocation == '/forgot-password' ||
                         state.matchedLocation.startsWith('/reset-password');
+    final isLegalRoute = state.matchedLocation == '/terms' ||
+                         state.matchedLocation == '/privacy-policy' ||
+                         state.matchedLocation == '/privacy';
     final isHomeOrDashboard = state.matchedLocation == '/' ||
                                state.matchedLocation == '/dashboard' ||
                                state.matchedLocation == '/home';
@@ -150,6 +153,11 @@ final GoRouter router = GoRouter(
 
     // Allow auth routes always
     if (isAuthRoute) {
+      return null;
+    }
+
+    // Allow legal/public routes always (accessible from onboarding)
+    if (isLegalRoute) {
       return null;
     }
 
@@ -494,6 +502,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/settings',
       redirect: (context, state) => '/profile-settings',
+    ),
+    GoRoute(
+      path: '/privacy',
+      redirect: (context, state) => '/privacy-policy',
     ),
   ],
 );
