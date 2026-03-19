@@ -552,7 +552,7 @@
 <footer>
   <span class="footer-brand">Gearsh</span>
   <div class="footer-links">
-    <a href="/privacy.html" aria-current="page">Privacy Policy</a>
+    <a href="/privacy" aria-current="page">Privacy Policy</a>
     <a href="/terms.html">Terms &amp; Conditions</a>
   </div>
 </footer>

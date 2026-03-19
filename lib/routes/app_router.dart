@@ -137,6 +137,9 @@ final GoRouter router = GoRouter(
                         state.matchedLocation == '/faq' ||
                         state.matchedLocation == '/forgot-password' ||
                         state.matchedLocation.startsWith('/reset-password');
+    final isLegalRoute = state.matchedLocation == '/terms' ||
+                         state.matchedLocation == '/privacy' ||
+                         state.matchedLocation == '/privacy-policy';
     final isHomeOrDashboard = state.matchedLocation == '/' ||
                                state.matchedLocation == '/dashboard' ||
                                state.matchedLocation == '/home';
@@ -151,8 +154,8 @@ final GoRouter router = GoRouter(
       return null; // Allow navigation
     }
 
-    // Allow auth routes always
-    if (isAuthRoute) {
+    // Allow auth and legal routes always
+    if (isAuthRoute || isLegalRoute) {
       return null;
     }
 
@@ -441,6 +444,10 @@ final GoRouter router = GoRouter(
       ),
     ),
     GoRoute(
+      path: '/privacy',
+      redirect: (context, state) => '/privacy-policy',
+    ),
+    GoRoute(
       path: '/terms',
       pageBuilder: (context, state) => buildPageWithTransition(
         context: context,
@@ -497,6 +504,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/settings',
       redirect: (context, state) => '/profile-settings',
+    ),
+    GoRoute(
+      path: '/privacy',
+      redirect: (context, state) => '/privacy-policy',
     ),
   ],
 );
