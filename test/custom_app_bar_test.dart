@@ -1,4 +1,10 @@
-import 'package:flutter/material.dart';
+// Basic Flutter widget test placeholder.
+// The original counter test was for the default Flutter template
+// and does not apply to The Gearsh app.
+
+void main() {
+  // No tests — kept as placeholder.
+}import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gearsh_app/widgets/custom_app_bar.dart';
