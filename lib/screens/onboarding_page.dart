@@ -1,8 +1,6 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gearsh_app/services/user_role_service.dart';
-import 'dart:math' as math;
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -1140,38 +1138,44 @@ class _OnboardingPageState extends State<OnboardingPage>
   Widget _buildTermsRow() => Padding(
     padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
     child: Center(
-      child: RichText(
-        textAlign: TextAlign.center,
-        text: TextSpan(
-          style: TextStyle(
-            fontSize: 11, fontWeight: FontWeight.w300,
-            color: Colors.white.withAlpha(51),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        children: [
+          Text('By continuing, you agree to our ',
+            style: TextStyle(
+              fontSize: 11, fontWeight: FontWeight.w300,
+              color: Colors.white.withAlpha(51),
+            ),
           ),
-          children: [
-            const TextSpan(text: 'By continuing, you agree to our '),
-            TextSpan(
-              text: 'Terms of Service',
-              style: const TextStyle(
+          GestureDetector(
+            onTap: () => context.go('/terms'),
+            child: const Text('Terms of Service',
+              style: TextStyle(
+                fontSize: 11, fontWeight: FontWeight.w300,
                 color: _skyL,
                 decoration: TextDecoration.underline,
                 decorationColor: _skyL,
               ),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () => context.go('/terms'),
             ),
-            const TextSpan(text: ' and '),
-            TextSpan(
-              text: 'Privacy Policy',
-              style: const TextStyle(
+          ),
+          Text(' and ',
+            style: TextStyle(
+              fontSize: 11, fontWeight: FontWeight.w300,
+              color: Colors.white.withAlpha(51),
+            ),
+          ),
+          GestureDetector(
+            onTap: () => context.go('/privacy-policy'),
+            child: const Text('Privacy Policy',
+              style: TextStyle(
+                fontSize: 11, fontWeight: FontWeight.w300,
                 color: _skyL,
                 decoration: TextDecoration.underline,
                 decorationColor: _skyL,
               ),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () => context.go('/privacy-policy'),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     ),
   );
