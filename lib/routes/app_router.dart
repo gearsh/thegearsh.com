@@ -20,6 +20,7 @@ import 'package:gearsh_app/features/booking/booking_flow_page.dart';
 import 'package:gearsh_app/features/messages/messages_page.dart';
 import 'package:gearsh_app/features/search/presentation/screens/search_screen.dart';
 import 'package:gearsh_app/features/profile/signup_page.dart';
+import 'package:gearsh_app/features/profile/artist_pricing_page.dart';
 import 'package:gearsh_app/features/profile/login_page.dart';
 import 'package:gearsh_app/features/profile/forgot_password_page.dart';
 import 'package:gearsh_app/features/profile/reset_password_page.dart';
@@ -130,6 +131,7 @@ final GoRouter router = GoRouter(
     final isOnboarding = state.matchedLocation == '/onboarding';
     final isAuthRoute = state.matchedLocation == '/login' ||
                         state.matchedLocation == '/signup' ||
+                        state.matchedLocation == '/join' ||
                         state.matchedLocation == '/forgot-password' ||
                         state.matchedLocation.startsWith('/reset-password');
     final isHomeOrDashboard = state.matchedLocation == '/' ||
@@ -172,12 +174,29 @@ final GoRouter router = GoRouter(
     // Auth routes - slide up for modal feel
     GoRoute(
       path: '/signup',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const SignupPage(),
-        type: TransitionType.slideUp,
-      ),
+      pageBuilder: (context, state) {
+        final role = state.uri.queryParameters['role'];
+        final tier = state.uri.queryParameters['tier'];
+        return buildPageWithTransition(
+          context: context,
+          state: state,
+          child: SignupPage(initialRole: role, initialTier: tier),
+          type: TransitionType.slideUp,
+        );
+      },
+    ),
+    // Artist pricing / join page — public landing page for artists
+    GoRoute(
+      path: '/join',
+      pageBuilder: (context, state) {
+        final tier = state.uri.queryParameters['tier'];
+        return buildPageWithTransition(
+          context: context,
+          state: state,
+          child: ArtistPricingPage(preselectedTier: tier),
+          type: TransitionType.fade,
+        );
+      },
     ),
     GoRoute(
       path: '/login',
