@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <base href="/">
 
@@ -16,19 +16,29 @@
   <meta name="description" content="Gearsh - The global marketplace to book creative talent. Connect with DJs, photographers, videographers, musicians, and artists worldwide for your events.">
   <meta name="keywords" content="Gearsh, book artists, DJs, photographers, videographers, entertainment, events, global, worldwide, creative talent, musicians, performers, booking platform">
   <meta name="author" content="Gearsh">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://thegearsh.com/">
 
   <!-- Open Graph / Social Media -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thegearsh.com/">
+  <meta property="og:site_name" content="Gearsh">
+  <meta property="og:locale" content="en_US">
   <meta property="og:title" content="Gearsh - Book Creative Talent">
   <meta property="og:description" content="Connect with DJs, photographers, videographers and more. Book instantly for your next event.">
   <meta property="og:image" content="https://thegearsh.com/icons/Icon-512.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:image:alt" content="Gearsh - Book Creative Talent">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@thegearsh">
   <meta name="twitter:url" content="https://thegearsh.com/">
   <meta name="twitter:title" content="Gearsh - Book Creative Talent">
   <meta name="twitter:description" content="Connect with DJs, photographers, videographers and more. Book instantly for your next event.">
+  <meta name="twitter:image" content="https://thegearsh.com/icons/Icon-512.png">
+  <meta name="twitter:image:alt" content="Gearsh - Book Creative Talent">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -48,6 +58,11 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
+  <!-- DNS Prefetch / Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+
   <!-- Google Material Icons CDN -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
@@ -55,6 +70,60 @@
 
   <title>Gearsh - Book Creative Talent</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Structured Data: WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Gearsh",
+    "url": "https://thegearsh.com/",
+    "description": "The global marketplace to book creative talent. Connect with DJs, photographers, videographers, musicians, and artists worldwide for your events.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://thegearsh.com/search?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- Structured Data: MobileApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    "name": "Gearsh",
+    "url": "https://thegearsh.com/",
+    "description": "Book creative talent worldwide — DJs, photographers, videographers, musicians, and more. Instant booking for any event.",
+    "applicationCategory": "EntertainmentApplication",
+    "operatingSystem": "Android, iOS",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+
+  <!-- Structured Data: Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Gearsh",
+    "url": "https://thegearsh.com/",
+    "logo": "https://thegearsh.com/icons/Icon-512.png",
+    "sameAs": [],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "availableLanguage": "English"
+    }
+  }
+  </script>
 
   <style>
     * {
@@ -135,6 +204,35 @@
   </style>
 </head>
 <body>
+  <!-- Pre-rendered content for search engine crawlers -->
+  <noscript>
+    <style>
+      .seo-content { font-family: sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; background: #020617; color: #e2e8f0; }
+      .seo-content h1 { font-size: 2rem; margin-bottom: 1rem; }
+      .seo-content h2 { font-size: 1.4rem; margin: 1.5rem 0 0.5rem; }
+      .seo-content p { line-height: 1.6; margin-bottom: 0.75rem; }
+      .seo-content ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+      .seo-content a { color: #38bdf8; }
+    </style>
+    <div class="seo-content">
+      <h1>Gearsh — Book Creative Talent Worldwide</h1>
+      <p>Gearsh is the global marketplace to discover and book creative professionals for your events. Connect with DJs, photographers, videographers, musicians, and performing artists — all in one place.</p>
+      <h2>Why Gearsh?</h2>
+      <ul>
+        <li>Instant booking for DJs, photographers, videographers, musicians, and more</li>
+        <li>Verified artists with ratings and reviews</li>
+        <li>Transparent pricing with no hidden fees</li>
+        <li>Worldwide availability for any event</li>
+        <li>Secure payments and booking guarantees</li>
+      </ul>
+      <h2>How it works</h2>
+      <p>Search for the creative talent you need, view their profiles, check availability, and book instantly. Gearsh handles payments, contracts, and communication so you can focus on your event.</p>
+      <h2>For Artists</h2>
+      <p>Are you a DJ, photographer, videographer, or musician? Join Gearsh to reach clients worldwide, manage your bookings, and grow your business.</p>
+      <p><a href="/terms.html">Terms &amp; Conditions</a> | <a href="/privacy">Privacy Policy</a></p>
+    </div>
+  </noscript>
+
   <div id="loading" class="loading-container">
     <div class="spinner"></div>
     <p class="loading-text">Loading Gearsh...</p>
