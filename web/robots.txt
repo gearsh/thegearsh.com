@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /functions/
+Disallow: /canvaskit/
+Disallow: /assets/
+
+Sitemap: https://thegearsh.com/sitemap.xml
