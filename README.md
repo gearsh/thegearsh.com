@@ -7,4 +7,4 @@ The Gearsh App is an innovative platform connecting local artists with bookers f
 Most Innovative Solution
 
 ## Note
-Written by Nhlanhla Collins Mahlangu
+Written by Nhlanhla Collins Mahlangu.
