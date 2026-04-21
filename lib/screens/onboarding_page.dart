@@ -1,502 +1,407 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/screens/onboarding_page.dart';
-import 'package:gearsh_app/screens/faq_page.dart';
-import 'package:gearsh_app/screens/privacy_policy_page.dart';
-import 'package:gearsh_app/screens/terms_of_service_page.dart';
-import 'package:gearsh_app/features/error/error_page.dart';
-import 'package:gearsh_app/features/signups/artists_list_page.dart';
-import 'package:gearsh_app/features/profile/profile_page.dart';
-import 'package:gearsh_app/features/profile/artist_view_profile_page.dart';
-import 'package:gearsh_app/features/dashboard/artist_dashboard_page.dart';
-import 'package:gearsh_app/features/dashboard/artist_verification_page.dart';
-import 'package:gearsh_app/features/profile/help_center_page.dart';
-import 'package:gearsh_app/features/profile/profile_settings_page.dart';
-import 'package:gearsh_app/features/profile/edit_profile_page.dart';
-import 'package:gearsh_app/features/bookings/my_bookings_page.dart';
-import 'package:gearsh_app/features/bookings/saved_artists_page.dart';
-import 'package:gearsh_app/features/booking/booking_page.dart';
-import 'package:gearsh_app/features/booking/booking_flow_page.dart';
-import 'package:gearsh_app/features/messages/messages_page.dart';
-import 'package:gearsh_app/features/search/presentation/screens/search_screen.dart';
-import 'package:gearsh_app/features/profile/signup_page.dart';
-import 'package:gearsh_app/features/profile/artist_pricing_page.dart';
-import 'package:gearsh_app/features/profile/login_page.dart';
-import 'package:gearsh_app/features/profile/forgot_password_page.dart';
-import 'package:gearsh_app/features/profile/reset_password_page.dart';
-import 'package:gearsh_app/features/discover/discover_page.dart';
-import 'package:gearsh_app/features/discover/map_page.dart';
-import '../features/discover/category_artists_page.dart';
-import 'package:gearsh_app/features/gigs/gigs_page.dart';
-import 'package:gearsh_app/features/cart/cart_page.dart';
-import 'package:gearsh_app/features/cart/cart_checkout_page.dart';
-import 'package:gearsh_app/features/cart/cart_success_page.dart';
 import 'package:gearsh_app/services/user_role_service.dart';
-import 'package:gearsh_app/widgets/swipe_back_wrapper.dart';
 
-/// Custom page transition for smooth navigation
-/// All pages are wrapped with EdgeSwipeBackWrapper for swipe-right-to-go-back
-CustomTransitionPage<T> buildPageWithTransition<T>({
-  required BuildContext context,
-  required GoRouterState state,
-  required Widget child,
-  TransitionType type = TransitionType.fade,
-  bool enableSwipeBack = true,
-}) {
-  // Wrap the child with swipe back functionality
-  final wrappedChild = enableSwipeBack
-      ? EdgeSwipeBackWrapper(child: child)
-      : child;
+/// The Gearsh onboarding page.
+///
+/// Shown on first launch. Walks the user through three intro slides,
+/// then lets them choose their role (Client or Artist) before entering
+/// the main app.
+class OnboardingPage extends StatefulWidget {
+  const OnboardingPage({super.key});
 
-  return CustomTransitionPage<T>(
-    key: state.pageKey,
-    child: wrappedChild,
-    transitionDuration: const Duration(milliseconds: 250),
-    reverseTransitionDuration: const Duration(milliseconds: 200),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      switch (type) {
-        case TransitionType.fade:
-          return FadeTransition(
-            opacity: CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOutCubic,
-            ),
-            child: child,
-          );
-        case TransitionType.slideUp:
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 0.1),
-              end: Offset.zero,
-            ).animate(CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOutCubic,
-            )),
-            child: FadeTransition(
-              opacity: CurvedAnimation(
-                parent: animation,
-                curve: Curves.easeOut,
+  @override
+  State<OnboardingPage> createState() => _OnboardingPageState();
+}
+
+class _OnboardingPageState extends State<OnboardingPage> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  static const Color _brandDark = Color(0xFF020617);
+  static const Color _brandBlue = Color(0xFF0EA5E9);
+  static const Color _brandCyan = Color(0xFF06B6D4);
+
+  final List<_OnboardingSlide> _slides = const [
+    _OnboardingSlide(
+      title: 'Explore the best talent',
+      subtitle: 'Discover a curated selection of artists, DJs, and performers ready to make your event unforgettable.',
+      icon: Icons.explore_outlined,
+    ),
+    _OnboardingSlide(
+      title: 'Book with confidence',
+      subtitle: 'Every booking is secured, every artist is verified, and every payment is handled through the platform.',
+      icon: Icons.verified_outlined,
+    ),
+    _OnboardingSlide(
+      title: 'Convenient performance scheduling',
+      subtitle: 'Manage your bookings, messages, and events all in one place — on your phone, in your pocket.',
+      icon: Icons.calendar_month_outlined,
+    ),
+  ];
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _goToNext() {
+    if (_currentPage < _slides.length - 1) {
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+      );
+    } else {
+      _showRoleSelection();
+    }
+  }
+
+  void _skipToRoleSelection() {
+    _showRoleSelection();
+  }
+
+  void _showRoleSelection() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const _RoleSelectionSheet(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: _brandDark,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Top bar with skip button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'TheGearsh',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: _skipToRoleSelection,
+                    child: Text(
+                      'Skip',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.7),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              child: child,
             ),
-          );
-        case TransitionType.slideRight:
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1.0, 0),
-              end: Offset.zero,
-            ).animate(CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOutCubic,
-            )),
-            child: child,
-          );
-        case TransitionType.scale:
-          return ScaleTransition(
-            scale: Tween<double>(
-              begin: 0.95,
-              end: 1.0,
-            ).animate(CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOutCubic,
-            )),
-            child: FadeTransition(
-              opacity: animation,
-              child: child,
+
+            // Page view with slides
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: _slides.length,
+                onPageChanged: (i) => setState(() => _currentPage = i),
+                itemBuilder: (context, index) {
+                  final slide = _slides[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [_brandBlue, _brandCyan],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ),
+                          child: Icon(
+                            slide.icon,
+                            size: 56,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 48),
+                        Text(
+                          slide.title,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            height: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          slide.subtitle,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.7),
+                            fontSize: 16,
+                            height: 1.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
-          );
-        case TransitionType.none:
-          return child;
-      }
-    },
-  );
+
+            // Page indicators
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(_slides.length, (i) {
+                  final isActive = i == _currentPage;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    width: isActive ? 24 : 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: isActive ? _brandBlue : Colors.white.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  );
+                }),
+              ),
+            ),
+
+            // Bottom action button
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+              child: SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: _goToNext,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _brandBlue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    _currentPage == _slides.length - 1 ? 'Get started' : 'Next',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-/// Transition types for different navigation contexts
-enum TransitionType {
-  fade,
-  slideUp,
-  slideRight,
-  scale,
-  none,
+class _OnboardingSlide {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+
+  const _OnboardingSlide({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+  });
 }
 
-final GoRouter router = GoRouter(
-  // Both web and mobile start at onboarding
-  initialLocation: '/onboarding',
-  errorBuilder: (context, state) => ErrorPage(error: state.error),
-  // Redirect based on user state
-  redirect: (context, state) {
-    final hasSelectedRole = userRoleService.hasSelectedRole;
-    final isOnboarding = state.matchedLocation == '/onboarding';
-    final isAuthRoute = state.matchedLocation == '/login' ||
-                        state.matchedLocation == '/signup' ||
-                        state.matchedLocation == '/join' ||
-                        state.matchedLocation == '/terms' ||
-                        state.matchedLocation == '/privacy-policy' ||
-                        state.matchedLocation == '/faq' ||
-                        state.matchedLocation == '/forgot-password' ||
-                        state.matchedLocation.startsWith('/reset-password');
-    final isHomeOrDashboard = state.matchedLocation == '/' ||
-                               state.matchedLocation == '/dashboard' ||
-                               state.matchedLocation == '/home';
+class _RoleSelectionSheet extends StatelessWidget {
+  const _RoleSelectionSheet();
 
-    // If user has selected a role and tries to go to onboarding, redirect to appropriate page
-    if (hasSelectedRole && isOnboarding) {
-      return userRoleService.isArtist ? '/dashboard' : '/home';
-    }
+  static const Color _brandDark = Color(0xFF020617);
+  static const Color _brandBlue = Color(0xFF0EA5E9);
 
-    // Allow navigation to home/dashboard if role is selected
-    if (hasSelectedRole && isHomeOrDashboard) {
-      return null; // Allow navigation
-    }
+  void _selectClient(BuildContext context) {
+    userRoleService.setRole(UserRole.client);
+    context.go('/home');
+  }
 
-    // Allow auth routes always
-    if (isAuthRoute) {
-      return null;
-    }
+  void _selectArtist(BuildContext context) {
+    userRoleService.setRole(UserRole.artist);
+    context.go('/join');
+  }
 
-    // If user hasn't selected a role and tries to access protected routes, redirect to onboarding
-    if (!hasSelectedRole && !isOnboarding) {
-      return '/onboarding';
-    }
-
-    return null;
-  },
-  routes: [
-    // Onboarding & Auth - use fade transition
-    GoRoute(
-      path: '/onboarding',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const OnboardingPage(),
-        type: TransitionType.fade,
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: _brandDark,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
-    ),
-    // Auth routes - slide up for modal feel
-    GoRoute(
-      path: '/signup',
-      pageBuilder: (context, state) {
-        final role = state.uri.queryParameters['role'];
-        final tier = state.uri.queryParameters['tier'];
-        return buildPageWithTransition(
-          context: context,
-          state: state,
-          child: SignupPage(initialRole: role, initialTier: tier),
-          type: TransitionType.slideUp,
-        );
-      },
-    ),
-    // Artist pricing / join page — public landing page for artists
-    GoRoute(
-      path: '/join',
-      pageBuilder: (context, state) {
-        final tier = state.uri.queryParameters['tier'];
-        return buildPageWithTransition(
-          context: context,
-          state: state,
-          child: ArtistPricingPage(preselectedTier: tier),
-          type: TransitionType.fade,
-        );
-      },
-    ),
-    GoRoute(
-      path: '/login',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const LoginPage(),
-        type: TransitionType.slideUp,
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Handle
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'How will you use The Gearsh?',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Choose your role to continue',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.7),
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 32),
+
+          // Client option
+          _RoleCard(
+            icon: Icons.search,
+            title: 'I want to book artists',
+            subtitle: 'Browse and book performers for your events',
+            onTap: () => _selectClient(context),
+          ),
+          const SizedBox(height: 12),
+
+          // Artist option
+          _RoleCard(
+            icon: Icons.mic_external_on_outlined,
+            title: 'I am an artist',
+            subtitle: 'Create a profile and get booked for gigs',
+            onTap: () => _selectArtist(context),
+          ),
+          const SizedBox(height: 24),
+
+          // Existing user link
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              context.push('/login');
+            },
+            child: Text(
+              'Already have an account? Sign in',
+              style: TextStyle(
+                color: _brandBlue,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
       ),
-    ),
-    GoRoute(
-      path: '/forgot-password',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const ForgotPasswordPage(),
-        type: TransitionType.slideRight,
-      ),
-    ),
-    GoRoute(
-      path: '/reset-password',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: ResetPasswordPage(
-          token: state.uri.queryParameters['token'],
-          email: state.uri.queryParameters['email'],
+    );
+  }
+}
+
+class _RoleCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _RoleCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.05),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.1),
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0EA5E9).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  icon,
+                  color: const Color(0xFF0EA5E9),
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.7),
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.white.withValues(alpha: 0.4),
+                size: 16,
+              ),
+            ],
+          ),
         ),
-        type: TransitionType.slideRight,
       ),
-    ),
-    // Search - slide up
-    GoRoute(
-      path: '/search',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const SearchScreen(),
-        type: TransitionType.slideUp,
-      ),
-    ),
-    // Gigs page for fans - fade for tab switching feel
-    GoRoute(
-      path: '/gigs',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const GigsPage(),
-        type: TransitionType.fade,
-      ),
-    ),
-    // Cart pages - slide up for modal/overlay feel
-    GoRoute(
-      path: '/cart',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const CartPage(),
-        type: TransitionType.slideUp,
-      ),
-    ),
-    GoRoute(
-      path: '/cart/checkout',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const CartCheckoutPage(),
-        type: TransitionType.slideRight,
-      ),
-    ),
-    GoRoute(
-      path: '/cart/success',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const CartSuccessPage(),
-        type: TransitionType.scale,
-      ),
-    ),
-    // Main App - Home/Explore page for clients - fade for instant feel
-    GoRoute(
-      path: '/home',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const DiscoverPage(),
-        type: TransitionType.fade,
-      ),
-    ),
-    GoRoute(
-      path: '/',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const DiscoverPage(),
-        type: TransitionType.fade,
-      ),
-    ),
-    GoRoute(
-      path: '/discover/map',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const MapPage(),
-        type: TransitionType.slideUp,
-      ),
-    ),
-    GoRoute(
-      path: '/artists',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const ArtistsListPage(),
-        type: TransitionType.slideRight,
-      ),
-    ),
-    GoRoute(
-      path: '/artist/:id',
-      pageBuilder: (context, state) {
-        final artistId = state.pathParameters['id']!;
-        return buildPageWithTransition(
-          context: context,
-          state: state,
-          child: ArtistViewProfilePage(artistId: artistId),
-          type: TransitionType.slideRight,
-        );
-      },
-    ),
-    GoRoute(
-      path: '/category/:name',
-      pageBuilder: (context, state) {
-        final name = state.pathParameters['name']!;
-        return buildPageWithTransition(
-          context: context,
-          state: state,
-          child: categoryArtistsPageBuilder(name),
-          type: TransitionType.slideRight,
-        );
-      },
-    ),
-    GoRoute(
-      path: '/profile/:id',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: ProfilePage(artistId: state.pathParameters['id']!),
-        type: TransitionType.slideRight,
-      ),
-    ),
-
-    // Dashboard & Management
-    GoRoute(
-      path: '/dashboard',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const ArtistDashboardPage(),
-        type: TransitionType.fade,
-      ),
-    ),
-    GoRoute(
-      path: '/dashboard/verification',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const ArtistVerificationPage(),
-        type: TransitionType.slideRight,
-      ),
-    ),
-    GoRoute(
-      path: '/manager',
-      redirect: (context, state) => '/dashboard',
-    ),
-    GoRoute(
-      path: '/profile',
-      redirect: (context, state) => '/profile-settings',
-    ),
-    GoRoute(
-      path: '/profile-settings',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const ProfileSettingsPage(),
-        type: TransitionType.fade,
-      ),
-    ),
-    GoRoute(
-      path: '/edit-profile',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const EditProfilePage(),
-        type: TransitionType.slideRight,
-      ),
-    ),
-    GoRoute(
-      path: '/my-bookings',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const MyBookingsPage(),
-        type: TransitionType.fade,
-      ),
-    ),
-    GoRoute(
-      path: '/saved-artists',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const SavedArtistsPage(),
-        type: TransitionType.slideRight,
-      ),
-    ),
-    GoRoute(
-      path: '/help',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const HelpCenterPage(),
-        type: TransitionType.slideRight,
-      ),
-    ),
-    GoRoute(
-      path: '/faq',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const FAQPage(),
-        type: TransitionType.slideRight,
-      ),
-    ),
-    GoRoute(
-      path: '/privacy-policy',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const PrivacyPolicyPage(),
-        type: TransitionType.slideRight,
-      ),
-    ),
-    GoRoute(
-      path: '/terms',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const TermsOfServicePage(),
-        type: TransitionType.slideRight,
-      ),
-    ),
-
-    // Booking Flow - slide right for flow progression
-    GoRoute(
-      path: '/booking/:id',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: BookingPage(artistId: state.pathParameters['id']!),
-        type: TransitionType.slideRight,
-      ),
-    ),
-    GoRoute(
-      path: '/booking-flow/:id',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: BookingFlowPage(
-          artistId: state.pathParameters['id']!,
-          artistName: state.uri.queryParameters['artistName'],
-          serviceName: state.uri.queryParameters['serviceName'],
-          servicePrice: double.tryParse(state.uri.queryParameters['price'] ?? ''),
-          serviceId: state.uri.queryParameters['service'],
-        ),
-        type: TransitionType.slideRight,
-      ),
-    ),
-    GoRoute(
-      path: '/book/:id',
-      redirect: (context, state) => '/booking-flow/${state.pathParameters['id']}',
-    ),
-
-    // Messages & Bookings screens - fade for tab-like navigation
-    GoRoute(
-      path: '/messages',
-      pageBuilder: (context, state) => buildPageWithTransition(
-        context: context,
-        state: state,
-        child: const MessagesPage(),
-        type: TransitionType.fade,
-      ),
-    ),
-    GoRoute(
-      path: '/bookings',
-      redirect: (context, state) => '/',
-    ),
-    GoRoute(
-      path: '/settings',
-      redirect: (context, state) => '/profile-settings',
-    ),
-  ],
-);
+    );
+  }
+}
