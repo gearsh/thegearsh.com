@@ -1,5 +1,4 @@
 name: Flutter CI
-
 on:
   push:
     branches: [ main, master ]
@@ -12,6 +11,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.4'
+          channel: 'stable'
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Analyze
+        run: flutter analyze
+      - name: Run tests
+        run: flutter test --no-pub
+
+  build_android:
+    name: Build Android AAB
+    runs-on: ubuntu-latest
+    needs: analyze_and_test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -22,8 +45,17 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Analyze
-        run: flutter analyze
+      - name: Build release AAB
+        run: flutter build appbundle --release
 
-      - name: Run tests
-        run: flutter test --no-pub
+      - name: Show merged manifest (for verification)
+        run: |
+          echo "=== Checking merged manifest for BACKGROUND_LOCATION ==="
+          find android/app/build/intermediates/merged_manifests -name "AndroidManifest.xml" -exec grep -l "BACKGROUND_LOCATION" {} \; || echo "BACKGROUND_LOCATION NOT FOUND"
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gearsh-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
