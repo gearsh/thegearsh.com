@@ -1,254 +1,366 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <base href="/">
-
   <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-
-  <!-- Mobile Optimization - Critical for all devices -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="HandheldFriendly" content="true">
-  <meta name="MobileOptimized" content="width">
-  <meta name="format-detection" content="telephone=no">
-
-  <!-- SEO Meta Tags -->
-  <meta name="description" content="Gearsh - The global marketplace to book creative talent. Connect with DJs, photographers, videographers, musicians, and artists worldwide for your events.">
-  <meta name="keywords" content="Gearsh, book artists, DJs, photographers, videographers, entertainment, events, global, worldwide, creative talent, musicians, performers, booking platform">
-  <meta name="author" content="Gearsh">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://thegearsh.com/">
-
-  <!-- Open Graph / Social Media -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://thegearsh.com/">
-  <meta property="og:site_name" content="Gearsh">
-  <meta property="og:locale" content="en_US">
-  <meta property="og:title" content="Get Booked. Get Paid. Go Global.">
-  <meta property="og:description" content="Join Gearsh — the global platform where artists get discovered, booked, and paid. List your talent today.">
-  <meta property="og:image" content="https://thegearsh.com/icons/og-image.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Gearsh - Book Creative Talent">
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@thegearsh">
-  <meta name="twitter:url" content="https://thegearsh.com/">
-  <meta name="twitter:title" content="Get Booked. Get Paid. Go Global.">
-  <meta name="twitter:description" content="Join Gearsh — the global platform where artists get discovered, booked, and paid. List your talent today.">
-  <meta name="twitter:image" content="https://thegearsh.com/icons/og-image.png">
-  <meta name="twitter:image:alt" content="Gearsh - Book Creative Talent">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Gearsh">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Android/Chrome -->
-  <meta name="application-name" content="Gearsh">
-  <meta name="msapplication-TileColor" content="#020617">
-  <meta name="msapplication-TileImage" content="icons/Icon-192.png">
-
-  <!-- Theme Color -->
-  <meta name="theme-color" content="#020617">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <!-- DNS Prefetch / Preconnect for performance -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-
-  <!-- Google Material Icons CDN -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Get Booked. Get Paid. Go Global. | Gearsh</title>
-  <link rel="manifest" href="manifest.json">
-
-  <!-- Structured Data: WebSite -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Gearsh",
-    "url": "https://thegearsh.com/",
-    "description": "The global marketplace to book creative talent. Connect with DJs, photographers, videographers, musicians, and artists worldwide for your events.",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": "https://thegearsh.com/search?q={search_term_string}"
-      },
-      "query-input": "required name=search_term_string"
-    }
-  }
-  </script>
-
-  <!-- Structured Data: MobileApplication -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "MobileApplication",
-    "name": "Gearsh",
-    "url": "https://thegearsh.com/",
-    "description": "Book creative talent worldwide — DJs, photographers, videographers, musicians, and more. Instant booking for any event.",
-    "applicationCategory": "EntertainmentApplication",
-    "operatingSystem": "Android, iOS",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    }
-  }
-  </script>
-
-  <!-- Structured Data: Organization -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Gearsh",
-    "url": "https://thegearsh.com/",
-    "logo": "https://thegearsh.com/icons/Icon-512.png",
-    "sameAs": [],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "contactType": "customer support",
-      "availableLanguage": "English"
-    }
-  }
-  </script>
-
+  <meta name="description" content="Join Gearsh — the global platform where artists get discovered, booked, and paid. List your talent today.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <style>
-    * {
-      -webkit-tap-highlight-color: transparent;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      user-select: none;
-      box-sizing: border-box;
+    :root {
+      --bg: #020617;
+      --bg2: #050e24;
+      --cyan: #0EA5E9;
+      --teal: #06B6D4;
+      --glow: rgba(14,165,233,0.18);
+      --glow-strong: rgba(14,165,233,0.35);
+      --text: #f0f6ff;
+      --muted: #7a93b4;
+      --card-bg: rgba(255,255,255,0.035);
+      --card-border: rgba(14,165,233,0.12);
     }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overflow-x: hidden; line-height: 1.6; }
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #020617;
-      overscroll-behavior: none;
-      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    .bg-orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
+    .bg-orb-1 { width:600px; height:600px; background:radial-gradient(circle,rgba(14,165,233,0.12),transparent 70%); top:-100px; left:-150px; animation:drift1 18s ease-in-out infinite alternate; }
+    .bg-orb-2 { width:500px; height:500px; background:radial-gradient(circle,rgba(6,182,212,0.1),transparent 70%); bottom:100px; right:-100px; animation:drift2 22s ease-in-out infinite alternate; }
+    @keyframes drift1 { from{transform:translate(0,0)} to{transform:translate(60px,40px)} }
+    @keyframes drift2 { from{transform:translate(0,0)} to{transform:translate(-40px,-60px)} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+
+    /* NAV */
+    nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:18px 5%; background:rgba(2,6,23,0.8); backdrop-filter:blur(20px); border-bottom:1px solid rgba(14,165,233,0.08); }
+    .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .nav-logo img { width:36px; height:36px; border-radius:10px; }
+    .nav-logo span { font-family:'Syne',sans-serif; font-size:1.25rem; font-weight:800; color:var(--text); letter-spacing:-0.02em; }
+    .nav-cta { background:var(--cyan); color:#020617; font-family:'Syne',sans-serif; font-weight:700; font-size:0.85rem; padding:10px 22px; border-radius:100px; text-decoration:none; transition:all 0.2s; }
+    .nav-cta:hover { background:var(--teal); transform:translateY(-1px); box-shadow:0 8px 24px var(--glow-strong); }
+
+    /* HERO */
+    .hero { position:relative; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding:0; z-index:1; overflow:hidden; }
+    .hero-bg { position:absolute; inset:0; }
+    .hero-bg img { width:100%; height:100%; object-fit:cover; object-position:center top; display:block; }
+    .hero-bg::after { content:''; position:absolute; inset:0; background:linear-gradient(to bottom, rgba(2,6,23,0.15) 0%, rgba(2,6,23,0.4) 50%, rgba(2,6,23,0.95) 100%); }
+    .hero-content { position:relative; z-index:2; width:100%; text-align:center; padding:60px 5% 80px; }
+    .hero-eyebrow { display:inline-flex; align-items:center; gap:8px; background:rgba(14,165,233,0.1); border:1px solid rgba(14,165,233,0.25); border-radius:100px; padding:6px 16px; font-size:0.75rem; font-weight:500; color:var(--cyan); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:28px; animation:fadeUp 0.8s ease both; }
+    .eyebrow-dot { width:6px; height:6px; background:var(--cyan); border-radius:50%; animation:pulse 2s ease-in-out infinite; }
+    .hero h1 { font-family:'Syne',sans-serif; font-size:clamp(2.2rem,5vw,4rem); font-weight:800; line-height:1.05; letter-spacing:-0.03em; margin-bottom:20px; animation:fadeUp 0.8s 0.1s ease both; }
+    .hero h1 .accent { background:linear-gradient(135deg,var(--cyan),var(--teal)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .hero-sub { font-size:1.05rem; color:var(--muted); max-width:500px; margin:0 auto 36px; font-weight:300; animation:fadeUp 0.8s 0.2s ease both; }
+    .hero-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; animation:fadeUp 0.8s 0.3s ease both; }
+    .btn-primary { background:linear-gradient(135deg,var(--cyan),var(--teal)); color:#020617; font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem; padding:14px 32px; border-radius:100px; text-decoration:none; transition:all 0.25s; box-shadow:0 0 40px var(--glow); white-space:nowrap; display:inline-block; }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 12px 40px var(--glow-strong); }
+    .btn-secondary { background:transparent; color:var(--text); font-family:'Syne',sans-serif; font-weight:600; font-size:0.95rem; padding:13px 28px; border-radius:100px; border:1px solid rgba(14,165,233,0.3); text-decoration:none; transition:all 0.25s; white-space:nowrap; display:inline-block; }
+    .btn-secondary:hover { border-color:var(--cyan); color:var(--cyan); transform:translateY(-2px); }
+
+    /* STATS */
+    .stats { position:relative; z-index:1; display:flex; flex-wrap:wrap; background:rgba(14,165,233,0.05); border-top:1px solid rgba(14,165,233,0.1); border-bottom:1px solid rgba(14,165,233,0.1); }
+    .stat { flex:1; min-width:140px; text-align:center; padding:36px 20px; border-right:1px solid rgba(14,165,233,0.08); }
+    .stat:last-child { border-right:none; }
+    .stat-num { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:var(--cyan); letter-spacing:-0.03em; }
+    .stat-label { font-size:0.82rem; color:var(--muted); margin-top:4px; }
+
+    /* SECTIONS */
+    section { position:relative; z-index:1; padding:100px 5%; }
+    .section-label { font-size:0.72rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--cyan); margin-bottom:14px; }
+    .section-title { font-family:'Syne',sans-serif; font-size:clamp(1.8rem,3.5vw,2.6rem); font-weight:800; letter-spacing:-0.02em; line-height:1.1; max-width:600px; margin-bottom:18px; }
+    .section-body { color:var(--muted); max-width:520px; font-size:1rem; font-weight:300; margin-bottom:48px; }
+
+    /* ARTIST GRID */
+    .who-section { background:var(--bg2); }
+    .artist-grid { display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:auto auto; gap:12px; }
+    .artist-card { position:relative; border-radius:18px; overflow:hidden; cursor:default; border:1px solid rgba(14,165,233,0.1); transition:all 0.3s; }
+    .artist-card img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.5s; min-height:200px; }
+    .artist-card:hover img { transform:scale(1.05); }
+    .artist-card:hover { border-color:rgba(14,165,233,0.4); box-shadow:0 20px 60px var(--glow); }
+    .ac-tall { grid-row:span 2; }
+    .ac-tall img { min-height:420px; }
+    .ac-wide { grid-column:span 2; }
+    .artist-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(2,6,23,0.92) 0%,rgba(2,6,23,0.15) 55%,transparent 100%); display:flex; flex-direction:column; justify-content:flex-end; padding:20px; }
+    .artist-type { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; }
+    .artist-sub { font-size:0.77rem; color:var(--muted); margin-top:3px; }
+
+    /* HOW IT WORKS */
+    .how-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:2px; background:rgba(14,165,233,0.06); border:1px solid var(--card-border); border-radius:20px; overflow:hidden; }
+    .how-step { background:var(--bg); padding:40px 32px; transition:background 0.3s; }
+    .how-step:hover { background:var(--card-bg); }
+    .step-num { font-family:'Syne',sans-serif; font-size:3rem; font-weight:800; color:rgba(14,165,233,0.15); line-height:1; margin-bottom:20px; letter-spacing:-0.04em; }
+    .step-title { font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:700; margin-bottom:10px; }
+    .step-body { color:var(--muted); font-size:0.9rem; font-weight:300; }
+
+    /* PROOF */
+    .proof-section { background:var(--bg2); }
+    .proof-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .proof-card { position:relative; border-radius:20px; overflow:hidden; min-height:380px; border:1px solid rgba(14,165,233,0.1); }
+    .proof-card img { width:100%; height:100%; object-fit:cover; display:block; }
+    .proof-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(2,6,23,0.95) 0%,rgba(2,6,23,0.3) 55%,transparent 100%); display:flex; flex-direction:column; justify-content:flex-end; padding:32px; }
+    .proof-quote { font-size:1.1rem; font-weight:300; font-style:italic; line-height:1.6; margin-bottom:14px; }
+    .proof-name { font-family:'Syne',sans-serif; font-weight:700; font-size:0.88rem; color:var(--cyan); }
+    .proof-role { font-size:0.78rem; color:var(--muted); margin-top:2px; }
+    .proof-wide { grid-column:span 2; min-height:320px; }
+    .proof-wide .proof-overlay { flex-direction:row; align-items:flex-end; gap:40px; }
+    .proof-wide .proof-quote { margin-bottom:0; max-width:620px; font-size:1.3rem; flex:1; }
+
+    /* FEATURES */
+    .features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; }
+    .feature-card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:20px; padding:32px; transition:all 0.3s; }
+    .feature-card:hover { border-color:rgba(14,165,233,0.3); transform:translateY(-4px); box-shadow:0 20px 60px var(--glow); }
+    .feature-icon { width:46px; height:46px; background:rgba(14,165,233,0.1); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; margin-bottom:18px; }
+    .feature-title { font-family:'Syne',sans-serif; font-size:1rem; font-weight:700; margin-bottom:8px; }
+    .feature-body { color:var(--muted); font-size:0.88rem; font-weight:300; line-height:1.7; }
+
+    /* CTA */
+    .cta-section { position:relative; overflow:hidden; text-align:center; padding:0; }
+    .cta-bg { position:relative; min-height:520px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:100px 5%; }
+    .cta-bg-photo { position:absolute; inset:0; overflow:hidden; }
+    .cta-bg-photo img { width:100%; height:100%; object-fit:cover; filter:brightness(0.2) saturate(0.7); }
+    .cta-content { position:relative; z-index:1; }
+    .cta-section .section-title { max-width:700px; margin:0 auto 16px; font-size:clamp(2rem,4vw,3rem); text-align:center; }
+    .cta-section .section-body { margin:0 auto 40px; text-align:center; }
+    .cta-sub { font-size:0.83rem; color:var(--muted); margin-top:16px; }
+
+    /* FOOTER */
+    footer { position:relative; z-index:1; padding:40px 5%; border-top:1px solid rgba(14,165,233,0.08); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+    .footer-logo { display:flex; align-items:center; gap:10px; }
+    .footer-logo img { width:28px; height:28px; border-radius:8px; }
+    .footer-logo span { font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; }
+    .footer-links { display:flex; gap:24px; }
+    .footer-links a { color:var(--muted); text-decoration:none; font-size:0.83rem; transition:color 0.2s; }
+    .footer-links a:hover { color:var(--cyan); }
+    .footer-copy { color:var(--muted); font-size:0.78rem; }
+
+    /* RESPONSIVE */
+    @media (max-width:900px) {
+      .artist-grid { grid-template-columns:1fr 1fr; }
+      .ac-tall { grid-row:auto; } .ac-tall img { min-height:200px; }
+      .ac-wide { grid-column:auto; }
+      .proof-grid { grid-template-columns:1fr; }
+      .proof-wide { grid-column:auto; }
+      .proof-wide .proof-overlay { flex-direction:column; }
     }
-
-    body {
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
-
-    input, textarea {
-      -webkit-user-select: text;
-      -moz-user-select: text;
-      -ms-user-select: text;
-      user-select: text;
-    }
-
-    .loading-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background-color: #020617;
-      z-index: 9999;
-    }
-
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid rgba(56, 189, 248, 0.2);
-      border-top-color: #38BDF8;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .loading-text {
-      color: #94A3B8;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      font-size: 14px;
-      margin-top: 16px;
-    }
-
-    ::-webkit-scrollbar {
-      display: none;
-    }
-
-    * {
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
+    @media (max-width:600px) {
+      .stats { flex-direction:column; }
+      .stat { border-right:none; border-bottom:1px solid rgba(14,165,233,0.08); }
+      footer { flex-direction:column; text-align:center; }
+      .footer-links { justify-content:center; }
     }
   </style>
 </head>
 <body>
-  <!-- Pre-rendered content for search engine crawlers -->
-  <noscript>
-    <style>
-      .seo-content { font-family: sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; background: #020617; color: #e2e8f0; }
-      .seo-content h1 { font-size: 2rem; margin-bottom: 1rem; }
-      .seo-content h2 { font-size: 1.4rem; margin: 1.5rem 0 0.5rem; }
-      .seo-content p { line-height: 1.6; margin-bottom: 0.75rem; }
-      .seo-content ul { padding-left: 1.5rem; margin-bottom: 1rem; }
-      .seo-content a { color: #38bdf8; }
-    </style>
-    <div class="seo-content">
-      <h1>Gearsh — Book Creative Talent Worldwide</h1>
-      <p>Gearsh is the global marketplace to discover and book creative professionals for your events. Connect with DJs, photographers, videographers, musicians, and performing artists — all in one place.</p>
-      <h2>Why Gearsh?</h2>
-      <ul>
-        <li>Instant booking for DJs, photographers, videographers, musicians, and more</li>
-        <li>Verified artists with ratings and reviews</li>
-        <li>Transparent pricing with no hidden fees</li>
-        <li>Worldwide availability for any event</li>
-        <li>Secure payments and booking guarantees</li>
-      </ul>
-      <h2>How it works</h2>
-      <p>Search for the creative talent you need, view their profiles, check availability, and book instantly. Gearsh handles payments, contracts, and communication so you can focus on your event.</p>
-      <h2>For Artists</h2>
-      <p>Are you a DJ, photographer, videographer, or musician? Join Gearsh to reach clients worldwide, manage your bookings, and grow your business.</p>
-      <p><a href="/terms.html">Terms &amp; Conditions</a> | <a href="/privacy">Privacy Policy</a></p>
-    </div>
-  </noscript>
 
-  <div id="loading" class="loading-container">
-    <div class="spinner"></div>
-    <p class="loading-text">Loading Gearsh...</p>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">
+      <img src="https://thegearsh.com/icons/Icon-512.png" alt="Gearsh">
+      <span>Gearsh</span>
+    </a>
+    <a href="https://thegearsh.com/onboarding" class="nav-cta">Join as Artist →</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">
+      <img src="https://thegearsh.com/icons/hero-image.png" alt="The Gearsh — Gear Up. Level Up.">
+    </div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="eyebrow-dot"></span>
+        Now Live — Global Artist Booking Platform
+      </div>
+      <h1>
+        Get <span class="accent">Booked.</span>
+        Get <span class="accent">Paid.</span>
+        Go <span class="accent">Global.</span>
+      </h1>
+      <p class="hero-sub">
+        Gearsh is where talented artists get discovered, booked, and paid — without the middleman. List your profile free and start earning.
+      </p>
+      <div class="hero-actions">
+        <a href="https://thegearsh.com/onboarding" class="btn-primary">List Your Talent Free →</a>
+        <a href="#how" class="btn-secondary">See How It Works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat"><div class="stat-num">Free</div><div class="stat-label">To list your profile</div></div>
+    <div class="stat"><div class="stat-num">Global</div><div class="stat-label">Client reach</div></div>
+    <div class="stat"><div class="stat-num">Instant</div><div class="stat-label">Booking requests</div></div>
+    <div class="stat"><div class="stat-num">Secure</div><div class="stat-label">Payments guaranteed</div></div>
   </div>
 
-  <script src="flutter_bootstrap.js?v=2" async></script>
+  <!-- ARTIST TYPES -->
+  <section class="who-section" id="artists">
+    <div class="section-label">Who It's For</div>
+    <h2 class="section-title">Every creative talent, one platform.</h2>
+    <p class="section-body">Whether you perform, shoot, spin, or create — if you've got talent, Gearsh has clients waiting.</p>
+    <div class="artist-grid">
+      <div class="artist-card ac-tall">
+        <img src="https://images.unsplash.com/photo-1571266028243-d220c6a2d63f?w=600&q=80" alt="DJ">
+        <div class="artist-overlay"><div class="artist-type">🎧 DJs</div><div class="artist-sub">Club nights, events, festivals</div></div>
+      </div>
+      <div class="artist-card">
+        <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&q=80" alt="Photographer">
+        <div class="artist-overlay"><div class="artist-type">📸 Photographers</div><div class="artist-sub">Events, portraits, weddings</div></div>
+      </div>
+      <div class="artist-card">
+        <img src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&q=80" alt="Musician">
+        <div class="artist-overlay"><div class="artist-type">🎵 Musicians</div><div class="artist-sub">Live bands, soloists, sessions</div></div>
+      </div>
+      <div class="artist-card">
+        <img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=600&q=80" alt="Videographer">
+        <div class="artist-overlay"><div class="artist-type">🎬 Videographers</div><div class="artist-sub">Films, events, content</div></div>
+      </div>
+      <div class="artist-card">
+        <img src="https://images.unsplash.com/photo-1547153760-18fc86324498?w=600&q=80" alt="Performer">
+        <div class="artist-overlay"><div class="artist-type">🕺 Dancers</div><div class="artist-sub">Shows, corporate, private</div></div>
+      </div>
+      <div class="artist-card ac-wide">
+        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=900&q=80" alt="Stage performance">
+        <div class="artist-overlay"><div class="artist-type">🎤 MCs & Performers</div><div class="artist-sub">Hosts, speakers, entertainers</div></div>
+      </div>
+    </div>
+  </section>
 
-  <script>
-    window.addEventListener('flutter-first-frame', function() {
-      const loading = document.getElementById('loading');
-      if (loading) {
-        loading.style.opacity = '0';
-        loading.style.transition = 'opacity 0.3s';
-        setTimeout(() => loading.remove(), 300);
-      }
-    });
-  </script>
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="section-label">How It Works</div>
+    <h2 class="section-title">From profile to payment in minutes.</h2>
+    <p class="section-body">No agency fees. No middleman. Just you, your talent, and paying clients.</p>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="step-num">01</div>
+        <div class="step-title">Create Your Profile</div>
+        <div class="step-body">Showcase your talent with photos, videos, and your rates. Set your availability and let clients find you 24/7.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">02</div>
+        <div class="step-title">Receive Booking Requests</div>
+        <div class="step-body">Clients find your profile and send requests. Review, negotiate, and accept on your own terms.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">03</div>
+        <div class="step-title">Deliver & Get Paid</div>
+        <div class="step-body">Show up, do what you do best, and get paid securely. Gearsh handles the contracts and payments.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROOF -->
+  <section class="proof-section">
+    <div class="section-label">Built for Artists</div>
+    <h2 class="section-title">Your talent deserves a global stage.</h2>
+    <p class="section-body">Artists already growing their careers on Gearsh.</p>
+    <div class="proof-grid">
+      <div class="proof-card">
+        <img src="https://images.unsplash.com/photo-1529651737248-dad5e287768e?w=800&q=80" alt="DJ at event">
+        <div class="proof-overlay">
+          <p class="proof-quote">"I got my first international booking within 2 weeks of listing my profile."</p>
+          <div class="proof-name">Thabo M.</div>
+          <div class="proof-role">DJ · Johannesburg</div>
+        </div>
+      </div>
+      <div class="proof-card">
+        <img src="https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&q=80" alt="Photographer">
+        <div class="proof-overlay">
+          <p class="proof-quote">"Gearsh replaced my entire client hustle. Bookings come to me now."</p>
+          <div class="proof-name">Lerato K.</div>
+          <div class="proof-role">Photographer · Cape Town</div>
+        </div>
+      </div>
+      <div class="proof-card proof-wide">
+        <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=1400&q=80" alt="Live concert">
+        <div class="proof-overlay">
+          <p class="proof-quote">"Stop waiting for opportunities. List yourself and let the world find you."</p>
+          <div>
+            <div class="proof-name">Sipho N.</div>
+            <div class="proof-role">Musician & Performer · Durban</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section>
+    <div class="section-label">Why Gearsh</div>
+    <h2 class="section-title">Built for artists who are serious.</h2>
+    <p class="section-body">Everything you need to turn your craft into a career.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <div class="feature-title">Keep More of What You Earn</div>
+        <div class="feature-body">No upfront fees. Transparent commission so you always know exactly what you take home.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <div class="feature-title">Global Client Reach</div>
+        <div class="feature-body">Get discovered by clients across South Africa and beyond. Your talent has no borders.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">Payments Always Protected</div>
+        <div class="feature-body">Every booking is payment-guaranteed. Get paid on time, every time — no more chasing invoices.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <div class="feature-title">Manage From Your Phone</div>
+        <div class="feature-body">Accept bookings, message clients, and track earnings right from the Gearsh app.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⭐</div>
+        <div class="feature-title">Build Your Reputation</div>
+        <div class="feature-body">Verified reviews from real bookings help you grow your credibility and command better rates.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">Contracts on Autopilot</div>
+        <div class="feature-body">Gearsh generates booking contracts automatically. Less admin, more time doing what you love.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-bg">
+      <div class="cta-bg-photo">
+        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1600&q=80" alt="Concert">
+      </div>
+      <div class="cta-content">
+        <div class="section-label" style="display:flex;justify-content:center">Ready?</div>
+        <h2 class="section-title">Your next booking is one profile away.</h2>
+        <p class="section-body">Join Gearsh free. List your talent, set your rates, and start getting booked by clients who are already searching.</p>
+        <a href="https://thegearsh.com/onboarding" class="btn-primary" style="font-size:1.05rem;padding:16px 44px">
+          List Your Talent Free →
+        </a>
+        <p class="cta-sub">Free to join · No credit card required · Go live in minutes</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">
+      <img src="https://thegearsh.com/icons/Icon-512.png" alt="Gearsh">
+      <span>Gearsh</span>
+    </div>
+    <div class="footer-links">
+      <a href="/terms.html">Terms</a>
+      <a href="/privacy">Privacy</a>
+      <a href="https://thegearsh.com/onboarding">Get Started</a>
+    </div>
+    <div class="footer-copy">© 2025 Gearsh (Pty) Ltd. All rights reserved.</div>
+  </footer>
+
 </body>
 </html>
