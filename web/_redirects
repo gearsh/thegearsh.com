@@ -1,6 +1,19 @@
-# Redirect root to onboarding
-/ /onboarding 302
+# Landing page is now the homepage (index.html)
+# App routes served by app.html
+/onboarding     /app.html 200
+/login          /app.html 200
+/register       /app.html 200
+/home           /app.html 200
+/profile        /app.html 200
+/booking/*      /app.html 200
+/artist/*       /app.html 200
+/search         /app.html 200
 
-# Handle all routes for SPA
-/* /index.html 200
+# Static assets and known pages pass through
+/terms.html     /terms.html 200
+/privacy        /privacy 200
+/icons/*        /icons/:splat 200
+/assets/*       /assets/:splat 200
 
+# Everything else → landing page
+/*              /index.html 200
