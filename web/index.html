@@ -3,533 +3,198 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Gearsh — the global platform where artists get discovered, booked, and paid.">
+<meta name="description" content="Gearsh — the global platform where artists get discovered, booked, and paid. List your talent today.">
 <title>Get Booked. Get Paid. Go Global. | Gearsh</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg:       #020617;
-    --surface:  #0b1120;
-    --border:   rgba(255,255,255,0.07);
-    --cyan:     #0EA5E9;
-    --cyan-dim: #0c4a6e;
-    --white:    #f8fafc;
-    --muted:    #64748b;
-    --light:    #94a3b8;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 400;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1.25rem 2rem;
-    background: rgba(2,6,23,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .nav-logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.25rem;
-    letter-spacing: -0.02em;
-    color: var(--white);
-    text-decoration: none;
-  }
-
-  .nav-logo span { color: var(--cyan); }
-
-  .nav-cta {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--bg);
-    background: var(--cyan);
-    border: none;
-    padding: 0.55rem 1.25rem;
-    border-radius: 6px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: opacity 0.2s;
-  }
-
-  .nav-cta:hover { opacity: 0.85; }
-
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center;
-    padding: 8rem 1.5rem 5rem;
-  }
-
-  .hero-badge {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--cyan);
-    border: 1px solid var(--cyan-dim);
-    padding: 0.35rem 0.9rem;
-    border-radius: 100px;
-    margin-bottom: 2rem;
-  }
-
-  .hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(2.5rem, 7vw, 5rem);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    color: var(--white);
-    max-width: 820px;
-    margin-bottom: 1.5rem;
-  }
-
-  .hero h1 em {
-    font-style: normal;
-    color: var(--cyan);
-  }
-
-  .hero-sub {
-    font-size: clamp(1rem, 2vw, 1.15rem);
-    color: var(--light);
-    max-width: 480px;
-    margin: 0 auto 2.5rem;
-    font-weight: 300;
-    line-height: 1.7;
-  }
-
-  .hero-actions {
-    display: flex; gap: 1rem; flex-wrap: wrap;
-    align-items: center; justify-content: center;
-  }
-
-  .btn-primary {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--bg);
-    background: var(--cyan);
-    border: none;
-    padding: 0.85rem 2rem;
-    border-radius: 8px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: opacity 0.2s, transform 0.2s;
-  }
-
-  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
-
-  .btn-ghost {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1rem;
-    font-weight: 400;
-    color: var(--light);
-    background: transparent;
-    border: 1px solid var(--border);
-    padding: 0.85rem 2rem;
-    border-radius: 8px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: border-color 0.2s, color 0.2s;
-  }
-
-  .btn-ghost:hover { border-color: rgba(255,255,255,0.2); color: var(--white); }
-
-  /* ── STATS ── */
-  .stats {
-    display: flex; justify-content: center;
-    gap: 0; flex-wrap: wrap;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    margin: 0;
-    background: var(--surface);
-  }
-
-  .stat {
-    flex: 1; min-width: 160px;
-    padding: 2rem 1.5rem;
-    text-align: center;
-    border-right: 1px solid var(--border);
-  }
-
-  .stat:last-child { border-right: none; }
-
-  .stat-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--cyan);
-    letter-spacing: -0.02em;
-  }
-
-  .stat-label {
-    font-size: 0.8rem;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-top: 0.25rem;
-  }
-
-  /* ── SECTIONS ── */
-  section { padding: 6rem 1.5rem; }
-
-  .container { max-width: 960px; margin: 0 auto; }
-
-  .section-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--cyan);
-    margin-bottom: 1rem;
-  }
-
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(1.75rem, 4vw, 2.5rem);
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    color: var(--white);
-    margin-bottom: 1rem;
-    line-height: 1.15;
-  }
-
-  .section-sub {
-    font-size: 1.05rem;
-    color: var(--light);
-    max-width: 520px;
-    font-weight: 300;
-    line-height: 1.7;
-    margin-bottom: 3.5rem;
-  }
-
-  /* ── TALENT GRID ── */
-  .talent-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  .talent-card {
-    background: var(--surface);
-    padding: 1.75rem 1.25rem;
-    text-align: center;
-    transition: background 0.2s;
-  }
-
-  .talent-card:hover { background: #0f1c30; }
-
-  .talent-icon {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .talent-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--white);
-    margin-bottom: 0.25rem;
-  }
-
-  .talent-desc {
-    font-size: 0.75rem;
-    color: var(--muted);
-    line-height: 1.4;
-  }
-
-  /* ── HOW IT WORKS ── */
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  .step {
-    background: var(--surface);
-    padding: 2.5rem 2rem;
-  }
-
-  .step-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    color: var(--cyan);
-    margin-bottom: 1.25rem;
-  }
-
-  .step-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 0.75rem;
-    letter-spacing: -0.01em;
-  }
-
-  .step-desc {
-    font-size: 0.9rem;
-    color: var(--light);
-    line-height: 1.6;
-    font-weight: 300;
-  }
-
-  /* ── FEATURES ── */
-  .features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .feature {
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.75rem;
-    background: var(--surface);
-    transition: border-color 0.2s;
-  }
-
-  .feature:hover { border-color: rgba(14,165,233,0.3); }
-
-  .feature-icon {
-    width: 36px; height: 36px;
-    border-radius: 8px;
-    background: var(--cyan-dim);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.95rem;
-    margin-bottom: 1rem;
-  }
-
-  .feature-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--white);
-    margin-bottom: 0.5rem;
-  }
-
-  .feature-desc {
-    font-size: 0.85rem;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-
-  /* ── ARTIST CARDS ── */
-  .artist-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 1rem;
-  }
-
-  .artist-card {
-    position: relative;
-    border-radius: 10px;
-    overflow: hidden;
-    aspect-ratio: 3/4;
-    background: var(--surface);
-    border: 1px solid var(--border);
-  }
-
-  .artist-card img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    object-position: top center;
-    display: block;
-    transition: transform 0.4s ease;
-  }
-
-  .artist-card:hover img { transform: scale(1.05); }
-
-  .artist-overlay {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    background: linear-gradient(to top, rgba(2,6,23,0.96) 0%, rgba(2,6,23,0.3) 65%, transparent 100%);
-    padding: 1.5rem 0.85rem 0.85rem;
-  }
-
-  .artist-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--white);
-    line-height: 1.2;
-  }
-
-  .artist-genre {
-    font-size: 0.68rem;
-    color: var(--cyan);
-    margin-top: 0.15rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-  }
-
-  /* ── TESTIMONIALS ── */
-  .testimonials {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .testimonial {
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 2rem;
-    background: var(--surface);
-  }
-
-  .testimonial-quote {
-    font-size: 0.95rem;
-    color: var(--light);
-    line-height: 1.7;
-    margin-bottom: 1.5rem;
-    font-weight: 300;
-    font-style: italic;
-  }
-
-  .testimonial-author {
-    display: flex; align-items: center; gap: 0.75rem;
-  }
-
-  .avatar {
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    overflow: hidden;
-    flex-shrink: 0;
-    border: 2px solid var(--cyan-dim);
-  }
-
-  .avatar img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    object-position: top center;
-  }
-
-  .author-name {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--white);
-  }
-
-  .author-role {
-    font-size: 0.75rem;
-    color: var(--muted);
-  }
-
-  /* ── CTA SECTION ── */
-  .cta-section {
-    text-align: center;
-    padding: 7rem 1.5rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .cta-section .section-title { margin: 0 auto 1rem; max-width: 600px; }
-  .cta-section .section-sub   { margin: 0 auto 2.5rem; }
-
-  .cta-note {
-    font-size: 0.8rem;
-    color: var(--muted);
-    margin-top: 1rem;
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 2rem 1.5rem;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 1rem;
-  }
-
-  .footer-logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1rem;
-    color: var(--white);
-    text-decoration: none;
-  }
-
-  .footer-logo span { color: var(--cyan); }
-
-  .footer-links {
-    display: flex; gap: 1.5rem; list-style: none;
-  }
-
-  .footer-links a {
-    font-size: 0.8rem;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .footer-links a:hover { color: var(--light); }
-
-  .footer-copy {
-    font-size: 0.75rem;
-    color: var(--muted);
-    width: 100%;
-  }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .hero-badge  { animation: fadeUp 0.5s ease both; }
-  .hero h1     { animation: fadeUp 0.5s 0.1s ease both; }
-  .hero-sub    { animation: fadeUp 0.5s 0.2s ease both; }
-  .hero-actions{ animation: fadeUp 0.5s 0.3s ease both; }
-
-  /* ── MOBILE ── */
-  @media (max-width: 640px) {
-    nav { padding: 1rem 1.25rem; }
-    .hero { padding: 7rem 1.25rem 4rem; }
-    .stat { min-width: 120px; padding: 1.5rem 1rem; }
-    section { padding: 4rem 1.25rem; }
-    .steps { grid-template-columns: 1fr; }
-    footer { flex-direction: column; align-items: flex-start; }
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #020617;
+  --surface: #0b1120;
+  --border:  rgba(255,255,255,0.07);
+  --cyan:    #0EA5E9;
+  --cyan2:   #06B6D4;
+  --cdim:    #0c4a6e;
+  --white:   #f8fafc;
+  --muted:   #64748b;
+  --light:   #94a3b8;
+  --gold:    #F59E0B;
+}
+html { scroll-behavior: smooth; }
+body { background:var(--bg); color:var(--white); font-family:'DM Sans',sans-serif; font-weight:400; line-height:1.6; -webkit-font-smoothing:antialiased; }
+
+/* NAV */
+nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:1rem 2rem; background:rgba(2,6,23,0.8); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); }
+.nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.nav-logo img { width:34px; height:34px; border-radius:9px; }
+.nav-logo span { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; color:var(--white); letter-spacing:-0.02em; }
+.nav-cta { font-family:'DM Sans',sans-serif; font-size:0.875rem; font-weight:500; color:var(--bg); background:var(--cyan); border:none; padding:0.55rem 1.3rem; border-radius:6px; cursor:pointer; text-decoration:none; transition:opacity 0.2s; }
+.nav-cta:hover { opacity:0.85; }
+
+/* HERO */
+.hero { min-height:100vh; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:8rem 1.5rem 6rem; overflow:hidden; }
+.hero-bg { position:absolute; inset:0; background-image:url('https://thegearsh.com/icons/hero-image.png'); background-size:cover; background-position:center 30%; background-repeat:no-repeat; filter:brightness(0.22) saturate(0.7); z-index:0; }
+.hero-overlay { position:absolute; inset:0; background:linear-gradient(to bottom, rgba(2,6,23,0.1) 0%, rgba(2,6,23,0.3) 40%, rgba(2,6,23,0.92) 85%, rgba(2,6,23,1) 100%); z-index:1; }
+.hero > *:not(.hero-bg):not(.hero-overlay) { position:relative; z-index:2; }
+
+.hero-logo-badge { display:flex; align-items:center; gap:12px; justify-content:center; margin-bottom:2rem; }
+.hero-logo-badge img { width:60px; height:60px; border-radius:16px; border:2px solid rgba(14,165,233,0.4); }
+.hero-logo-badge span { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:var(--white); letter-spacing:-0.03em; }
+
+.hero-pill { display:inline-flex; align-items:center; gap:8px; font-size:0.72rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--cyan); border:1px solid var(--cdim); padding:0.35rem 1rem; border-radius:100px; margin-bottom:1.75rem; }
+.hero-pill-dot { width:6px; height:6px; border-radius:50%; background:var(--cyan); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+.hero h1 { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(2.8rem,8vw,5.5rem); line-height:1.0; letter-spacing:-0.035em; color:var(--white); max-width:860px; margin-bottom:1.5rem; }
+.hero h1 em { font-style:normal; color:var(--cyan); }
+.hero-sub { font-size:clamp(1rem,2vw,1.15rem); color:var(--light); max-width:500px; margin:0 auto 2.5rem; font-weight:300; line-height:1.75; }
+.hero-actions { display:flex; gap:1rem; flex-wrap:wrap; align-items:center; justify-content:center; }
+
+.btn-primary { font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:500; color:var(--bg); background:var(--cyan); border:none; padding:0.9rem 2.2rem; border-radius:8px; cursor:pointer; text-decoration:none; transition:opacity 0.2s,transform 0.2s; }
+.btn-primary:hover { opacity:0.88; transform:translateY(-1px); }
+.btn-ghost { font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:400; color:var(--light); background:transparent; border:1px solid var(--border); padding:0.9rem 2.2rem; border-radius:8px; cursor:pointer; text-decoration:none; transition:border-color 0.2s,color 0.2s; }
+.btn-ghost:hover { border-color:rgba(255,255,255,0.2); color:var(--white); }
+
+/* STATS */
+.stats { display:flex; justify-content:center; flex-wrap:wrap; background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+.stat { flex:1; min-width:140px; padding:1.75rem 1.5rem; text-align:center; border-right:1px solid var(--border); }
+.stat:last-child { border-right:none; }
+.stat-num { font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:700; color:var(--cyan); letter-spacing:-0.02em; }
+.stat-label { font-size:0.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-top:0.2rem; }
+
+/* SECTIONS */
+section { padding:5.5rem 1.5rem; }
+.container { max-width:1040px; margin:0 auto; }
+.section-label { font-size:0.72rem; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--cyan); margin-bottom:0.9rem; }
+.section-title { font-family:'Syne',sans-serif; font-size:clamp(1.75rem,4vw,2.6rem); font-weight:700; letter-spacing:-0.025em; color:var(--white); margin-bottom:0.9rem; line-height:1.1; }
+.section-sub { font-size:1rem; color:var(--light); max-width:520px; font-weight:300; line-height:1.7; margin-bottom:3rem; }
+
+/* ARTIST MOSAIC */
+.artist-mosaic { display:grid; grid-template-columns:repeat(4,1fr); gap:0.75rem; }
+.ac { position:relative; border-radius:10px; overflow:hidden; background:var(--surface); border:1px solid var(--border); }
+.ac img { width:100%; height:100%; min-height:200px; object-fit:cover; object-position:top center; display:block; transition:transform 0.4s ease; }
+.ac:hover img { transform:scale(1.05); }
+.ac-tall { grid-row:span 2; }
+.ac-wide { grid-column:span 2; }
+.ac-overlay { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(to top, rgba(2,6,23,0.97) 0%, rgba(2,6,23,0.35) 60%, transparent 100%); padding:1.5rem 1rem 0.9rem; }
+.ac-name { font-family:'Syne',sans-serif; font-size:0.88rem; font-weight:700; color:var(--white); line-height:1.2; }
+.ac-meta { font-size:0.68rem; color:var(--cyan); margin-top:0.15rem; font-weight:500; letter-spacing:0.03em; }
+.ac-badge { position:absolute; top:0.6rem; right:0.6rem; background:rgba(14,165,233,0.15); border:1px solid var(--cdim); color:var(--cyan); font-size:0.62rem; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; padding:0.2rem 0.5rem; border-radius:4px; }
+.ac-mastery { position:absolute; top:0.6rem; left:0.6rem; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:var(--gold); font-size:0.62rem; font-weight:600; padding:0.2rem 0.5rem; border-radius:4px; }
+.ac-price { display:inline-block; margin-top:0.4rem; font-size:0.75rem; font-weight:500; color:var(--white); }
+.ac-price-original { text-decoration:line-through; color:var(--muted); font-size:0.68rem; margin-right:4px; }
+.ac-discount { color:var(--gold); font-size:0.68rem; font-weight:700; }
+
+/* TALENT GRID */
+.talent-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+.talent-card { background:var(--surface); padding:1.75rem 1.25rem; text-align:center; transition:background 0.2s; }
+.talent-card:hover { background:#0f1c30; }
+.talent-icon { font-size:1.4rem; margin-bottom:0.7rem; }
+.talent-name { font-family:'Syne',sans-serif; font-size:0.88rem; font-weight:600; color:var(--white); margin-bottom:0.2rem; }
+.talent-desc { font-size:0.72rem; color:var(--muted); line-height:1.4; }
+
+/* STEPS */
+.steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+.step { background:var(--surface); padding:2.5rem 2rem; }
+.step-num { font-family:'Syne',sans-serif; font-size:0.68rem; font-weight:700; letter-spacing:0.15em; color:var(--cyan); margin-bottom:1.25rem; }
+.step-title { font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:700; color:var(--white); margin-bottom:0.65rem; letter-spacing:-0.01em; }
+.step-desc { font-size:0.875rem; color:var(--light); line-height:1.65; font-weight:300; }
+
+/* MASTERY BARS */
+.mastery-bar-bg { height:5px; background:rgba(255,255,255,0.08); border-radius:3px; margin:0.75rem 0 0; overflow:hidden; }
+.mastery-bar-fill { height:100%; background:linear-gradient(90deg,var(--cyan),var(--cyan2)); border-radius:3px; }
+
+/* FEATURES */
+.features { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.25rem; }
+.feature { border:1px solid var(--border); border-radius:10px; padding:1.75rem; background:var(--surface); transition:border-color 0.2s; }
+.feature:hover { border-color:rgba(14,165,233,0.3); }
+.feature-icon { width:36px; height:36px; border-radius:8px; background:var(--cdim); display:flex; align-items:center; justify-content:center; font-size:1rem; margin-bottom:1rem; }
+.feature-title { font-family:'Syne',sans-serif; font-size:0.92rem; font-weight:600; color:var(--white); margin-bottom:0.45rem; }
+.feature-desc { font-size:0.82rem; color:var(--muted); line-height:1.6; }
+
+/* TESTIMONIALS */
+.testimonials { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.25rem; margin-top:3rem; }
+.testimonial { border:1px solid var(--border); border-radius:10px; padding:1.75rem; background:var(--surface); }
+.testimonial-quote { font-size:0.92rem; color:var(--light); line-height:1.75; margin-bottom:1.25rem; font-weight:300; font-style:italic; }
+.t-author { display:flex; align-items:center; gap:0.75rem; }
+.t-avatar { width:44px; height:44px; border-radius:50%; overflow:hidden; flex-shrink:0; border:2px solid var(--cdim); }
+.t-avatar img { width:100%; height:100%; object-fit:cover; object-position:top center; }
+.t-name { font-size:0.875rem; font-weight:500; color:var(--white); }
+.t-role { font-size:0.72rem; color:var(--muted); }
+
+/* CTA */
+.cta-section { text-align:center; padding:7rem 1.5rem; border-top:1px solid var(--border); position:relative; overflow:hidden; }
+.cta-glow { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:600px; height:300px; background:radial-gradient(ellipse,rgba(14,165,233,0.08) 0%,transparent 70%); pointer-events:none; }
+.cta-section .section-title { margin:0 auto 1rem; max-width:600px; }
+.cta-section .section-sub { margin:0 auto 2.5rem; }
+.cta-note { font-size:0.78rem; color:var(--muted); margin-top:1rem; }
+
+/* FOOTER */
+footer { border-top:1px solid var(--border); padding:2rem 1.5rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+.footer-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.footer-logo img { width:28px; height:28px; border-radius:7px; }
+.footer-logo span { font-family:'Syne',sans-serif; font-weight:800; font-size:1rem; color:var(--white); }
+.footer-links { display:flex; gap:1.5rem; list-style:none; }
+.footer-links a { font-size:0.78rem; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+.footer-links a:hover { color:var(--light); }
+.footer-copy { font-size:0.72rem; color:var(--muted); width:100%; }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+.hero-logo-badge { animation:fadeUp 0.5s ease both; }
+.hero-pill       { animation:fadeUp 0.5s 0.1s ease both; }
+.hero h1         { animation:fadeUp 0.5s 0.15s ease both; }
+.hero-sub        { animation:fadeUp 0.5s 0.25s ease both; }
+.hero-actions    { animation:fadeUp 0.5s 0.35s ease both; }
+
+/* MOBILE */
+@media (max-width:900px) {
+  .artist-mosaic { grid-template-columns:repeat(2,1fr); }
+  .ac-tall { grid-row:auto; }
+  .ac-wide { grid-column:auto; }
+}
+@media (max-width:640px) {
+  nav { padding:1rem 1.25rem; }
+  .hero { padding:7rem 1.25rem 4rem; }
+  .stat { min-width:110px; padding:1.5rem 0.75rem; }
+  section { padding:4rem 1.25rem; }
+  .steps { grid-template-columns:1fr; }
+  footer { flex-direction:column; align-items:flex-start; }
+}
 </style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <a href="/" class="nav-logo">Gear<span>sh</span></a>
-  <a href="/onboarding" class="nav-cta">Join as Artist</a>
+  <a href="/" class="nav-logo">
+    <img src="https://thegearsh.com/icons/Icon-512.png" alt="Gearsh Logo">
+    <span>Gearsh</span>
+  </a>
+  <a href="/onboarding" class="nav-cta">Join as Artist →</a>
 </nav>
 
-<!-- HERO -->
+<!-- HERO — full stadium background -->
 <section class="hero">
-  <div class="hero-badge">Now Live — Global Artist Booking</div>
-  <h1>Get Booked.<br><em>Get Paid.</em><br>Go Global.</h1>
-  <p class="hero-sub">The platform where talented artists get discovered, booked, and paid — without the middleman.</p>
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-logo-badge">
+    <img src="https://thegearsh.com/icons/Icon-512.png" alt="Gearsh">
+    <span>Gearsh</span>
+  </div>
+
+  <div class="hero-pill">
+    <span class="hero-pill-dot"></span>
+    Now Live — Global Artist Booking Platform
+  </div>
+
+  <h1>Get <em>Booked.</em><br>Get <em>Paid.</em><br>Go <em>Global.</em></h1>
+
+  <p class="hero-sub">The platform where talented artists get discovered, booked, and paid — without the middleman. Free to list. No credit card required.</p>
+
   <div class="hero-actions">
     <a href="/onboarding" class="btn-primary">List Your Talent Free →</a>
     <a href="#how" class="btn-ghost">See How It Works</a>
@@ -538,272 +203,235 @@
 
 <!-- STATS -->
 <div class="stats">
-  <div class="stat">
-    <div class="stat-num">Free</div>
-    <div class="stat-label">To list your profile</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num">Global</div>
-    <div class="stat-label">Client reach</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num">Instant</div>
-    <div class="stat-label">Booking requests</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num">Secure</div>
-    <div class="stat-label">Payments guaranteed</div>
-  </div>
+  <div class="stat"><div class="stat-num">Free</div><div class="stat-label">To list your profile</div></div>
+  <div class="stat"><div class="stat-num">Global</div><div class="stat-label">Client reach</div></div>
+  <div class="stat"><div class="stat-num">10,000</div><div class="stat-label">Hours to mastery</div></div>
+  <div class="stat"><div class="stat-num">Secure</div><div class="stat-label">Payments guaranteed</div></div>
 </div>
 
-<!-- TALENT TYPES -->
+<!-- REAL ARTISTS -->
 <section>
+  <div class="container">
+    <p class="section-label">Artists on Gearsh</p>
+    <h2 class="section-title">Real talent.<br>Real bookings.</h2>
+    <p class="section-sub">From emerging artists to established names — every creative talent on one platform. Your profile sits alongside the best in South Africa.</p>
+
+    <div class="artist-mosaic">
+
+      <div class="ac ac-tall">
+        <img src="/assets/images/artists/yde.png" alt="Y.D.E">
+        <span class="ac-badge">80% OFF</span>
+        <span class="ac-mastery">🌱 Newcomer</span>
+        <div class="ac-overlay">
+          <div class="ac-name">Y.D.E</div>
+          <div class="ac-meta">Hip Hop · Louis Trichardt</div>
+          <div class="ac-price"><span class="ac-price-original">R10,000</span> <span class="ac-discount">80% OFF</span> R2,000</div>
+        </div>
+      </div>
+
+      <div class="ac">
+        <img src="/assets/images/artists/ZJ90.jpg" alt="ZJ90">
+        <span class="ac-badge">Verified</span>
+        <span class="ac-mastery">🚀 Rising</span>
+        <div class="ac-overlay">
+          <div class="ac-name">ZJ90</div>
+          <div class="ac-meta">House · Amapiano · Joburg</div>
+          <div class="ac-price">from R25,000</div>
+        </div>
+      </div>
+
+      <div class="ac">
+        <img src="/assets/images/artists/rixelton.jpg" alt="Rix Elton">
+        <span class="ac-badge">Verified</span>
+        <span class="ac-mastery">🌱 Newcomer</span>
+        <div class="ac-overlay">
+          <div class="ac-name">Rix Elton</div>
+          <div class="ac-meta">Amapiano DJ · Joburg</div>
+          <div class="ac-price">from R20,000</div>
+        </div>
+      </div>
+
+      <div class="ac ac-wide">
+        <img src="/assets/images/artists/empress-ngqama.jpg" alt="Empress Ngqama" style="min-height:260px;">
+        <span class="ac-badge">Verified</span>
+        <span class="ac-mastery">🌱 Newcomer</span>
+        <div class="ac-overlay">
+          <div class="ac-name">Empress Ngqama</div>
+          <div class="ac-meta">Afro-Soul · Reggae · Eastern Cape</div>
+          <div class="ac-price">from R22,000</div>
+        </div>
+      </div>
+
+      <div class="ac">
+        <img src="/assets/images/artists/dripmaker.png" alt="Dripmaker">
+        <span class="ac-badge">Verified</span>
+        <span class="ac-mastery">🚀 Rising</span>
+        <div class="ac-overlay">
+          <div class="ac-name">Dripmaker</div>
+          <div class="ac-meta">Fashion · Thohoyandou</div>
+          <div class="ac-price">from R300</div>
+        </div>
+      </div>
+
+      <div class="ac">
+        <img src="/assets/images/artists/tyla.jpg" alt="Tyla">
+        <span class="ac-badge">Featured</span>
+        <div class="ac-overlay">
+          <div class="ac-name">Tyla</div>
+          <div class="ac-meta">Afropop · Global</div>
+        </div>
+      </div>
+
+      <div class="ac">
+        <img src="/assets/images/artists/coffee.png" alt="Black Coffee">
+        <span class="ac-badge">Featured</span>
+        <div class="ac-overlay">
+          <div class="ac-name">Black Coffee</div>
+          <div class="ac-meta">House · International</div>
+        </div>
+      </div>
+
+      <div class="ac">
+        <img src="/assets/images/artists/kabza.png" alt="Kabza De Small">
+        <span class="ac-badge">Featured</span>
+        <div class="ac-overlay">
+          <div class="ac-name">Kabza De Small</div>
+          <div class="ac-meta">Amapiano · Pretoria</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="testimonials">
+      <div class="testimonial">
+        <p class="testimonial-quote">"Straight out of Louis Trichardt — Gearsh gave me a platform to reach clients I never could before. The work speaks."</p>
+        <div class="t-author">
+          <div class="t-avatar"><img src="/assets/images/artists/yde.png" alt="Y.D.E"></div>
+          <div><div class="t-name">Y.D.E</div><div class="t-role">Hip Hop · Louis Trichardt, SA</div></div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <p class="testimonial-quote">"As a female DJ, having a verified profile that clients trust changed everything. Now the bookings come to me."</p>
+        <div class="t-author">
+          <div class="t-avatar"><img src="/assets/images/artists/ZJ90.jpg" alt="ZJ90"></div>
+          <div><div class="t-name">ZJ90</div><div class="t-role">DJ · Johannesburg</div></div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <p class="testimonial-quote">"Custom pieces from R300. Gearsh put my designs in front of clients who actually want to buy. No more waiting."</p>
+        <div class="t-author">
+          <div class="t-avatar"><img src="/assets/images/artists/dripmaker.png" alt="Dripmaker"></div>
+          <div><div class="t-name">Dripmaker</div><div class="t-role">Fashion Designer · Thohoyandou</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
   <div class="container">
     <p class="section-label">Who It's For</p>
     <h2 class="section-title">Every creative talent,<br>one platform.</h2>
-    <p class="section-sub">Whether you perform, shoot, spin, or create — if you have talent, Gearsh has clients waiting.</p>
+    <p class="section-sub">Whether you perform, shoot, spin, design, or create — if you have talent, Gearsh has clients waiting.</p>
     <div class="talent-grid">
-      <div class="talent-card">
-        <div class="talent-icon">🎧</div>
-        <div class="talent-name">DJs</div>
-        <div class="talent-desc">Club nights, events, festivals</div>
-      </div>
-      <div class="talent-card">
-        <div class="talent-icon">📸</div>
-        <div class="talent-name">Photographers</div>
-        <div class="talent-desc">Events, portraits, weddings</div>
-      </div>
-      <div class="talent-card">
-        <div class="talent-icon">🎵</div>
-        <div class="talent-name">Musicians</div>
-        <div class="talent-desc">Live bands, soloists, sessions</div>
-      </div>
-      <div class="talent-card">
-        <div class="talent-icon">🎬</div>
-        <div class="talent-name">Videographers</div>
-        <div class="talent-desc">Films, events, content</div>
-      </div>
-      <div class="talent-card">
-        <div class="talent-icon">🕺</div>
-        <div class="talent-name">Dancers</div>
-        <div class="talent-desc">Shows, corporate, private</div>
-      </div>
-      <div class="talent-card">
-        <div class="talent-icon">🎤</div>
-        <div class="talent-name">MCs & Performers</div>
-        <div class="talent-desc">Hosts, speakers, entertainers</div>
-      </div>
+      <div class="talent-card"><div class="talent-icon">🎧</div><div class="talent-name">DJs</div><div class="talent-desc">Clubs, events, festivals</div></div>
+      <div class="talent-card"><div class="talent-icon">🎵</div><div class="talent-name">Musicians</div><div class="talent-desc">Live bands, soloists</div></div>
+      <div class="talent-card"><div class="talent-icon">🎤</div><div class="talent-name">MCs & Performers</div><div class="talent-desc">Hosts, speakers</div></div>
+      <div class="talent-card"><div class="talent-icon">📸</div><div class="talent-name">Photographers</div><div class="talent-desc">Events, portraits</div></div>
+      <div class="talent-card"><div class="talent-icon">🎬</div><div class="talent-name">Videographers</div><div class="talent-desc">Films, content</div></div>
+      <div class="talent-card"><div class="talent-icon">👗</div><div class="talent-name">Fashion Designers</div><div class="talent-desc">Custom, streetwear</div></div>
+      <div class="talent-card"><div class="talent-icon">🕺</div><div class="talent-name">Dancers</div><div class="talent-desc">Shows, corporate</div></div>
+      <div class="talent-card"><div class="talent-icon">🎨</div><div class="talent-name">Visual Artists</div><div class="talent-desc">Illustration, design</div></div>
     </div>
   </div>
 </section>
 
 <!-- HOW IT WORKS -->
-<section id="how" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+<section id="how">
   <div class="container">
     <p class="section-label">How It Works</p>
     <h2 class="section-title">From profile to payment<br>in minutes.</h2>
-    <p class="section-sub">No agency fees. No middleman. Just you, your talent, and paying clients.</p>
+    <p class="section-sub">No agency fees. No middleman. Just you, your talent, and paying clients who found you on Gearsh.</p>
     <div class="steps">
       <div class="step">
         <div class="step-num">01</div>
         <div class="step-title">Create Your Profile</div>
-        <div class="step-desc">Showcase your talent with photos, videos, and your rates. Set your availability and let clients find you 24/7.</div>
+        <div class="step-desc">Showcase your talent, set your rates, and list your services. Go live in minutes — free to join, no credit card required.</div>
       </div>
       <div class="step">
         <div class="step-num">02</div>
         <div class="step-title">Receive Booking Requests</div>
-        <div class="step-desc">Clients find your profile and send requests. Review, negotiate, and accept on your own terms.</div>
+        <div class="step-desc">Clients find your profile and send requests. Review, negotiate, and accept on your own terms. You stay in control.</div>
       </div>
       <div class="step">
         <div class="step-num">03</div>
         <div class="step-title">Deliver & Get Paid</div>
-        <div class="step-desc">Show up, do what you do best, and get paid securely. Gearsh handles the contracts and payments.</div>
+        <div class="step-desc">Show up, do what you do best, and get paid securely. Gearsh handles contracts and payments — no more chasing invoices.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
+<!-- MASTERY SYSTEM -->
+<section style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="container">
+    <p class="section-label">10,000 Hours to Mastery</p>
+    <h2 class="section-title">The more you book,<br>the more you earn.</h2>
+    <p class="section-sub">Every booking grows your Mastery score. Climb from Newcomer to Legend — and unlock better visibility, higher trust, and bigger clients.</p>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">🌱</div>
+        <div class="feature-title">Newcomer (0–99 hrs)</div>
+        <div class="feature-desc">Get listed and land your first bookings. New artists get an 80% introductory discount to attract clients fast.</div>
+        <div class="mastery-bar-bg"><div class="mastery-bar-fill" style="width:5%"></div></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🚀</div>
+        <div class="feature-title">Rising → Professional</div>
+        <div class="feature-desc">100–4,999 hours. Your track record builds credibility. Reviews stack up. Clients seek you out directly.</div>
+        <div class="mastery-bar-bg"><div class="mastery-bar-fill" style="width:45%"></div></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⭐</div>
+        <div class="feature-title">Expert → Master</div>
+        <div class="feature-desc">5,000–9,999 hours. Elite status. Priority placement. Premium badge. Top-tier client access.</div>
+        <div class="mastery-bar-bg"><div class="mastery-bar-fill" style="width:75%"></div></div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">👑</div>
+        <div class="feature-title">Legend (10,000+ hrs)</div>
+        <div class="feature-desc">The highest tier. Maximum visibility, maximum trust, maximum earning potential on Gearsh.</div>
+        <div class="mastery-bar-bg"><div class="mastery-bar-fill" style="width:100%"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY GEARSH -->
 <section>
   <div class="container">
     <p class="section-label">Why Gearsh</p>
     <h2 class="section-title">Built for artists<br>who are serious.</h2>
-    <p class="section-sub">Everything you need to turn your craft into a career.</p>
+    <p class="section-sub">Everything you need to turn your craft into a career — from your first booking to your 10,000th hour.</p>
     <div class="features">
-      <div class="feature">
-        <div class="feature-icon">💰</div>
-        <div class="feature-title">Keep More of What You Earn</div>
-        <div class="feature-desc">No upfront fees. Transparent commission so you always know exactly what you take home.</div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🌍</div>
-        <div class="feature-title">Global Client Reach</div>
-        <div class="feature-desc">Get discovered by clients across South Africa and beyond. Your talent has no borders.</div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🔒</div>
-        <div class="feature-title">Payments Always Protected</div>
-        <div class="feature-desc">Every booking is payment-guaranteed. Get paid on time, every time — no more chasing invoices.</div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">📱</div>
-        <div class="feature-title">Manage From Your Phone</div>
-        <div class="feature-desc">Accept bookings, message clients, and track earnings right from the Gearsh app.</div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">⭐</div>
-        <div class="feature-title">Build Your Reputation</div>
-        <div class="feature-desc">Verified reviews from real bookings help you grow your credibility and command better rates.</div>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">📋</div>
-        <div class="feature-title">Contracts on Autopilot</div>
-        <div class="feature-desc">Gearsh generates booking contracts automatically. Less admin, more time doing what you love.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ARTISTS -->
-<section style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-  <div class="container">
-    <p class="section-label">Artists on Gearsh</p>
-    <h2 class="section-title">Your talent deserves<br>a global stage.</h2>
-    <p class="section-sub">South Africa's biggest artists. One platform. Your profile sits alongside the best.</p>
-    <div class="artist-grid">
-      <div class="artist-card">
-        <img src="/assets/images/artists/tyla.jpg" alt="Tyla" loading="lazy">
-        <div class="artist-overlay">
-          <div class="artist-name">Tyla</div>
-          <div class="artist-genre">Afropop · Global</div>
-        </div>
-      </div>
-      <div class="artist-card">
-        <img src="/assets/images/artists/coffee.png" alt="Black Coffee" loading="lazy">
-        <div class="artist-overlay">
-          <div class="artist-name">Black Coffee</div>
-          <div class="artist-genre">House DJ · International</div>
-        </div>
-      </div>
-      <div class="artist-card">
-        <img src="/assets/images/artists/nastyc.png" alt="Nasty C" loading="lazy">
-        <div class="artist-overlay">
-          <div class="artist-name">Nasty C</div>
-          <div class="artist-genre">Hip Hop · Durban</div>
-        </div>
-      </div>
-      <div class="artist-card">
-        <img src="/assets/images/artists/waffles.png" alt="Uncle Waffles" loading="lazy">
-        <div class="artist-overlay">
-          <div class="artist-name">Uncle Waffles</div>
-          <div class="artist-genre">DJ · Cape Town</div>
-        </div>
-      </div>
-      <div class="artist-card">
-        <img src="/assets/images/artists/kabza.png" alt="Kabza De Small" loading="lazy">
-        <div class="artist-overlay">
-          <div class="artist-name">Kabza De Small</div>
-          <div class="artist-genre">Amapiano · Pretoria</div>
-        </div>
-      </div>
-      <div class="artist-card">
-        <img src="/assets/images/artists/maphorisa.png" alt="DJ Maphorisa" loading="lazy">
-        <div class="artist-overlay">
-          <div class="artist-name">DJ Maphorisa</div>
-          <div class="artist-genre">Amapiano · Soweto</div>
-        </div>
-      </div>
-      <div class="artist-card">
-        <img src="/assets/images/artists/cassper.png" alt="Cassper Nyovest" loading="lazy">
-        <div class="artist-overlay">
-          <div class="artist-name">Cassper Nyovest</div>
-          <div class="artist-genre">Hip Hop · Mahikeng</div>
-        </div>
-      </div>
-      <div class="artist-card">
-        <img src="/assets/images/artists/kelvin-momo.png" alt="Kelvin Momo" loading="lazy">
-        <div class="artist-overlay">
-          <div class="artist-name">Kelvin Momo</div>
-          <div class="artist-genre">Amapiano · Joburg</div>
-        </div>
-      </div>
-      <div class="artist-card">
-        <img src="/assets/images/artists/lastkrm.png" alt="William Last KRM" loading="lazy">
-        <div class="artist-overlay">
-          <div class="artist-name">William Last KRM</div>
-          <div class="artist-genre">Gospel · Joburg</div>
-        </div>
-      </div>
-      <div class="artist-card">
-        <img src="/assets/images/artists/a-reece.png" alt="A-Reece" loading="lazy">
-        <div class="artist-overlay">
-          <div class="artist-name">A-Reece</div>
-          <div class="artist-genre">Hip Hop · Pretoria</div>
-        </div>
-      </div>
-      <div class="artist-card">
-        <img src="/assets/images/artists/emtee.webp" alt="Emtee" loading="lazy">
-        <div class="artist-overlay">
-          <div class="artist-name">Emtee</div>
-          <div class="artist-genre">Trap · Mthatha</div>
-        </div>
-      </div>
-      <div class="artist-card">
-        <img src="/assets/images/artists/scotts.png" alt="Scotts Maphuma" loading="lazy">
-        <div class="artist-overlay">
-          <div class="artist-name">Scotts Maphuma</div>
-          <div class="artist-genre">Gospel · Limpopo</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Testimonials -->
-    <div class="testimonials" style="margin-top: 3rem;">
-      <div class="testimonial">
-        <p class="testimonial-quote">"I got my first international booking within 2 weeks of listing my profile."</p>
-        <div class="testimonial-author">
-          <div class="avatar">
-            <img src="/assets/images/artists/maphorisa.png" alt="DJ Maphorisa">
-          </div>
-          <div>
-            <div class="author-name">DJ Maphorisa</div>
-            <div class="author-role">DJ · Soweto</div>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial">
-        <p class="testimonial-quote">"Gearsh replaced my entire client hustle. Bookings come to me now."</p>
-        <div class="testimonial-author">
-          <div class="avatar">
-            <img src="/assets/images/artists/waffles.png" alt="Uncle Waffles">
-          </div>
-          <div>
-            <div class="author-name">Uncle Waffles</div>
-            <div class="author-role">DJ · Cape Town</div>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial">
-        <p class="testimonial-quote">"Stop waiting for opportunities. List yourself and let the world find you."</p>
-        <div class="testimonial-author">
-          <div class="avatar">
-            <img src="/assets/images/artists/nastyc.png" alt="Nasty C">
-          </div>
-          <div>
-            <div class="author-name">Nasty C</div>
-            <div class="author-role">Hip Hop · Durban</div>
-          </div>
-        </div>
-      </div>
+      <div class="feature"><div class="feature-icon">💰</div><div class="feature-title">Keep More of What You Earn</div><div class="feature-desc">No upfront fees. Transparent commission so you always know exactly what you take home.</div></div>
+      <div class="feature"><div class="feature-icon">🌍</div><div class="feature-title">Global Client Reach</div><div class="feature-desc">Get discovered by clients across South Africa and beyond. Most artists are available for international bookings.</div></div>
+      <div class="feature"><div class="feature-icon">🔒</div><div class="feature-title">Payments Always Protected</div><div class="feature-desc">Every booking is payment-guaranteed. Get paid on time, every time — no more chasing invoices.</div></div>
+      <div class="feature"><div class="feature-icon">📱</div><div class="feature-title">Manage From Your Phone</div><div class="feature-desc">Accept bookings, message clients, and track earnings right from the Gearsh app.</div></div>
+      <div class="feature"><div class="feature-icon">⭐</div><div class="feature-title">Build Your Reputation</div><div class="feature-desc">Verified reviews from real bookings. Grow your Mastery score. Command better rates as you level up.</div></div>
+      <div class="feature"><div class="feature-icon">📋</div><div class="feature-title">Contracts on Autopilot</div><div class="feature-desc">Gearsh generates booking contracts automatically. Less admin, more time doing what you love.</div></div>
     </div>
   </div>
 </section>
 
 <!-- CTA -->
 <section class="cta-section">
+  <div class="cta-glow"></div>
   <div class="container">
+    <p class="section-label">Ready?</p>
     <h2 class="section-title">Your next booking is<br>one profile away.</h2>
-    <p class="section-sub">Join Gearsh free. List your talent, set your rates, and start getting booked.</p>
+    <p class="section-sub">Join Gearsh free. List your talent, set your rates, and start getting booked by clients who are already searching.</p>
     <a href="/onboarding" class="btn-primary">List Your Talent Free →</a>
     <p class="cta-note">Free to join · No credit card required · Go live in minutes</p>
   </div>
@@ -811,7 +439,10 @@
 
 <!-- FOOTER -->
 <footer>
-  <a href="/" class="footer-logo">Gear<span>sh</span></a>
+  <a href="/" class="footer-logo">
+    <img src="https://thegearsh.com/icons/Icon-512.png" alt="Gearsh">
+    <span>Gearsh</span>
+  </a>
   <ul class="footer-links">
     <li><a href="/terms.html">Terms</a></li>
     <li><a href="/privacy">Privacy</a></li>
