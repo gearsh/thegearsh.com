@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sign Up — The Gearsh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #020617;
+    --surface: #0f172a;
+    --surface2: #1e293b;
+    --border: #1e293b;
+    --border-focus: #0EA5E9;
+    --sky: #0EA5E9;
+    --cyan: #06B6D4;
+    --gold: #F59E0B;
+    --text: #f1f5f9;
+    --text-muted: #64748b;
+    --text-sub: #94a3b8;
+    --error: #ef4444;
+    --success: #22c55e;
+    --gradient: linear-gradient(135deg, var(--sky), var(--cyan));
+    --gradient-glow: 0 0 24px rgba(14,165,233,0.35), 0 4px 16px rgba(6,182,212,0.2);
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 32px 16px 48px;
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(14,165,233,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 30% at 80% 90%, rgba(6,182,212,0.07) 0%, transparent 60%);
+  }
+
+  /* ── Logo ── */
+  .logo {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 28px;
+    text-decoration: none;
+  }
+
+  /* ── Card ── */
+  .card {
+    width: 100%;
+    max-width: 480px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 32px 32px;
+    overflow: hidden;
+  }
+
+  /* ── Step indicator ── */
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 28px;
+  }
+  .step-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+  }
+  .step-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: calc(50% + 14px);
+    right: calc(-50% + 14px);
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    transition: background var(--transition);
+    z-index: 0;
+  }
+  .step-item.done:not(:last-child)::after,
+  .step-item.active:not(:last-child)::after {
+    background: var(--gradient);
+  }
+  .step-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--surface);
+    transition: all var(--transition);
+    position: relative;
+    z-index: 1;
+  }
+  .step-item.done .step-dot {
+    background: var(--gradient);
+    border-color: transparent;
+    color: #fff;
+  }
+  .step-item.active .step-dot {
+    border-color: var(--sky);
+    color: var(--sky);
+    box-shadow: 0 0 0 4px rgba(14,165,233,0.15);
+  }
+  .step-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: color var(--transition);
+  }
+  .step-item.active .step-label { color: var(--sky); }
+  .step-item.done .step-label { color: var(--cyan); }
+
+  /* ── Tier badge ── */
+  .tier-badge {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    background: rgba(245,158,11,0.1);
+    border: 1px solid rgba(245,158,11,0.3);
+    border-radius: 50px;
+    padding: 6px 14px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gold);
+    font-family: var(--font-head);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .tier-badge.visible { display: flex; }
+  .tier-badge svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  /* ── Headings ── */
+  .step-heading {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+  }
+  .step-sub {
+    font-size: 13px;
+    color: var(--text-sub);
+    margin-bottom: 24px;
+  }
+
+  /* ── Slide container ── */
+  .slides-wrapper {
+    overflow: hidden;
+    position: relative;
+  }
+  .slides {
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    will-change: transform;
+  }
+  .slide {
+    min-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ── Floating label field ── */
+  .field {
+    position: relative;
+  }
+  .field input, .field select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px 14px 8px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    appearance: none;
+  }
+  .field input:focus, .field select:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(14,165,233,0.1);
+  }
+  .field input.error, .field select.error {
+    border-color: var(--error);
+  }
+  .field label {
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    font-size: 14px;
+    color: var(--text-muted);
+    pointer-events: none;
+    transition: all var(--transition);
+    transform-origin: left top;
+  }
+  .field input:focus ~ label,
+  .field input:not(:placeholder-shown) ~ label,
+  .field select:focus ~ label,
+  .field select.has-value ~ label {
+    transform: translateY(-8px) scale(0.78);
+    color: var(--sky);
+  }
+  .field input::placeholder { color: transparent; }
+  .field-error {
+    font-size: 11px;
+    color: var(--error);
+    margin-top: 4px;
+    padding-left: 2px;
+    display: none;
+  }
+  .field-error.visible { display: block; }
+
+  /* password toggle */
+  .field .pw-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    transition: color var(--transition);
+  }
+  .field .pw-toggle:hover { color: var(--sky); }
+
+  /* ── Row ── */
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* ── User type selector ── */
+  .role-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .role-btn {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .role-btn:hover { border-color: var(--sky); }
+  .role-btn.selected {
+    border-color: var(--sky);
+    background: rgba(14,165,233,0.08);
+    box-shadow: 0 0 0 3px rgba(14,165,233,0.1);
+  }
+  .role-btn svg { width: 22px; height: 22px; color: var(--text-muted); transition: color var(--transition); }
+  .role-btn.selected svg { color: var(--sky); }
+  .role-btn span {
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font-head);
+    color: var(--text-muted);
+    transition: color var(--transition);
+  }
+  .role-btn.selected span { color: var(--sky); }
+
+  /* ── Plan cards ── */
+  .plans { display: flex; flex-direction: column; gap: 10px; }
+  .plan-card {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all var(--transition);
+    position: relative;
+  }
+  .plan-card:hover { border-color: var(--sky); }
+  .plan-card.selected {
+    border-color: var(--sky);
+    background: rgba(14,165,233,0.06);
+  }
+  .plan-radio {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    transition: all var(--transition);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .plan-card.selected .plan-radio {
+    border-color: var(--sky);
+    background: var(--sky);
+  }
+  .plan-card.selected .plan-radio::after {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .plan-info { flex: 1; }
+  .plan-name {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .plan-price { font-size: 12px; color: var(--text-sub); margin-top: 1px; }
+  .badge {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 2px 7px;
+    border-radius: 50px;
+    text-transform: uppercase;
+  }
+  .badge-popular { background: rgba(14,165,233,0.2); color: var(--sky); border: 1px solid rgba(14,165,233,0.3); }
+  .badge-pro { background: rgba(245,158,11,0.2); color: var(--gold); border: 1px solid rgba(245,158,11,0.3); }
+
+  /* ── Skills chips ── */
+  .skills-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-sub);
+    margin-bottom: 8px;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all var(--transition);
+    user-select: none;
+  }
+  .chip:hover { border-color: var(--sky); color: var(--sky); }
+  .chip.selected {
+    background: rgba(14,165,233,0.12);
+    border-color: var(--sky);
+    color: var(--sky);
+  }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: -4px;
+  }
+
+  /* ── Info box ── */
+  .info-box {
+    background: rgba(14,165,233,0.06);
+    border: 1px solid rgba(14,165,233,0.2);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.6;
+    display: flex;
+    gap: 10px;
+  }
+  .info-box svg { flex-shrink: 0; color: var(--sky); margin-top: 2px; }
+
+  /* ── Terms ── */
+  .terms-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .custom-cb {
+    width: 20px; height: 20px;
+    border-radius: 5px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--transition);
+  }
+  .terms-row.checked .custom-cb {
+    background: var(--gradient);
+    border-color: transparent;
+  }
+  .terms-row.checked .custom-cb::after {
+    content: '';
+    width: 10px; height: 6px;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(-45deg) translateY(-1px);
+  }
+  .terms-text { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
+  .terms-text a { color: var(--sky); text-decoration: none; }
+  .terms-text a:hover { text-decoration: underline; }
+
+  /* ── Buttons ── */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .btn-back {
+    flex: 0 0 auto;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 20px;
+    color: var(--text-sub);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn-back:hover { border-color: var(--sky); color: var(--sky); }
+  .btn-primary {
+    flex: 1;
+    background: var(--gradient);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 14px 20px;
+    color: #fff;
+    font-family: var(--font-head);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: all var(--transition);
+    box-shadow: var(--gradient-glow);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary:hover { opacity: 0.92; box-shadow: 0 0 32px rgba(14,165,233,0.45), 0 6px 20px rgba(6,182,212,0.3); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* spinner */
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  .btn-primary.loading .spinner { display: block; }
+  .btn-primary.loading .btn-label { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Banner ── */
+  .banner {
+    display: none;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    align-items: center;
+    gap: 10px;
+    animation: slideDown 0.3s ease;
+  }
+  @keyframes slideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+  .banner.error { display: flex; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+  .banner.success { display: flex; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #86efac; }
+  .banner svg { flex-shrink: 0; }
+
+  /* ── Login link ── */
+  .login-link {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .login-link a { color: var(--sky); text-decoration: none; font-weight: 500; }
+  .login-link a:hover { text-decoration: underline; }
+
+  /* ── Success screen ── */
+  .success-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px 0;
+    gap: 16px;
+  }
+  .success-icon {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(34,197,94,0.1);
+    border: 2px solid rgba(34,197,94,0.3);
+    display: flex; align-items: center; justify-content: center;
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn { from { transform: scale(0); opacity:0; } to { transform: scale(1); opacity:1; } }
+  .success-title { font-family: var(--font-head); font-size: 22px; font-weight: 700; }
+  .success-sub { font-size: 14px; color: var(--text-sub); max-width: 300px; }
+
+  @media (max-width: 480px) {
+    .card { padding: 28px 20px 24px; }
+    .row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<a class="logo" href="/">THE GEARSH</a>
+
+<div class="card">
+
+  <!-- Banner -->
+  <div class="banner" id="banner">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span id="banner-text"></span>
+  </div>
+
+  <!-- Step indicator -->
+  <div class="steps" id="steps">
+    <div class="step-item active" data-step="1">
+      <div class="step-dot">1</div>
+      <span class="step-label">Account</span>
+    </div>
+    <div class="step-item" data-step="2">
+      <div class="step-dot">2</div>
+      <span class="step-label">Profile</span>
+    </div>
+    <div class="step-item" data-step="3">
+      <div class="step-dot">3</div>
+      <span class="step-label">Security</span>
+    </div>
+  </div>
+
+  <!-- Tier badge -->
+  <div class="tier-badge" id="tier-badge">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    <span id="tier-badge-text">Standard Plan</span>
+  </div>
+
+  <!-- Slides -->
+  <div class="slides-wrapper">
+    <div class="slides" id="slides">
+
+      <!-- STEP 1: Account -->
+      <div class="slide" id="slide-1">
+        <div>
+          <div class="step-heading">Create your account</div>
+          <div class="step-sub">Join the Gearsh creative community</div>
+        </div>
+        <div class="field">
+          <input type="text" id="username" name="username" placeholder="username" autocomplete="username"/>
+          <label for="username">Username</label>
+          <div class="field-error" id="username-err">Username is required</div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <input type="text" id="firstName" name="firstName" placeholder="firstName"/>
+            <label for="firstName">First Name</label>
+            <div class="field-error" id="firstName-err">Required</div>
+          </div>
+          <div class="field">
+            <input type="text" id="lastName" name="lastName" placeholder="lastName"/>
+            <label for="lastName">Last Name</label>
+            <div class="field-error" id="lastName-err">Required</div>
+          </div>
+        </div>
+        <div class="field">
+          <input type="email" id="email" name="email" placeholder="email" autocomplete="email"/>
+          <label for="email">Email Address</label>
+          <div class="field-error" id="email-err">Valid email required</div>
+        </div>
+        <div class="field">
+          <input type="tel" id="phone" name="phone" placeholder="phone" autocomplete="tel"/>
+          <label for="phone">Phone Number</label>
+          <div class="field-error" id="phone-err">Phone number required</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="nextStep(1)">
+            <span class="btn-label">Continue</span>
+            <div class="spinner"></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Profile -->
+      <div class="slide" id="slide-2">
+        <div>
+          <div class="step-heading">Set up your profile</div>
+          <div class="step-sub">Tell us how you'll use Gearsh</div>
+        </div>
+
+        <div>
+          <div class="section-label">I am a</div>
+          <div style="margin-top:10px;">
+            <div class="role-selector">
+              <div class="role-btn" data-role="booker" onclick="selectRole('booker')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span>Booker</span>
+              </div>
+              <div class="role-btn" data-role="artist" onclick="selectRole('artist')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M12 3c-4.97 0-9 3.58-9 8 0 1.72.54 3.31 1.46 4.62L3 21l5.38-1.46A9.27 9.27 0 0012 21c4.97 0 9-3.58 9-8s-4.03-8-9-8z"/></svg>
+                <span>Artist</span>
+              </div>
+              <div class="role-btn" data-role="fan" onclick="selectRole('fan')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <span>Fan</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Artist plans (only shown when artist selected) -->
+        <div id="plans-section" style="display:none;">
+          <div class="section-label" style="margin-bottom:10px;">Choose your plan</div>
+          <div class="plans">
+            <div class="plan-card" data-tier="basic" onclick="selectTier('basic')">
+              <div class="plan-radio"></div>
+              <div class="plan-info">
+                <div class="plan-name">Basic</div>
+                <div class="plan-price">Free — limited features</div>
+              </div>
+            </div>
+            <div class="plan-card" data-tier="standard" onclick="selectTier('standard')">
+              <div class="plan-radio"></div>
+              <div class="plan-info">
+                <div class="plan-name">Standard <span class="badge badge-popular">Popular</span></div>
+                <div class="plan-price">R149/month — full booking access</div>
+              </div>
+            </div>
+            <div class="plan-card" data-tier="premium" onclick="selectTier('premium')">
+              <div class="plan-radio"></div>
+              <div class="plan-info">
+                <div class="plan-name">Premium <span class="badge badge-pro">Pro</span></div>
+                <div class="plan-price">R299/month — unlimited + analytics</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <select id="country" onchange="this.classList.add('has-value')">
+              <option value="" disabled selected></option>
+              <option value="ZA">South Africa</option>
+              <option value="ZW">Zimbabwe</option>
+              <option value="ZM">Zambia</option>
+              <option value="MZ">Mozambique</option>
+              <option value="BW">Botswana</option>
+              <option value="NG">Nigeria</option>
+              <option value="KE">Kenya</option>
+              <option value="GH">Ghana</option>
+              <option value="GB">United Kingdom</option>
+              <option value="US">United States</option>
+              <option value="other">Other</option>
+            </select>
+            <label for="country">Country</label>
+          </div>
+          <div class="field">
+            <input type="text" id="city" name="city" placeholder="city"/>
+            <label for="city">City</label>
+          </div>
+        </div>
+
+        <!-- Skills (artist only) -->
+        <div id="skills-section" style="display:none;">
+          <div class="skills-label">Skills / Services</div>
+          <div class="chips" id="chips">
+            <div class="chip" data-skill="DJ" onclick="toggleChip(this)">DJ</div>
+            <div class="chip" data-skill="Photography" onclick="toggleChip(this)">Photography</div>
+            <div class="chip" data-skill="Videography" onclick="toggleChip(this)">Videography</div>
+            <div class="chip" data-skill="MC" onclick="toggleChip(this)">MC / Host</div>
+            <div class="chip" data-skill="Live Music" onclick="toggleChip(this)">Live Music</div>
+            <div class="chip" data-skill="Lighting" onclick="toggleChip(this)">Lighting</div>
+            <div class="chip" data-skill="Production" onclick="toggleChip(this)">Production</div>
+            <div class="chip" data-skill="Sound" onclick="toggleChip(this)">Sound Tech</div>
+            <div class="chip" data-skill="Dance" onclick="toggleChip(this)">Dance</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <input type="date" id="dob" name="dob" placeholder="dob"/>
+            <label for="dob" style="transform: translateY(-8px) scale(0.78); color: var(--text-muted);">Date of Birth</label>
+          </div>
+          <div class="field">
+            <select id="gender" onchange="this.classList.add('has-value')">
+              <option value="" disabled selected></option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="non-binary">Non-binary</option>
+              <option value="prefer_not">Prefer not to say</option>
+            </select>
+            <label for="gender">Gender</label>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-back" onclick="goBack(2)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            Back
+          </button>
+          <button class="btn-primary" onclick="nextStep(2)">
+            <span class="btn-label">Continue</span>
+            <div class="spinner"></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Security -->
+      <div class="slide" id="slide-3">
+        <div>
+          <div class="step-heading">Secure your account</div>
+          <div class="step-sub">Almost there — set your password</div>
+        </div>
+
+        <div class="info-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Use at least 8 characters with a mix of letters, numbers, and symbols for a strong password.</span>
+        </div>
+
+        <div class="field">
+          <input type="password" id="password" name="password" placeholder="password" autocomplete="new-password"/>
+          <label for="password">Password</label>
+          <button type="button" class="pw-toggle" onclick="togglePw('password', this)" tabindex="-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+          <div class="field-error" id="password-err">Minimum 8 characters required</div>
+        </div>
+
+        <div class="field">
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="confirmPassword" autocomplete="new-password"/>
+          <label for="confirmPassword">Confirm Password</label>
+          <button type="button" class="pw-toggle" onclick="togglePw('confirmPassword', this)" tabindex="-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+          <div class="field-error" id="confirmPassword-err">Passwords do not match</div>
+        </div>
+
+        <div class="terms-row" id="terms-row" onclick="toggleTerms()">
+          <div class="custom-cb"></div>
+          <div class="terms-text">
+            I agree to the <a href="/terms" onclick="event.stopPropagation()">Terms of Service</a> and <a href="/privacy" onclick="event.stopPropagation()">Privacy Policy</a>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-back" onclick="goBack(3)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            Back
+          </button>
+          <button class="btn-primary" id="submit-btn" onclick="submitForm()">
+            <span class="btn-label">Create Account</span>
+            <div class="spinner"></div>
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /slides -->
+  </div><!-- /slides-wrapper -->
+
+  <!-- Success screen -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="success-title">You're in!</div>
+    <div class="success-sub">Your Gearsh account has been created. Welcome to the community.</div>
+    <button class="btn-primary" style="max-width:200px;" onclick="window.location.href='/dashboard'">
+      <span class="btn-label">Go to Dashboard</span>
+    </button>
+  </div>
+
+</div><!-- /card -->
+
+<div class="login-link">Already have an account? <a href="/login">Sign in</a></div>
+
+<script>
+  // ── State ──
+  let currentStep = 1;
+  let selectedRole = '';
+  let selectedTier = '';
+  let termsChecked = false;
+
+  // ── URL param pre-fill ──
+  (function() {
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get('role');
+    const tier = params.get('tier');
+    if (role) {
+      // defer until DOM ready
+      window.addEventListener('DOMContentLoaded', () => {
+        selectRole(role, true);
+        if (tier) selectTier(tier, true);
+      });
+    }
+  })();
+
+  // ── Step navigation ──
+  function goToStep(n) {
+    const slides = document.getElementById('slides');
+    slides.style.transform = `translateX(-${(n-1) * 100}%)`;
+    // update indicators
+    document.querySelectorAll('.step-item').forEach((el, i) => {
+      el.classList.remove('active','done');
+      if (i+1 < n) el.classList.add('done');
+      if (i+1 === n) el.classList.add('active');
+    });
+    currentStep = n;
+    updateTierBadge();
+    clearBanner();
+  }
+
+  function goBack(from) { goToStep(from - 1); }
+
+  // ── Validation ──
+  function clearFieldError(id) {
+    const inp = document.getElementById(id);
+    const err = document.getElementById(id + '-err');
+    if (inp) inp.classList.remove('error');
+    if (err) err.classList.remove('visible');
+  }
+  function showFieldError(id) {
+    const inp = document.getElementById(id);
+    const err = document.getElementById(id + '-err');
+    if (inp) inp.classList.add('error');
+    if (err) err.classList.add('visible');
+  }
+
+  function validateStep1() {
+    let ok = true;
+    ['username','firstName','lastName','email','phone'].forEach(f => clearFieldError(f));
+    if (!v('username')) { showFieldError('username'); ok=false; }
+    if (!v('firstName')) { showFieldError('firstName'); ok=false; }
+    if (!v('lastName')) { showFieldError('lastName'); ok=false; }
+    const email = v('email');
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError('email'); ok=false; }
+    if (!v('phone')) { showFieldError('phone'); ok=false; }
+    return ok;
+  }
+
+  function validateStep2() {
+    if (!selectedRole) { showBanner('error', 'Please select your role (Booker, Artist, or Fan).'); return false; }
+    return true;
+  }
+
+  function validateStep3() {
+    let ok = true;
+    ['password','confirmPassword'].forEach(f => clearFieldError(f));
+    const pw = v('password');
+    const cpw = v('confirmPassword');
+    if (!pw || pw.length < 8) { showFieldError('password'); ok=false; }
+    if (!cpw || cpw !== pw) { showFieldError('confirmPassword'); ok=false; }
+    if (!termsChecked) { showBanner('error', 'Please accept the Terms of Service to continue.'); ok=false; }
+    return ok;
+  }
+
+  function v(id) {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  function nextStep(from) {
+    if (from === 1 && !validateStep1()) return;
+    if (from === 2 && !validateStep2()) return;
+    goToStep(from + 1);
+  }
+
+  // ── Role selection ──
+  function selectRole(role, silent) {
+    selectedRole = role;
+    document.querySelectorAll('.role-btn').forEach(b => {
+      b.classList.toggle('selected', b.dataset.role === role);
+    });
+    const isArtist = role === 'artist';
+    document.getElementById('plans-section').style.display = isArtist ? 'block' : 'none';
+    document.getElementById('skills-section').style.display = isArtist ? 'block' : 'none';
+    if (!isArtist) {
+      selectedTier = '';
+      updateTierBadge();
+    }
+  }
+
+  // ── Tier selection ──
+  function selectTier(tier, silent) {
+    selectedTier = tier;
+    document.querySelectorAll('.plan-card').forEach(c => {
+      c.classList.toggle('selected', c.dataset.tier === tier);
+    });
+    updateTierBadge();
+  }
+
+  function updateTierBadge() {
+    const badge = document.getElementById('tier-badge');
+    const badgeText = document.getElementById('tier-badge-text');
+    if (selectedTier && selectedTier !== 'basic' && currentStep >= 2) {
+      const labels = { standard: 'Standard Plan', premium: 'Premium Pro Plan' };
+      badgeText.textContent = labels[selectedTier] || '';
+      badge.classList.add('visible');
+    } else {
+      badge.classList.remove('visible');
+    }
+  }
+
+  // ── Skills chips ──
+  function toggleChip(el) {
+    el.classList.toggle('selected');
+  }
+
+  // ── Password toggle ──
+  function togglePw(fieldId, btn) {
+    const inp = document.getElementById(fieldId);
+    const isText = inp.type === 'text';
+    inp.type = isText ? 'password' : 'text';
+    btn.innerHTML = isText
+      ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`
+      : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+  }
+
+  // ── Terms toggle ──
+  function toggleTerms() {
+    termsChecked = !termsChecked;
+    document.getElementById('terms-row').classList.toggle('checked', termsChecked);
+  }
+
+  // ── Banner ──
+  function showBanner(type, msg) {
+    const banner = document.getElementById('banner');
+    banner.className = 'banner ' + type;
+    document.getElementById('banner-text').textContent = msg;
+  }
+  function clearBanner() {
+    document.getElementById('banner').className = 'banner';
+  }
+
+  // ── Submit ──
+  async function submitForm() {
+    if (!validateStep3()) return;
+
+    const btn = document.getElementById('submit-btn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    const skills = [...document.querySelectorAll('.chip.selected')].map(c => c.dataset.skill);
+
+    const payload = {
+      username: v('username'),
+      firstName: v('firstName'),
+      lastName: v('lastName'),
+      email: v('email'),
+      phone: v('phone'),
+      role: selectedRole,
+      tier: selectedTier || null,
+      skills,
+      country: document.getElementById('country').value,
+      city: v('city'),
+      dob: document.getElementById('dob').value,
+      gender: document.getElementById('gender').value,
+      password: v('password'),
+    };
+
+    try {
+      const res = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Signup failed. Please try again.');
+      }
+
+      // success
+      document.getElementById('steps').style.display = 'none';
+      document.getElementById('tier-badge').style.display = 'none';
+      document.getElementById('slides-wrapper') && (document.querySelector('.slides-wrapper').style.display = 'none');
+      document.querySelector('.slides-wrapper').style.display = 'none';
+      const ss = document.getElementById('success-screen');
+      ss.style.display = 'flex';
+      clearBanner();
+
+    } catch (err) {
+      showBanner('error', err.message);
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    }
+  }
+
+  // ── Pre-fill from URL on load ──
+  document.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get('role');
+    const tier = params.get('tier');
+    if (role) selectRole(role, true);
+    if (tier) selectTier(tier, true);
+  });
+</script>
+</body>
+</html>
