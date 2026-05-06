@@ -3,84 +3,109 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Sign Up — The Gearsh</title>
+<title>Sign Up — Gearsh</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet"/>
 <style>
   :root {
-    --bg: #020617;
-    --surface: #0f172a;
-    --surface2: #1e293b;
-    --border: #1e293b;
-    --border-focus: #0EA5E9;
-    --sky: #0EA5E9;
-    --cyan: #06B6D4;
-    --gold: #F59E0B;
-    --text: #f1f5f9;
-    --text-muted: #64748b;
-    --text-sub: #94a3b8;
-    --error: #ef4444;
-    --success: #22c55e;
-    --gradient: linear-gradient(135deg, var(--sky), var(--cyan));
+    --bg:            #020617;
+    --surface:       #0f172a;
+    --surface2:      #1e293b;
+    --border:        #1e293b;
+    --border-focus:  #0EA5E9;
+    --sky:           #0EA5E9;
+    --cyan:          #06B6D4;
+    --gold:          #F59E0B;
+    --text:          #f1f5f9;
+    --text-muted:    #64748b;
+    --text-sub:      #94a3b8;
+    --error:         #ef4444;
+    --success:       #22c55e;
+    --gradient:      linear-gradient(135deg, var(--sky), var(--cyan));
     --gradient-glow: 0 0 24px rgba(14,165,233,0.35), 0 4px 16px rgba(6,182,212,0.2);
-    --font-head: 'Syne', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
-    --radius: 14px;
-    --radius-sm: 8px;
-    --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+    --font-head:     'Syne', sans-serif;
+    --font-body:     'DM Sans', sans-serif;
+    --radius:        14px;
+    --radius-sm:     10px;
+    --transition:    0.25s cubic-bezier(0.4,0,0.2,1);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html, body {
-    height: 100%;
+  html, body { height: 100%; }
+
+  body {
+    min-height: 100vh;
     background: var(--bg);
     color: var(--text);
     font-family: var(--font-body);
     font-size: 15px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-  }
-
-  body {
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 32px 16px 48px;
+    padding: 28px 16px 56px;
     background-image:
-      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(14,165,233,0.12) 0%, transparent 70%),
-      radial-gradient(ellipse 60% 30% at 80% 90%, rgba(6,182,212,0.07) 0%, transparent 60%);
+      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(14,165,233,0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 25% at 80% 95%, rgba(6,182,212,0.06) 0%, transparent 60%);
   }
 
-  /* ── Logo ── */
+  /* ── NAV BACK LINK ── */
+  .topbar {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .back-link {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--transition);
+  }
+  .back-link:hover { color: var(--sky); }
+  .back-link svg { width: 14px; height: 14px; }
+
+  /* ── LOGO ── */
   .logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+  }
+  .logo img { width: 34px; height: 34px; border-radius: 9px; }
+  .logo span {
     font-family: var(--font-head);
     font-weight: 800;
-    font-size: 22px;
-    letter-spacing: -0.5px;
+    font-size: 1.1rem;
+    letter-spacing: -0.02em;
     background: var(--gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 28px;
-    text-decoration: none;
   }
 
-  /* ── Card ── */
+  /* ── CARD ── */
   .card {
     width: 100%;
     max-width: 480px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 20px;
-    padding: 36px 32px 32px;
+    padding: 32px 28px 28px;
     overflow: hidden;
+    position: relative;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--gradient);
   }
 
-  /* ── Step indicator ── */
+  /* ── STEP INDICATOR ── */
   .steps {
     display: flex;
     align-items: center;
@@ -107,127 +132,77 @@
     transition: background var(--transition);
     z-index: 0;
   }
-  .step-item.done:not(:last-child)::after,
-  .step-item.active:not(:last-child)::after {
-    background: var(--gradient);
-  }
+  .step-item.done:not(:last-child)::after { background: var(--gradient); }
+  .step-item.active:not(:last-child)::after { background: rgba(14,165,233,0.3); }
+
   .step-dot {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
+    width: 28px; height: 28px; border-radius: 50%;
     border: 2px solid var(--border);
     display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-head);
-    font-weight: 700;
-    font-size: 12px;
-    color: var(--text-muted);
-    background: var(--surface);
-    transition: all var(--transition);
-    position: relative;
-    z-index: 1;
+    font-family: var(--font-head); font-weight: 700; font-size: 12px;
+    color: var(--text-muted); background: var(--surface);
+    transition: all var(--transition); position: relative; z-index: 1;
   }
   .step-item.done .step-dot {
-    background: var(--gradient);
-    border-color: transparent;
-    color: #fff;
+    background: var(--gradient); border-color: transparent; color: #fff;
   }
   .step-item.active .step-dot {
-    border-color: var(--sky);
-    color: var(--sky);
+    border-color: var(--sky); color: var(--sky);
     box-shadow: 0 0 0 4px rgba(14,165,233,0.15);
   }
   .step-label {
-    font-size: 10px;
-    font-weight: 500;
-    color: var(--text-muted);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    font-size: 10px; font-weight: 500; color: var(--text-muted);
+    letter-spacing: 0.5px; text-transform: uppercase;
     transition: color var(--transition);
   }
   .step-item.active .step-label { color: var(--sky); }
   .step-item.done .step-label { color: var(--cyan); }
 
-  /* ── Tier badge ── */
+  /* ── TIER BADGE ── */
   .tier-badge {
-    display: none;
-    align-items: center;
-    gap: 8px;
-    background: rgba(245,158,11,0.1);
-    border: 1px solid rgba(245,158,11,0.3);
-    border-radius: 50px;
-    padding: 6px 14px;
-    margin-bottom: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gold);
-    font-family: var(--font-head);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    display: none; align-items: center; gap: 8px;
+    background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);
+    border-radius: 50px; padding: 6px 14px; margin-bottom: 20px;
+    font-size: 12px; font-weight: 600; color: var(--gold);
+    font-family: var(--font-head); letter-spacing: 0.5px; text-transform: uppercase;
   }
   .tier-badge.visible { display: flex; }
   .tier-badge svg { width: 14px; height: 14px; flex-shrink: 0; }
 
-  /* ── Headings ── */
-  .step-heading {
-    font-family: var(--font-head);
-    font-weight: 700;
-    font-size: 22px;
-    letter-spacing: -0.3px;
-    margin-bottom: 4px;
-  }
-  .step-sub {
-    font-size: 13px;
-    color: var(--text-sub);
-    margin-bottom: 24px;
-  }
+  /* ── HEADINGS ── */
+  .step-heading { font-family: var(--font-head); font-weight: 700; font-size: 22px; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .step-sub { font-size: 13px; color: var(--text-sub); margin-bottom: 24px; }
 
-  /* ── Slide container ── */
-  .slides-wrapper {
-    overflow: hidden;
-    position: relative;
-  }
+  /* ── SLIDE CONTAINER ── */
+  .slides-wrapper { overflow: hidden; position: relative; }
   .slides {
     display: flex;
     transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
     will-change: transform;
   }
-  .slide {
-    min-width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
+  .slide { min-width: 100%; display: flex; flex-direction: column; gap: 14px; }
 
-  /* ── Floating label field ── */
-  .field {
-    position: relative;
-  }
+  /* ── FLOATING LABEL ── */
+  .field { position: relative; }
   .field input, .field select {
     width: 100%;
     background: var(--surface2);
     border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 20px 14px 8px;
-    font-family: var(--font-body);
-    font-size: 14px;
-    color: var(--text);
+    font-family: var(--font-body); font-size: 15px; color: var(--text);
     outline: none;
     transition: border-color var(--transition), box-shadow var(--transition);
-    appearance: none;
+    appearance: none; -webkit-appearance: none;
   }
   .field input:focus, .field select:focus {
     border-color: var(--border-focus);
     box-shadow: 0 0 0 3px rgba(14,165,233,0.1);
   }
-  .field input.error, .field select.error {
-    border-color: var(--error);
-  }
+  .field input.error, .field select.error { border-color: var(--error); }
   .field label {
-    position: absolute;
-    left: 14px;
-    top: 14px;
-    font-size: 14px;
-    color: var(--text-muted);
+    position: absolute; left: 14px; top: 14px;
+    font-size: 14px; color: var(--text-muted);
     pointer-events: none;
     transition: all var(--transition);
     transform-origin: left top;
@@ -235,332 +210,225 @@
   .field input:focus ~ label,
   .field input:not(:placeholder-shown) ~ label,
   .field select:focus ~ label,
-  .field select.has-value ~ label {
+  .field select.has-value ~ label,
+  .field.always-up label {
     transform: translateY(-8px) scale(0.78);
     color: var(--sky);
   }
   .field input::placeholder { color: transparent; }
-  .field-error {
-    font-size: 11px;
-    color: var(--error);
-    margin-top: 4px;
-    padding-left: 2px;
-    display: none;
-  }
-  .field-error.visible { display: block; }
 
   /* password toggle */
   .field .pw-toggle {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-muted);
-    padding: 4px;
-    display: flex;
-    align-items: center;
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted); padding: 4px;
+    display: flex; align-items: center;
     transition: color var(--transition);
   }
   .field .pw-toggle:hover { color: var(--sky); }
 
-  /* ── Row ── */
+  .field-error {
+    font-size: 11px; color: var(--error);
+    margin-top: 3px; padding-left: 2px; display: none;
+  }
+  .field-error.visible { display: block; }
+
+  /* ── ROW ── */
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-  /* ── User type selector ── */
-  .role-selector {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
+  /* ── ROLE SELECTOR ── */
+  .role-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .role-btn {
-    background: var(--surface2);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px 8px;
-    cursor: pointer;
-    text-align: center;
+    background: var(--surface2); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 8px;
+    cursor: pointer; text-align: center;
     transition: all var(--transition);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
   }
   .role-btn:hover { border-color: var(--sky); }
   .role-btn.selected {
-    border-color: var(--sky);
-    background: rgba(14,165,233,0.08);
+    border-color: var(--sky); background: rgba(14,165,233,0.08);
     box-shadow: 0 0 0 3px rgba(14,165,233,0.1);
   }
   .role-btn svg { width: 22px; height: 22px; color: var(--text-muted); transition: color var(--transition); }
   .role-btn.selected svg { color: var(--sky); }
-  .role-btn span {
-    font-size: 12px;
-    font-weight: 600;
-    font-family: var(--font-head);
-    color: var(--text-muted);
-    transition: color var(--transition);
-  }
+  .role-btn span { font-size: 12px; font-weight: 600; font-family: var(--font-head); color: var(--text-muted); transition: color var(--transition); }
   .role-btn.selected span { color: var(--sky); }
 
-  /* ── Plan cards ── */
+  /* ── PLAN CARDS ── */
   .plans { display: flex; flex-direction: column; gap: 10px; }
   .plan-card {
-    background: var(--surface2);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all var(--transition);
-    position: relative;
+    background: var(--surface2); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+    cursor: pointer; display: flex; align-items: center; gap: 12px;
+    transition: all var(--transition); position: relative;
   }
   .plan-card:hover { border-color: var(--sky); }
-  .plan-card.selected {
-    border-color: var(--sky);
-    background: rgba(14,165,233,0.06);
-  }
+  .plan-card.selected { border-color: var(--sky); background: rgba(14,165,233,0.06); }
   .plan-radio {
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    flex-shrink: 0;
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--border); flex-shrink: 0;
     transition: all var(--transition);
     display: flex; align-items: center; justify-content: center;
   }
-  .plan-card.selected .plan-radio {
-    border-color: var(--sky);
-    background: var(--sky);
-  }
-  .plan-card.selected .plan-radio::after {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: #fff;
-  }
+  .plan-card.selected .plan-radio { border-color: var(--sky); background: var(--sky); }
+  .plan-card.selected .plan-radio::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fff; }
   .plan-info { flex: 1; }
-  .plan-name {
-    font-family: var(--font-head);
-    font-weight: 700;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .plan-price { font-size: 12px; color: var(--text-sub); margin-top: 1px; }
-  .badge {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    padding: 2px 7px;
-    border-radius: 50px;
-    text-transform: uppercase;
-  }
+  .plan-name { font-family: var(--font-head); font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .plan-price { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
+  .badge { font-size: 9px; font-weight: 700; letter-spacing: 0.5px; padding: 2px 7px; border-radius: 50px; text-transform: uppercase; }
   .badge-popular { background: rgba(14,165,233,0.2); color: var(--sky); border: 1px solid rgba(14,165,233,0.3); }
   .badge-pro { background: rgba(245,158,11,0.2); color: var(--gold); border: 1px solid rgba(245,158,11,0.3); }
 
-  /* ── Skills chips ── */
-  .skills-label {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-sub);
-    margin-bottom: 8px;
-  }
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
+  /* ── SKILLS ── */
+  .skills-label { font-size: 12px; font-weight: 500; color: var(--text-sub); margin-bottom: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip {
-    background: var(--surface2);
-    border: 1.5px solid var(--border);
-    border-radius: 50px;
-    padding: 6px 14px;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-sub);
-    cursor: pointer;
-    transition: all var(--transition);
-    user-select: none;
+    background: var(--surface2); border: 1.5px solid var(--border);
+    border-radius: 50px; padding: 6px 14px;
+    font-size: 12px; font-weight: 500; color: var(--text-sub);
+    cursor: pointer; transition: all var(--transition); user-select: none;
   }
   .chip:hover { border-color: var(--sky); color: var(--sky); }
-  .chip.selected {
-    background: rgba(14,165,233,0.12);
-    border-color: var(--sky);
-    color: var(--sky);
-  }
+  .chip.selected { background: rgba(14,165,233,0.12); border-color: var(--sky); color: var(--sky); }
 
-  /* ── Section label ── */
+  /* ── SECTION LABEL ── */
   .section-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    margin-bottom: -4px;
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: -2px;
   }
 
-  /* ── Info box ── */
+  /* ── INFO BOX ── */
   .info-box {
-    background: rgba(14,165,233,0.06);
-    border: 1px solid rgba(14,165,233,0.2);
-    border-radius: var(--radius-sm);
-    padding: 14px 16px;
-    font-size: 13px;
-    color: var(--text-sub);
-    line-height: 1.6;
-    display: flex;
-    gap: 10px;
+    background: rgba(14,165,233,0.06); border: 1px solid rgba(14,165,233,0.2);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+    font-size: 13px; color: var(--text-sub); line-height: 1.6;
+    display: flex; gap: 10px;
   }
   .info-box svg { flex-shrink: 0; color: var(--sky); margin-top: 2px; }
 
-  /* ── Terms ── */
+  /* ── TERMS ── */
   .terms-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    cursor: pointer;
-    user-select: none;
+    display: flex; align-items: flex-start; gap: 12px;
+    cursor: pointer; user-select: none;
   }
   .custom-cb {
-    width: 20px; height: 20px;
-    border-radius: 5px;
-    border: 2px solid var(--border);
-    flex-shrink: 0;
-    margin-top: 1px;
+    width: 20px; height: 20px; border-radius: 5px;
+    border: 2px solid var(--border); flex-shrink: 0; margin-top: 1px;
     display: flex; align-items: center; justify-content: center;
     transition: all var(--transition);
   }
-  .terms-row.checked .custom-cb {
-    background: var(--gradient);
-    border-color: transparent;
-  }
+  .terms-row.checked .custom-cb { background: var(--gradient); border-color: transparent; }
   .terms-row.checked .custom-cb::after {
     content: '';
     width: 10px; height: 6px;
-    border-left: 2px solid #fff;
-    border-bottom: 2px solid #fff;
+    border-left: 2px solid #fff; border-bottom: 2px solid #fff;
     transform: rotate(-45deg) translateY(-1px);
   }
   .terms-text { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
   .terms-text a { color: var(--sky); text-decoration: none; }
   .terms-text a:hover { text-decoration: underline; }
 
-  /* ── Buttons ── */
-  .btn-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 8px;
-  }
+  /* ── BUTTONS ── */
+  .btn-row { display: flex; gap: 10px; margin-top: 6px; }
   .btn-back {
     flex: 0 0 auto;
-    background: var(--surface2);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px 20px;
-    color: var(--text-sub);
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
+    background: var(--surface2); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 18px;
+    color: var(--text-sub); font-family: var(--font-body);
+    font-size: 14px; font-weight: 500; cursor: pointer;
     transition: all var(--transition);
     display: flex; align-items: center; gap: 6px;
   }
   .btn-back:hover { border-color: var(--sky); color: var(--sky); }
   .btn-primary {
     flex: 1;
-    background: var(--gradient);
-    border: none;
-    border-radius: var(--radius-sm);
-    padding: 14px 20px;
-    color: #fff;
-    font-family: var(--font-head);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    cursor: pointer;
-    transition: all var(--transition);
+    background: var(--gradient); border: none;
+    border-radius: var(--radius-sm); padding: 15px 20px;
+    color: #fff; font-family: var(--font-head);
+    font-size: 15px; font-weight: 700; letter-spacing: 0.3px;
+    cursor: pointer; transition: all var(--transition);
     box-shadow: var(--gradient-glow);
     display: flex; align-items: center; justify-content: center; gap: 8px;
   }
-  .btn-primary:hover { opacity: 0.92; box-shadow: 0 0 32px rgba(14,165,233,0.45), 0 6px 20px rgba(6,182,212,0.3); transform: translateY(-1px); }
+  .btn-primary:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 0 32px rgba(14,165,233,0.45), 0 6px 20px rgba(6,182,212,0.3); }
   .btn-primary:active { transform: translateY(0); }
   .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-  /* spinner */
   .spinner {
     width: 16px; height: 16px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: none;
+    border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+    border-radius: 50%; animation: spin 0.7s linear infinite; display: none;
   }
   .btn-primary.loading .spinner { display: block; }
   .btn-primary.loading .btn-label { display: none; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── Banner ── */
+  /* ── BANNER ── */
   .banner {
-    display: none;
-    padding: 12px 16px;
-    border-radius: var(--radius-sm);
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 16px;
-    align-items: center;
-    gap: 10px;
+    display: none; padding: 12px 16px; border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 500; margin-bottom: 16px;
+    align-items: center; gap: 10px;
     animation: slideDown 0.3s ease;
   }
-  @keyframes slideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
-  .banner.error { display: flex; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
-  .banner.success { display: flex; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #86efac; }
+  @keyframes slideDown { from{opacity:0;transform:translateY(-8px);} to{opacity:1;transform:translateY(0);} }
+  .banner.error { display:flex; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+  .banner.success { display:flex; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #86efac; }
   .banner svg { flex-shrink: 0; }
 
-  /* ── Login link ── */
-  .login-link {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 13px;
-    color: var(--text-muted);
-  }
+  /* ── LOGIN LINK ── */
+  .login-link { margin-top: 20px; text-align: center; font-size: 13px; color: var(--text-muted); }
   .login-link a { color: var(--sky); text-decoration: none; font-weight: 500; }
   .login-link a:hover { text-decoration: underline; }
 
-  /* ── Success screen ── */
+  /* ── SUCCESS SCREEN ── */
   .success-screen {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 20px 0;
-    gap: 16px;
+    display: none; flex-direction: column; align-items: center;
+    text-align: center; padding: 24px 0; gap: 16px;
   }
   .success-icon {
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    background: rgba(34,197,94,0.1);
-    border: 2px solid rgba(34,197,94,0.3);
+    width: 68px; height: 68px; border-radius: 50%;
+    background: rgba(34,197,94,0.1); border: 2px solid rgba(34,197,94,0.3);
     display: flex; align-items: center; justify-content: center;
     animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
   }
-  @keyframes popIn { from { transform: scale(0); opacity:0; } to { transform: scale(1); opacity:1; } }
-  .success-title { font-family: var(--font-head); font-size: 22px; font-weight: 700; }
-  .success-sub { font-size: 14px; color: var(--text-sub); max-width: 300px; }
+  @keyframes popIn { from{transform:scale(0);opacity:0;} to{transform:scale(1);opacity:1;} }
+  .success-title { font-family: var(--font-head); font-size: 24px; font-weight: 700; }
+  .success-sub { font-size: 14px; color: var(--text-sub); max-width: 300px; line-height: 1.6; }
+  .success-role-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(14,165,233,0.1); border: 1px solid rgba(14,165,233,0.25);
+    border-radius: 50px; padding: 6px 16px;
+    font-size: 12px; font-weight: 600; color: var(--sky);
+    font-family: var(--font-head); letter-spacing: 0.4px; text-transform: uppercase;
+  }
 
-  @media (max-width: 480px) {
-    .card { padding: 28px 20px 24px; }
-    .row { grid-template-columns: 1fr; }
+  /* ── MOBILE ── */
+  @media (max-width: 500px) {
+    body { padding: 20px 12px 48px; }
+    .card { padding: 24px 18px 22px; border-radius: 16px; }
+    .row { grid-template-columns: 1fr; gap: 14px; }
+    .step-heading { font-size: 20px; }
+    .btn-primary { font-size: 14px; padding: 14px 16px; }
+    .role-selector { gap: 8px; }
+    .role-btn { padding: 12px 6px; }
+    .role-btn svg { width: 20px; height: 20px; }
   }
 </style>
 </head>
 <body>
 
-<a class="logo" href="/">THE GEARSH</a>
+<!-- Top bar: back link + logo -->
+<div class="topbar">
+  <a class="back-link" href="/">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    Back to Gearsh
+  </a>
+  <a class="logo" href="/">
+    <img src="https://thegearsh.com/icons/Icon-512.png" alt="Gearsh">
+    <span>Gearsh</span>
+  </a>
+</div>
 
 <div class="card">
 
@@ -593,7 +461,7 @@
   </div>
 
   <!-- Slides -->
-  <div class="slides-wrapper">
+  <div class="slides-wrapper" id="slides-wrapper">
     <div class="slides" id="slides">
 
       <!-- STEP 1: Account -->
@@ -664,7 +532,7 @@
           </div>
         </div>
 
-        <!-- Artist plans (only shown when artist selected) -->
+        <!-- Artist plans -->
         <div id="plans-section" style="display:none;">
           <div class="section-label" style="margin-bottom:10px;">Choose your plan</div>
           <div class="plans">
@@ -729,13 +597,16 @@
             <div class="chip" data-skill="Production" onclick="toggleChip(this)">Production</div>
             <div class="chip" data-skill="Sound" onclick="toggleChip(this)">Sound Tech</div>
             <div class="chip" data-skill="Dance" onclick="toggleChip(this)">Dance</div>
+            <div class="chip" data-skill="Fashion" onclick="toggleChip(this)">Fashion Design</div>
+            <div class="chip" data-skill="Rap" onclick="toggleChip(this)">Rap / Hip Hop</div>
+            <div class="chip" data-skill="Afropop" onclick="toggleChip(this)">Afropop</div>
           </div>
         </div>
 
         <div class="row">
-          <div class="field">
+          <div class="field always-up">
             <input type="date" id="dob" name="dob" placeholder="dob"/>
-            <label for="dob" style="transform: translateY(-8px) scale(0.78); color: var(--text-muted);">Date of Birth</label>
+            <label for="dob">Date of Birth</label>
           </div>
           <div class="field">
             <select id="gender" onchange="this.classList.add('has-value')">
@@ -770,7 +641,7 @@
 
         <div class="info-box">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span>Use at least 8 characters with a mix of letters, numbers, and symbols for a strong password.</span>
+          <span>Use at least 8 characters with a mix of letters, numbers, and symbols.</span>
         </div>
 
         <div class="field">
@@ -794,7 +665,7 @@
         <div class="terms-row" id="terms-row" onclick="toggleTerms()">
           <div class="custom-cb"></div>
           <div class="terms-text">
-            I agree to the <a href="/terms" onclick="event.stopPropagation()">Terms of Service</a> and <a href="/privacy" onclick="event.stopPropagation()">Privacy Policy</a>
+            I agree to the <a href="/terms.html" onclick="event.stopPropagation()">Terms of Service</a> and <a href="/privacy.html" onclick="event.stopPropagation()">Privacy Policy</a>
           </div>
         </div>
 
@@ -816,12 +687,13 @@
   <!-- Success screen -->
   <div class="success-screen" id="success-screen">
     <div class="success-icon">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <div class="success-title">You're in!</div>
-    <div class="success-sub">Your Gearsh account has been created. Welcome to the community.</div>
-    <button class="btn-primary" style="max-width:200px;" onclick="window.location.href='/dashboard'">
-      <span class="btn-label">Go to Dashboard</span>
+    <div class="success-title">You're in! 🎉</div>
+    <div id="success-role-badge" class="success-role-badge"></div>
+    <div class="success-sub" id="success-sub">Your Gearsh account has been created. Welcome to the community.</div>
+    <button class="btn-primary" style="max-width:220px; margin-top:8px;" onclick="window.location.href='/'">
+      <span class="btn-label">Back to Gearsh</span>
     </button>
   </div>
 
@@ -830,44 +702,30 @@
 <div class="login-link">Already have an account? <a href="/login">Sign in</a></div>
 
 <script>
-  // ── State ──
   let currentStep = 1;
   let selectedRole = '';
   let selectedTier = '';
   let termsChecked = false;
 
-  // ── URL param pre-fill ──
-  (function() {
-    const params = new URLSearchParams(window.location.search);
-    const role = params.get('role');
-    const tier = params.get('tier');
-    if (role) {
-      // defer until DOM ready
-      window.addEventListener('DOMContentLoaded', () => {
-        selectRole(role, true);
-        if (tier) selectTier(tier, true);
-      });
-    }
-  })();
-
   // ── Step navigation ──
   function goToStep(n) {
-    const slides = document.getElementById('slides');
-    slides.style.transform = `translateX(-${(n-1) * 100}%)`;
-    // update indicators
+    document.getElementById('slides').style.transform = `translateX(-${(n-1) * 100}%)`;
     document.querySelectorAll('.step-item').forEach((el, i) => {
-      el.classList.remove('active','done');
-      if (i+1 < n) el.classList.add('done');
-      if (i+1 === n) el.classList.add('active');
+      el.classList.remove('active', 'done');
+      if (i + 1 < n) el.classList.add('done');
+      if (i + 1 === n) el.classList.add('active');
     });
     currentStep = n;
     updateTierBadge();
     clearBanner();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function goBack(from) { goToStep(from - 1); }
 
-  // ── Validation ──
+  // ── Validation helpers ──
+  function v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
   function clearFieldError(id) {
     const inp = document.getElementById(id);
     const err = document.getElementById(id + '-err');
@@ -884,17 +742,17 @@
   function validateStep1() {
     let ok = true;
     ['username','firstName','lastName','email','phone'].forEach(f => clearFieldError(f));
-    if (!v('username')) { showFieldError('username'); ok=false; }
-    if (!v('firstName')) { showFieldError('firstName'); ok=false; }
-    if (!v('lastName')) { showFieldError('lastName'); ok=false; }
+    if (!v('username')) { showFieldError('username'); ok = false; }
+    if (!v('firstName')) { showFieldError('firstName'); ok = false; }
+    if (!v('lastName')) { showFieldError('lastName'); ok = false; }
     const email = v('email');
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError('email'); ok=false; }
-    if (!v('phone')) { showFieldError('phone'); ok=false; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError('email'); ok = false; }
+    if (!v('phone')) { showFieldError('phone'); ok = false; }
     return ok;
   }
 
   function validateStep2() {
-    if (!selectedRole) { showBanner('error', 'Please select your role (Booker, Artist, or Fan).'); return false; }
+    if (!selectedRole) { showBanner('error', 'Please select your role — Booker, Artist, or Fan.'); return false; }
     return true;
   }
 
@@ -903,15 +761,10 @@
     ['password','confirmPassword'].forEach(f => clearFieldError(f));
     const pw = v('password');
     const cpw = v('confirmPassword');
-    if (!pw || pw.length < 8) { showFieldError('password'); ok=false; }
-    if (!cpw || cpw !== pw) { showFieldError('confirmPassword'); ok=false; }
-    if (!termsChecked) { showBanner('error', 'Please accept the Terms of Service to continue.'); ok=false; }
+    if (!pw || pw.length < 8) { showFieldError('password'); ok = false; }
+    if (!cpw || cpw !== pw) { showFieldError('confirmPassword'); ok = false; }
+    if (!termsChecked) { showBanner('error', 'Please accept the Terms of Service to continue.'); ok = false; }
     return ok;
-  }
-
-  function v(id) {
-    const el = document.getElementById(id);
-    return el ? el.value.trim() : '';
   }
 
   function nextStep(from) {
@@ -920,35 +773,27 @@
     goToStep(from + 1);
   }
 
-  // ── Role selection ──
-  function selectRole(role, silent) {
+  // ── Role & Tier ──
+  function selectRole(role) {
     selectedRole = role;
-    document.querySelectorAll('.role-btn').forEach(b => {
-      b.classList.toggle('selected', b.dataset.role === role);
-    });
+    document.querySelectorAll('.role-btn').forEach(b => b.classList.toggle('selected', b.dataset.role === role));
     const isArtist = role === 'artist';
     document.getElementById('plans-section').style.display = isArtist ? 'block' : 'none';
     document.getElementById('skills-section').style.display = isArtist ? 'block' : 'none';
-    if (!isArtist) {
-      selectedTier = '';
-      updateTierBadge();
-    }
+    if (!isArtist) { selectedTier = ''; updateTierBadge(); }
   }
 
-  // ── Tier selection ──
-  function selectTier(tier, silent) {
+  function selectTier(tier) {
     selectedTier = tier;
-    document.querySelectorAll('.plan-card').forEach(c => {
-      c.classList.toggle('selected', c.dataset.tier === tier);
-    });
+    document.querySelectorAll('.plan-card').forEach(c => c.classList.toggle('selected', c.dataset.tier === tier));
     updateTierBadge();
   }
 
   function updateTierBadge() {
     const badge = document.getElementById('tier-badge');
     const badgeText = document.getElementById('tier-badge-text');
+    const labels = { standard: 'Standard Plan', premium: 'Premium Pro Plan' };
     if (selectedTier && selectedTier !== 'basic' && currentStep >= 2) {
-      const labels = { standard: 'Standard Plan', premium: 'Premium Pro Plan' };
       badgeText.textContent = labels[selectedTier] || '';
       badge.classList.add('visible');
     } else {
@@ -956,10 +801,8 @@
     }
   }
 
-  // ── Skills chips ──
-  function toggleChip(el) {
-    el.classList.toggle('selected');
-  }
+  // ── Skills ──
+  function toggleChip(el) { el.classList.toggle('selected'); }
 
   // ── Password toggle ──
   function togglePw(fieldId, btn) {
@@ -971,7 +814,7 @@
       : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
   }
 
-  // ── Terms toggle ──
+  // ── Terms ──
   function toggleTerms() {
     termsChecked = !termsChecked;
     document.getElementById('terms-row').classList.toggle('checked', termsChecked);
@@ -983,29 +826,20 @@
     banner.className = 'banner ' + type;
     document.getElementById('banner-text').textContent = msg;
   }
-  function clearBanner() {
-    document.getElementById('banner').className = 'banner';
-  }
+  function clearBanner() { document.getElementById('banner').className = 'banner'; }
 
   // ── Submit ──
   async function submitForm() {
     if (!validateStep3()) return;
-
     const btn = document.getElementById('submit-btn');
     btn.classList.add('loading');
     btn.disabled = true;
 
     const skills = [...document.querySelectorAll('.chip.selected')].map(c => c.dataset.skill);
-
     const payload = {
-      username: v('username'),
-      firstName: v('firstName'),
-      lastName: v('lastName'),
-      email: v('email'),
-      phone: v('phone'),
-      role: selectedRole,
-      tier: selectedTier || null,
-      skills,
+      username: v('username'), firstName: v('firstName'), lastName: v('lastName'),
+      email: v('email'), phone: v('phone'), role: selectedRole,
+      tier: selectedTier || null, skills,
       country: document.getElementById('country').value,
       city: v('city'),
       dob: document.getElementById('dob').value,
@@ -1020,17 +854,20 @@
         body: JSON.stringify(payload),
       });
       const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Signup failed. Please try again.');
 
-      if (!res.ok) {
-        throw new Error(data.message || 'Signup failed. Please try again.');
-      }
-
-      // success
+      // Show success
       document.getElementById('steps').style.display = 'none';
       document.getElementById('tier-badge').style.display = 'none';
-      document.getElementById('slides-wrapper') && (document.querySelector('.slides-wrapper').style.display = 'none');
-      document.querySelector('.slides-wrapper').style.display = 'none';
+      document.getElementById('slides-wrapper').style.display = 'none';
       const ss = document.getElementById('success-screen');
+      const roleLabels = { artist: '🎤 Artist', booker: '📅 Booker', fan: '❤️ Fan' };
+      document.getElementById('success-role-badge').textContent = roleLabels[selectedRole] || selectedRole;
+      if (selectedTier && selectedTier !== 'basic') {
+        const tierLabels = { standard: 'Standard Plan', premium: 'Premium Pro' };
+        document.getElementById('success-sub').textContent =
+          `Welcome to Gearsh on the ${tierLabels[selectedTier]}. Your account is live — go explore.`;
+      }
       ss.style.display = 'flex';
       clearBanner();
 
@@ -1041,13 +878,13 @@
     }
   }
 
-  // ── Pre-fill from URL on load ──
+  // ── URL param pre-fill ──
   document.addEventListener('DOMContentLoaded', function() {
     const params = new URLSearchParams(window.location.search);
     const role = params.get('role');
     const tier = params.get('tier');
-    if (role) selectRole(role, true);
-    if (tier) selectTier(tier, true);
+    if (role) selectRole(role);
+    if (tier) selectTier(tier);
   });
 </script>
 </body>
