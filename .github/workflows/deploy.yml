@@ -39,3 +39,8 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy build/web --project-name=thegearsh-com
+
+      - name: Copy artist images to web build
+         run: | mkdir -p build/web/assets/images/artists
+              cp -r assets/images/artists/* build/web/assets/images/artists/
+              cp -r web/icons build/web/icons 2>/dev/null || true
