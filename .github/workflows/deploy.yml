@@ -32,6 +32,8 @@ jobs:
           cp -r assets/images/artists/* build/web/assets/images/artists/
           cp -r web/icons build/web/icons 2>/dev/null || true
           cp web/gearsh-brand.css build/web/gearsh-brand.css 2>/dev/null || true
+          mv build/web/index.html build/web/app.html
+          cp web/index.html build/web/index.html 2>/dev/null || true
           cp web/signup.html build/web/signup.html 2>/dev/null || true
           cp web/terms.html build/web/terms.html 2>/dev/null || true
           cp web/privacy.html build/web/privacy.html 2>/dev/null || true
