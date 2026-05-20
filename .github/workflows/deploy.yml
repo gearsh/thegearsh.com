@@ -1,16 +1,13 @@
 name: Deploy to Cloudflare Pages
-
 on:
   push:
     branches:
       - main
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Remove stale build artifacts from web/
         run: |
           rm -f web/main.dart.js
@@ -20,27 +17,27 @@ jobs:
           rm -f web/version.json
           rm -rf web/canvaskit
           rm -rf web/assets
-
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.41.4'
           channel: 'stable'
-
       - name: Install dependencies
         run: flutter pub get
-
       - name: Build web
         run: flutter build web --release
-
+      - name: Copy static assets to build output
+        run: |
+          mkdir -p build/web/assets/images/artists
+          cp -r assets/images/artists/* build/web/assets/images/artists/
+          cp -r web/icons build/web/icons 2>/dev/null || true
+          cp web/gearsh-brand.css build/web/gearsh-brand.css 2>/dev/null || true
+          cp web/signup.html build/web/signup.html 2>/dev/null || true
+          cp web/terms.html build/web/terms.html 2>/dev/null || true
+          cp web/privacy.html build/web/privacy.html 2>/dev/null || true
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy build/web --project-name=thegearsh-com
-
-      - name: Copy artist images to web build
-         run: | mkdir -p build/web/assets/images/artists
-              cp -r assets/images/artists/* build/web/assets/images/artists/
-              cp -r web/icons build/web/icons 2>/dev/null || true
