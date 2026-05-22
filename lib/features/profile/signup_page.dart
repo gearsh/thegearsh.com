@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -179,23 +177,27 @@ class _SignupPageState extends ConsumerState<SignupPage>
       setState(() { _isLoading = true; _error = null; _success = false; });
 
       try {
+        final isArtist = _userType?.toLowerCase() == 'artist';
         final result = await ref.read(authControllerProvider).signUpWithEmail(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
           username: _userNameController.text.trim(),
           firstName: _firstNameController.text.trim(),
           lastName: _surnameController.text.trim(),
+          userType: isArtist ? 'artist' : 'client',
+          phone: _contactNumberController.text.trim(),
+          location: _locationController.text.trim(),
+          country: _countryController.text.trim(),
+          skillSet: _selectedSkills.join(', '),
         );
 
         if (!mounted) return;
 
         if (result.success && result.user != null) {
-          final fullName = '${_firstNameController.text.trim()} ${_surnameController.text.trim()}';
-          final email = _emailController.text.trim();
-          final role = _userType?.toLowerCase() == 'artist' ? UserRole.artist : UserRole.client;
+          final authUser = result.user!;
+          final role = authUser.isArtist ? UserRole.artist : UserRole.client;
 
-          userRoleService.login(role: role, name: fullName, email: email);
-          await _saveAdditionalProfileData();
+          userRoleService.login(role: role, name: authUser.fullName, email: authUser.email);
 
           setState(() { _success = true; _isLoading = false; });
 
@@ -217,36 +219,6 @@ class _SignupPageState extends ConsumerState<SignupPage>
         });
         debugPrint('Signup error: $e');
       }
-    }
-  }
-
-  Future<void> _saveAdditionalProfileData() async {
-    try {
-      const apiBaseUrl = 'https://thegearsh.com/api/update-profile';
-      final user = ref.read(currentFirebaseUserProvider);
-      if (user == null) return;
-      final idToken = await user.getIdToken();
-      await http.post(
-        Uri.parse(apiBaseUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $idToken',
-        },
-        body: jsonEncode({
-          'firebase_uid': user.uid,
-          'user_type': _userType,
-          'subscription_tier': _selectedTier,
-          'contact_number': _contactNumberController.text.trim(),
-          'country': _countryController.text.trim(),
-          'location': _locationController.text.trim(),
-          'skill_set': _selectedSkills.join(', '),
-          'date_of_birth': _dateOfBirth?.toIso8601String(),
-          'gender': _gender,
-        }),
-      ).timeout(const Duration(seconds: 30));
-    } catch (e) {
-      debugPrint('Failed to save additional profile data: $e');
     }
   }
 

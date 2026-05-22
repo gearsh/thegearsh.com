@@ -96,6 +96,8 @@ class AuthApiService {
     String? phone,
     String? location,
     String? country,
+    String? username,
+    String? skillSet,
   }) async {
     final response = await _apiService.post(
       ApiConfig.authRegister,
@@ -108,37 +110,72 @@ class AuthApiService {
         'phone': phone,
         'location': location,
         'country': country,
+        'username': username,
+        'user_name': username,
+        'skill_set': skillSet,
       },
     );
 
     if (response.success && response.data != null) {
-      final user = AuthUser.fromJson(response.data['data']);
-      await _saveAuthData(user);
-      _apiService.setAuthToken(user.token);
-      return AuthResult.success(user);
+      final userData = response.data['data'];
+      if (userData is Map<String, dynamic>) {
+        final user = AuthUser.fromJson(userData);
+        await _saveAuthData(user);
+        _apiService.setAuthToken(user.token);
+        return AuthResult.success(user);
+      }
     }
 
     return AuthResult.failure(response.error ?? 'Registration failed');
   }
 
-  /// Login user
+  /// Login with email or username + password
   Future<AuthResult> login({
-    required String email,
+    required String identifier,
     required String password,
   }) async {
     final response = await _apiService.post(
       ApiConfig.authLogin,
       body: {
-        'email': email,
+        'identifier': identifier,
         'password': password,
       },
     );
 
     if (response.success && response.data != null) {
-      final user = AuthUser.fromJson(response.data['data']);
-      await _saveAuthData(user);
-      _apiService.setAuthToken(user.token);
-      return AuthResult.success(user);
+      final userData = response.data['data'];
+      if (userData is Map<String, dynamic>) {
+        final user = AuthUser.fromJson(userData);
+        await _saveAuthData(user);
+        _apiService.setAuthToken(user.token);
+        return AuthResult.success(user);
+      }
+    }
+
+    return AuthResult.failure(response.error ?? 'Login failed');
+  }
+
+  /// Login via /api/login (alias used by marketing site)
+  Future<AuthResult> loginLegacy({
+    required String identifier,
+    required String password,
+  }) async {
+    final response = await _apiService.post(
+      '/login',
+      body: {
+        'identifier': identifier,
+        'password': password,
+      },
+    );
+
+    if (response.success && response.data != null) {
+      final userData = response.data['data'];
+      if (userData is Map<String, dynamic>) {
+        final user = AuthUser.fromJson(userData);
+        await _saveAuthData(user);
+        _apiService.setAuthToken(user.token);
+        return AuthResult.success(user);
+      }
     }
 
     return AuthResult.failure(response.error ?? 'Login failed');
@@ -160,17 +197,16 @@ class AuthApiService {
       final userData = prefs.getString(_userKey);
 
       if (token != null && userData != null) {
-        // Decode and validate token
         final payload = _decodeToken(token);
         if (payload != null && payload['exp'] > DateTime.now().millisecondsSinceEpoch) {
           _apiService.setAuthToken(token);
-          // In production, you'd validate the token with the server
-          // For now, we'll just restore from cached data
-          return null; // Return user from cache or fetch from server
+          return AuthUser.fromJson(
+            Map<String, dynamic>.from(jsonDecode(userData) as Map),
+          );
         }
       }
     } catch (e) {
-      // Session restore failed, user will need to login again
+      // Session restore failed
     }
     return null;
   }
@@ -179,7 +215,17 @@ class AuthApiService {
   Future<void> _saveAuthData(AuthUser user) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_tokenKey, user.token);
-    // In production, encrypt sensitive data
+    await prefs.setString(_userKey, jsonEncode({
+      'user_id': user.userId,
+      'email': user.email,
+      'user_type': user.userType,
+      'first_name': user.firstName,
+      'last_name': user.lastName,
+      'display_name': user.displayName,
+      'profile_picture_url': user.profilePictureUrl,
+      'is_verified': user.isVerified,
+      'token': user.token,
+    }));
   }
 
   /// Decode JWT-like token

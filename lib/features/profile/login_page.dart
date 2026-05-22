@@ -88,22 +88,19 @@ class _LoginPageState extends ConsumerState<LoginPage>
         if (!mounted) return;
 
         if (result.success && result.user != null) {
-          // Determine display name
-          final displayName = result.user!.displayName ??
-              (identifier.contains('@') ? identifier.split('@').first : identifier);
+          final authUser = result.user!;
+          final role = authUser.isArtist ? UserRole.artist : UserRole.client;
 
-          // Set user as logged in (not guest) with their current role
           userRoleService.login(
-            role: userRoleService.currentRole,
-            name: displayName,
-            email: result.user!.email ?? identifier,
+            role: role,
+            name: authUser.fullName,
+            email: authUser.email,
           );
 
-          // Navigate based on role
-          if (userRoleService.isArtist) {
+          if (authUser.isArtist) {
             GoRouter.of(context).go('/dashboard');
           } else {
-            GoRouter.of(context).go('/');
+            GoRouter.of(context).go('/home');
           }
         } else {
           setState(() {

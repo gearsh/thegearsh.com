@@ -49,6 +49,7 @@ jobs:
           mkdir -p build/web/functions/api
           cp -r functions/api/* build/web/functions/api/
           cp web/functions/api/*.js build/web/functions/api/ 2>/dev/null || true
+          cp functions/api/auth-utils.js build/web/functions/api/auth-utils.js
           cp web/wrangler.toml build/web/wrangler.toml 2>/dev/null || true
       - name: Verify deployment bundle
         run: |
