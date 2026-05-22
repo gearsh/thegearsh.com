@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gearsh — the global platform where artists get discovered, booked, and paid. List your gig today.">
+  <meta name="og:title" content="Get Booked. Get Paid. Go Global. | Gearsh">
+  <meta name="og:description" content="Gearsh — the global platform where artists get discovered, booked, and paid.">
+  <meta name="og:image" content="icons/Icon-512.png">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Get Booked. Get Paid. Go Global. | Gearsh</title>
+  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" href="icons/Icon-512.png">
+  <link rel="stylesheet" href="gearsh-brand.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh; min-height: 100svh;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      position: relative; overflow: hidden;
+      padding: 0 0 48px;
+    }
+    .hero-mosaic {
+      position: absolute; inset: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 3px; opacity: 0.35;
+    }
+    .hero-mosaic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top,
+        rgba(10,10,10,1) 0%, rgba(10,10,10,0.92) 25%,
+        rgba(10,10,10,0.5) 55%, rgba(10,10,10,0.3) 100%);
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      padding: 0 24px; max-width: 1200px; margin: 0 auto; width: 100%;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(0,191,255,0.12); border: 0.5px solid rgba(0,191,255,0.2);
+      color: var(--g-accent); padding: 6px 14px; border-radius: 20px;
+      font-size: 12px; font-weight: 500; margin-bottom: 20px;
+    }
+    .hero-badge .pulse {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--g-accent); animation: pls 2s infinite;
+    }
+    @keyframes pls { 0%,100%{opacity:1}50%{opacity:.3} }
+    .hero-title {
+      font-family: var(--g-serif); font-weight: 400;
+      font-size: clamp(40px, 8vw, 64px);
+      line-height: 1.05; color: var(--g-white);
+      letter-spacing: -0.03em; margin-bottom: 14px;
+    }
+    .hero-title em { font-style: italic; color: var(--g-accent); }
+    .hero-sub {
+      font-size: 16px; color: var(--g-text-muted);
+      max-width: 440px; line-height: 1.55; margin-bottom: 28px;
+    }
+    .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    /* ── STATS ── */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--g-border);
+      border-radius: 14px; overflow: hidden;
+      margin-top: 56px;
+    }
+    .stat-item { background: var(--g-surface); padding: 24px 16px; text-align: center; }
+    .stat-value { font-size: 22px; font-weight: 700; color: var(--g-white); letter-spacing: -0.02em; }
+    .stat-value.accent { color: var(--g-accent); }
+    .stat-label { font-size: 12px; color: var(--g-text-dim); margin-top: 4px; }
+    @media (max-width: 520px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+    /* ── STORIES ── */
+    .stories-section { padding: 40px 20px 0; max-width: 1200px; margin: 0 auto; }
+    .stories-bar {
+      display: flex; gap: 20px; overflow-x: auto; padding-bottom: 8px;
+      -ms-overflow-style: none; scrollbar-width: none;
+    }
+    .stories-bar::-webkit-scrollbar { display: none; }
+    .story-item {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 8px; flex-shrink: 0; cursor: pointer; text-decoration: none;
+    }
+    .story-ring {
+      width: 72px; height: 72px; border-radius: 50%; padding: 3px;
+      background: linear-gradient(135deg, var(--g-accent), #8B5CF6, #EC4899);
+    }
+    .story-ring img {
+      width: 100%; height: 100%; border-radius: 50%;
+      object-fit: cover; display: block; border: 3px solid var(--g-black);
+    }
+    .story-name {
+      font-size: 11px; color: var(--g-text-muted); font-weight: 500;
+      max-width: 72px; text-align: center; overflow: hidden;
+      text-overflow: ellipsis; white-space: nowrap;
+    }
+    /* ── CATS PILLS ── */
+    .cats-section { padding: 32px 20px 0; max-width: 1200px; margin: 0 auto; }
+    .cats-scroll {
+      display: flex; gap: 10px; overflow-x: auto; padding: 8px 0;
+      -ms-overflow-style: none; scrollbar-width: none;
+    }
+    .cats-scroll::-webkit-scrollbar { display: none; }
+    .cat-pill {
+      flex-shrink: 0; display: flex; align-items: center; gap: 8px;
+      background: var(--g-surface); border: 0.5px solid var(--g-border);
+      border-radius: 40px; padding: 12px 22px;
+      font-size: 13px; color: var(--g-text-muted); font-weight: 500;
+      cursor: pointer; transition: border-color 0.2s, color 0.2s, background 0.2s;
+      text-decoration: none;
+    }
+    .cat-pill i { font-size: 18px; color: var(--g-accent); }
+    .cat-pill:hover { border-color: var(--g-accent); color: var(--g-white); background: var(--g-accent-light); }
+    /* ── FEED GRID ── */
+    .feed-section { padding: 32px 20px 0; max-width: 1200px; margin: 0 auto; }
+    .feed-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .feed-title { font-family: var(--g-serif); font-size: 24px; color: var(--g-white); font-weight: 400; letter-spacing: -0.02em; }
+    .feed-title em { font-style: italic; color: var(--g-accent); }
+    .feed-link { font-size: 13px; color: var(--g-accent); text-decoration: none; font-weight: 500; }
+    .feed-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+    .feed-cell { position: relative; overflow: hidden; aspect-ratio: 1; cursor: pointer; border-radius: 2px; }
+    .feed-cell img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
+    .feed-cell:hover img { transform: scale(1.06); }
+    .feed-cell-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 12px; transition: background 0.3s;
+    }
+    .feed-cell:hover .feed-cell-overlay { background: rgba(0,0,0,0.55); }
+    .feed-cell-info { opacity: 0; transform: translateY(8px); transition: opacity 0.3s, transform 0.3s; }
+    .feed-cell:hover .feed-cell-info { opacity: 1; transform: translateY(0); }
+    .feed-cell-name { font-size: 13px; font-weight: 700; color: #fff; }
+    .feed-cell-genre { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+    .feed-cell-price { font-size: 12px; font-weight: 500; color: var(--g-accent); margin-top: 4px; }
+    .feed-cell-badge {
+      position: absolute; top: 8px; right: 8px;
+      font-size: 10px; padding: 3px 8px; border-radius: 6px;
+      font-weight: 600; backdrop-filter: blur(8px);
+    }
+    .fb-new { background: rgba(0,191,255,0.25); color: #7DD3FC; }
+    .fb-rise { background: rgba(139,92,246,0.25); color: #C4B5FD; }
+    .fb-feat { background: rgba(251,191,36,0.25); color: #FDE68A; }
+    .fb-deal { background: rgba(52,211,153,0.25); color: #6EE7B7; }
+    .feed-cell.large { grid-column: span 2; grid-row: span 2; }
+    @media (max-width: 600px) {
+      .feed-grid { grid-template-columns: repeat(3, 1fr); gap: 2px; }
+      .feed-cell.large { grid-column: span 1; grid-row: span 1; }
+    }
+    /* ── TESTIMONIALS ── */
+    .testimonials-section { padding: 48px 20px 0; max-width: 1200px; margin: 0 auto; }
+    .testimonial-feed {
+      display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;
+      -ms-overflow-style: none; scrollbar-width: none;
+    }
+    .testimonial-feed::-webkit-scrollbar { display: none; }
+    .testi-card {
+      flex-shrink: 0; width: 300px; background: var(--g-surface);
+      border: 0.5px solid var(--g-border); border-radius: 14px; padding: 24px;
+    }
+    .testi-text { font-size: 14px; color: var(--g-text-muted); line-height: 1.6; font-style: italic; margin-bottom: 16px; }
+    .testi-author { display: flex; align-items: center; gap: 10px; }
+    .testi-ava { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: var(--g-surface-3); }
+    .testi-name { font-size: 13px; font-weight: 700; color: var(--g-white); }
+    .testi-role { font-size: 11px; color: var(--g-text-dim); }
+    /* ── SECTION SHARED ── */
+    .section-label { font-size: 11px; font-weight: 500; color: var(--g-accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+    .section-title { font-family: var(--g-serif); font-weight: 400; font-size: clamp(26px, 4.5vw, 38px); line-height: 1.15; color: var(--g-white); letter-spacing: -0.02em; max-width: 560px; }
+    .section-title em { font-style: italic; color: var(--g-accent); }
+    .section-sub { font-size: 14px; color: var(--g-text-muted); max-width: 460px; margin-top: 10px; line-height: 1.55; }
+    /* ── HOW ── */
+    .how-section { padding: 72px 20px 0; max-width: 1200px; margin: 0 auto; }
+    .how-visual { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 28px; border-radius: 16px; overflow: hidden; }
+    .how-card { background: var(--g-surface); padding: 40px 28px; position: relative; }
+    .how-card::before { content: attr(data-num); font-size: 80px; font-weight: 700; color: rgba(0,191,255,0.06); position: absolute; top: 16px; right: 20px; line-height: 1; letter-spacing: -0.05em; }
+    .how-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--g-accent-light); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+    .how-icon i { font-size: 22px; color: var(--g-accent); }
+    .how-card h3 { font-size: 16px; font-weight: 700; color: var(--g-white); margin-bottom: 8px; }
+    .how-card p { font-size: 13px; color: var(--g-text-muted); line-height: 1.55; }
+    @media (max-width: 768px) { .how-visual { grid-template-columns: 1fr; } }
+    /* ── MASTERY ── */
+    .mastery-section { padding: 72px 20px 0; max-width: 1200px; margin: 0 auto; }
+    .mastery-bar { display: flex; gap: 2px; margin-top: 28px; border-radius: 16px; overflow: hidden; }
+    .mastery-tier { flex: 1; padding: 28px 20px; text-align: center; }
+    .mt-1 { background: rgba(0,191,255,0.06); } .mt-2 { background: rgba(139,92,246,0.06); }
+    .mt-3 { background: rgba(251,191,36,0.06); } .mt-4 { background: rgba(236,72,153,0.06); }
+    .mt-icon { font-size: 28px; margin-bottom: 10px; }
+    .mt-name { font-size: 14px; font-weight: 700; color: var(--g-white); margin-bottom: 2px; }
+    .mt-hrs { font-size: 11px; color: var(--g-accent); font-weight: 500; margin-bottom: 8px; }
+    .mt-desc { font-size: 11px; color: var(--g-text-muted); line-height: 1.5; }
+    @media (max-width: 768px) { .mastery-bar { flex-direction: column; } }
+    /* ── WHY ── */
+    .why-section { padding: 72px 20px 0; max-width: 1200px; margin: 0 auto; }
+    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 28px; border-radius: 16px; overflow: hidden; }
+    .why-card { background: var(--g-surface); padding: 28px 24px; }
+    .why-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--g-accent-light); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .why-icon i { font-size: 20px; color: var(--g-accent); }
+    .why-card h3 { font-size: 14px; font-weight: 700; color: var(--g-white); margin-bottom: 6px; }
+    .why-card p { font-size: 12px; color: var(--g-text-muted); line-height: 1.55; }
+    @media (max-width: 768px) { .why-grid { grid-template-columns: 1fr; } }
+    /* ── CTA ── */
+    .cta-section { padding: 80px 20px 100px; max-width: 1200px; margin: 0 auto; }
+    .cta-box { position: relative; overflow: hidden; border-radius: 20px; padding: 64px 32px; text-align: center; }
+    .cta-mosaic { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(2, 1fr); gap: 2px; opacity: 0.15; }
+    .cta-mosaic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .cta-overlay { position: absolute; inset: 0; background: rgba(10,10,10,0.88); }
+    .cta-content { position: relative; z-index: 2; }
+    .cta-content h2 { font-family: var(--g-serif); font-weight: 400; font-size: clamp(28px, 5vw, 40px); line-height: 1.15; color: var(--g-white); letter-spacing: -0.02em; max-width: 500px; margin: 0 auto 12px; }
+    .cta-content h2 em { font-style: italic; color: var(--g-accent); }
+    .cta-content p { font-size: 15px; color: var(--g-text-muted); max-width: 420px; margin: 0 auto 28px; line-height: 1.55; }
+    .cta-fine { font-size: 12px; color: var(--g-text-dim); margin-top: 16px; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="g-nav">
+    <div class="g-nav-inner">
+      <a href="./" class="g-nav-logo">
+        <img src="icons/Icon-512.png" alt="Gearsh"> Gearsh
+      </a>
+      <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu">
+        <i class="ti ti-menu-2"></i>
+      </button>
+      <ul class="g-nav-links">
+        <li><a href="#feed">Explore</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#why">Why Gearsh</a></li>
+        <li><a href="list-gig.html" class="g-nav-cta">Join free</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-mosaic">
+      <img src="assets/images/artists/tyla.jpg" alt="" loading="eager">
+      <img src="assets/images/artists/ZJ90.jpg" alt="" loading="eager">
+      <img src="assets/images/artists/coffee.png" alt="" loading="eager">
+      <img src="assets/images/artists/kabza.png" alt="" loading="eager">
+      <img src="assets/images/artists/maphorisa.png" alt="" loading="eager">
+      <img src="assets/images/artists/waffles.png" alt="" loading="eager">
+      <img src="assets/images/artists/nastyc.png" alt="" loading="eager">
+      <img src="assets/images/artists/cassper.png" alt="" loading="eager">
+      <img src="assets/images/artists/kelvin-momo.png" alt="" loading="lazy">
+      <img src="assets/images/artists/a-reece.png" alt="" loading="lazy">
+      <img src="assets/images/artists/empress-ngqama.jpg" alt="" loading="lazy">
+      <img src="assets/images/artists/yde.png" alt="" loading="lazy">
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge"><span class="pulse"></span> Now live — artist booking platform</div>
+      <h1 class="hero-title">Get <em>booked.</em><br>Get <em>paid.</em><br>Go <em>global.</em></h1>
+      <p class="hero-sub">The platform where talented artists get discovered, booked, and paid — without the middleman.</p>
+      <div class="hero-actions">
+        <a href="list-gig.html" class="btn-main">List your gig free <i class="ti ti-arrow-right" style="font-size:18px"></i></a>
+        <a href="#how" class="btn-ghost">How it works</a>
+      </div>
+      <div class="stats-row">
+        <div class="stat-item"><div class="stat-value accent">Free</div><div class="stat-label">To list your profile</div></div>
+        <div class="stat-item"><div class="stat-value">Global</div><div class="stat-label">Client reach</div></div>
+        <div class="stat-item"><div class="stat-value">10,000</div><div class="stat-label">Hours to mastery</div></div>
+        <div class="stat-item"><div class="stat-value">Secure</div><div class="stat-label">Payments guaranteed</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORIES -->
+  <div class="stories-section reveal">
+    <div class="stories-bar">
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/yde.png" alt="Y.D.E"></div><span class="story-name">Y.D.E</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/ZJ90.jpg" alt="ZJ90"></div><span class="story-name">ZJ90</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/rixelton.jpg" alt="Rix Elton"></div><span class="story-name">Rix Elton</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/empress-ngqama.jpg" alt="Empress"></div><span class="story-name">Empress</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/dripmaker.png" alt="Dripmaker"></div><span class="story-name">Dripmaker</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/tyla.jpg" alt="Tyla"></div><span class="story-name">Tyla</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/coffee.png" alt="Black Coffee"></div><span class="story-name">Black Coffee</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/kabza.png" alt="Kabza"></div><span class="story-name">Kabza</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/maphorisa.png" alt="DJ Maphorisa"></div><span class="story-name">Maphorisa</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/waffles.png" alt="Uncle Waffles"></div><span class="story-name">Uncle Waffles</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/nastyc.png" alt="Nasty C"></div><span class="story-name">Nasty C</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/cassper.png" alt="Cassper"></div><span class="story-name">Cassper</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/kelvin-momo.png" alt="Kelvin Momo"></div><span class="story-name">Kelvin Momo</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/a-reece.png" alt="A-Reece"></div><span class="story-name">A-Reece</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/lastkrm.png" alt="Last KRM"></div><span class="story-name">Last KRM</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/scotts.png" alt="Scotts"></div><span class="story-name">Scotts</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/emtee.webp" alt="Emtee"></div><span class="story-name">Emtee</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/kiffness.png" alt="The Kiffness"></div><span class="story-name">The Kiffness</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/antwoord.png" alt="Die Antwoord"></div><span class="story-name">Die Antwoord</span></a>
+      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/seether.png" alt="Seether"></div><span class="story-name">Seether</span></a>
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="cats-section reveal">
+    <div class="cats-scroll">
+      <a class="cat-pill"><i class="ti ti-headphones"></i> DJs</a>
+      <a class="cat-pill"><i class="ti ti-music"></i> Musicians</a>
+      <a class="cat-pill"><i class="ti ti-microphone"></i> MCs</a>
+      <a class="cat-pill"><i class="ti ti-camera"></i> Photographers</a>
+      <a class="cat-pill"><i class="ti ti-video"></i> Videographers</a>
+      <a class="cat-pill"><i class="ti ti-shirt"></i> Fashion</a>
+      <a class="cat-pill"><i class="ti ti-man"></i> Dancers</a>
+      <a class="cat-pill"><i class="ti ti-brush"></i> Visual art</a>
+    </div>
+  </div>
+
+  <!-- FEED GRID -->
+  <section class="feed-section reveal" id="feed">
+    <div class="feed-header">
+      <h2 class="feed-title">Explore <em>talent</em></h2>
+      <a href="list-gig.html" class="feed-link">See all <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
+    </div>
+    <div class="feed-grid">
+      <div class="feed-cell large"><img src="assets/images/artists/tyla.jpg" alt="Tyla"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Tyla</div><div class="feed-cell-genre">Afropop · Global</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/yde.png" alt="Y.D.E"><span class="feed-cell-badge fb-deal">80% off</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Y.D.E</div><div class="feed-cell-genre">Hip Hop</div><div class="feed-cell-price">R2,000</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/ZJ90.jpg" alt="ZJ90"><span class="feed-cell-badge fb-rise">Rising</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">ZJ90</div><div class="feed-cell-genre">House · Amapiano</div><div class="feed-cell-price">from R25,000</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/maphorisa.png" alt="DJ Maphorisa"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">DJ Maphorisa</div><div class="feed-cell-genre">Amapiano · SA</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/waffles.png" alt="Uncle Waffles"><span class="feed-cell-badge fb-rise">Rising</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Uncle Waffles</div><div class="feed-cell-genre">DJ · Amapiano</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/nastyc.png" alt="Nasty C"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Nasty C</div><div class="feed-cell-genre">Hip Hop · Durban</div></div></div></div>
+      <div class="feed-cell large"><img src="assets/images/artists/coffee.png" alt="Black Coffee"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Black Coffee</div><div class="feed-cell-genre">House · International</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/cassper.png" alt="Cassper Nyovest"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Cassper Nyovest</div><div class="feed-cell-genre">Hip Hop · Joburg</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/rixelton.jpg" alt="Rix Elton"><span class="feed-cell-badge fb-new">Newcomer</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Rix Elton</div><div class="feed-cell-genre">Amapiano DJ</div><div class="feed-cell-price">from R20,000</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/empress-ngqama.jpg" alt="Empress Ngqama"><span class="feed-cell-badge fb-new">Newcomer</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Empress Ngqama</div><div class="feed-cell-genre">Afro-Soul · Reggae</div><div class="feed-cell-price">from R22,000</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/kelvin-momo.png" alt="Kelvin Momo"><span class="feed-cell-badge fb-rise">Rising</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Kelvin Momo</div><div class="feed-cell-genre">Amapiano</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/a-reece.png" alt="A-Reece"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">A-Reece</div><div class="feed-cell-genre">Hip Hop · Pretoria</div></div></div></div>
+      <div class="feed-cell large"><img src="assets/images/artists/kabza.png" alt="Kabza De Small"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Kabza De Small</div><div class="feed-cell-genre">Amapiano · Pretoria</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/dripmaker.png" alt="Dripmaker"><span class="feed-cell-badge fb-rise">Rising</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Dripmaker</div><div class="feed-cell-genre">Fashion</div><div class="feed-cell-price">from R300</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/lastkrm.png" alt="William Last KRM"><span class="feed-cell-badge fb-rise">Rising</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">William Last KRM</div><div class="feed-cell-genre">Comedy · Music</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/emtee.webp" alt="Emtee"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Emtee</div><div class="feed-cell-genre">Hip Hop · SA</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/scotts.png" alt="Scotts Maphuma"><span class="feed-cell-badge fb-new">Newcomer</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Scotts Maphuma</div><div class="feed-cell-genre">Artist · SA</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/kiffness.png" alt="The Kiffness"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">The Kiffness</div><div class="feed-cell-genre">Music · Cape Town</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/antwoord.png" alt="Die Antwoord"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Die Antwoord</div><div class="feed-cell-genre">Rap-Rave · Cape Town</div></div></div></div>
+      <div class="feed-cell"><img src="assets/images/artists/seether.png" alt="Seether"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Seether</div><div class="feed-cell-genre">Rock · International</div></div></div></div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials-section reveal">
+    <div class="feed-header"><h2 class="feed-title">What artists <em>say</em></h2></div>
+    <div class="testimonial-feed">
+      <div class="testi-card"><p class="testi-text">"Straight out of Louis Trichardt — Gearsh gave me a platform to reach clients I never could before. The work speaks."</p><div class="testi-author"><img src="assets/images/artists/yde.png" alt="Y.D.E" class="testi-ava"><div><div class="testi-name">Y.D.E</div><div class="testi-role">Hip Hop · Louis Trichardt</div></div></div></div>
+      <div class="testi-card"><p class="testi-text">"As a female DJ, having a verified profile that clients trust changed everything. Now the bookings come to me."</p><div class="testi-author"><img src="assets/images/artists/ZJ90.jpg" alt="ZJ90" class="testi-ava"><div><div class="testi-name">ZJ90</div><div class="testi-role">DJ · Johannesburg</div></div></div></div>
+      <div class="testi-card"><p class="testi-text">"Custom pieces from R300. Gearsh put my designs in front of clients who actually want to buy. No more waiting."</p><div class="testi-author"><img src="assets/images/artists/dripmaker.png" alt="Dripmaker" class="testi-ava"><div><div class="testi-name">Dripmaker</div><div class="testi-role">Fashion · Thohoyandou</div></div></div></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section reveal" id="how">
+    <div class="section-label">How it works</div>
+    <h2 class="section-title">From profile to payment <em>in minutes.</em></h2>
+    <p class="section-sub">No agency fees. No middleman. Just you, your talent, and paying clients.</p>
+    <div class="how-visual">
+      <div class="how-card" data-num="01"><div class="how-icon"><i class="ti ti-user-plus"></i></div><h3>Create your profile</h3><p>Showcase your talent, set your rates, go live in minutes. Free to join — no credit card.</p></div>
+      <div class="how-card" data-num="02"><div class="how-icon"><i class="ti ti-bell"></i></div><h3>Receive bookings</h3><p>Clients find you and send requests. Review, negotiate, accept — on your terms.</p></div>
+      <div class="how-card" data-num="03"><div class="how-icon"><i class="ti ti-coin"></i></div><h3>Deliver and get paid</h3><p>Show up, do your thing, get paid securely. Gearsh handles contracts and payments.</p></div>
+    </div>
+  </section>
+
+  <!-- MASTERY -->
+  <section class="mastery-section reveal">
+    <div class="section-label">10,000 hours to mastery</div>
+    <h2 class="section-title">The more you book, <em>the more you earn.</em></h2>
+    <p class="section-sub">Every booking grows your mastery score. Climb from Newcomer to Legend.</p>
+    <div class="mastery-bar">
+      <div class="mastery-tier mt-1"><div class="mt-icon"><i class="ti ti-seedling" style="color:var(--g-accent)"></i></div><div class="mt-name">Newcomer</div><div class="mt-hrs">0 – 99 hrs</div><div class="mt-desc">Get listed. 80% intro discount to attract your first clients.</div></div>
+      <div class="mastery-tier mt-2"><div class="mt-icon"><i class="ti ti-rocket" style="color:#A78BFA"></i></div><div class="mt-name">Rising</div><div class="mt-hrs">100 – 4,999 hrs</div><div class="mt-desc">Track record builds. Reviews stack. Clients seek you out.</div></div>
+      <div class="mastery-tier mt-3"><div class="mt-icon"><i class="ti ti-star" style="color:#FBBF24"></i></div><div class="mt-name">Expert</div><div class="mt-hrs">5,000 – 9,999 hrs</div><div class="mt-desc">Elite status. Priority placement. Premium badge.</div></div>
+      <div class="mastery-tier mt-4"><div class="mt-icon"><i class="ti ti-crown" style="color:#F472B6"></i></div><div class="mt-name">Legend</div><div class="mt-hrs">10,000+ hrs</div><div class="mt-desc">Maximum visibility, trust, and earning potential.</div></div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section class="why-section reveal" id="why">
+    <div class="section-label">Why Gearsh</div>
+    <h2 class="section-title">Built for artists <em>who are serious.</em></h2>
+    <p class="section-sub">Everything you need to turn your craft into a career.</p>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-icon"><i class="ti ti-coin"></i></div><h3>Keep more of what you earn</h3><p>No upfront fees. Transparent commission so you always know what you take home.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="ti ti-world"></i></div><h3>Global client reach</h3><p>Get discovered by clients across South Africa and beyond.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="ti ti-lock"></i></div><h3>Payments protected</h3><p>Every booking is payment-guaranteed. No more chasing invoices.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="ti ti-device-mobile"></i></div><h3>Manage from your phone</h3><p>Accept bookings, message clients, track earnings — all in the app.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="ti ti-star"></i></div><h3>Build your reputation</h3><p>Verified reviews. Growing mastery score. Better rates as you level up.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="ti ti-file-text"></i></div><h3>Contracts on autopilot</h3><p>Gearsh generates booking contracts automatically. Less admin, more creating.</p></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-box reveal">
+      <div class="cta-mosaic">
+        <img src="assets/images/artists/tyla.jpg" alt=""><img src="assets/images/artists/maphorisa.png" alt=""><img src="assets/images/artists/coffee.png" alt=""><img src="assets/images/artists/nastyc.png" alt=""><img src="assets/images/artists/waffles.png" alt=""><img src="assets/images/artists/cassper.png" alt="">
+        <img src="assets/images/artists/kelvin-momo.png" alt=""><img src="assets/images/artists/a-reece.png" alt=""><img src="assets/images/artists/kabza.png" alt=""><img src="assets/images/artists/emtee.webp" alt=""><img src="assets/images/artists/ZJ90.jpg" alt=""><img src="assets/images/artists/dripmaker.png" alt="">
+      </div>
+      <div class="cta-overlay"></div>
+      <div class="cta-content">
+        <div class="section-label">Ready?</div>
+        <h2>Your next booking is <em>one profile away.</em></h2>
+        <p>Join Gearsh free. List your gig, set your rates, and start getting booked.</p>
+        <a href="list-gig.html" class="btn-main">List your gig free <i class="ti ti-arrow-right" style="font-size:18px"></i></a>
+        <div class="cta-fine">Free to join · No credit card required · Go live in minutes</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="g-footer">
+    <div class="g-footer-inner">
+      <div class="g-footer-left">
+        <img src="icons/Icon-512.png" alt="Gearsh">
+        &copy; 2025 Gearsh (Pty) Ltd. All rights reserved.
+      </div>
+      <ul class="g-footer-links">
+        <li><a href="terms.html">Terms</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="list-gig.html">Get started</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+  </script>
+</body>
+</html>
