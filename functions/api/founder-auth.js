@@ -20,7 +20,7 @@ export function getFounderEmails(env) {
 
 export function verifyFounderAccessKey(env, key) {
   const required = env.FOUNDER_ACCESS_KEY;
-  if (!required) return Boolean(key);
+  if (!required) return false;
   return String(key || '') === required;
 }
 
