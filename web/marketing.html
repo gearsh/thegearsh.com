@@ -123,7 +123,16 @@
     .feed-title em { font-style: italic; color: var(--g-accent); }
     .feed-link { font-size: 13px; color: var(--g-accent); text-decoration: none; font-weight: 500; }
     .feed-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
-    .feed-cell { position: relative; overflow: hidden; aspect-ratio: 1; cursor: pointer; border-radius: 2px; }
+    .feed-cell { position: relative; overflow: hidden; aspect-ratio: 1; cursor: pointer; border-radius: 2px; display: block; text-decoration: none; color: inherit; }
+    .feed-cell.is-bookable { cursor: pointer; }
+    .feed-cell.is-static { cursor: default; }
+    .feed-cell-action {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: var(--g-accent); color: var(--g-black); font-size: 12px; font-weight: 700;
+      padding: 8px 14px; border-radius: 999px; opacity: 0; transition: opacity 0.25s;
+      pointer-events: none; z-index: 2;
+    }
+    .feed-cell.is-bookable:hover .feed-cell-action { opacity: 1; }
     .feed-cell img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
     .feed-cell:hover img { transform: scale(1.06); }
     .feed-cell-overlay {
@@ -272,28 +281,7 @@
 
   <!-- STORIES -->
   <div class="stories-section reveal">
-    <div class="stories-bar">
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/yde.png" alt="Y.D.E"></div><span class="story-name">Y.D.E</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/ZJ90.jpg" alt="ZJ90"></div><span class="story-name">ZJ90</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/rixelton.jpg" alt="Rix Elton"></div><span class="story-name">Rix Elton</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/empress-ngqama.jpg" alt="Empress"></div><span class="story-name">Empress</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/dripmaker.png" alt="Dripmaker"></div><span class="story-name">Dripmaker</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/tyla.jpg" alt="Tyla"></div><span class="story-name">Tyla</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/coffee.png" alt="Black Coffee"></div><span class="story-name">Black Coffee</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/kabza.png" alt="Kabza"></div><span class="story-name">Kabza</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/maphorisa.png" alt="DJ Maphorisa"></div><span class="story-name">Maphorisa</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/waffles.png" alt="Uncle Waffles"></div><span class="story-name">Uncle Waffles</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/nastyc.png" alt="Nasty C"></div><span class="story-name">Nasty C</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/cassper.png" alt="Cassper"></div><span class="story-name">Cassper</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/kelvin-momo.png" alt="Kelvin Momo"></div><span class="story-name">Kelvin Momo</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/a-reece.png" alt="A-Reece"></div><span class="story-name">A-Reece</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/lastkrm.png" alt="Last KRM"></div><span class="story-name">Last KRM</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/scotts.png" alt="Scotts"></div><span class="story-name">Scotts</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/emtee.webp" alt="Emtee"></div><span class="story-name">Emtee</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/kiffness.png" alt="The Kiffness"></div><span class="story-name">The Kiffness</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/antwoord.png" alt="Die Antwoord"></div><span class="story-name">Die Antwoord</span></a>
-      <a class="story-item" href="#feed"><div class="story-ring"><img src="assets/images/artists/seether.png" alt="Seether"></div><span class="story-name">Seether</span></a>
-    </div>
+    <div class="stories-bar" id="stories-bar"></div>
   </div>
 
   <!-- CATEGORIES -->
@@ -316,28 +304,7 @@
       <h2 class="feed-title">Explore <em>talent</em></h2>
       <a href="join-gig.html" class="feed-link">See all <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
     </div>
-    <div class="feed-grid">
-      <div class="feed-cell large"><img src="assets/images/artists/tyla.jpg" alt="Tyla"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Tyla</div><div class="feed-cell-genre">Afropop · Global</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/yde.png" alt="Y.D.E"><span class="feed-cell-badge fb-deal">80% off</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Y.D.E</div><div class="feed-cell-genre">Hip Hop</div><div class="feed-cell-price">R2,000</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/ZJ90.jpg" alt="ZJ90"><span class="feed-cell-badge fb-rise">Rising</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">ZJ90</div><div class="feed-cell-genre">House · Amapiano</div><div class="feed-cell-price">from R25,000</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/maphorisa.png" alt="DJ Maphorisa"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">DJ Maphorisa</div><div class="feed-cell-genre">Amapiano · SA</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/waffles.png" alt="Uncle Waffles"><span class="feed-cell-badge fb-rise">Rising</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Uncle Waffles</div><div class="feed-cell-genre">DJ · Amapiano</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/nastyc.png" alt="Nasty C"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Nasty C</div><div class="feed-cell-genre">Hip Hop · Durban</div></div></div></div>
-      <div class="feed-cell large"><img src="assets/images/artists/coffee.png" alt="Black Coffee"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Black Coffee</div><div class="feed-cell-genre">House · International</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/cassper.png" alt="Cassper Nyovest"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Cassper Nyovest</div><div class="feed-cell-genre">Hip Hop · Joburg</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/rixelton.jpg" alt="Rix Elton"><span class="feed-cell-badge fb-new">Newcomer</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Rix Elton</div><div class="feed-cell-genre">Amapiano DJ</div><div class="feed-cell-price">from R20,000</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/empress-ngqama.jpg" alt="Empress Ngqama"><span class="feed-cell-badge fb-new">Newcomer</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Empress Ngqama</div><div class="feed-cell-genre">Afro-Soul · Reggae</div><div class="feed-cell-price">from R22,000</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/kelvin-momo.png" alt="Kelvin Momo"><span class="feed-cell-badge fb-rise">Rising</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Kelvin Momo</div><div class="feed-cell-genre">Amapiano</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/a-reece.png" alt="A-Reece"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">A-Reece</div><div class="feed-cell-genre">Hip Hop · Pretoria</div></div></div></div>
-      <div class="feed-cell large"><img src="assets/images/artists/kabza.png" alt="Kabza De Small"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Kabza De Small</div><div class="feed-cell-genre">Amapiano · Pretoria</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/dripmaker.png" alt="Dripmaker"><span class="feed-cell-badge fb-rise">Rising</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Dripmaker</div><div class="feed-cell-genre">Fashion</div><div class="feed-cell-price">from R300</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/lastkrm.png" alt="William Last KRM"><span class="feed-cell-badge fb-rise">Rising</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">William Last KRM</div><div class="feed-cell-genre">Comedy · Music</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/emtee.webp" alt="Emtee"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Emtee</div><div class="feed-cell-genre">Hip Hop · SA</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/scotts.png" alt="Scotts Maphuma"><span class="feed-cell-badge fb-new">Newcomer</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Scotts Maphuma</div><div class="feed-cell-genre">Artist · SA</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/kiffness.png" alt="The Kiffness"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">The Kiffness</div><div class="feed-cell-genre">Music · Cape Town</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/antwoord.png" alt="Die Antwoord"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Die Antwoord</div><div class="feed-cell-genre">Rap-Rave · Cape Town</div></div></div></div>
-      <div class="feed-cell"><img src="assets/images/artists/seether.png" alt="Seether"><span class="feed-cell-badge fb-feat">Featured</span><div class="feed-cell-overlay"><div class="feed-cell-info"><div class="feed-cell-name">Seether</div><div class="feed-cell-genre">Rock · International</div></div></div></div>
-    </div>
+    <div class="feed-grid" id="feed-grid"></div>
   </section>
 
   <!-- TESTIMONIALS -->
@@ -425,10 +392,158 @@
   </footer>
 
   <script>
+    var API_BASE = '/api';
+
+    var SHOWCASE = [
+      { name: 'Tyla', image: 'assets/images/artists/tyla.jpg', genre: 'Afropop · Global', badge: 'Featured', badgeClass: 'fb-feat', large: true },
+      { name: 'Y.D.E', image: 'assets/images/artists/yde.png', genre: 'Hip Hop', badge: '80% off', badgeClass: 'fb-deal', price: 'R2,000' },
+      { name: 'ZJ90', image: 'assets/images/artists/ZJ90.jpg', genre: 'House · Amapiano', badge: 'Rising', badgeClass: 'fb-rise', price: 'from R25,000' },
+      { name: 'DJ Maphorisa', image: 'assets/images/artists/maphorisa.png', genre: 'Amapiano · SA', badge: 'Featured', badgeClass: 'fb-feat' },
+      { name: 'Uncle Waffles', image: 'assets/images/artists/waffles.png', genre: 'DJ · Amapiano', badge: 'Rising', badgeClass: 'fb-rise' },
+      { name: 'Nasty C', image: 'assets/images/artists/nastyc.png', genre: 'Hip Hop · Durban', badge: 'Featured', badgeClass: 'fb-feat' },
+      { name: 'Black Coffee', image: 'assets/images/artists/coffee.png', genre: 'House · International', badge: 'Featured', badgeClass: 'fb-feat', large: true },
+      { name: 'Cassper Nyovest', image: 'assets/images/artists/cassper.png', genre: 'Hip Hop · Joburg', badge: 'Featured', badgeClass: 'fb-feat' },
+      { name: 'Rix Elton', image: 'assets/images/artists/rixelton.jpg', genre: 'Amapiano DJ', badge: 'Newcomer', badgeClass: 'fb-new', price: 'from R20,000' },
+      { name: 'Empress Ngqama', image: 'assets/images/artists/empress-ngqama.jpg', genre: 'Afro-Soul · Reggae', badge: 'Newcomer', badgeClass: 'fb-new', price: 'from R22,000' },
+      { name: 'Kelvin Momo', image: 'assets/images/artists/kelvin-momo.png', genre: 'Amapiano', badge: 'Rising', badgeClass: 'fb-rise' },
+      { name: 'A-Reece', image: 'assets/images/artists/a-reece.png', genre: 'Hip Hop · Pretoria', badge: 'Featured', badgeClass: 'fb-feat' },
+      { name: 'Kabza De Small', image: 'assets/images/artists/kabza.png', genre: 'Amapiano · Pretoria', badge: 'Featured', badgeClass: 'fb-feat', large: true },
+      { name: 'Dripmaker', image: 'assets/images/artists/dripmaker.png', genre: 'Fashion', badge: 'Rising', badgeClass: 'fb-rise', price: 'from R300' },
+      { name: 'William Last KRM', image: 'assets/images/artists/lastkrm.png', genre: 'Comedy · Music', badge: 'Rising', badgeClass: 'fb-rise' },
+      { name: 'Emtee', image: 'assets/images/artists/emtee.webp', genre: 'Hip Hop · SA', badge: 'Featured', badgeClass: 'fb-feat' },
+      { name: 'Scotts Maphuma', image: 'assets/images/artists/scotts.png', genre: 'Artist · SA', badge: 'Newcomer', badgeClass: 'fb-new' },
+      { name: 'The Kiffness', image: 'assets/images/artists/kiffness.png', genre: 'Music · Cape Town', badge: 'Featured', badgeClass: 'fb-feat' },
+      { name: 'Die Antwoord', image: 'assets/images/artists/antwoord.png', genre: 'Rap-Rave · Cape Town', badge: 'Featured', badgeClass: 'fb-feat' },
+      { name: 'Seether', image: 'assets/images/artists/seether.png', genre: 'Rock · International', badge: 'Featured', badgeClass: 'fb-feat' }
+    ];
+
+    function normalizeName(value) {
+      return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    }
+
+    function bookUrl(artistId) {
+      return 'book-gig.html?artist=' + encodeURIComponent(artistId);
+    }
+
+    function formatPrice(amount) {
+      if (!amount) return '';
+      return 'from R' + Number(amount).toLocaleString('en-ZA');
+    }
+
+    function buildArtistIndex(artists) {
+      var index = {};
+      artists.forEach(function(artist) {
+        index[normalizeName(artist.name)] = artist;
+      });
+      return index;
+    }
+
+    function findArtistMatch(name, index) {
+      var key = normalizeName(name);
+      if (index[key]) return index[key];
+      var keys = Object.keys(index);
+      for (var i = 0; i < keys.length; i++) {
+        if (keys[i].indexOf(key) !== -1 || key.indexOf(keys[i]) !== -1) return index[keys[i]];
+      }
+      return null;
+    }
+
+    function findShowcaseImage(name) {
+      var match = SHOWCASE.find(function(item) {
+        return normalizeName(item.name) === normalizeName(name);
+      });
+      return match ? match.image : null;
+    }
+
+    function mergeTalent(apiArtists) {
+      var index = buildArtistIndex(apiArtists || []);
+      var used = {};
+      var cells = [];
+
+      (apiArtists || []).forEach(function(artist) {
+        if (!artist.artist_id || used[artist.artist_id]) return;
+        used[artist.artist_id] = true;
+        cells.push({
+          artist_id: artist.artist_id,
+          name: artist.name,
+          image: artist.image || findShowcaseImage(artist.name) || 'icons/Icon-512.png',
+          genre: [artist.category, artist.location].filter(Boolean).join(' · ') || 'Available to book',
+          badge: 'Book now',
+          badgeClass: 'fb-deal',
+          price: artist.min_price ? formatPrice(artist.min_price) : (artist.base_rate ? formatPrice(artist.base_rate) : ''),
+          large: false,
+          bookable: true
+        });
+      });
+
+      SHOWCASE.forEach(function(item) {
+        var match = findArtistMatch(item.name, index);
+        var artistId = match ? match.artist_id : null;
+        if (artistId && used[artistId]) return;
+        if (artistId) used[artistId] = true;
+        cells.push({
+          artist_id: artistId,
+          name: item.name,
+          image: item.image,
+          genre: item.genre,
+          badge: artistId ? 'Book now' : item.badge,
+          badgeClass: artistId ? 'fb-deal' : item.badgeClass,
+          price: item.price || (match && match.min_price ? formatPrice(match.min_price) : ''),
+          large: !!item.large,
+          bookable: !!artistId
+        });
+      });
+
+      return cells;
+    }
+
+    function renderFeedCell(item) {
+      var classes = 'feed-cell' + (item.large ? ' large' : '') + (item.bookable ? ' is-bookable' : ' is-static');
+      var inner =
+        '<img src="' + item.image + '" alt="' + item.name + '">' +
+        '<span class="feed-cell-badge ' + item.badgeClass + '">' + item.badge + '</span>' +
+        (item.bookable ? '<span class="feed-cell-action">Book now</span>' : '') +
+        '<div class="feed-cell-overlay"><div class="feed-cell-info">' +
+        '<div class="feed-cell-name">' + item.name + '</div>' +
+        '<div class="feed-cell-genre">' + item.genre + '</div>' +
+        (item.price ? '<div class="feed-cell-price">' + item.price + '</div>' : '') +
+        '</div></div>';
+
+      if (item.bookable) {
+        return '<a class="' + classes + '" href="' + bookUrl(item.artist_id) + '" aria-label="Book ' + item.name + '">' + inner + '</a>';
+      }
+      return '<div class="' + classes + '">' + inner + '</div>';
+    }
+
+    function renderStory(item) {
+      var href = item.bookable ? bookUrl(item.artist_id) : '#feed';
+      return '<a class="story-item" href="' + href + '">' +
+        '<div class="story-ring"><img src="' + item.image + '" alt="' + item.name + '"></div>' +
+        '<span class="story-name">' + item.name + '</span></a>';
+    }
+
+    async function loadTalentFeed() {
+      var feed = document.getElementById('feed-grid');
+      var stories = document.getElementById('stories-bar');
+      var apiArtists = [];
+
+      try {
+        var res = await fetch(API_BASE + '/artists?limit=100');
+        var data = await res.json();
+        if (res.ok && data.success) apiArtists = data.data || [];
+      } catch (_) {}
+
+      var cells = mergeTalent(apiArtists);
+      feed.innerHTML = cells.map(renderFeedCell).join('');
+      stories.innerHTML = cells.slice(0, 16).map(renderStory).join('');
+    }
+
     var obs = new IntersectionObserver(function(entries) {
       entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.08 });
     document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+
+    loadTalentFeed();
   </script>
 </body>
 </html>

@@ -29,7 +29,8 @@ export async function onRequestGet(context) {
         ap.total_reviews as review_count,
         ap.is_trending,
         ap.skills,
-        ap.years_experience
+        ap.years_experience,
+        (SELECT MIN(s.price) FROM services s WHERE s.artist_id = ap.id AND s.is_active = 1) AS min_price
       FROM artist_profiles ap
       JOIN users u ON ap.user_id = u.id
       WHERE u.is_active = 1
