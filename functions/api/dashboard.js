@@ -170,6 +170,7 @@ export async function onRequestGet(context) {
         checklist,
         checklist_complete: checklistComplete,
         checklist_total: checklist.length,
+        profile_url: artistProfile ? `/book-gig.html?artist=${artistProfile.id}` : null,
         bookings,
         services,
         activity,

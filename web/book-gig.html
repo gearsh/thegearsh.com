@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Book this gig on Gearsh.">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Book on Gearsh</title>
+  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+  <link rel="stylesheet" href="gearsh-brand.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    .book-page { padding: 80px 20px 60px; max-width: 960px; margin: 0 auto; }
+    .book-hero {
+      background: var(--g-surface); border: 0.5px solid var(--g-border);
+      border-radius: 20px; padding: 32px; margin-bottom: 20px;
+    }
+    .book-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; color: var(--g-accent);
+      background: var(--g-accent-light); padding: 5px 12px; border-radius: 20px; margin-bottom: 14px;
+    }
+    .book-title {
+      font-family: var(--g-serif); font-size: clamp(32px, 6vw, 44px);
+      color: var(--g-white); letter-spacing: -0.03em; line-height: 1.08;
+    }
+    .book-title em { font-style: italic; color: var(--g-accent); }
+    .book-meta { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 14px; }
+    .book-meta span { font-size: 13px; color: var(--g-text-muted); display: inline-flex; align-items: center; gap: 6px; }
+    .book-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .card {
+      background: var(--g-surface); border: 0.5px solid var(--g-border);
+      border-radius: 16px; padding: 24px;
+    }
+    .card h2 {
+      font-family: var(--g-serif); font-size: 22px; color: var(--g-white);
+      font-weight: 400; margin-bottom: 14px;
+    }
+    .service-row {
+      display: flex; justify-content: space-between; gap: 12px; align-items: flex-start;
+      padding: 14px 0; border-bottom: 0.5px solid var(--g-border);
+    }
+    .service-row:last-child { border-bottom: none; }
+    .service-name { font-size: 14px; font-weight: 700; color: var(--g-white); }
+    .service-desc { font-size: 12px; color: var(--g-text-muted); margin-top: 4px; line-height: 1.5; }
+    .service-price { font-size: 15px; font-weight: 700; color: var(--g-accent); white-space: nowrap; }
+    .field-group { margin-bottom: 12px; }
+    .field-label { display: block; font-size: 12px; color: var(--g-text-muted); margin-bottom: 5px; }
+    .field-input, .field-select, .field-textarea {
+      width: 100%; background: var(--g-black); border: 0.5px solid var(--g-border);
+      border-radius: 10px; color: var(--g-text); font-family: var(--g-font); font-size: 15px;
+      padding: 12px 14px; outline: none;
+    }
+    .field-textarea { min-height: 90px; resize: vertical; }
+    .field-input:focus, .field-select:focus, .field-textarea:focus {
+      border-color: rgba(0,191,255,0.45); box-shadow: 0 0 0 3px rgba(0,191,255,0.06);
+    }
+    .book-msg { font-size: 13px; margin-top: 10px; }
+    .book-msg.error { color: #f87171; }
+    .book-msg.success { color: #34d399; }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .skill-tag {
+      font-size: 12px; color: var(--g-text-muted); background: var(--g-black);
+      border: 0.5px solid var(--g-border); padding: 6px 12px; border-radius: 20px;
+    }
+    .wa-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; margin-top: 10px; padding: 13px 18px; border-radius: 10px;
+      background: rgba(37,211,102,0.12); color: #25d366; border: 0.5px solid rgba(37,211,102,0.25);
+      text-decoration: none; font-size: 14px; font-weight: 600;
+    }
+    .loading { text-align: center; padding: 80px 20px; color: var(--g-text-muted); }
+    @media (max-width: 768px) { .book-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav class="g-nav">
+    <div class="g-nav-inner">
+      <a href="./" class="g-nav-logo"><img src="icons/Icon-512.png" alt="Gearsh"> Gearsh</a>
+      <ul class="g-nav-links">
+        <li><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div id="loading" class="loading">Loading gig profile…</div>
+  <div id="error" class="book-page" style="display:none">
+    <div class="card"><h2>Gig not found</h2><p class="card-sub" style="color:var(--g-text-muted)">This booking link may be invalid or the profile is no longer active.</p><a href="./" class="btn-main" style="margin-top:16px;display:inline-flex">Back to Gearsh</a></div>
+  </div>
+
+  <div id="content" class="book-page" style="display:none">
+    <div class="book-hero">
+      <div class="book-badge"><i class="ti ti-seedling"></i> Newcomer · 80% intro discount</div>
+      <h1 class="book-title">Book <em id="artist-name">…</em></h1>
+      <div class="book-meta">
+        <span id="artist-location"><i class="ti ti-map-pin"></i> —</span>
+        <span id="artist-category"><i class="ti ti-tag"></i> —</span>
+      </div>
+      <div class="skill-tags" id="skill-tags"></div>
+    </div>
+
+    <div class="book-grid">
+      <div class="card">
+        <h2>Services &amp; pricing</h2>
+        <div id="services-list"></div>
+      </div>
+      <div class="card">
+        <h2>Request a booking</h2>
+        <form id="booking-form">
+          <div class="field-group"><label class="field-label">Your name</label><input class="field-input" id="client-name" required placeholder="Your full name"></div>
+          <div class="field-group"><label class="field-label">Phone</label><input class="field-input" id="client-phone" type="tel" required placeholder="+27 00 000 0000"></div>
+          <div class="field-group"><label class="field-label">Email (optional)</label><input class="field-input" id="client-email" type="email" placeholder="you@email.com"></div>
+          <div class="field-group"><label class="field-label">Preferred date</label><input class="field-input" id="event-date" type="date" required></div>
+          <div class="field-group"><label class="field-label">Service</label><select class="field-select" id="service-id"><option value="">Select a service</option></select></div>
+          <div class="field-group"><label class="field-label">Notes</label><textarea class="field-textarea" id="notes" placeholder="Car details, address, special requests…"></textarea></div>
+          <button class="btn-main" type="submit" id="submit-btn" style="width:100%;justify-content:center">Send booking request</button>
+          <div class="book-msg" id="book-msg"></div>
+          <a class="wa-btn" id="wa-link" href="#" target="_blank" rel="noopener" style="display:none">
+            <i class="ti ti-brand-whatsapp"></i> Chat on WhatsApp
+          </a>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer class="g-footer" style="margin-top:40px">
+    <div class="g-footer-inner">
+      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="Gearsh"> &copy; 2025 Gearsh (Pty) Ltd.</div>
+      <ul class="g-footer-links"><li><a href="terms.html">Terms</a></li><li><a href="privacy.html">Privacy</a></li></ul>
+    </div>
+  </footer>
+
+  <script>
+    var API_BASE = '/api';
+    var artistId = new URLSearchParams(window.location.search).get('artist');
+    var artistData = null;
+
+    function formatMoney(amount) {
+      return 'R' + Number(amount || 0).toLocaleString('en-ZA');
+    }
+
+    function showError() {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error').style.display = 'block';
+    }
+
+    function renderProfile(data) {
+      artistData = data;
+      document.getElementById('artist-name').textContent = data.name || 'this provider';
+      document.getElementById('artist-location').innerHTML =
+        '<i class="ti ti-map-pin"></i> ' + [data.location, data.country].filter(Boolean).join(', ') || 'Location on request';
+      document.getElementById('artist-category').innerHTML =
+        '<i class="ti ti-tag"></i> ' + (data.category || 'Services');
+
+      var skills = Array.isArray(data.skills) ? data.skills : [];
+      document.getElementById('skill-tags').innerHTML = skills.map(function(skill) {
+        return '<span class="skill-tag">' + skill + '</span>';
+      }).join('');
+
+      var servicesEl = document.getElementById('services-list');
+      var serviceSelect = document.getElementById('service-id');
+      if (!data.services || !data.services.length) {
+        servicesEl.innerHTML = '<p style="color:var(--g-text-muted);font-size:13px">Contact the provider for pricing.</p>';
+      } else {
+        servicesEl.innerHTML = data.services.map(function(service) {
+          return '<div class="service-row">' +
+            '<div><div class="service-name">' + service.name + '</div>' +
+            '<div class="service-desc">' + (service.description || '') +
+            (service.duration_hours ? ' · ' + service.duration_hours + ' hrs' : '') + '</div></div>' +
+            '<div class="service-price">' + formatMoney(service.price) + '</div></div>';
+        }).join('');
+        data.services.forEach(function(service) {
+          var opt = document.createElement('option');
+          opt.value = service.id;
+          opt.textContent = service.name + ' — ' + formatMoney(service.price);
+          serviceSelect.appendChild(opt);
+        });
+      }
+
+      if (data.phone) {
+        var wa = document.getElementById('wa-link');
+        var msg = encodeURIComponent('Hi ' + (data.name || '') + ', I found your gig on Gearsh and I\'d like to book you.');
+        wa.href = 'https://wa.me/' + data.phone.replace(/\D/g, '') + '?text=' + msg;
+        wa.style.display = 'inline-flex';
+      }
+
+      document.title = 'Book ' + (data.name || 'Gig') + ' | Gearsh';
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+    }
+
+    async function loadProfile() {
+      if (!artistId) return showError();
+      try {
+        var res = await fetch(API_BASE + '/artists/' + encodeURIComponent(artistId));
+        var json = await res.json();
+        if (!res.ok || !json.success) return showError();
+        renderProfile(json.data);
+      } catch (_) {
+        showError();
+      }
+    }
+
+    document.getElementById('booking-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var msg = document.getElementById('book-msg');
+      var btn = document.getElementById('submit-btn');
+      msg.className = 'book-msg';
+      msg.textContent = '';
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      try {
+        var res = await fetch(API_BASE + '/booking-request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            artist_id: artistId,
+            client_name: document.getElementById('client-name').value.trim(),
+            client_phone: document.getElementById('client-phone').value.trim(),
+            client_email: document.getElementById('client-email').value.trim(),
+            event_date: document.getElementById('event-date').value,
+            service_id: document.getElementById('service-id').value || null,
+            notes: document.getElementById('notes').value.trim(),
+          }),
+        });
+        var data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || 'Booking failed');
+        msg.className = 'book-msg success';
+        msg.textContent = data.message;
+        document.getElementById('booking-form').reset();
+      } catch (err) {
+        msg.className = 'book-msg error';
+        msg.textContent = err.message || 'Something went wrong.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send booking request';
+      }
+    });
+
+    loadProfile();
+  </script>
+</body>
+</html>

@@ -44,6 +44,7 @@ jobs:
           cp web/marketing.html build/web/index.html
           cp web/join-gig.html build/web/join-gig.html
           cp web/artist-dashboard.html build/web/artist-dashboard.html
+          cp web/book-gig.html build/web/book-gig.html
           cp web/terms.html build/web/terms.html
           cp web/privacy.html build/web/privacy.html
           cp web/_redirects build/web/_redirects

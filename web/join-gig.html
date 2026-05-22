@@ -242,10 +242,10 @@
       <div class="step-panel visible" id="step1">
         <div class="step-hero">
           <h1>Join as an <em>artist</em></h1>
-          <p>Your stage name, email, and phone — that's all we need to start.</p>
+          <p>Your business name, email, and phone — DJs, car wash, photography, and more.</p>
         </div>
         <div class="step-form">
-          <div class="field-group"><label class="field-label">Stage name</label><input type="text" id="stage-name" class="field-input" placeholder="e.g. DJ ZJ90, Y.D.E, Dripmaker" required></div>
+          <div class="field-group"><label class="field-label">Business / stage name</label><input type="text" id="stage-name" class="field-input" placeholder="e.g. Sparkle Wash, DJ ZJ90, Dripmaker" required></div>
           <div class="field-group"><label class="field-label">Email</label><input type="email" id="email" class="field-input" placeholder="you@email.com" required></div>
           <div class="field-group"><label class="field-label">Phone</label><input type="tel" id="phone" class="field-input" placeholder="+27 00 000 0000"></div>
           <div id="signup-error" class="signup-error" style="display:none;margin-bottom:12px"></div>
@@ -269,6 +269,7 @@
           <div class="field-group">
             <label class="field-label">Your skills</label>
             <div class="skills-grid">
+              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-car" style="font-size:16px"></i> Car wash</div>
               <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-headphones" style="font-size:16px"></i> DJ</div>
               <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-camera" style="font-size:16px"></i> Photography</div>
               <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-video" style="font-size:16px"></i> Videography</div>
@@ -286,6 +287,10 @@
               <select id="country" class="field-select"><option value="">Select</option><option value="South Africa" selected>South Africa</option><option value="Zimbabwe">Zimbabwe</option><option value="Zambia">Zambia</option><option value="Mozambique">Mozambique</option><option value="Botswana">Botswana</option><option value="Nigeria">Nigeria</option><option value="Kenya">Kenya</option><option value="Ghana">Ghana</option><option value="United Kingdom">United Kingdom</option><option value="United States">United States</option></select>
             </div>
             <div class="field-group"><label class="field-label">City</label><input type="text" id="city" class="field-input" placeholder="Johannesburg"></div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Starting price (R)</label>
+            <input type="number" id="starting-price" class="field-input" placeholder="e.g. 200 for car wash" min="0" step="1">
           </div>
           <div class="mastery-note">
             <div style="font-size:18px; flex-shrink:0;"><i class="ti ti-trophy" style="color:var(--g-accent)"></i></div>
@@ -324,7 +329,14 @@
         <div class="success-area">
           <div class="success-icon"><i class="ti ti-check" style="font-size:28px; color:var(--g-accent);"></i></div>
           <h2>You're in</h2>
-          <p>Your free artist profile is live. Complete your portfolio and start getting booked.</p>
+          <p>Your gig is live on Gearsh. Share your booking link with friends and start getting requests.</p>
+          <div class="share-box" id="share-box" style="display:none;margin:20px 0;padding:14px;background:var(--g-black);border:0.5px solid var(--g-border);border-radius:12px;text-align:left">
+            <div style="font-size:11px;color:var(--g-text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Your booking link</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="text" id="share-link" class="field-input" readonly style="height:42px;font-size:13px">
+              <button type="button" class="btn-signup" style="width:auto;height:42px;padding:0 16px;margin:0" onclick="copyShareLink()">Copy</button>
+            </div>
+          </div>
           <button class="btn-signup" onclick="window.location.href='artist-dashboard.html'">Go to dashboard <i class="ti ti-arrow-right" style="font-size:18px"></i></button>
         </div>
       </div>
@@ -426,7 +438,8 @@
         phone: document.getElementById('phone').value.trim(),
         location: document.getElementById('city').value.trim(),
         country: country,
-        skill_set: getSelectedSkills()
+        skill_set: getSelectedSkills(),
+        starting_price: document.getElementById('starting-price').value || null
       };
       var username = document.getElementById('username').value.trim();
       if (username) payload.user_name = username;
@@ -448,6 +461,13 @@
           localStorage.setItem('gearsh_user_name', data.data.display_name || stageName);
           localStorage.setItem('gearsh_user_type', data.data.user_type || 'artist');
           localStorage.setItem('gearsh_skills', getSelectedSkills());
+          if (data.data.artist_id) localStorage.setItem('gearsh_artist_id', data.data.artist_id);
+          if (data.data.profile_url) {
+            localStorage.setItem('gearsh_profile_url', data.data.profile_url);
+            var fullUrl = window.location.origin + data.data.profile_url;
+            document.getElementById('share-link').value = fullUrl;
+            document.getElementById('share-box').style.display = 'block';
+          }
         }
         goStep(4);
       } catch (err) {
@@ -477,6 +497,12 @@
         else if (i + 1 === n) el.classList.add('active');
       });
       if (n === 4) {
+        showError('');
+        var savedUrl = localStorage.getItem('gearsh_profile_url');
+        if (savedUrl) {
+          document.getElementById('share-link').value = window.location.origin + savedUrl;
+          document.getElementById('share-box').style.display = 'block';
+        }
         document.getElementById('progress-area').style.display = 'none';
         document.getElementById('signin-row').style.display = 'none';
       } else {
@@ -487,6 +513,15 @@
     function checkPw() {
       validatePassword(false);
       if (passwordReady()) showError('');
+    }
+
+    function copyShareLink() {
+      var input = document.getElementById('share-link');
+      input.select();
+      input.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(input.value).catch(function() {
+        document.execCommand('copy');
+      });
     }
   </script>
 

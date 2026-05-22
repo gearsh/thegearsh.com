@@ -1,5 +1,7 @@
 // GET /api/artists/[id] - Get single artist by ID
 
+import { parseSkills } from '../auth-utils.js';
+
 export async function onRequestGet(context) {
   try {
     const artistId = context.params.id;
@@ -79,7 +81,7 @@ export async function onRequestGet(context) {
     // Parse JSON fields
     const artistData = {
       ...artist,
-      skills: artist.skills ? JSON.parse(artist.skills) : [],
+      skills: parseSkills(artist.skills),
       portfolio_urls: artist.portfolio_urls ? JSON.parse(artist.portfolio_urls) : [],
       social_links: artist.social_links ? JSON.parse(artist.social_links) : {},
       is_verified: Boolean(artist.is_verified),

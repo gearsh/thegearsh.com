@@ -295,6 +295,15 @@
       </div>
 
       <div class="dash-panel active" id="panel-overview">
+        <div class="card" id="share-card" style="display:none;margin-bottom:20px">
+          <div class="section-label">Share your gig</div>
+          <h2 class="card-title">Send this link to <em>get booked</em></h2>
+          <p class="card-sub">Friends and clients can view your services and send booking requests.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input type="text" id="dash-share-link" readonly style="flex:1;min-width:220px;height:44px;background:var(--g-black);border:0.5px solid var(--g-border);border-radius:10px;padding:0 14px;color:var(--g-text);font-size:13px">
+            <button type="button" class="btn-main" onclick="copyDashboardLink()" style="height:44px">Copy link</button>
+          </div>
+        </div>
         <div class="card">
           <div class="checklist-header">
             <div>
@@ -432,10 +441,18 @@
     }
 
     function signOut() {
-      ['gearsh_token', 'gearsh_user_id', 'gearsh_user_name', 'gearsh_user_type', 'gearsh_skills'].forEach(function(k) {
+      ['gearsh_token', 'gearsh_user_id', 'gearsh_user_name', 'gearsh_user_type', 'gearsh_skills', 'gearsh_artist_id', 'gearsh_profile_url'].forEach(function(k) {
         localStorage.removeItem(k);
       });
       window.location.href = 'join-gig.html';
+    }
+
+    function copyDashboardLink() {
+      var input = document.getElementById('dash-share-link');
+      input.select();
+      navigator.clipboard.writeText(input.value).catch(function() {
+        document.execCommand('copy');
+      });
     }
 
     function showError(message) {
@@ -450,6 +467,13 @@
       var user = data.user;
       var mastery = data.mastery;
       var name = user.display_name || user.first_name || 'Artist';
+
+      if (data.profile_url) {
+        var shareCard = document.getElementById('share-card');
+        var shareInput = document.getElementById('dash-share-link');
+        shareInput.value = window.location.origin + data.profile_url;
+        shareCard.style.display = 'block';
+      }
 
       document.getElementById('welcome-name').textContent = name;
       document.getElementById('nav-name').textContent = name;

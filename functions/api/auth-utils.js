@@ -53,6 +53,21 @@ export function unauthorizedResponse(message = 'Unauthorized') {
   return jsonResponse({ success: false, error: message }, 401);
 }
 
+export function parseSkills(value) {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [String(parsed)];
+  } catch (_) {
+    return String(value).split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+  }
+}
+
+export function categoryFromSkills(skillSet) {
+  const skills = parseSkills(skillSet);
+  return skills[0] || 'Services';
+}
+
 export async function findUserByIdentifier(db, identifier) {
   const value = identifier.trim();
   const isEmail = value.includes('@');
