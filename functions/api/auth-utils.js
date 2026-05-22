@@ -158,22 +158,37 @@ export async function ensureArtistUsername(db, userId, fallbackName) {
 export async function findUserByIdentifier(db, identifier) {
   const value = identifier.trim();
   const isEmail = value.includes('@');
+  const activeClause = `(is_active = 1 OR user_type = 'admin')`;
+  const fullColumns = `id, email, password_hash, user_type, first_name, last_name,
+            display_name, profile_picture_url, is_verified, username, is_active`;
+  const baseColumns = `id, email, password_hash, user_type, first_name, last_name,
+            display_name, profile_picture_url, is_verified, is_active`;
 
-  if (isEmail) {
+  try {
+    if (isEmail) {
+      return db.prepare(
+        `SELECT ${fullColumns} FROM users WHERE LOWER(email) = LOWER(?) AND ${activeClause}`
+      ).bind(value).first();
+    }
+
     return db.prepare(
-      `SELECT id, email, password_hash, user_type, first_name, last_name,
-              display_name, profile_picture_url, is_verified, username
+      `SELECT ${fullColumns}
        FROM users
-       WHERE LOWER(email) = LOWER(?) AND is_active = 1`
-    ).bind(value).first();
-  }
+       WHERE (LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?))
+         AND ${activeClause}`
+    ).bind(value, value).first();
+  } catch (err) {
+    // Older databases may not have the username column yet.
+    if (isEmail) {
+      return db.prepare(
+        `SELECT ${baseColumns} FROM users WHERE LOWER(email) = LOWER(?) AND ${activeClause}`
+      ).bind(value).first();
+    }
 
-  return db.prepare(
-    `SELECT id, email, password_hash, user_type, first_name, last_name,
-            display_name, profile_picture_url, is_verified, username
-     FROM users
-     WHERE (username = ? OR LOWER(email) = LOWER(?)) AND is_active = 1`
-  ).bind(value, value).first();
+    return db.prepare(
+      `SELECT ${baseColumns} FROM users WHERE LOWER(email) = LOWER(?) AND ${activeClause}`
+    ).bind(value, value).first();
+  }
 }
 
 export async function ensureAuthTables(db) {

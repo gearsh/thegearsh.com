@@ -54,7 +54,7 @@ jobs:
           mkdir -p build/web/functions/api
           cp -r functions/api/* build/web/functions/api/
           for f in web/functions/api/*.js; do
-            case "$(basename "$f")" in signup.js) continue ;; esac
+            case "$(basename "$f")" in signup.js|login.js|auth-utils.js) continue ;; esac
             cp "$f" build/web/functions/api/
           done
           cp functions/api/auth-utils.js build/web/functions/api/auth-utils.js

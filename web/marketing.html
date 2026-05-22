@@ -141,8 +141,8 @@
       transition: transform 0.2s, border-color 0.2s;
     }
     .feed-card:hover { transform: translateY(-2px); border-color: rgba(0,191,255,0.25); }
-    .feed-card.is-static { cursor: default; pointer-events: none; }
-    .feed-card.is-static:hover { transform: none; border-color: var(--g-border); }
+    .feed-card.is-static { cursor: pointer; }
+    .feed-card.is-static:hover { transform: translateY(-2px); border-color: rgba(0,191,255,0.15); }
     .feed-card-media { position: relative; aspect-ratio: 1; overflow: hidden; }
     .feed-card-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
     .feed-card:hover .feed-card-media img { transform: scale(1.05); }
@@ -440,10 +440,13 @@
     }
 
     function bookUrl(artist) {
-      if (artist.profile_url) return artist.profile_url.replace(/^\//, '');
-      if (artist.username) return 'book/' + encodeURIComponent(String(artist.username).toLowerCase());
+      if (artist.username) return 'book-gig.html?artist=' + encodeURIComponent(String(artist.username).toLowerCase());
+      if (artist.profile_url) {
+        var match = String(artist.profile_url).match(/\/book\/([^/?#]+)/i);
+        if (match) return 'book-gig.html?artist=' + encodeURIComponent(match[1].toLowerCase());
+      }
       if (artist.artist_id) return 'book-gig.html?artist=' + encodeURIComponent(artist.artist_id);
-      return '#feed';
+      return 'join-gig.html';
     }
 
     function formatPrice(amount) {
@@ -514,7 +517,8 @@
         badge: match ? 'Book now' : item.badge,
         badgeClass: match ? 'fb-deal' : item.badgeClass,
         price: item.price || (match && match.min_price ? formatPrice(match.min_price) : ''),
-        bookable: !!match
+        bookable: !!match,
+        showcase: !match
       };
     }
 
@@ -555,7 +559,7 @@
       if (item.bookable) {
         return '<a class="' + classes + '" href="' + bookUrl(item) + '" aria-label="Book ' + item.name + '">' + inner + '</a>';
       }
-      return '<div class="' + classes + '">' + inner + '</div>';
+      return '<a class="' + classes + '" href="join-gig.html" aria-label="List your gig on Gearsh like ' + item.name + '">' + inner + '</a>';
     }
 
     function renderCategorySection(category, cards) {
@@ -575,7 +579,7 @@
     }
 
     function renderStory(item) {
-      var href = item.bookable ? bookUrl(item) : '#cat-new';
+      var href = item.bookable ? bookUrl(item) : 'join-gig.html';
       return '<a class="story-item" href="' + href + '">' +
         '<div class="story-ring"><img src="' + item.image + '" alt="' + item.name + '"></div>' +
         '<span class="story-name">' + item.name + '</span></a>';

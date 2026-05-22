@@ -17,8 +17,8 @@
 /dashboard/*              /gearsh-app.html 200
 /manager                  /gearsh-app.html 200
 /booking/*                /gearsh-app.html 200
-/book/:username           /book-gig.html?artist=:username 200
-/book/*                   /gearsh-app.html 200
+/book/*                   /book-gig.html?artist=:splat 200
+/book-gig                 /book-gig.html 200
 /artist/*                 /gearsh-app.html 200
 /artists                  /gearsh-app.html 200
 /category/*               /gearsh-app.html 200

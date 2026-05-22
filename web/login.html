@@ -146,7 +146,12 @@
             password: document.getElementById('password').value
           })
         });
-        var data = await res.json();
+        var data = {};
+        try {
+          data = await res.json();
+        } catch (_) {
+          throw new Error('Sign in service unavailable. Please try again in a moment.');
+        }
         if (!res.ok || !data.success) {
           throw new Error(data.error || 'Sign in failed. Check your email and password.');
         }

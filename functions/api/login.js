@@ -1,6 +1,5 @@
 // POST /api/login — email or username + password
 import {
-  corsHeaders,
   corsPreflightResponse,
   jsonResponse,
   verifyPassword,
@@ -8,10 +7,17 @@ import {
   findUserByIdentifier,
   buildProfileUrl,
   ensureArtistUsername,
+  ensureAuthTables,
 } from './auth-utils.js';
 
 export async function onRequestPost(context) {
   try {
+    if (!context.env.DB) {
+      return jsonResponse({ success: false, error: 'Database not configured' }, 500);
+    }
+
+    await ensureAuthTables(context.env.DB);
+
     const body = await context.request.json();
     const identifier = (body.identifier || body.email || '').trim();
     const { password } = body;
@@ -37,16 +43,20 @@ export async function onRequestPost(context) {
     let profileUrl = null;
     let artistUsername = user.username || null;
     if (user.user_type === 'artist') {
-      artistProfile = await context.env.DB.prepare(
-        `SELECT id, category, avg_rating, total_bookings
-         FROM artist_profiles WHERE user_id = ?`
-      ).bind(user.id).first();
-      artistUsername = await ensureArtistUsername(
-        context.env.DB,
-        user.id,
-        user.display_name || user.first_name
-      );
-      profileUrl = buildProfileUrl(artistUsername);
+      try {
+        artistProfile = await context.env.DB.prepare(
+          `SELECT id, category, avg_rating, total_bookings
+           FROM artist_profiles WHERE user_id = ?`
+        ).bind(user.id).first();
+        artistUsername = await ensureArtistUsername(
+          context.env.DB,
+          user.id,
+          user.display_name || user.first_name
+        );
+        profileUrl = buildProfileUrl(artistUsername);
+      } catch (artistErr) {
+        console.error('Artist profile load failed:', artistErr);
+      }
     }
 
     const token = generateToken(user.id);
