@@ -28,9 +28,10 @@ jobs:
         run: flutter build web --release --base-href "/app/"
       - name: Copy static assets to build output
         run: |
-          # Move Flutter build into /app/ subdirectory
+          # Flutter shell at root; JS/assets under /app/ (no index in /app/ — avoids /app/ redirect loops)
           mkdir -p build/web/app
-          for item in index.html main.dart.js flutter.js flutter_bootstrap.js flutter_service_worker.js version.json canvaskit assets; do
+          mv build/web/index.html build/web/gearsh-app.html
+          for item in main.dart.js flutter.js flutter_bootstrap.js flutter_service_worker.js version.json canvaskit assets; do
             if [ -e "build/web/$item" ]; then
               mv "build/web/$item" "build/web/app/$item"
             fi
@@ -41,7 +42,8 @@ jobs:
           cp -r web/icons build/web/icons 2>/dev/null || true
           cp web/gearsh-brand.css build/web/gearsh-brand.css 2>/dev/null || true
           cp web/marketing.html build/web/index.html
-          cp web/list-gig.html build/web/list-gig.html
+          mkdir -p build/web/list-gig
+          cp web/list-gig.html build/web/list-gig/index.html
           cp web/terms.html build/web/terms.html
           cp web/privacy.html build/web/privacy.html
           cp web/_redirects build/web/_redirects
@@ -54,9 +56,10 @@ jobs:
       - name: Verify deployment bundle
         run: |
           test -f build/web/_redirects
-          test -f build/web/app/index.html
-          grep -q "flutter_bootstrap" build/web/app/index.html
-          grep -q "list-gig.html" build/web/_redirects
+          test -f build/web/gearsh-app.html
+          test ! -f build/web/app/index.html
+          grep -q "flutter_bootstrap" build/web/gearsh-app.html
+          grep -q "gearsh-app.html" build/web/_redirects
           echo "Deployment bundle OK"
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3

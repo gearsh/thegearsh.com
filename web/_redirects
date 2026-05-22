@@ -1,48 +1,44 @@
-# Flutter app lives in /app/ (built with --base-href /app/)
-/app                      /app/index.html 200
-/app/                     /app/index.html 200
+# Flutter shell (assets live under /app/ — no index.html in /app/ to avoid /app/ redirects)
+/gearsh-app.html          /gearsh-app.html 200
 
-# Flutter routes — rewrite to shell (URL stays /login, /onboarding, etc.)
-/onboarding               /app/index.html 200
-/login                    /app/index.html 200
-/register                 /app/index.html 200
-/signup                   /app/index.html 200
-/join                     /app/index.html 200
-/home                     /app/index.html 200
-/discover                 /app/index.html 200
-/discover/*               /app/index.html 200
-/profile                  /app/index.html 200
-/profile/*                /app/index.html 200
-/profile-settings         /app/index.html 200
-/edit-profile             /app/index.html 200
-/dashboard                /app/index.html 200
-/dashboard/*              /app/index.html 200
-/manager                  /app/index.html 200
-/booking/*                /app/index.html 200
-/book/*                   /app/index.html 200
-/artist/*                 /app/index.html 200
-/artists                  /app/index.html 200
-/category/*               /app/index.html 200
-/search                   /app/index.html 200
-/gigs                     /app/index.html 200
-/cart                     /app/index.html 200
-/cart/*                   /app/index.html 200
-/messages                 /app/index.html 200
-/bookings                 /app/index.html 200
-/my-bookings              /app/index.html 200
-/saved-artists            /app/index.html 200
-/forgot-password          /app/index.html 200
-/reset-password           /app/index.html 200
-/help                     /app/index.html 200
-/faq                      /app/index.html 200
-/settings                 /app/index.html 200
-/privacy-policy           /app/index.html 200
-/terms                    /app/index.html 200
+/onboarding               /gearsh-app.html 200
+/login                    /gearsh-app.html 200
+/register                 /gearsh-app.html 200
+/signup                   /gearsh-app.html 200
+/join                     /gearsh-app.html 200
+/home                     /gearsh-app.html 200
+/discover                 /gearsh-app.html 200
+/discover/*               /gearsh-app.html 200
+/profile                  /gearsh-app.html 200
+/profile/*                /gearsh-app.html 200
+/profile-settings         /gearsh-app.html 200
+/edit-profile             /gearsh-app.html 200
+/dashboard                /gearsh-app.html 200
+/dashboard/*              /gearsh-app.html 200
+/manager                  /gearsh-app.html 200
+/booking/*                /gearsh-app.html 200
+/book/*                   /gearsh-app.html 200
+/artist/*                 /gearsh-app.html 200
+/artists                  /gearsh-app.html 200
+/category/*               /gearsh-app.html 200
+/search                   /gearsh-app.html 200
+/gigs                     /gearsh-app.html 200
+/cart                     /gearsh-app.html 200
+/cart/*                   /gearsh-app.html 200
+/messages                 /gearsh-app.html 200
+/bookings                 /gearsh-app.html 200
+/my-bookings              /gearsh-app.html 200
+/saved-artists            /gearsh-app.html 200
+/forgot-password          /gearsh-app.html 200
+/reset-password           /gearsh-app.html 200
+/help                     /gearsh-app.html 200
+/faq                      /gearsh-app.html 200
+/settings                 /gearsh-app.html 200
+/privacy-policy           /gearsh-app.html 200
 
-# Marketing & legal (static HTML at site root)
-/list-gig.html            /list-gig.html 200
-/list-gig                 /list-gig.html 200
+# Marketing & legal (do NOT add extensionless rules that loop with Pretty URLs)
 /terms.html               /terms.html 200
+/terms                    /terms.html 200
 /privacy.html             /privacy.html 200
 /privacy                  /privacy.html 200
 /landing.html             /landing.html 200
@@ -50,5 +46,4 @@
 /icons/*                  /icons/:splat 200
 /assets/*                 /assets/:splat 200
 
-# Homepage only — never use /* catch-all
 /                         /index.html 200
