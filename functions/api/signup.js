@@ -23,15 +23,25 @@ export async function onRequestPost(context) {
       country = 'South Africa',
       user_name,
       username,
+      stage_name,
       skill_set,
       date_of_birth,
       gender
     } = body;
 
-    const chosenUsername = (username || user_name || '').trim() || null;
+    let chosenUsername = (username || user_name || '').trim() || null;
+    let firstName = (first_name || '').trim();
+    let lastName = (last_name || '').trim();
+    const stageName = (stage_name || '').trim();
+
+    if (user_type === 'artist' && stageName) {
+      firstName = stageName;
+      lastName = '—';
+      if (!chosenUsername) chosenUsername = stageName;
+    }
 
     // Validate required fields
-    if (!email || !password || !first_name || !last_name) {
+    if (!email || !password || !firstName || !lastName) {
       return jsonResponse({
         success: false,
         error: "Please fill in all required fields"
@@ -83,7 +93,7 @@ export async function onRequestPost(context) {
     // Generate user ID and hash password
     const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const passwordHash = await hashPassword(password);
-    const displayName = `${first_name} ${last_name}`;
+    const displayName = user_type === 'artist' && stageName ? stageName : `${firstName} ${lastName}`.trim();
     const createdAt = new Date().toISOString();
 
     console.log("Inserting user:", userId, email.toLowerCase());
@@ -100,8 +110,8 @@ export async function onRequestPost(context) {
         email.toLowerCase(),
         passwordHash,
         user_type,
-        first_name,
-        last_name,
+        firstName,
+        lastName,
         displayName,
         chosenUsername,
         phone || null,
@@ -147,8 +157,8 @@ export async function onRequestPost(context) {
         user_id: userId,
         email: email.toLowerCase(),
         user_type,
-        first_name,
-        last_name,
+        first_name: firstName,
+        last_name: lastName,
         display_name: displayName,
         token
       }

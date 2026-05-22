@@ -237,13 +237,10 @@
       <div class="step-panel visible" id="step1">
         <div class="step-hero">
           <h1>Join as an <em>artist</em></h1>
-          <p>Create your free profile. Start getting booked.</p>
+          <p>Your stage name, email, and phone — that's all we need to start.</p>
         </div>
         <div class="step-form">
-          <div class="field-row">
-            <div class="field-group"><label class="field-label">First name</label><input type="text" id="first-name" class="field-input" placeholder="First name" required></div>
-            <div class="field-group"><label class="field-label">Last name</label><input type="text" id="last-name" class="field-input" placeholder="Last name" required></div>
-          </div>
+          <div class="field-group"><label class="field-label">Stage name</label><input type="text" id="stage-name" class="field-input" placeholder="e.g. DJ ZJ90, Y.D.E, Dripmaker" required></div>
           <div class="field-group"><label class="field-label">Email</label><input type="email" id="email" class="field-input" placeholder="you@email.com" required></div>
           <div class="field-group"><label class="field-label">Phone</label><input type="tel" id="phone" class="field-input" placeholder="+27 00 000 0000"></div>
           <div id="signup-error" class="terms-text" style="color:#f87171;display:none;margin-bottom:12px"></div>
@@ -285,7 +282,6 @@
             </div>
             <div class="field-group"><label class="field-label">City</label><input type="text" id="city" class="field-input" placeholder="Johannesburg"></div>
           </div>
-          <div class="field-group"><label class="field-label">Artist / stage name (optional)</label><input type="text" id="stage-name" class="field-input" placeholder="Your creative name"></div>
           <div class="mastery-note">
             <div style="font-size:18px; flex-shrink:0;"><i class="ti ti-trophy" style="color:var(--g-accent)"></i></div>
             <p>You'll start as a <strong>Newcomer</strong> with an 80% introductory discount to help you land your first bookings.</p>
@@ -349,11 +345,10 @@
     }
 
     function validateStep1() {
-      var first = document.getElementById('first-name').value.trim();
-      var last = document.getElementById('last-name').value.trim();
+      var stageName = document.getElementById('stage-name').value.trim();
       var email = document.getElementById('email').value.trim();
-      if (!first || !last || !email) {
-        showError('Please enter your first name, last name, and email.');
+      if (!stageName || !email) {
+        showError('Please enter your stage name and email.');
         return false;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -381,11 +376,11 @@
       btn.textContent = 'Creating account…';
 
       var country = document.getElementById('country').value || 'South Africa';
+      var stageName = document.getElementById('stage-name').value.trim();
       var payload = {
         email: document.getElementById('email').value.trim(),
         password: document.getElementById('pw1').value,
-        first_name: document.getElementById('first-name').value.trim(),
-        last_name: document.getElementById('last-name').value.trim(),
+        stage_name: stageName,
         user_type: 'artist',
         phone: document.getElementById('phone').value.trim(),
         location: document.getElementById('city').value.trim(),
@@ -394,6 +389,7 @@
       };
       var username = document.getElementById('username').value.trim();
       if (username) payload.user_name = username;
+      else payload.user_name = stageName;
 
       try {
         var res = await fetch(API_BASE + '/signup', {
@@ -428,7 +424,7 @@
       document.querySelectorAll('.step-panel').forEach(function(p) { p.classList.remove('visible'); });
       var t = document.getElementById('step' + n);
       if (t) t.classList.add('visible');
-      var labels = { 1:'Step 1 of 3 — Your details', 2:'Step 2 of 3 — Your craft', 3:'Step 3 of 3 — Security', 4:'' };
+      var labels = { 1:'Step 1 of 3 — Stage name & contact', 2:'Step 2 of 3 — Your craft', 3:'Step 3 of 3 — Security', 4:'' };
       document.getElementById('step-label').textContent = labels[n] || '';
       ['ps1','ps2','ps3'].forEach(function(id, i) {
         var el = document.getElementById(id);
