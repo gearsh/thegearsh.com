@@ -58,6 +58,7 @@ body {
 .g-nav-logo img {
   height: 40px; width: auto; max-width: 140px;
   border-radius: 0; object-fit: contain;
+  background: transparent;
 }
 .g-nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
 .g-nav-links a {
@@ -126,6 +127,7 @@ body {
 .g-footer-left img {
   height: 28px; width: auto; max-width: 100px;
   border-radius: 0; object-fit: contain;
+  background: transparent;
 }
 .g-footer-links { display: flex; gap: 20px; list-style: none; }
 .g-footer-links a {
