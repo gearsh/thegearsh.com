@@ -30,6 +30,14 @@
       display: none; margin-bottom: 14px; padding: 12px 14px; border-radius: 10px;
       background: rgba(248,113,113,0.1); border: 0.5px solid rgba(248,113,113,0.25); color: #f87171; font-size: 13px;
     }
+    .god-success {
+      display: none; margin-bottom: 14px; padding: 12px 14px; border-radius: 10px;
+      background: rgba(52,211,153,0.1); border: 0.5px solid rgba(52,211,153,0.25); color: #6ee7b7; font-size: 13px;
+    }
+    .god-link-btn {
+      background: none; border: none; color: var(--g-accent); font-size: 12px;
+      cursor: pointer; padding: 0; margin-top: 12px; font-family: var(--g-font);
+    }
     .god-top {
       display: flex; align-items: center; justify-content: space-between; gap: 16px;
       margin-bottom: 28px; flex-wrap: wrap;
@@ -113,6 +121,7 @@
     <h1>Gearsh Command</h1>
     <p>Founder-only control panel. This page is private — not linked anywhere on the public site.</p>
     <div class="god-error" id="login-error"></div>
+    <div class="god-success" id="login-success"></div>
     <form id="login-form">
       <div class="god-field">
         <label for="founder-email">Founder email</label>
@@ -127,6 +136,28 @@
         <input id="founder-key" type="password" required placeholder="Your FOUNDER_ACCESS_KEY">
       </div>
       <button class="btn-main" type="submit" id="login-btn" style="width:100%;margin-top:8px">Enter command center</button>
+      <button class="god-link-btn" type="button" id="show-reset-btn">Forgot password? Reset with access key</button>
+    </form>
+
+    <form id="reset-form" class="hidden">
+      <div class="god-field">
+        <label for="reset-email">Founder email</label>
+        <input id="reset-email" type="email" required autocomplete="username">
+      </div>
+      <div class="god-field">
+        <label for="reset-key">Private access key</label>
+        <input id="reset-key" type="password" required placeholder="Your FOUNDER_ACCESS_KEY">
+      </div>
+      <div class="god-field">
+        <label for="reset-password">New password</label>
+        <input id="reset-password" type="password" required placeholder="At least 8 characters" autocomplete="new-password">
+      </div>
+      <div class="god-field">
+        <label for="reset-password2">Confirm new password</label>
+        <input id="reset-password2" type="password" required autocomplete="new-password">
+      </div>
+      <button class="btn-main" type="submit" id="reset-btn" style="width:100%;margin-top:8px">Reset password</button>
+      <button class="god-link-btn" type="button" id="show-login-btn">Back to sign in</button>
     </form>
   </div>
 
@@ -255,7 +286,72 @@
       var el = document.getElementById('login-error');
       el.textContent = msg;
       el.style.display = msg ? 'block' : 'none';
+      if (msg) document.getElementById('login-success').style.display = 'none';
     }
+
+    function showLoginSuccess(msg) {
+      var el = document.getElementById('login-success');
+      el.textContent = msg;
+      el.style.display = msg ? 'block' : 'none';
+      if (msg) document.getElementById('login-error').style.display = 'none';
+    }
+
+    function showResetForm(show) {
+      document.getElementById('login-form').classList.toggle('hidden', show);
+      document.getElementById('reset-form').classList.toggle('hidden', !show);
+      showLoginError('');
+      showLoginSuccess('');
+      if (show) {
+        document.getElementById('reset-email').value = document.getElementById('founder-email').value;
+        document.getElementById('reset-key').value = document.getElementById('founder-key').value;
+      }
+    }
+
+    document.getElementById('show-reset-btn').addEventListener('click', function() {
+      showResetForm(true);
+    });
+
+    document.getElementById('show-login-btn').addEventListener('click', function() {
+      showResetForm(false);
+    });
+
+    document.getElementById('reset-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      showLoginError('');
+      showLoginSuccess('');
+      var pw = document.getElementById('reset-password').value;
+      var pw2 = document.getElementById('reset-password2').value;
+      if (pw !== pw2) {
+        showLoginError('Passwords do not match.');
+        return;
+      }
+      var btn = document.getElementById('reset-btn');
+      btn.disabled = true;
+      btn.textContent = 'Resetting…';
+      try {
+        var res = await fetch(API_BASE + '/founder/reset-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('reset-email').value.trim(),
+            access_key: document.getElementById('reset-key').value,
+            new_password: pw
+          })
+        });
+        var data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || 'Reset failed');
+        document.getElementById('founder-email').value = document.getElementById('reset-email').value.trim();
+        document.getElementById('founder-password').value = pw;
+        document.getElementById('founder-key').value = document.getElementById('reset-key').value;
+        showResetForm(false);
+        showLoginSuccess('Password updated. Sign in with your new password.');
+      } catch (err) {
+        showLoginError(err.message || 'Could not reset password');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Reset password';
+      }
+    });
 
     function showApp(show) {
       document.getElementById('login-view').classList.toggle('hidden', show);
