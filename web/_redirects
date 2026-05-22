@@ -1,9 +1,10 @@
-# Flutter shell (assets live under /app/ — no index.html in /app/ to avoid /app/ redirects)
+# Flutter shell (assets in /app/)
 /gearsh-app.html          /gearsh-app.html 200
 
 /onboarding               /gearsh-app.html 200
 /login                    /gearsh-app.html 200
 /register                 /gearsh-app.html 200
+/signup                   /gearsh-app.html 200
 /join                     /gearsh-app.html 200
 /home                     /gearsh-app.html 200
 /discover                 /gearsh-app.html 200
@@ -35,13 +36,10 @@
 /settings                 /gearsh-app.html 200
 /privacy-policy           /gearsh-app.html 200
 
-# Marketing & legal static pages
-/signup.html              /signup.html 200
-/signup                   /signup.html 200
+# Marketing static pages — .html only (no extensionless rules; Pretty URLs causes loops)
+/join-gig.html            /join-gig.html 200
 /terms.html               /terms.html 200
-/terms                    /terms.html 200
 /privacy.html             /privacy.html 200
-/privacy                  /privacy.html 200
 /landing.html             /landing.html 200
 
 /icons/*                  /icons/:splat 200
