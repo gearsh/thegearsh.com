@@ -70,6 +70,17 @@
       text-decoration: none; font-size: 14px; font-weight: 600;
     }
     .loading { text-align: center; padding: 80px 20px; color: var(--g-text-muted); }
+    .claim-banner {
+      margin-bottom: 20px; padding: 16px 18px; border-radius: 14px;
+      background: rgba(0,191,255,0.08); border: 0.5px solid rgba(0,191,255,0.18);
+      display: none;
+    }
+    .claim-banner strong { color: var(--g-white); }
+    .claim-banner p { font-size: 13px; color: var(--g-text-muted); margin-top: 6px; line-height: 1.5; }
+    .claim-banner a {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+      color: var(--g-accent); font-size: 13px; font-weight: 700; text-decoration: none;
+    }
     @media (max-width: 768px) { .book-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -97,8 +108,13 @@
   </div>
 
   <div id="content" class="book-page" style="display:none">
+    <div id="claim-banner" class="claim-banner">
+      <strong id="claim-banner-title">Are you this artist?</strong>
+      <p id="claim-banner-copy">This is a Gearsh demo profile created with the artist's permission. Claim it with your private code to manage bookings and update your details.</p>
+      <a id="claim-banner-link" href="#"><i class="ti ti-key"></i> Claim this profile</a>
+    </div>
     <div class="book-hero">
-      <div class="book-badge"><i class="ti ti-seedling"></i> Newcomer · 80% intro discount</div>
+      <div class="book-badge" id="book-badge"><i class="ti ti-seedling"></i> Available to book</div>
       <h1 class="book-title">Book <em id="artist-name">…</em></h1>
       <div class="book-meta">
         <span id="artist-location"><i class="ti ti-map-pin"></i> —</span>
@@ -169,6 +185,20 @@
         '<i class="ti ti-map-pin"></i> ' + [data.location, data.country].filter(Boolean).join(', ') || 'Location on request';
       document.getElementById('artist-category').innerHTML =
         '<i class="ti ti-tag"></i> ' + (data.category || 'Services');
+
+      var badge = document.getElementById('book-badge');
+      if (data.hourly_rate) {
+        badge.innerHTML = '<i class="ti ti-clock"></i> R' + Number(data.hourly_rate).toLocaleString('en-ZA') + '/hour';
+      } else if (data.is_verified) {
+        badge.innerHTML = '<i class="ti ti-rosette-discount-check"></i> Verified on Gearsh';
+      }
+
+      if (data.is_claimable && data.claim_url) {
+        var banner = document.getElementById('claim-banner');
+        document.getElementById('claim-banner-title').textContent = 'Are you ' + (data.name || 'this artist') + '?';
+        document.getElementById('claim-banner-link').href = data.claim_url;
+        banner.style.display = 'block';
+      }
 
       var skills = Array.isArray(data.skills) ? data.skills : [];
       document.getElementById('skill-tags').innerHTML = skills.map(function(skill) {

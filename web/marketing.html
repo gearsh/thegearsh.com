@@ -421,7 +421,7 @@
       { name: 'Nasty C', image: 'assets/images/artists/nastyc.png', genre: 'Hip Hop · Durban', badge: 'Featured', badgeClass: 'fb-feat' },
       { name: 'Black Coffee', image: 'assets/images/artists/coffee.png', genre: 'House · International', badge: 'Featured', badgeClass: 'fb-feat', large: true },
       { name: 'Cassper Nyovest', image: 'assets/images/artists/cassper.png', genre: 'Hip Hop · Joburg', badge: 'Featured', badgeClass: 'fb-feat' },
-      { name: 'Rix Elton', image: 'assets/images/artists/rixelton.jpg', genre: 'Amapiano DJ', badge: 'Newcomer', badgeClass: 'fb-new', price: 'from R20,000' },
+      { name: 'Rix Elton', image: 'assets/images/artists/rixelton.jpg', genre: 'Amapiano DJ · Johannesburg', badge: 'Book now', badgeClass: 'fb-deal', price: 'R2,000/hr' },
       { name: 'Empress Ngqama', image: 'assets/images/artists/empress-ngqama.jpg', genre: 'Afro-Soul · Reggae', badge: 'Newcomer', badgeClass: 'fb-new', price: 'from R22,000' },
       { name: 'Kelvin Momo', image: 'assets/images/artists/kelvin-momo.png', genre: 'Amapiano', badge: 'Rising', badgeClass: 'fb-rise' },
       { name: 'A-Reece', image: 'assets/images/artists/a-reece.png', genre: 'Hip Hop · Pretoria', badge: 'Featured', badgeClass: 'fb-feat' },
@@ -440,12 +440,12 @@
     }
 
     function bookUrl(artist) {
-      if (artist.username) return 'book-gig.html?artist=' + encodeURIComponent(String(artist.username).toLowerCase());
+      if (artist.username) return 'book-gig?artist=' + encodeURIComponent(String(artist.username).toLowerCase());
       if (artist.profile_url) {
         var match = String(artist.profile_url).match(/\/book\/([^/?#]+)/i);
-        if (match) return 'book-gig.html?artist=' + encodeURIComponent(match[1].toLowerCase());
+        if (match) return 'book-gig?artist=' + encodeURIComponent(match[1].toLowerCase());
       }
-      if (artist.artist_id) return 'book-gig.html?artist=' + encodeURIComponent(artist.artist_id);
+      if (artist.artist_id) return 'book-gig?artist=' + encodeURIComponent(artist.artist_id);
       return 'join-gig.html';
     }
 

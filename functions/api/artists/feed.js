@@ -1,6 +1,7 @@
 // GET /api/artists/feed — categorized artist rows for the homepage
 
 import { parseSkills, buildProfileUrl } from '../auth-utils.js';
+import { seedRixElton } from '../demo-artists.js';
 
 const SA_COUNTRIES = new Set([
   'south africa',
@@ -204,6 +205,15 @@ function buildCategories(artists) {
 
 export async function onRequestGet(context) {
   try {
+    try {
+      const rix = await context.env.DB.prepare(
+        `SELECT id FROM users WHERE LOWER(username) = 'rixelton' LIMIT 1`
+      ).first();
+      if (!rix) await seedRixElton(context.env.DB);
+    } catch (seedErr) {
+      console.error('Demo artist seed skipped:', seedErr);
+    }
+
     const query = `
       SELECT
         ap.id as artist_id,

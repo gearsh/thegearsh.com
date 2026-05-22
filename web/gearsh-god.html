@@ -203,6 +203,15 @@
       </div>
     </div>
 
+    <div class="god-panel" id="demo-panel">
+      <h2>Demo artist — Rix Elton</h2>
+      <div class="sub">Bookable demo profile for product testing. Rix can claim it later with a private code.</div>
+      <div class="god-toolbar">
+        <button class="god-btn primary" type="button" onclick="seedRixElton()"><i class="ti ti-user-plus"></i> Create / refresh Rix Elton</button>
+      </div>
+      <div id="demo-result" class="god-success" style="display:none;margin-bottom:0"></div>
+    </div>
+
     <div class="god-panel">
       <h2>Manage artists</h2>
       <div class="sub">Search, approve listings, or remove profiles from the marketplace</div>
@@ -491,6 +500,32 @@
           '<td>' + actions + '</td>' +
         '</tr>';
       }).join('') || '<tr><td colspan="7">No artists found</td></tr>';
+    }
+
+    async function seedRixElton() {
+      var resultEl = document.getElementById('demo-result');
+      resultEl.style.display = 'none';
+      try {
+        var data = await founderFetch('/founder/seed-demo-artist', {
+          method: 'POST',
+          body: JSON.stringify({ artist: 'rixelton' })
+        });
+        var info = data || {};
+        var lines = [];
+        lines.push('Booking page: https://thegearsh.com/book-gig?artist=' + encodeURIComponent(info.username || 'rixelton'));
+        lines.push('Share link: https://thegearsh.com/book/' + encodeURIComponent(info.username || 'rixelton'));
+        if (info.claim_url) lines.push('Claim page: https://thegearsh.com' + info.claim_url);
+        if (info.claim_code) lines.push('Private claim code for Rix: <strong style="color:#fff">' + info.claim_code + '</strong>');
+        if (info.hourly_rate) lines.push('Rate: R' + Number(info.hourly_rate).toLocaleString('en-ZA') + '/hour');
+        resultEl.className = 'god-success';
+        resultEl.innerHTML = lines.join('<br>') || 'Demo profile ready.';
+        resultEl.style.display = 'block';
+        await refreshAll();
+      } catch (err) {
+        resultEl.className = 'god-error';
+        resultEl.textContent = err.message || 'Failed to seed demo artist';
+        resultEl.style.display = 'block';
+      }
     }
 
     async function refreshAll() {

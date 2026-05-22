@@ -1,9 +1,11 @@
 // GET /api/artists/[id] - Get single artist by profile ID or username
 
 import { parseSkills, resolveArtistProfile } from '../auth-utils.js';
+import { ensureDemoColumns } from '../demo-artists.js';
 
 export async function onRequestGet(context) {
   try {
+    await ensureDemoColumns(context.env.DB);
     const identifier = context.params.id;
     const resolved = await resolveArtistProfile(context.env.DB, identifier);
 
@@ -49,7 +51,9 @@ export async function onRequestGet(context) {
         ap.portfolio_urls,
         ap.social_links,
         ap.years_experience,
-        ap.availability_status
+        ap.availability_status,
+        u.claim_token,
+        u.is_demo
       FROM artist_profiles ap
       JOIN users u ON ap.user_id = u.id
       WHERE ap.id = ? AND u.is_active = 1
@@ -96,6 +100,9 @@ export async function onRequestGet(context) {
     const artistData = {
       ...artist,
       profile_url: artist.username ? `/book/${encodeURIComponent(String(artist.username).toLowerCase())}` : null,
+      claim_url: artist.claim_token ? `/claim-profile.html?artist=${encodeURIComponent(String(artist.username).toLowerCase())}` : null,
+      is_claimable: Boolean(artist.claim_token),
+      is_demo: Boolean(artist.is_demo),
       skills: parseSkills(artist.skills),
       portfolio_urls: artist.portfolio_urls ? JSON.parse(artist.portfolio_urls) : [],
       social_links: artist.social_links ? JSON.parse(artist.social_links) : {},
@@ -104,6 +111,7 @@ export async function onRequestGet(context) {
       services: services.results || [],
       reviews: reviews.results || [],
     };
+    delete artistData.claim_token;
 
     return new Response(JSON.stringify({
       success: true,

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Claim your profile | Gearsh</title>
+  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+  <link rel="stylesheet" href="gearsh-brand.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    .auth-page {
+      min-height: 100vh; min-height: 100svh; display: flex; align-items: center; justify-content: center;
+      padding: 80px 20px 40px;
+    }
+    .auth-card {
+      width: 100%; max-width: 460px; background: var(--g-surface); border: 0.5px solid var(--g-border);
+      border-radius: 20px; padding: 28px;
+    }
+    .auth-card h1 {
+      font-family: var(--g-serif); font-size: 28px; color: var(--g-white); font-weight: 400; line-height: 1.15;
+    }
+    .auth-card h1 em { font-style: italic; color: var(--g-accent); }
+    .auth-card p { font-size: 14px; color: var(--g-text-muted); margin-top: 8px; line-height: 1.55; }
+    .claim-note {
+      margin-top: 16px; padding: 14px 16px; border-radius: 12px;
+      background: rgba(0,191,255,0.08); border: 0.5px solid rgba(0,191,255,0.18);
+      font-size: 13px; color: var(--g-text-muted); line-height: 1.5;
+    }
+    .field-group { margin-top: 14px; }
+    .field-label { display: block; font-size: 12px; color: var(--g-text-muted); margin-bottom: 5px; }
+    .field-input {
+      width: 100%; height: 48px; background: var(--g-black); border: 0.5px solid var(--g-border);
+      border-radius: 10px; padding: 0 16px; font-family: var(--g-font); font-size: 15px; color: var(--g-text);
+    }
+    .field-input:focus { outline: none; border-color: rgba(0,191,255,0.45); }
+    .auth-error { font-size: 13px; color: #f87171; margin-top: 12px; display: none; }
+    .auth-success { font-size: 13px; color: #34d399; margin-top: 12px; display: none; }
+    .btn-submit {
+      width: 100%; height: 52px; margin-top: 16px; background: var(--g-accent); color: var(--g-black);
+      border: none; border-radius: 10px; font-family: var(--g-font); font-size: 15px; font-weight: 700; cursor: pointer;
+    }
+    .auth-footer { text-align: center; font-size: 13px; color: var(--g-text-muted); margin-top: 18px; }
+    .auth-footer a { color: var(--g-accent); text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <nav class="g-nav">
+    <div class="g-nav-inner">
+      <a href="./" class="g-nav-logo"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
+      <ul class="g-nav-links"><li><a href="./">Home</a></li></ul>
+    </div>
+  </nav>
+
+  <div class="auth-page">
+    <div class="auth-card">
+      <h1>Claim your <em id="artist-title">profile</em></h1>
+      <p id="claim-intro">Enter the private claim code you received from Gearsh, then set your email and password to take over this demo profile.</p>
+      <div class="claim-note" id="claim-note" style="display:none"></div>
+
+      <form id="claim-form">
+        <div class="field-group">
+          <label class="field-label" for="claim-code">Private claim code</label>
+          <input class="field-input" id="claim-code" required placeholder="RIX-XXXXXXXX" autocomplete="off">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="email">Your email</label>
+          <input class="field-input" id="email" type="email" required placeholder="you@email.com" autocomplete="email">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="phone">Phone (optional)</label>
+          <input class="field-input" id="phone" type="tel" placeholder="+27 00 000 0000">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="password">Choose a password</label>
+          <input class="field-input" id="password" type="password" required minlength="8" placeholder="At least 8 characters" autocomplete="new-password">
+        </div>
+        <div class="auth-error" id="claim-error"></div>
+        <div class="auth-success" id="claim-success"></div>
+        <button class="btn-submit" type="submit" id="claim-btn">Claim profile</button>
+      </form>
+
+      <div class="auth-footer">
+        Already claimed? <a href="login.html">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var API_BASE = '/api';
+    var artistSlug = new URLSearchParams(window.location.search).get('artist') || 'rixelton';
+
+    async function loadClaimInfo() {
+      try {
+        var res = await fetch(API_BASE + '/claim-profile?artist=' + encodeURIComponent(artistSlug));
+        var data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || 'Profile not available');
+        document.getElementById('artist-title').textContent = data.data.display_name + ' profile';
+        document.getElementById('claim-note').style.display = 'block';
+        document.getElementById('claim-note').innerHTML =
+          'You are claiming <strong style="color:var(--g-white)">' + data.data.display_name + '</strong> (' +
+          data.data.username + '). Your bookings, link, and dashboard will stay exactly as they are on Gearsh.';
+      } catch (err) {
+        document.getElementById('claim-intro').textContent = err.message || 'This profile cannot be claimed.';
+        document.getElementById('claim-form').style.display = 'none';
+      }
+    }
+
+    document.getElementById('claim-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var errEl = document.getElementById('claim-error');
+      var okEl = document.getElementById('claim-success');
+      var btn = document.getElementById('claim-btn');
+      errEl.style.display = 'none';
+      okEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Claiming…';
+
+      try {
+        var res = await fetch(API_BASE + '/claim-profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: artistSlug,
+            claim_code: document.getElementById('claim-code').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            password: document.getElementById('password').value
+          })
+        });
+        var data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || 'Claim failed');
+
+        localStorage.setItem('gearsh_token', data.data.token);
+        localStorage.setItem('gearsh_user_id', data.data.user_id || '');
+        localStorage.setItem('gearsh_user_name', data.data.display_name || '');
+        localStorage.setItem('gearsh_user_type', 'artist');
+        if (data.data.profile_url) localStorage.setItem('gearsh_profile_url', data.data.profile_url);
+        if (data.data.username) localStorage.setItem('gearsh_username', data.data.username);
+
+        okEl.textContent = data.message + ' Redirecting to your dashboard…';
+        okEl.style.display = 'block';
+        setTimeout(function() { window.location.href = 'artist-dashboard.html'; }, 1200);
+      } catch (err) {
+        errEl.textContent = err.message || 'Something went wrong.';
+        errEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Claim profile';
+      }
+    });
+
+    loadClaimInfo();
+  </script>
+</body>
+</html>
