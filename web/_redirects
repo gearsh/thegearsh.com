@@ -36,7 +36,8 @@
 /settings                 /gearsh-app.html 200
 /privacy-policy           /gearsh-app.html 200
 
-# Marketing & legal (do NOT add extensionless rules that loop with Pretty URLs)
+# Marketing & legal static pages (link with .html — avoids Pretty URL conflicts)
+/signup.html              /signup.html 200
 /terms.html               /terms.html 200
 /terms                    /terms.html 200
 /privacy.html             /privacy.html 200

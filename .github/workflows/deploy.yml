@@ -42,8 +42,7 @@ jobs:
           cp -r web/icons build/web/icons 2>/dev/null || true
           cp web/gearsh-brand.css build/web/gearsh-brand.css 2>/dev/null || true
           cp web/marketing.html build/web/index.html
-          mkdir -p build/web/list-gig
-          cp web/list-gig.html build/web/list-gig/index.html
+          cp web/signup.html build/web/signup.html
           cp web/terms.html build/web/terms.html
           cp web/privacy.html build/web/privacy.html
           cp web/_redirects build/web/_redirects
