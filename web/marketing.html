@@ -115,50 +115,61 @@
       text-decoration: none;
     }
     .cat-pill i { font-size: 18px; color: var(--g-accent); }
-    .cat-pill:hover { border-color: var(--g-accent); color: var(--g-white); background: var(--g-accent-light); }
-    /* ── FEED GRID ── */
-    .feed-section { padding: 32px 20px 0; max-width: 1200px; margin: 0 auto; }
-    .feed-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .feed-title { font-family: var(--g-serif); font-size: 24px; color: var(--g-white); font-weight: 400; letter-spacing: -0.02em; }
-    .feed-title em { font-style: italic; color: var(--g-accent); }
-    .feed-link { font-size: 13px; color: var(--g-accent); text-decoration: none; font-weight: 500; }
-    .feed-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
-    .feed-cell { position: relative; overflow: hidden; aspect-ratio: 1; cursor: pointer; border-radius: 2px; display: block; text-decoration: none; color: inherit; }
-    .feed-cell.is-bookable { cursor: pointer; }
-    .feed-cell.is-static { cursor: default; }
-    .feed-cell-action {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      background: var(--g-accent); color: var(--g-black); font-size: 12px; font-weight: 700;
-      padding: 8px 14px; border-radius: 999px; opacity: 0; transition: opacity 0.25s;
-      pointer-events: none; z-index: 2;
-    }
-    .feed-cell.is-bookable:hover .feed-cell-action { opacity: 1; }
-    .feed-cell img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
-    .feed-cell:hover img { transform: scale(1.06); }
-    .feed-cell-overlay {
-      position: absolute; inset: 0; background: rgba(0,0,0,0);
-      display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 12px; transition: background 0.3s;
-    }
-    .feed-cell:hover .feed-cell-overlay { background: rgba(0,0,0,0.55); }
-    .feed-cell-info { opacity: 0; transform: translateY(8px); transition: opacity 0.3s, transform 0.3s; }
-    .feed-cell:hover .feed-cell-info { opacity: 1; transform: translateY(0); }
-    .feed-cell-name { font-size: 13px; font-weight: 700; color: #fff; }
-    .feed-cell-genre { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 2px; }
-    .feed-cell-price { font-size: 12px; font-weight: 500; color: var(--g-accent); margin-top: 4px; }
-    .feed-cell-badge {
-      position: absolute; top: 8px; right: 8px;
-      font-size: 10px; padding: 3px 8px; border-radius: 6px;
-      font-weight: 600; backdrop-filter: blur(8px);
-    }
+    .cat-pill:hover, .cat-pill.active { border-color: var(--g-accent); color: var(--g-white); background: var(--g-accent-light); }
     .fb-new { background: rgba(0,191,255,0.25); color: #7DD3FC; }
     .fb-rise { background: rgba(139,92,246,0.25); color: #C4B5FD; }
     .fb-feat { background: rgba(251,191,36,0.25); color: #FDE68A; }
     .fb-deal { background: rgba(52,211,153,0.25); color: #6EE7B7; }
-    .feed-cell.large { grid-column: span 2; grid-row: span 2; }
+    /* ── FEED GRID ── */
+    .feed-section { padding: 32px 20px 0; max-width: 1200px; margin: 0 auto; }
+    .feed-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+    .feed-title { font-family: var(--g-serif); font-size: 24px; color: var(--g-white); font-weight: 400; letter-spacing: -0.02em; }
+    .feed-title em { font-style: italic; color: var(--g-accent); }
+    .feed-subtitle { font-size: 13px; color: var(--g-text-dim); margin-top: 4px; line-height: 1.45; }
+    .feed-link { font-size: 13px; color: var(--g-accent); text-decoration: none; font-weight: 500; white-space: nowrap; }
+    .feed-categories { display: flex; flex-direction: column; gap: 36px; }
+    .feed-category { scroll-margin-top: 80px; }
+    .feed-row {
+      display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;
+      -ms-overflow-style: none; scrollbar-width: none;
+    }
+    .feed-row::-webkit-scrollbar { display: none; }
+    .feed-card {
+      position: relative; flex: 0 0 168px; width: 168px;
+      border-radius: 14px; overflow: hidden; background: var(--g-surface);
+      border: 0.5px solid var(--g-border); text-decoration: none; color: inherit;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .feed-card:hover { transform: translateY(-2px); border-color: rgba(0,191,255,0.25); }
+    .feed-card.is-static { cursor: default; pointer-events: none; }
+    .feed-card.is-static:hover { transform: none; border-color: var(--g-border); }
+    .feed-card-media { position: relative; aspect-ratio: 1; overflow: hidden; }
+    .feed-card-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
+    .feed-card:hover .feed-card-media img { transform: scale(1.05); }
+    .feed-card-body { padding: 12px; }
+    .feed-card-name { font-size: 13px; font-weight: 700; color: var(--g-white); line-height: 1.3; }
+    .feed-card-genre { font-size: 11px; color: var(--g-text-dim); margin-top: 4px; line-height: 1.4; }
+    .feed-card-price { font-size: 12px; font-weight: 600; color: var(--g-accent); margin-top: 6px; }
+    .feed-card-badge {
+      position: absolute; top: 8px; left: 8px;
+      font-size: 10px; padding: 3px 8px; border-radius: 6px;
+      font-weight: 600; backdrop-filter: blur(8px); z-index: 2;
+    }
+    .feed-card-action {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.45); opacity: 0; transition: opacity 0.25s;
+      font-size: 12px; font-weight: 700; color: var(--g-black);
+    }
+    .feed-card-action span {
+      background: var(--g-accent); padding: 8px 14px; border-radius: 999px;
+    }
+    .feed-card.is-bookable:hover .feed-card-action { opacity: 1; }
+    .feed-empty {
+      font-size: 13px; color: var(--g-text-dim); padding: 18px 0 4px;
+    }
     @media (max-width: 600px) {
-      .feed-grid { grid-template-columns: repeat(3, 1fr); gap: 2px; }
-      .feed-cell.large { grid-column: span 1; grid-row: span 1; }
+      .feed-card { flex-basis: 140px; width: 140px; }
+      .feed-title { font-size: 21px; }
     }
     /* ── TESTIMONIALS ── */
     .testimonials-section { padding: 48px 20px 0; max-width: 1200px; margin: 0 auto; }
@@ -289,25 +300,29 @@
 
   <!-- CATEGORIES -->
   <div class="cats-section reveal">
-    <div class="cats-scroll">
-      <a class="cat-pill"><i class="ti ti-headphones"></i> DJs</a>
-      <a class="cat-pill"><i class="ti ti-music"></i> Musicians</a>
-      <a class="cat-pill"><i class="ti ti-microphone"></i> MCs</a>
-      <a class="cat-pill"><i class="ti ti-camera"></i> Photographers</a>
-      <a class="cat-pill"><i class="ti ti-video"></i> Videographers</a>
-      <a class="cat-pill"><i class="ti ti-shirt"></i> Fashion</a>
-      <a class="cat-pill"><i class="ti ti-man"></i> Dancers</a>
-      <a class="cat-pill"><i class="ti ti-brush"></i> Visual art</a>
+    <div class="cats-scroll" id="category-nav">
+      <a class="cat-pill" href="#cat-new"><i class="ti ti-sparkles"></i> New</a>
+      <a class="cat-pill" href="#cat-most-booked"><i class="ti ti-calendar-check"></i> Most booked</a>
+      <a class="cat-pill" href="#cat-most-popular"><i class="ti ti-flame"></i> Popular</a>
+      <a class="cat-pill" href="#cat-local"><i class="ti ti-map-pin"></i> Local</a>
+      <a class="cat-pill" href="#cat-international"><i class="ti ti-world"></i> International</a>
+      <a class="cat-pill" href="#cat-trending"><i class="ti ti-trending-up"></i> Trending</a>
+      <a class="cat-pill" href="#cat-top-rated"><i class="ti ti-star"></i> Top rated</a>
+      <a class="cat-pill" href="#cat-verified"><i class="ti ti-rosette-discount-check"></i> Verified</a>
+      <a class="cat-pill" href="#cat-rising"><i class="ti ti-rocket"></i> Rising</a>
     </div>
   </div>
 
-  <!-- FEED GRID -->
+  <!-- FEED CATEGORIES -->
   <section class="feed-section reveal" id="feed">
     <div class="feed-header">
-      <h2 class="feed-title">Explore <em>talent</em></h2>
-      <a href="join-gig.html" class="feed-link">See all <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
+      <div>
+        <h2 class="feed-title">Explore by <em>category</em></h2>
+        <p class="feed-subtitle">Discover artists by what matters most — new talent, local favourites, global stars, and more.</p>
+      </div>
+      <a href="join-gig.html" class="feed-link">List your gig <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
     </div>
-    <div class="feed-grid" id="feed-grid"></div>
+    <div class="feed-categories" id="feed-categories"></div>
   </section>
 
   <!-- TESTIMONIALS -->
@@ -461,63 +476,81 @@
       return match ? match.image : null;
     }
 
-    function mergeTalent(apiArtists) {
-      var index = buildArtistIndex(apiArtists || []);
-      var used = {};
-      var cells = [];
+    function apiArtistToCard(artist) {
+      return {
+        artist_id: artist.artist_id,
+        username: artist.username,
+        profile_url: artist.profile_url,
+        name: artist.name,
+        image: artist.image || findShowcaseImage(artist.name) || 'icons/Icon-512.png',
+        genre: [artist.category, artist.location, artist.country].filter(Boolean).join(' · ') || 'Available to book',
+        badge: artist.is_verified ? 'Verified' : (artist.is_trending ? 'Trending' : 'Book now'),
+        badgeClass: artist.is_verified ? 'fb-feat' : (artist.is_trending ? 'fb-rise' : 'fb-deal'),
+        price: artist.min_price ? formatPrice(artist.min_price) : (artist.base_rate ? formatPrice(artist.base_rate) : ''),
+        bookable: true
+      };
+    }
 
-      (apiArtists || []).forEach(function(artist) {
-        if (!artist.artist_id || used[artist.artist_id]) return;
-        used[artist.artist_id] = true;
-        cells.push({
-          artist_id: artist.artist_id,
-          username: artist.username,
-          profile_url: artist.profile_url,
-          name: artist.name,
-          image: artist.image || findShowcaseImage(artist.name) || 'icons/Icon-512.png',
-          genre: [artist.category, artist.location].filter(Boolean).join(' · ') || 'Available to book',
-          badge: 'Book now',
-          badgeClass: 'fb-deal',
-          price: artist.min_price ? formatPrice(artist.min_price) : (artist.base_rate ? formatPrice(artist.base_rate) : ''),
-          large: false,
-          bookable: true
-        });
+    function showcaseCategories(item) {
+      var genre = String(item.genre || '').toLowerCase();
+      var cats = [];
+      if (item.badge === 'Newcomer') cats.push('new', 'rising');
+      if (item.badge === 'Rising') cats.push('rising', 'trending', 'most-popular');
+      if (item.badge === 'Featured') cats.push('most-popular', 'trending');
+      if (genre.indexOf('international') !== -1 || genre.indexOf('global') !== -1) cats.push('international');
+      if (/joburg|durban|pretoria|cape town|thohoyandou|louis trichardt| · sa|south africa/.test(genre)) cats.push('local');
+      if (!cats.length) cats.push('most-popular');
+      return cats;
+    }
+
+    function showcaseToCard(item, match) {
+      return {
+        artist_id: match ? match.artist_id : null,
+        username: match ? match.username : null,
+        profile_url: match ? match.profile_url : null,
+        name: item.name,
+        image: item.image,
+        genre: item.genre,
+        badge: match ? 'Book now' : item.badge,
+        badgeClass: match ? 'fb-deal' : item.badgeClass,
+        price: item.price || (match && match.min_price ? formatPrice(match.min_price) : ''),
+        bookable: !!match
+      };
+    }
+
+    function mergeCategoryArtists(categoryId, apiArtists, index) {
+      var cards = (apiArtists || []).map(apiArtistToCard);
+      var usedNames = {};
+      cards.forEach(function(card) {
+        usedNames[normalizeName(card.name)] = true;
       });
 
       SHOWCASE.forEach(function(item) {
+        if (showcaseCategories(item).indexOf(categoryId) === -1) return;
+        var key = normalizeName(item.name);
+        if (usedNames[key]) return;
         var match = findArtistMatch(item.name, index);
-        var artistId = match ? match.artist_id : null;
-        if (artistId && used[artistId]) return;
-        if (artistId) used[artistId] = true;
-        cells.push({
-          artist_id: artistId,
-          username: match ? match.username : null,
-          profile_url: match ? match.profile_url : null,
-          name: item.name,
-          image: item.image,
-          genre: item.genre,
-          badge: artistId ? 'Book now' : item.badge,
-          badgeClass: artistId ? 'fb-deal' : item.badgeClass,
-          price: item.price || (match && match.min_price ? formatPrice(match.min_price) : ''),
-          large: !!item.large,
-          bookable: !!artistId
-        });
+        if (match && cards.some(function(card) { return card.artist_id === match.artist_id; })) return;
+        cards.push(showcaseToCard(item, match));
+        usedNames[key] = true;
       });
 
-      return cells;
+      return cards.slice(0, 16);
     }
 
-    function renderFeedCell(item) {
-      var classes = 'feed-cell' + (item.large ? ' large' : '') + (item.bookable ? ' is-bookable' : ' is-static');
+    function renderFeedCard(item) {
+      var classes = 'feed-card' + (item.bookable ? ' is-bookable' : ' is-static');
       var inner =
-        '<img src="' + item.image + '" alt="' + item.name + '">' +
-        '<span class="feed-cell-badge ' + item.badgeClass + '">' + item.badge + '</span>' +
-        (item.bookable ? '<span class="feed-cell-action">Book now</span>' : '') +
-        '<div class="feed-cell-overlay"><div class="feed-cell-info">' +
-        '<div class="feed-cell-name">' + item.name + '</div>' +
-        '<div class="feed-cell-genre">' + item.genre + '</div>' +
-        (item.price ? '<div class="feed-cell-price">' + item.price + '</div>' : '') +
-        '</div></div>';
+        '<div class="feed-card-media">' +
+          '<img src="' + item.image + '" alt="' + item.name + '" loading="lazy">' +
+          '<span class="feed-card-badge ' + item.badgeClass + '">' + item.badge + '</span>' +
+          (item.bookable ? '<div class="feed-card-action"><span>Book now</span></div>' : '') +
+        '</div>' +
+        '<div class="feed-card-body">' +
+          '<div class="feed-card-name">' + item.name + '</div>' +
+          '<div class="feed-card-genre">' + item.genre + '</div>' +
+          (item.price ? '<div class="feed-card-price">' + item.price + '</div>' : '') +
+        '</div>';
 
       if (item.bookable) {
         return '<a class="' + classes + '" href="' + bookUrl(item) + '" aria-label="Book ' + item.name + '">' + inner + '</a>';
@@ -525,27 +558,86 @@
       return '<div class="' + classes + '">' + inner + '</div>';
     }
 
+    function renderCategorySection(category, cards) {
+      var cardsHtml = cards.length
+        ? cards.map(renderFeedCard).join('')
+        : '<div class="feed-empty">More artists coming soon. <a href="join-gig.html" style="color:var(--g-accent)">List your gig</a> to appear here.</div>';
+
+      return '<section class="feed-category" id="cat-' + category.id + '">' +
+        '<div class="feed-header">' +
+          '<div>' +
+            '<h3 class="feed-title"><i class="' + category.icon + '" style="font-size:20px;color:var(--g-accent);margin-right:8px;vertical-align:-2px"></i>' + category.title + '</h3>' +
+            '<p class="feed-subtitle">' + category.subtitle + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="feed-row">' + cardsHtml + '</div>' +
+      '</section>';
+    }
+
     function renderStory(item) {
-      var href = item.bookable ? bookUrl(item) : '#feed';
+      var href = item.bookable ? bookUrl(item) : '#cat-new';
       return '<a class="story-item" href="' + href + '">' +
         '<div class="story-ring"><img src="' + item.image + '" alt="' + item.name + '"></div>' +
         '<span class="story-name">' + item.name + '</span></a>';
     }
 
     async function loadTalentFeed() {
-      var feed = document.getElementById('feed-grid');
+      var container = document.getElementById('feed-categories');
       var stories = document.getElementById('stories-bar');
+      var categories = [];
       var apiArtists = [];
 
       try {
-        var res = await fetch(API_BASE + '/artists?limit=100');
+        var res = await fetch(API_BASE + '/artists/feed');
         var data = await res.json();
-        if (res.ok && data.success) apiArtists = data.data || [];
+        if (res.ok && data.success) categories = (data.data && data.data.categories) || [];
       } catch (_) {}
 
-      var cells = mergeTalent(apiArtists);
-      feed.innerHTML = cells.map(renderFeedCell).join('');
-      stories.innerHTML = cells.slice(0, 16).map(renderStory).join('');
+      if (categories.length) {
+        categories.forEach(function(category) {
+          (category.artists || []).forEach(function(artist) { apiArtists.push(artist); });
+        });
+      } else {
+        try {
+          var fallback = await fetch(API_BASE + '/artists?limit=100');
+          var fallbackData = await fallback.json();
+          if (fallback.ok && fallbackData.success) apiArtists = fallbackData.data || [];
+        } catch (_) {}
+      }
+
+      var index = buildArtistIndex(apiArtists);
+      var storyCards = [];
+      var seenStories = {};
+
+      if (categories.length) {
+        container.innerHTML = categories.map(function(category) {
+          var cards = mergeCategoryArtists(category.id, category.artists, index);
+          cards.slice(0, 4).forEach(function(card) {
+            var storyKey = card.artist_id || normalizeName(card.name);
+            if (seenStories[storyKey]) return;
+            seenStories[storyKey] = true;
+            storyCards.push(card);
+          });
+          return renderCategorySection(category, cards);
+        }).join('');
+      } else {
+        var fallbackCards = mergeCategoryArtists('most-popular', apiArtists, index);
+        container.innerHTML = renderCategorySection({
+          id: 'most-popular',
+          title: 'Explore talent',
+          subtitle: 'Book artists on Gearsh',
+          icon: 'ti ti-flame'
+        }, fallbackCards);
+        storyCards = fallbackCards.slice(0, 16);
+      }
+
+      if (!storyCards.length) {
+        storyCards = SHOWCASE.slice(0, 16).map(function(item) {
+          return showcaseToCard(item, findArtistMatch(item.name, index));
+        });
+      }
+
+      stories.innerHTML = storyCards.slice(0, 16).map(renderStory).join('');
     }
 
     var obs = new IntersectionObserver(function(entries) {
