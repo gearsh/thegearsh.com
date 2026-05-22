@@ -140,7 +140,16 @@
 
   <script>
     var API_BASE = '/api';
-    var artistId = new URLSearchParams(window.location.search).get('artist');
+
+    function getArtistSlug() {
+      var fromQuery = new URLSearchParams(window.location.search).get('artist');
+      if (fromQuery) return fromQuery;
+      var match = window.location.pathname.match(/^\/book\/([^/?#]+)\/?$/i);
+      if (match) return decodeURIComponent(match[1]);
+      return null;
+    }
+
+    var artistSlug = getArtistSlug();
     var artistData = null;
 
     function formatMoney(amount) {
@@ -198,9 +207,9 @@
     }
 
     async function loadProfile() {
-      if (!artistId) return showError();
+      if (!artistSlug) return showError();
       try {
-        var res = await fetch(API_BASE + '/artists/' + encodeURIComponent(artistId));
+        var res = await fetch(API_BASE + '/artists/' + encodeURIComponent(artistSlug));
         var json = await res.json();
         if (!res.ok || !json.success) return showError();
         renderProfile(json.data);
@@ -223,7 +232,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            artist_id: artistId,
+            artist_id: artistData.artist_id,
             client_name: document.getElementById('client-name').value.trim(),
             client_phone: document.getElementById('client-phone').value.trim(),
             client_email: document.getElementById('client-email').value.trim(),

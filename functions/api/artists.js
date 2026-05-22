@@ -1,7 +1,7 @@
 // GET /api/artists - List all artists with optional filters
 // GET /api/artists?category=DJ&minRating=4.0&verified=true
 
-import { parseSkills } from './auth-utils.js';
+import { parseSkills, buildProfileUrl } from './auth-utils.js';
 
 export async function onRequestGet(context) {
   try {
@@ -17,6 +17,7 @@ export async function onRequestGet(context) {
         ap.id as artist_id,
         u.id as user_id,
         u.display_name as name,
+        u.username,
         u.profile_picture_url as image,
         u.bio,
         u.location,
@@ -61,6 +62,7 @@ export async function onRequestGet(context) {
     // Parse JSON fields
     const artists = result.results.map(artist => ({
       ...artist,
+      profile_url: buildProfileUrl(artist.username),
       skills: parseSkills(artist.skills),
       is_verified: Boolean(artist.is_verified),
       is_trending: Boolean(artist.is_trending),

@@ -74,6 +74,10 @@
       display: block; font-size: 12px; font-weight: 500;
       color: var(--g-text-muted); margin-bottom: 5px; letter-spacing: 0.02em;
     }
+    .field-hint {
+      font-size: 12px; color: var(--g-text-dim); margin-top: 8px; line-height: 1.5;
+    }
+    .field-hint strong { color: var(--g-text-muted); font-weight: 500; }
     .field-input {
       width: 100%; height: 48px;
       background: var(--g-black); border: 0.5px solid var(--g-border);
@@ -312,7 +316,11 @@
           <p>Set a strong password to protect your profile.</p>
         </div>
         <div class="step-form">
-          <div class="field-group"><label class="field-label">Username</label><input type="text" id="username" class="field-input" placeholder="Choose a username"></div>
+          <div class="field-group">
+            <label class="field-label" for="username">Username</label>
+            <input type="text" id="username" class="field-input" placeholder="e.g. dj-maphorisa" autocomplete="username">
+            <p class="field-hint" id="username-hint">Your shareable booking link: <strong>thegearsh.com/book/<span id="username-preview">yourname</span></strong></p>
+          </div>
           <div class="field-group"><label class="field-label">Password</label><input type="password" class="field-input" placeholder="Create a password" id="pw1" oninput="checkPw()"></div>
           <div class="field-group"><label class="field-label">Confirm password</label><input type="password" class="field-input" placeholder="Re-enter password" id="pw2" oninput="checkPw()"></div>
           <div class="password-rules">
@@ -332,9 +340,9 @@
         <div class="success-area">
           <div class="success-icon"><i class="ti ti-check" style="font-size:28px; color:var(--g-accent);"></i></div>
           <h2>You're in</h2>
-          <p>Your gig is live on Gearsh. Share your booking link with friends and start getting requests.</p>
+          <p>Your gig is live on Gearsh. Share your personal booking link with clients anywhere in the world — Gearsh handles bookings and gets you paid.</p>
           <div class="share-box" id="share-box" style="display:none;margin:20px 0;padding:14px;background:var(--g-black);border:0.5px solid var(--g-border);border-radius:12px;text-align:left">
-            <div style="font-size:11px;color:var(--g-text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Your booking link</div>
+            <div style="font-size:11px;color:var(--g-text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Your global booking link</div>
             <div style="display:flex;gap:8px;align-items:center">
               <input type="text" id="share-link" class="field-input" readonly style="height:42px;font-size:13px">
               <button type="button" class="btn-signup" style="width:auto;height:42px;padding:0 16px;margin:0" onclick="copyShareLink()">Copy</button>
@@ -350,6 +358,27 @@
 
   <script>
     var API_BASE = '/api';
+
+    function slugifyUsername(value) {
+      return String(value || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9_-]+/g, '-')
+        .replace(/^[-_]+|[-_]+$/g, '')
+        .replace(/[-_]{2,}/g, '-')
+        .slice(0, 32) || 'yourname';
+    }
+
+    function updateUsernamePreview() {
+      var input = document.getElementById('username');
+      var preview = document.getElementById('username-preview');
+      if (!input || !preview) return;
+      var source = input.value.trim() || document.getElementById('stage-name').value.trim();
+      preview.textContent = slugifyUsername(source);
+    }
+
+    document.getElementById('username').addEventListener('input', updateUsernamePreview);
+    document.getElementById('stage-name').addEventListener('input', updateUsernamePreview);
 
     function toggleSkill(el) { el.classList.toggle('selected'); }
 
@@ -465,6 +494,7 @@
           localStorage.setItem('gearsh_user_type', data.data.user_type || 'artist');
           localStorage.setItem('gearsh_skills', getSelectedSkills());
           if (data.data.artist_id) localStorage.setItem('gearsh_artist_id', data.data.artist_id);
+          if (data.data.username) localStorage.setItem('gearsh_username', data.data.username);
           if (data.data.profile_url) {
             localStorage.setItem('gearsh_profile_url', data.data.profile_url);
             var fullUrl = window.location.origin + data.data.profile_url;
@@ -486,6 +516,13 @@
       if (n === 3 && !getSelectedSkills()) {
         showError('Please select at least one skill.');
         return;
+      }
+      if (n === 3) {
+        var usernameInput = document.getElementById('username');
+        if (!usernameInput.value.trim()) {
+          usernameInput.value = slugifyUsername(document.getElementById('stage-name').value.trim());
+        }
+        updateUsernamePreview();
       }
       if (n === 4) showError('');
       document.querySelectorAll('.step-panel').forEach(function(p) { p.classList.remove('visible'); });

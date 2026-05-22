@@ -424,8 +424,11 @@
       return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
     }
 
-    function bookUrl(artistId) {
-      return 'book-gig.html?artist=' + encodeURIComponent(artistId);
+    function bookUrl(artist) {
+      if (artist.profile_url) return artist.profile_url.replace(/^\//, '');
+      if (artist.username) return 'book/' + encodeURIComponent(String(artist.username).toLowerCase());
+      if (artist.artist_id) return 'book-gig.html?artist=' + encodeURIComponent(artist.artist_id);
+      return '#feed';
     }
 
     function formatPrice(amount) {
@@ -468,6 +471,8 @@
         used[artist.artist_id] = true;
         cells.push({
           artist_id: artist.artist_id,
+          username: artist.username,
+          profile_url: artist.profile_url,
           name: artist.name,
           image: artist.image || findShowcaseImage(artist.name) || 'icons/Icon-512.png',
           genre: [artist.category, artist.location].filter(Boolean).join(' · ') || 'Available to book',
@@ -486,6 +491,8 @@
         if (artistId) used[artistId] = true;
         cells.push({
           artist_id: artistId,
+          username: match ? match.username : null,
+          profile_url: match ? match.profile_url : null,
           name: item.name,
           image: item.image,
           genre: item.genre,
@@ -513,13 +520,13 @@
         '</div></div>';
 
       if (item.bookable) {
-        return '<a class="' + classes + '" href="' + bookUrl(item.artist_id) + '" aria-label="Book ' + item.name + '">' + inner + '</a>';
+        return '<a class="' + classes + '" href="' + bookUrl(item) + '" aria-label="Book ' + item.name + '">' + inner + '</a>';
       }
       return '<div class="' + classes + '">' + inner + '</div>';
     }
 
     function renderStory(item) {
-      var href = item.bookable ? bookUrl(item.artist_id) : '#feed';
+      var href = item.bookable ? bookUrl(item) : '#feed';
       return '<a class="story-item" href="' + href + '">' +
         '<div class="story-ring"><img src="' + item.image + '" alt="' + item.name + '"></div>' +
         '<span class="story-name">' + item.name + '</span></a>';

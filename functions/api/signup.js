@@ -7,6 +7,10 @@ import {
   corsPreflightResponse,
   categoryFromSkills,
   parseSkills,
+  slugifyUsername,
+  ensureUniqueUsername,
+  buildProfileUrl,
+  isValidUsername,
 } from './auth-utils.js';
 
 export async function onRequestPost(context) {
@@ -91,6 +95,23 @@ export async function onRequestPost(context) {
     } catch (checkErr) {
       console.error("Email check error:", checkErr);
       // Continue - table might not exist yet
+    }
+
+    if (user_type === 'artist') {
+      const slugBase = chosenUsername || stageName || email.split('@')[0];
+      chosenUsername = slugifyUsername(slugBase);
+      if (!isValidUsername(chosenUsername)) {
+        chosenUsername = await ensureUniqueUsername(context.env.DB, slugBase);
+      } else {
+        const taken = await context.env.DB.prepare(
+          `SELECT id FROM users WHERE LOWER(username) = LOWER(?)`
+        ).bind(chosenUsername).first();
+        if (taken) {
+          chosenUsername = await ensureUniqueUsername(context.env.DB, slugBase);
+        }
+      }
+    } else if (chosenUsername) {
+      chosenUsername = slugifyUsername(chosenUsername) || null;
     }
 
     // Generate user ID and hash password
@@ -205,7 +226,8 @@ export async function onRequestPost(context) {
         last_name: lastName,
         display_name: displayName,
         artist_id: artistId,
-        profile_url: artistId ? `/book-gig.html?artist=${artistId}` : null,
+        username: chosenUsername,
+        profile_url: artistId && chosenUsername ? buildProfileUrl(chosenUsername) : null,
         token
       }
     }, 201);

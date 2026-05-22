@@ -4,6 +4,8 @@ import {
   unauthorizedResponse,
   jsonResponse,
   corsPreflightResponse,
+  buildProfileUrl,
+  ensureArtistUsername,
 } from './auth-utils.js';
 
 function masteryTier(hours) {
@@ -132,6 +134,11 @@ export async function onRequestGet(context) {
     const tier = masteryTier(masteryHours);
     const checklist = buildChecklist(user, artistProfile, services);
     const checklistComplete = checklist.filter(function(item) { return item.completed; }).length;
+    const username = await ensureArtistUsername(
+      context.env.DB,
+      userId,
+      user.display_name || user.first_name
+    );
 
     const activity = bookings.slice(0, 5).map(function(booking) {
       return {
@@ -149,6 +156,7 @@ export async function onRequestGet(context) {
       data: {
         user: {
           ...user,
+          username,
           is_verified: Boolean(user.is_verified),
         },
         artist_profile: {
@@ -170,7 +178,7 @@ export async function onRequestGet(context) {
         checklist,
         checklist_complete: checklistComplete,
         checklist_total: checklist.length,
-        profile_url: artistProfile ? `/book-gig.html?artist=${artistProfile.id}` : null,
+        profile_url: buildProfileUrl(username),
         bookings,
         services,
         activity,

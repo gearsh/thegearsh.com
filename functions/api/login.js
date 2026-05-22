@@ -6,6 +6,8 @@ import {
   verifyPassword,
   generateToken,
   findUserByIdentifier,
+  buildProfileUrl,
+  ensureArtistUsername,
 } from './auth-utils.js';
 
 export async function onRequestPost(context) {
@@ -32,11 +34,19 @@ export async function onRequestPost(context) {
     }
 
     let artistProfile = null;
+    let profileUrl = null;
+    let artistUsername = user.username || null;
     if (user.user_type === 'artist') {
       artistProfile = await context.env.DB.prepare(
         `SELECT id, category, avg_rating, total_bookings
          FROM artist_profiles WHERE user_id = ?`
       ).bind(user.id).first();
+      artistUsername = await ensureArtistUsername(
+        context.env.DB,
+        user.id,
+        user.display_name || user.first_name
+      );
+      profileUrl = buildProfileUrl(artistUsername);
     }
 
     const token = generateToken(user.id);
@@ -51,10 +61,11 @@ export async function onRequestPost(context) {
         first_name: user.first_name,
         last_name: user.last_name,
         display_name: user.display_name,
-        username: user.username,
+        username: artistUsername,
         profile_picture_url: user.profile_picture_url,
         is_verified: Boolean(user.is_verified),
         artist_profile: artistProfile,
+        profile_url: profileUrl,
         token,
       },
     });

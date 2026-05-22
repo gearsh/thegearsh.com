@@ -1,15 +1,32 @@
-// GET /api/artists/[id] - Get single artist by ID
+// GET /api/artists/[id] - Get single artist by profile ID or username
 
-import { parseSkills } from '../auth-utils.js';
+import { parseSkills, resolveArtistProfile } from '../auth-utils.js';
 
 export async function onRequestGet(context) {
   try {
-    const artistId = context.params.id;
+    const identifier = context.params.id;
+    const resolved = await resolveArtistProfile(context.env.DB, identifier);
+
+    if (!resolved) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: "Artist not found"
+      }), {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
+        status: 404,
+      });
+    }
+
+    const artistId = resolved.artist_id;
 
     const query = `
       SELECT
         ap.id as artist_id,
         u.id as user_id,
+        u.username,
         u.display_name as name,
         u.first_name,
         u.last_name,
@@ -53,7 +70,6 @@ export async function onRequestGet(context) {
       });
     }
 
-    // Get services
     const servicesQuery = `
       SELECT id, name, description, price, duration_hours
       FROM services
@@ -61,7 +77,6 @@ export async function onRequestGet(context) {
     `;
     const services = await context.env.DB.prepare(servicesQuery).bind(artistId).all();
 
-    // Get reviews
     const reviewsQuery = `
       SELECT
         r.id,
@@ -78,9 +93,9 @@ export async function onRequestGet(context) {
     `;
     const reviews = await context.env.DB.prepare(reviewsQuery).bind(artistId).all();
 
-    // Parse JSON fields
     const artistData = {
       ...artist,
+      profile_url: artist.username ? `/book/${encodeURIComponent(String(artist.username).toLowerCase())}` : null,
       skills: parseSkills(artist.skills),
       portfolio_urls: artist.portfolio_urls ? JSON.parse(artist.portfolio_urls) : [],
       social_links: artist.social_links ? JSON.parse(artist.social_links) : {},
@@ -124,4 +139,3 @@ export async function onRequestOptions() {
     },
   });
 }
-

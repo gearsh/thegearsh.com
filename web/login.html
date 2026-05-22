@@ -158,7 +158,14 @@
         localStorage.setItem('gearsh_user_type', user.user_type || '');
         if (user.artist_profile && user.artist_profile.id) {
           localStorage.setItem('gearsh_artist_id', user.artist_profile.id);
-          localStorage.setItem('gearsh_profile_url', '/book-gig.html?artist=' + user.artist_profile.id);
+        }
+        if (user.profile_url) {
+          localStorage.setItem('gearsh_profile_url', user.profile_url);
+        } else if (user.username) {
+          localStorage.setItem('gearsh_profile_url', '/book/' + encodeURIComponent(user.username.toLowerCase()));
+        }
+        if (user.username) {
+          localStorage.setItem('gearsh_username', user.username);
         }
 
         if (user.user_type === 'artist') {
