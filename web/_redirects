@@ -4,7 +4,6 @@
 /onboarding               /gearsh-app.html 200
 /login                    /gearsh-app.html 200
 /register                 /gearsh-app.html 200
-/signup                   /gearsh-app.html 200
 /join                     /gearsh-app.html 200
 /home                     /gearsh-app.html 200
 /discover                 /gearsh-app.html 200
@@ -36,8 +35,9 @@
 /settings                 /gearsh-app.html 200
 /privacy-policy           /gearsh-app.html 200
 
-# Marketing & legal static pages (link with .html — avoids Pretty URL conflicts)
+# Marketing & legal static pages
 /signup.html              /signup.html 200
+/signup                   /signup.html 200
 /terms.html               /terms.html 200
 /terms                    /terms.html 200
 /privacy.html             /privacy.html 200
