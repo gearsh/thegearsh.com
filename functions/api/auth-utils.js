@@ -38,6 +38,21 @@ export function generateToken(userId) {
   return btoa(JSON.stringify(payload));
 }
 
+export function parseToken(authHeader) {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+  try {
+    const payload = JSON.parse(atob(authHeader.slice(7)));
+    if (!payload.userId || !payload.exp || payload.exp < Date.now()) return null;
+    return payload.userId;
+  } catch (_) {
+    return null;
+  }
+}
+
+export function unauthorizedResponse(message = 'Unauthorized') {
+  return jsonResponse({ success: false, error: message }, 401);
+}
+
 export async function findUserByIdentifier(db, identifier) {
   const value = identifier.trim();
   const isEmail = value.includes('@');

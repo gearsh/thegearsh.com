@@ -171,6 +171,11 @@
     .pw-rule .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--g-text-dim); flex-shrink: 0; }
     .pw-rule.met .dot { background: var(--g-accent); }
     .pw-rule.met { color: var(--g-text-muted); }
+    .pw-rule.fail .dot { background: #f87171; }
+    .pw-rule.fail { color: #f87171; }
+    .signup-error {
+      font-size: 13px; color: #f87171; line-height: 1.45;
+    }
     .step-panel { display: none; }
     .step-panel.visible { display: block; animation: fadeUp 0.35s ease; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
@@ -243,7 +248,7 @@
           <div class="field-group"><label class="field-label">Stage name</label><input type="text" id="stage-name" class="field-input" placeholder="e.g. DJ ZJ90, Y.D.E, Dripmaker" required></div>
           <div class="field-group"><label class="field-label">Email</label><input type="email" id="email" class="field-input" placeholder="you@email.com" required></div>
           <div class="field-group"><label class="field-label">Phone</label><input type="tel" id="phone" class="field-input" placeholder="+27 00 000 0000"></div>
-          <div id="signup-error" class="terms-text" style="color:#f87171;display:none;margin-bottom:12px"></div>
+          <div id="signup-error" class="signup-error" style="display:none;margin-bottom:12px"></div>
           <button class="btn-signup" onclick="goStep(2)">Continue <i class="ti ti-arrow-right" style="font-size:18px"></i></button>
           <div class="divider-or">or</div>
           <button class="social-btn">
@@ -286,6 +291,7 @@
             <div style="font-size:18px; flex-shrink:0;"><i class="ti ti-trophy" style="color:var(--g-accent)"></i></div>
             <p>You'll start as a <strong>Newcomer</strong> with an 80% introductory discount to help you land your first bookings.</p>
           </div>
+          <div class="signup-error" style="display:none;margin-bottom:12px"></div>
           <button class="btn-signup" onclick="goStep(3)" style="margin-top:16px">Continue <i class="ti ti-arrow-right" style="font-size:18px"></i></button>
           <button class="btn-back" onclick="goStep(1)"><i class="ti ti-arrow-left" style="font-size:14px"></i> Back</button>
         </div>
@@ -307,6 +313,7 @@
             <div class="pw-rule" id="pr-num"><span class="dot"></span> Number</div>
             <div class="pw-rule" id="pr-match"><span class="dot"></span> Passwords match</div>
           </div>
+          <div class="signup-error" style="display:none;margin-top:12px"></div>
           <button class="btn-signup" id="create-btn" onclick="submitSignup()" style="margin-top:20px">Create account <i class="ti ti-check" style="font-size:18px"></i></button>
           <button class="btn-back" onclick="goStep(2)"><i class="ti ti-arrow-left" style="font-size:14px"></i> Back</button>
         </div>
@@ -318,7 +325,7 @@
           <div class="success-icon"><i class="ti ti-check" style="font-size:28px; color:var(--g-accent);"></i></div>
           <h2>You're in</h2>
           <p>Your free artist profile is live. Complete your portfolio and start getting booked.</p>
-          <button class="btn-signup" onclick="window.location.href='/login'">Go to dashboard <i class="ti ti-arrow-right" style="font-size:18px"></i></button>
+          <button class="btn-signup" onclick="window.location.href='artist-dashboard.html'">Go to dashboard <i class="ti ti-arrow-right" style="font-size:18px"></i></button>
         </div>
       </div>
 
@@ -338,10 +345,16 @@
     }
 
     function showError(msg) {
-      var el = document.getElementById('signup-error');
+      document.querySelectorAll('.signup-error').forEach(function(el) {
+        el.textContent = '';
+        el.style.display = 'none';
+      });
+      if (!msg) return;
+      var visible = document.querySelector('.step-panel.visible');
+      var el = visible ? visible.querySelector('.signup-error') : document.getElementById('signup-error');
       if (!el) return;
       el.textContent = msg;
-      el.style.display = msg ? 'block' : 'none';
+      el.style.display = 'block';
     }
 
     function validateStep1() {
@@ -359,15 +372,43 @@
       return true;
     }
 
-    function passwordReady() {
+    function getPasswordChecks() {
       var pw = document.getElementById('pw1').value;
       var pw2 = document.getElementById('pw2').value;
-      return pw.length >= 8 && /[A-Z]/.test(pw) && /[0-9]/.test(pw) && pw === pw2;
+      return [
+        { id: 'pr-len', met: pw.length >= 8, label: '8+ characters' },
+        { id: 'pr-upper', met: /[A-Z]/.test(pw), label: 'uppercase letter' },
+        { id: 'pr-num', met: /[0-9]/.test(pw), label: 'number' },
+        { id: 'pr-match', met: pw.length > 0 && pw === pw2, label: 'matching passwords' }
+      ];
+    }
+
+    function passwordReady() {
+      return getPasswordChecks().every(function(r) { return r.met; });
+    }
+
+    function validatePassword(showMessages) {
+      var checks = getPasswordChecks();
+      var failed = checks.filter(function(r) { return !r.met; });
+      checks.forEach(function(r) {
+        var el = document.getElementById(r.id);
+        if (!el) return;
+        el.classList.remove('fail');
+        if (r.met) el.classList.add('met');
+        else el.classList.remove('met');
+        if (showMessages && !r.met) el.classList.add('fail');
+      });
+      if (showMessages && failed.length) {
+        showError('Password needs: ' + failed.map(function(r) { return r.label; }).join(', ') + '.');
+        return false;
+      }
+      if (showMessages) showError('');
+      return failed.length === 0;
     }
 
     async function submitSignup() {
-      if (!passwordReady()) {
-        showError('Please meet all password requirements.');
+      if (!validatePassword(true)) {
+        document.getElementById('pw1').focus();
         return;
       }
       showError('');
@@ -404,6 +445,9 @@
         if (data.data && data.data.token) {
           localStorage.setItem('gearsh_token', data.data.token);
           localStorage.setItem('gearsh_user_id', data.data.user_id || '');
+          localStorage.setItem('gearsh_user_name', data.data.display_name || stageName);
+          localStorage.setItem('gearsh_user_type', data.data.user_type || 'artist');
+          localStorage.setItem('gearsh_skills', getSelectedSkills());
         }
         goStep(4);
       } catch (err) {
@@ -441,14 +485,8 @@
       }
     }
     function checkPw() {
-      var pw = document.getElementById('pw1').value;
-      var pw2 = document.getElementById('pw2').value;
-      [{ id:'pr-len', met: pw.length >= 8 }, { id:'pr-upper', met: /[A-Z]/.test(pw) },
-       { id:'pr-num', met: /[0-9]/.test(pw) }, { id:'pr-match', met: pw.length > 0 && pw === pw2 }
-      ].forEach(function(r) {
-        var el = document.getElementById(r.id);
-        if (r.met) el.classList.add('met'); else el.classList.remove('met');
-      });
+      validatePassword(false);
+      if (passwordReady()) showError('');
     }
   </script>
 

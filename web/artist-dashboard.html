@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Your Gearsh artist dashboard — manage bookings, profile, and earnings.">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Artist Dashboard | Gearsh</title>
+  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" href="icons/Icon-512.png">
+  <link rel="stylesheet" href="gearsh-brand.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    .dash-page { padding-top: 56px; min-height: 100vh; }
+    .dash-hero {
+      position: relative; overflow: hidden;
+      padding: 48px 20px 32px;
+      border-bottom: 0.5px solid var(--g-border);
+    }
+    .dash-hero-bg {
+      position: absolute; inset: 0;
+      display: grid; grid-template-columns: repeat(6, 1fr);
+      gap: 2px; opacity: 0.12;
+    }
+    .dash-hero-bg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .dash-hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.55) 0%, var(--g-black) 100%);
+    }
+    .dash-hero-inner {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .dash-welcome {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 20px; flex-wrap: wrap; margin-bottom: 28px;
+    }
+    .dash-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(0,191,255,0.12); border: 0.5px solid rgba(0,191,255,0.2);
+      color: var(--g-accent); padding: 6px 14px; border-radius: 20px;
+      font-size: 12px; font-weight: 500; margin-bottom: 14px;
+    }
+    .dash-title {
+      font-family: var(--g-serif); font-weight: 400;
+      font-size: clamp(32px, 6vw, 48px);
+      line-height: 1.08; color: var(--g-white);
+      letter-spacing: -0.03em;
+    }
+    .dash-title em { font-style: italic; color: var(--g-accent); }
+    .dash-sub { font-size: 15px; color: var(--g-text-muted); margin-top: 8px; max-width: 480px; line-height: 1.55; }
+    .dash-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--g-accent-light); border: 0.5px solid rgba(0,191,255,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700; color: var(--g-accent);
+      flex-shrink: 0;
+    }
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--g-border);
+      border-radius: 14px; overflow: hidden;
+    }
+    .stat-item { background: var(--g-surface); padding: 22px 16px; text-align: center; }
+    .stat-value { font-size: 22px; font-weight: 700; color: var(--g-white); letter-spacing: -0.02em; }
+    .stat-value.accent { color: var(--g-accent); }
+    .stat-label { font-size: 12px; color: var(--g-text-dim); margin-top: 4px; }
+    .dash-body { max-width: 1200px; margin: 0 auto; padding: 32px 20px 80px; }
+    .dash-tabs {
+      display: flex; gap: 4px; overflow-x: auto;
+      border-bottom: 0.5px solid var(--g-border);
+      margin-bottom: 28px; padding-bottom: 0;
+      -ms-overflow-style: none; scrollbar-width: none;
+    }
+    .dash-tabs::-webkit-scrollbar { display: none; }
+    .dash-tab {
+      flex-shrink: 0; padding: 12px 18px;
+      font-size: 13px; font-weight: 500; color: var(--g-text-muted);
+      background: none; border: none; cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -0.5px;
+      font-family: var(--g-font); transition: color 0.2s, border-color 0.2s;
+    }
+    .dash-tab:hover { color: var(--g-white); }
+    .dash-tab.active { color: var(--g-accent); border-bottom-color: var(--g-accent); }
+    .dash-panel { display: none; }
+    .dash-panel.active { display: block; }
+    .section-label {
+      font-size: 11px; font-weight: 500; color: var(--g-accent);
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .card {
+      background: var(--g-surface); border: 0.5px solid var(--g-border);
+      border-radius: 16px; padding: 24px;
+    }
+    .card-title {
+      font-family: var(--g-serif); font-size: 22px; color: var(--g-white);
+      font-weight: 400; letter-spacing: -0.02em; margin-bottom: 6px;
+    }
+    .card-title em { font-style: italic; color: var(--g-accent); }
+    .card-sub { font-size: 13px; color: var(--g-text-muted); line-height: 1.55; margin-bottom: 20px; }
+    .checklist-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap; margin-bottom: 6px;
+    }
+    .checklist-badge {
+      font-size: 11px; font-weight: 500; color: var(--g-accent);
+      background: var(--g-accent-light); padding: 4px 12px; border-radius: 20px;
+    }
+    .check-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px 0; border-bottom: 0.5px solid var(--g-border);
+    }
+    .check-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .check-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: var(--g-accent-light); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .check-icon i { font-size: 18px; color: var(--g-accent); }
+    .check-body { flex: 1; min-width: 0; }
+    .check-body h3 { font-size: 14px; font-weight: 700; color: var(--g-white); margin-bottom: 3px; }
+    .check-body p { font-size: 12px; color: var(--g-text-muted); line-height: 1.5; }
+    .check-action {
+      flex-shrink: 0; align-self: center;
+      font-size: 12px; font-weight: 600; color: var(--g-accent);
+      background: var(--g-accent-light); border: 0.5px solid rgba(0,191,255,0.2);
+      padding: 8px 14px; border-radius: 8px; text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .check-action:hover { opacity: 0.85; }
+    .mastery-card {
+      margin-top: 28px; overflow: hidden;
+      background: linear-gradient(135deg, rgba(0,191,255,0.08) 0%, rgba(139,92,246,0.06) 100%);
+      border: 0.5px solid rgba(0,191,255,0.15);
+    }
+    .mastery-inner { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .mastery-tier-icon {
+      width: 56px; height: 56px; border-radius: 14px;
+      background: var(--g-accent-light);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mastery-tier-icon i { font-size: 26px; color: var(--g-accent); }
+    .mastery-meta { flex: 1; min-width: 200px; }
+    .mastery-name { font-size: 18px; font-weight: 700; color: var(--g-white); }
+    .mastery-hrs { font-size: 12px; color: var(--g-accent); font-weight: 500; margin-top: 2px; }
+    .mastery-desc { font-size: 13px; color: var(--g-text-muted); margin-top: 6px; line-height: 1.5; }
+    .empty-state {
+      text-align: center; padding: 48px 24px;
+    }
+    .empty-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--g-accent-light); border: 0.5px solid rgba(0,191,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .empty-icon i { font-size: 24px; color: var(--g-accent); }
+    .empty-state h3 {
+      font-family: var(--g-serif); font-size: 20px; color: var(--g-white);
+      font-weight: 400; margin-bottom: 8px;
+    }
+    .empty-state p { font-size: 13px; color: var(--g-text-muted); max-width: 360px; margin: 0 auto; line-height: 1.55; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 28px; }
+    .nav-user {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: var(--g-text-muted);
+    }
+    .nav-user-ava {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--g-accent-light); color: var(--g-accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+    .nav-signout {
+      background: none; border: none; color: var(--g-text-dim);
+      font-size: 12px; cursor: pointer; font-family: var(--g-font);
+      padding: 0; margin-left: 8px;
+    }
+    .nav-signout:hover { color: var(--g-text-muted); }
+    .g-nav-links a.active { color: var(--g-white); }
+    .dash-loading {
+      text-align: center; padding: 80px 20px; color: var(--g-text-muted); font-size: 14px;
+    }
+    .dash-error {
+      max-width: 1200px; margin: 24px auto; padding: 16px 20px;
+      background: rgba(248,113,113,0.1); border: 0.5px solid rgba(248,113,113,0.25);
+      border-radius: 12px; color: #f87171; font-size: 14px;
+    }
+    .check-item.done .check-icon { background: rgba(52,211,153,0.12); }
+    .check-item.done .check-icon i { color: #34d399; }
+    .check-item.done h3 { color: var(--g-text-muted); text-decoration: line-through; }
+    .list-stack { display: flex; flex-direction: column; gap: 10px; }
+    .list-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 14px 16px; background: var(--g-black); border: 0.5px solid var(--g-border);
+      border-radius: 12px;
+    }
+    .list-row-main { min-width: 0; }
+    .list-row-title { font-size: 14px; font-weight: 600; color: var(--g-white); }
+    .list-row-sub { font-size: 12px; color: var(--g-text-muted); margin-top: 3px; }
+    .status-pill {
+      flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px;
+      text-transform: capitalize;
+    }
+    .status-pending { background: rgba(251,191,36,0.12); color: #fbbf24; }
+    .status-confirmed { background: rgba(0,191,255,0.12); color: var(--g-accent); }
+    .status-completed { background: rgba(52,211,153,0.12); color: #34d399; }
+    .status-cancelled { background: rgba(248,113,113,0.12); color: #f87171; }
+    .service-price { font-size: 14px; font-weight: 700; color: var(--g-accent); white-space: nowrap; }
+    .calendar-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 16px;
+    }
+    .calendar-day-name {
+      font-size: 11px; color: var(--g-text-dim); text-align: center; padding-bottom: 6px;
+    }
+    .calendar-day {
+      aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: var(--g-text-muted); background: var(--g-black);
+      border: 0.5px solid var(--g-border);
+    }
+    .calendar-day.today { border-color: var(--g-accent); color: var(--g-accent); }
+    .calendar-day.has-booking { background: var(--g-accent-light); color: var(--g-accent); font-weight: 700; }
+    .calendar-head {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;
+    }
+    .calendar-head h3 { font-size: 16px; font-weight: 700; color: var(--g-white); }
+    .dash-avatar.has-photo { background-size: cover; background-position: center; color: transparent; }
+    @media (max-width: 768px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .grid-2 { grid-template-columns: 1fr; }
+      .check-action { display: none; }
+      .nav-user span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="g-nav">
+    <div class="g-nav-inner">
+      <a href="./" class="g-nav-logo">
+        <img src="icons/Icon-512.png" alt="Gearsh"> Gearsh
+      </a>
+      <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu">
+        <i class="ti ti-menu-2"></i>
+      </button>
+      <ul class="g-nav-links">
+        <li><a href="artist-dashboard.html" class="active">Dashboard</a></li>
+        <li><a href="./">Explore</a></li>
+        <li class="nav-user">
+          <div class="nav-user-ava" id="nav-initials">A</div>
+          <span id="nav-name">Artist</span>
+          <button class="nav-signout" type="button" onclick="signOut()">Sign out</button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="dash-page">
+    <section class="dash-hero">
+      <div class="dash-hero-bg">
+        <img src="assets/images/artists/tyla.jpg" alt="">
+        <img src="assets/images/artists/ZJ90.jpg" alt="">
+        <img src="assets/images/artists/coffee.png" alt="">
+        <img src="assets/images/artists/maphorisa.png" alt="">
+        <img src="assets/images/artists/waffles.png" alt="">
+        <img src="assets/images/artists/nastyc.png" alt="">
+      </div>
+      <div class="dash-hero-overlay"></div>
+      <div class="dash-hero-inner">
+        <div class="dash-welcome">
+          <div>
+            <div class="dash-badge" id="tier-badge"><i class="ti ti-seedling" style="font-size:14px"></i> Loading…</div>
+            <h1 class="dash-title">Welcome, <em id="welcome-name">…</em></h1>
+            <p class="dash-sub" id="welcome-sub">Loading your dashboard…</p>
+          </div>
+          <div class="dash-avatar" id="hero-initials">…</div>
+        </div>
+        <div class="stats-row" id="stats-row">
+          <div class="stat-item"><div class="stat-value accent" id="stat-bookings">—</div><div class="stat-label">Bookings</div></div>
+          <div class="stat-item"><div class="stat-value" id="stat-earnings">—</div><div class="stat-label">Earnings</div></div>
+          <div class="stat-item"><div class="stat-value" id="stat-views">—</div><div class="stat-label">Profile views</div></div>
+          <div class="stat-item"><div class="stat-value accent" id="stat-hours">—</div><div class="stat-label">Mastery hours</div></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="dash-body">
+      <div id="dash-error" class="dash-error" style="display:none"></div>
+      <div id="dash-loading" class="dash-loading">Loading your dashboard…</div>
+      <div id="dash-content" style="display:none">
+      <div class="dash-tabs" role="tablist">
+        <button class="dash-tab active" type="button" data-tab="overview">Overview</button>
+        <button class="dash-tab" type="button" data-tab="bookings">Bookings</button>
+        <button class="dash-tab" type="button" data-tab="calendar">Calendar</button>
+        <button class="dash-tab" type="button" data-tab="services">Services</button>
+      </div>
+
+      <div class="dash-panel active" id="panel-overview">
+        <div class="card">
+          <div class="checklist-header">
+            <div>
+              <div class="section-label">Get started</div>
+              <h2 class="card-title">Complete your <em>profile</em></h2>
+            </div>
+            <span class="checklist-badge" id="checklist-badge">0 / 4 complete</span>
+          </div>
+          <p class="card-sub">Finish these steps to get discovered by clients and start receiving booking requests.</p>
+          <div id="checklist-root"></div>
+        </div>
+
+        <div class="card mastery-card">
+          <div class="mastery-inner">
+            <div class="mastery-tier-icon"><i class="ti ti-seedling" id="mastery-icon"></i></div>
+            <div class="mastery-meta">
+              <div class="mastery-name" id="mastery-name">Newcomer</div>
+              <div class="mastery-hrs" id="mastery-range">0 – 99 mastery hours</div>
+              <p class="mastery-desc" id="mastery-desc">Loading mastery details…</p>
+            </div>
+            <a href="./#how" class="btn-ghost">How mastery works</a>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-label">Recent activity</div>
+            <div id="activity-root"></div>
+          </div>
+          <div class="card">
+            <div class="section-label">Your craft</div>
+            <h2 class="card-title" style="font-size:18px;margin-bottom:12px">Skills</h2>
+            <p class="card-sub" id="skills-list" style="margin-bottom:0">—</p>
+            <p class="card-sub" id="location-line" style="margin-top:12px;margin-bottom:0">—</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-panel" id="panel-bookings">
+        <div class="card">
+          <div class="section-label">Bookings</div>
+          <h2 class="card-title">Booking <em>requests</em></h2>
+          <p class="card-sub">Review, accept, or decline requests from clients.</p>
+          <div id="bookings-root"></div>
+        </div>
+      </div>
+
+      <div class="dash-panel" id="panel-calendar">
+        <div class="card">
+          <div class="section-label">Calendar</div>
+          <div class="calendar-head">
+            <h3 id="calendar-month">—</h3>
+            <span style="font-size:12px;color:var(--g-text-muted)"><i class="ti ti-circle-filled" style="font-size:8px;color:var(--g-accent)"></i> Has booking</span>
+          </div>
+          <div id="calendar-root"></div>
+        </div>
+      </div>
+
+      <div class="dash-panel" id="panel-services">
+        <div class="card">
+          <div class="section-label">Services</div>
+          <h2 class="card-title">Services &amp; <em>pricing</em></h2>
+          <p class="card-sub">Set what you offer and how much you charge. Newcomers get an 80% intro discount applied automatically.</p>
+          <div id="services-root"></div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="g-footer">
+    <div class="g-footer-inner">
+      <div class="g-footer-left">
+        <img src="icons/Icon-512.png" alt="Gearsh">
+        &copy; 2025 Gearsh (Pty) Ltd. All rights reserved.
+      </div>
+      <ul class="g-footer-links">
+        <li><a href="terms.html">Terms</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="./">Home</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    var API_BASE = '/api';
+    var dashboardData = null;
+
+    var CHECK_ICONS = {
+      profile: 'ti-user',
+      portfolio: 'ti-photo',
+      services: 'ti-tag',
+      verified: 'ti-shield-check'
+    };
+
+    function switchTab(id) {
+      document.querySelectorAll('.dash-tab').forEach(function(t) {
+        t.classList.toggle('active', t.getAttribute('data-tab') === id);
+      });
+      document.querySelectorAll('.dash-panel').forEach(function(p) {
+        p.classList.toggle('active', p.id === 'panel-' + id);
+      });
+    }
+
+    document.querySelectorAll('.dash-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        switchTab(tab.getAttribute('data-tab'));
+      });
+    });
+
+    function initials(name) {
+      if (!name) return 'A';
+      var parts = name.trim().split(/\s+/);
+      if (parts.length >= 2 && parts[1] !== '—') return (parts[0][0] + parts[1][0]).toUpperCase();
+      return parts[0][0].toUpperCase();
+    }
+
+    function formatMoney(amount) {
+      return 'R' + Number(amount || 0).toLocaleString('en-ZA');
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function emptyState(icon, title, text) {
+      return '<div class="empty-state" style="padding:32px 12px">' +
+        '<div class="empty-icon"><i class="ti ' + icon + '"></i></div>' +
+        '<h3>' + escapeHtml(title) + '</h3>' +
+        '<p>' + escapeHtml(text) + '</p></div>';
+    }
+
+    function signOut() {
+      ['gearsh_token', 'gearsh_user_id', 'gearsh_user_name', 'gearsh_user_type', 'gearsh_skills'].forEach(function(k) {
+        localStorage.removeItem(k);
+      });
+      window.location.href = 'join-gig.html';
+    }
+
+    function showError(message) {
+      document.getElementById('dash-loading').style.display = 'none';
+      document.getElementById('dash-content').style.display = 'none';
+      var el = document.getElementById('dash-error');
+      el.textContent = message;
+      el.style.display = 'block';
+    }
+
+    function renderHeader(data) {
+      var user = data.user;
+      var mastery = data.mastery;
+      var name = user.display_name || user.first_name || 'Artist';
+
+      document.getElementById('welcome-name').textContent = name;
+      document.getElementById('nav-name').textContent = name;
+      document.getElementById('welcome-sub').textContent =
+        data.checklist_complete < data.checklist_total
+          ? 'Your profile is live. Complete the steps below to start getting booked.'
+          : 'Your profile is ready. Keep an eye out for booking requests.';
+
+      var ini = initials(name);
+      var heroAvatar = document.getElementById('hero-initials');
+      var navAvatar = document.getElementById('nav-initials');
+      if (user.profile_picture_url) {
+        heroAvatar.className = 'dash-avatar has-photo';
+        heroAvatar.style.backgroundImage = 'url(' + user.profile_picture_url + ')';
+        heroAvatar.textContent = '';
+        navAvatar.textContent = ini;
+      } else {
+        heroAvatar.className = 'dash-avatar';
+        heroAvatar.textContent = ini;
+        navAvatar.textContent = ini;
+      }
+
+      var tierText = mastery.label + ' tier';
+      if (mastery.intro_discount) tierText += ' · ' + mastery.intro_discount + '% intro discount';
+      document.getElementById('tier-badge').innerHTML =
+        '<i class="ti ti-' + escapeHtml(mastery.icon) + '" style="font-size:14px"></i> ' + escapeHtml(tierText);
+
+      document.getElementById('stat-bookings').textContent = String(data.stats.bookings);
+      document.getElementById('stat-earnings').textContent = formatMoney(data.stats.earnings);
+      document.getElementById('stat-views').textContent = String(data.stats.profile_views);
+      document.getElementById('stat-hours').textContent = data.stats.mastery_hours + ' hrs';
+
+      document.getElementById('mastery-icon').className = 'ti ti-' + mastery.icon;
+      document.getElementById('mastery-name').textContent = mastery.label;
+      document.getElementById('mastery-range').textContent = mastery.range;
+      document.getElementById('mastery-desc').textContent = mastery.intro_discount
+        ? 'You\'re starting with an ' + mastery.intro_discount + '% introductory discount to attract your first clients. Every completed booking grows your mastery score.'
+        : 'You\'ve reached ' + mastery.label + ' status with ' + data.stats.mastery_hours + ' mastery hours logged from completed bookings.';
+
+      document.getElementById('skills-list').textContent =
+        data.artist_profile.skills || user.bio || localStorage.getItem('gearsh_skills') || 'No skills added yet.';
+      document.getElementById('location-line').textContent =
+        [user.location, user.country].filter(Boolean).join(', ') || 'Location not set';
+
+      localStorage.setItem('gearsh_user_name', name);
+    }
+
+    function renderChecklist(data) {
+      document.getElementById('checklist-badge').textContent =
+        data.checklist_complete + ' / ' + data.checklist_total + ' complete';
+
+      document.getElementById('checklist-root').innerHTML = data.checklist.map(function(item) {
+        var icon = CHECK_ICONS[item.id] || 'ti-circle-check';
+        var action = item.id === 'services'
+          ? '<a class="check-action" href="#" onclick="switchTab(\'services\'); return false;">' + escapeHtml(item.action) + '</a>'
+          : '<span class="check-action">' + escapeHtml(item.action) + '</span>';
+        return '<div class="check-item' + (item.completed ? ' done' : '') + '">' +
+          '<div class="check-icon"><i class="ti ' + icon + '"></i></div>' +
+          '<div class="check-body"><h3>' + escapeHtml(item.title) + '</h3><p>' + escapeHtml(item.description) + '</p></div>' +
+          action + '</div>';
+      }).join('');
+    }
+
+    function renderActivity(data) {
+      var root = document.getElementById('activity-root');
+      if (!data.activity.length) {
+        root.innerHTML = emptyState('ti-bell', 'No activity yet', 'When clients send booking requests, they will show up here.');
+        return;
+      }
+      root.innerHTML = '<div class="list-stack">' + data.activity.map(function(item) {
+        return '<div class="list-row">' +
+          '<div class="list-row-main">' +
+          '<div class="list-row-title">' + escapeHtml(item.title) + '</div>' +
+          '<div class="list-row-sub">' + escapeHtml(item.subtitle) + '</div></div>' +
+          '<span class="status-pill status-' + escapeHtml(item.status) + '">' + escapeHtml(item.status) + '</span></div>';
+      }).join('') + '</div>';
+    }
+
+    function renderBookings(data) {
+      var root = document.getElementById('bookings-root');
+      if (!data.bookings.length) {
+        root.innerHTML = emptyState('ti-inbox', 'No booking requests', 'Complete your profile and portfolio to start getting discovered by clients.');
+        return;
+      }
+      root.innerHTML = '<div class="list-stack">' + data.bookings.map(function(booking) {
+        return '<div class="list-row">' +
+          '<div class="list-row-main">' +
+          '<div class="list-row-title">' + escapeHtml(booking.client_name) + '</div>' +
+          '<div class="list-row-sub">' + escapeHtml(booking.event_date) +
+          (booking.event_location ? ' · ' + escapeHtml(booking.event_location) : '') +
+          (booking.service_name ? ' · ' + escapeHtml(booking.service_name) : '') + '</div></div>' +
+          '<div style="text-align:right">' +
+          '<div class="service-price">' + formatMoney(booking.total_price) + '</div>' +
+          '<span class="status-pill status-' + escapeHtml(booking.status) + '">' + escapeHtml(booking.status) + '</span></div></div>';
+      }).join('') + '</div>';
+    }
+
+    function renderServices(data) {
+      var root = document.getElementById('services-root');
+      if (!data.services.length) {
+        root.innerHTML = emptyState('ti-tag', 'No services yet', 'Add your first service package so clients know what to book you for.');
+        return;
+      }
+      root.innerHTML = '<div class="list-stack">' + data.services.map(function(service) {
+        return '<div class="list-row">' +
+          '<div class="list-row-main">' +
+          '<div class="list-row-title">' + escapeHtml(service.name) + '</div>' +
+          '<div class="list-row-sub">' + escapeHtml(service.description || 'No description') +
+          (service.duration_hours ? ' · ' + service.duration_hours + ' hrs' : '') + '</div></div>' +
+          '<div class="service-price">' + formatMoney(service.price) + '</div></div>';
+      }).join('') + '</div>';
+    }
+
+    function renderCalendar(data) {
+      var now = new Date();
+      var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      document.getElementById('calendar-month').textContent = monthNames[now.getMonth()] + ' ' + now.getFullYear();
+
+      var bookingDays = {};
+      data.bookings.forEach(function(booking) {
+        if (!booking.event_date) return;
+        var parts = booking.event_date.split('-');
+        if (parts.length >= 3) {
+          var day = parseInt(parts[2], 10);
+          var month = parseInt(parts[1], 10) - 1;
+          var year = parseInt(parts[0], 10);
+          if (year === now.getFullYear() && month === now.getMonth()) {
+            bookingDays[day] = true;
+          }
+        }
+      });
+
+      var firstDay = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
+      var daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      var html = '<div class="calendar-grid">';
+      ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(function(name) {
+        html += '<div class="calendar-day-name">' + name + '</div>';
+      });
+      for (var i = 0; i < firstDay; i++) html += '<div></div>';
+      for (var day = 1; day <= daysInMonth; day++) {
+        var classes = ['calendar-day'];
+        if (day === now.getDate()) classes.push('today');
+        if (bookingDays[day]) classes.push('has-booking');
+        html += '<div class="' + classes.join(' ') + '">' + day + '</div>';
+      }
+      html += '</div>';
+
+      if (!data.bookings.length) {
+        html += emptyState('ti-calendar', 'Nothing scheduled', 'When you accept bookings, they will appear on your calendar here.');
+      }
+
+      document.getElementById('calendar-root').innerHTML = html;
+    }
+
+    function renderDashboard(data) {
+      dashboardData = data;
+      renderHeader(data);
+      renderChecklist(data);
+      renderActivity(data);
+      renderBookings(data);
+      renderServices(data);
+      renderCalendar(data);
+      document.getElementById('dash-loading').style.display = 'none';
+      document.getElementById('dash-content').style.display = 'block';
+    }
+
+    async function loadDashboard() {
+      var token = localStorage.getItem('gearsh_token');
+      if (!token) {
+        window.location.href = 'join-gig.html';
+        return;
+      }
+
+      try {
+        var res = await fetch(API_BASE + '/dashboard', {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        var data = await res.json();
+        if (!res.ok || !data.success) {
+          if (res.status === 401) {
+            signOut();
+            return;
+          }
+          throw new Error(data.error || 'Could not load dashboard.');
+        }
+        if (data.data.user && data.data.user.id) {
+          localStorage.setItem('gearsh_user_id', data.data.user.id);
+        }
+        renderDashboard(data.data);
+      } catch (err) {
+        showError(err.message || 'Something went wrong loading your dashboard.');
+      }
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>
