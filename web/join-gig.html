@@ -42,7 +42,7 @@
       text-decoration: none; color: var(--g-white);
       font-weight: 700; font-size: 16px; letter-spacing: -0.02em;
     }
-    .signup-logo img { width: 30px; height: 30px; border-radius: 8px; }
+    .signup-logo img { height: 36px; width: auto; max-width: 130px; object-fit: contain; }
     .signup-badge {
       font-size: 11px; color: var(--g-accent);
       background: var(--g-accent-light);
@@ -207,15 +207,15 @@
   <nav class="g-nav">
     <div class="g-nav-inner">
       <a href="./" class="g-nav-logo">
-        <img src="icons/Icon-512.png" alt="Gearsh"> Gearsh
+        <img src="icons/Icon-512.png" alt="The Gearsh">
       </a>
       <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu">
         <i class="ti ti-menu-2"></i>
       </button>
       <ul class="g-nav-links">
         <li><a href="./">Home</a></li>
-        <li><a href="./#how">How it works</a></li>
-        <li><a href="./#why">Why Gearsh</a></li>
+        <li><a href="login.html">Sign in</a></li>
+        <li><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
       </ul>
     </div>
   </nav>
@@ -224,7 +224,7 @@
     <div class="signup-card">
       <div class="signup-header">
         <a href="./" class="signup-logo">
-          <img src="icons/Icon-512.png" alt="Gearsh"> Gearsh
+          <img src="icons/Icon-512.png" alt="The Gearsh">
         </a>
         <div class="signup-badge">Free to join</div>
       </div>
@@ -341,7 +341,7 @@
         </div>
       </div>
 
-      <div class="signin-link" id="signin-row">Already on Gearsh? <a href="/login">Sign in</a></div>
+      <div class="signin-link" id="signin-row">Already on Gearsh? <a href="login.html">Sign in</a></div>
     </div>
   </div>
 
@@ -527,7 +527,7 @@
 
   <footer class="g-footer" style="margin-top: 40px;">
     <div class="g-footer-inner">
-      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="Gearsh"> &copy; 2025 Gearsh (Pty) Ltd. All rights reserved.</div>
+      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="The Gearsh"> &copy; 2025 Gearsh (Pty) Ltd. All rights reserved.</div>
       <ul class="g-footer-links"><li><a href="terms.html">Terms</a></li><li><a href="privacy.html">Privacy</a></li><li><a href="./">Home</a></li></ul>
     </div>
   </footer>

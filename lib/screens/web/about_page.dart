@@ -21,7 +21,7 @@ class AboutPage extends StatelessWidget {
                     onTap: () => Navigator.of(context).pushReplacementNamed('/'),
                     child: Row(
                       children: [
-                        Image.asset('assets/images/gearsh_logo.png', height: 48),
+                        Image.asset('assets/images/gearsh-logo.png', height: 48),
                         const SizedBox(width: 8),
                         const Text('Gearsh', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
                       ],

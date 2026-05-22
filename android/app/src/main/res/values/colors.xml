@@ -9,6 +9,5 @@
     <color name="slate_900">#0F172A</color>
 
     <!-- Launcher icon background -->
-    <color name="ic_launcher_background">#020617</color>
+    <color name="ic_launcher_background">#FFFFFF</color>
 </resources>
-

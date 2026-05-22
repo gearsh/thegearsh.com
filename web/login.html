@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sign in to your Gearsh account.">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Sign in | Gearsh</title>
+  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" href="icons/Icon-512.png">
+  <link rel="stylesheet" href="gearsh-brand.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    .auth-page {
+      min-height: 100vh; min-height: 100svh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 80px 20px 40px; position: relative; overflow: hidden;
+    }
+    .auth-page::before {
+      content: ''; position: absolute;
+      top: -100px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,191,255,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .auth-card {
+      width: 100%; max-width: 420px;
+      background: var(--g-surface); border: 0.5px solid var(--g-border);
+      border-radius: 20px; overflow: hidden; position: relative; z-index: 1;
+    }
+    .auth-header {
+      padding: 28px 28px 0;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .auth-logo img { height: 36px; width: auto; max-width: 130px; object-fit: contain; }
+    .auth-body { padding: 24px 28px 28px; }
+    .auth-body h1 {
+      font-family: var(--g-serif); font-weight: 400; font-size: 26px;
+      line-height: 1.15; color: var(--g-white); letter-spacing: -0.01em;
+    }
+    .auth-body h1 em { font-style: italic; color: var(--g-accent); }
+    .auth-body p { font-size: 14px; color: var(--g-text-muted); margin-top: 6px; line-height: 1.5; }
+    .field-group { margin-bottom: 14px; margin-top: 20px; }
+    .field-label {
+      display: block; font-size: 12px; font-weight: 500;
+      color: var(--g-text-muted); margin-bottom: 5px;
+    }
+    .field-input {
+      width: 100%; height: 48px; background: var(--g-black);
+      border: 0.5px solid var(--g-border); border-radius: 10px;
+      padding: 0 16px; font-family: var(--g-font); font-size: 15px;
+      color: var(--g-text); outline: none;
+    }
+    .field-input:focus {
+      border-color: rgba(0,191,255,0.45);
+      box-shadow: 0 0 0 3px rgba(0,191,255,0.06);
+    }
+    .auth-error {
+      font-size: 13px; color: #f87171; margin-top: 12px; display: none;
+    }
+    .btn-submit {
+      width: 100%; height: 52px; background: var(--g-accent); color: var(--g-black);
+      border: none; border-radius: 10px; font-family: var(--g-font);
+      font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px;
+    }
+    .btn-submit:hover { opacity: 0.88; }
+    .auth-footer {
+      text-align: center; font-size: 14px; color: var(--g-text-muted);
+      margin-top: 20px; padding-top: 20px; border-top: 0.5px solid var(--g-border);
+    }
+    .auth-footer a { color: var(--g-accent); text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <nav class="g-nav">
+    <div class="g-nav-inner">
+      <a href="./" class="g-nav-logo"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
+      <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu">
+        <i class="ti ti-menu-2"></i>
+      </button>
+      <ul class="g-nav-links">
+        <li><a href="./">Home</a></li>
+        <li><a href="login.html" class="active">Sign in</a></li>
+        <li><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-header">
+        <a href="./" class="auth-logo"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
+      </div>
+      <div class="auth-body">
+        <h1>Welcome <em>back</em></h1>
+        <p>Sign in to manage your gigs, bookings, and dashboard.</p>
+        <form id="login-form" onsubmit="submitLogin(event)">
+          <div class="field-group">
+            <label class="field-label" for="identifier">Email or username</label>
+            <input class="field-input" id="identifier" type="text" required placeholder="you@email.com" autocomplete="username">
+          </div>
+          <div class="field-group" style="margin-top:14px">
+            <label class="field-label" for="password">Password</label>
+            <input class="field-input" id="password" type="password" required placeholder="Your password" autocomplete="current-password">
+          </div>
+          <div class="auth-error" id="login-error"></div>
+          <button class="btn-submit" type="submit" id="login-btn">Sign in</button>
+        </form>
+        <div class="auth-footer">
+          New to Gearsh? <a href="join-gig.html">List your gig free</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="g-footer">
+    <div class="g-footer-inner">
+      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="The Gearsh"> &copy; 2025 Gearsh (Pty) Ltd.</div>
+      <ul class="g-footer-links">
+        <li><a href="terms.html">Terms</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="./">Home</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    var API_BASE = '/api';
+
+    async function submitLogin(e) {
+      e.preventDefault();
+      var errEl = document.getElementById('login-error');
+      var btn = document.getElementById('login-btn');
+      errEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Signing in…';
+
+      try {
+        var res = await fetch(API_BASE + '/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            identifier: document.getElementById('identifier').value.trim(),
+            password: document.getElementById('password').value
+          })
+        });
+        var data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || 'Sign in failed. Check your email and password.');
+        }
+
+        var user = data.data;
+        localStorage.setItem('gearsh_token', user.token);
+        localStorage.setItem('gearsh_user_id', user.user_id || '');
+        localStorage.setItem('gearsh_user_name', user.display_name || user.first_name || '');
+        localStorage.setItem('gearsh_user_type', user.user_type || '');
+        if (user.artist_profile && user.artist_profile.id) {
+          localStorage.setItem('gearsh_artist_id', user.artist_profile.id);
+          localStorage.setItem('gearsh_profile_url', '/book-gig.html?artist=' + user.artist_profile.id);
+        }
+
+        if (user.user_type === 'artist') {
+          window.location.href = 'artist-dashboard.html';
+        } else {
+          window.location.href = './';
+        }
+      } catch (err) {
+        errEl.textContent = err.message || 'Something went wrong. Please try again.';
+        errEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Sign in';
+      }
+    }
+
+    if (localStorage.getItem('gearsh_token')) {
+      var type = localStorage.getItem('gearsh_user_type');
+      window.location.href = type === 'artist' ? 'artist-dashboard.html' : './';
+    }
+  </script>
+</body>
+</html>

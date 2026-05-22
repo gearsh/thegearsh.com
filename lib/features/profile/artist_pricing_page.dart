@@ -112,7 +112,7 @@ class _ArtistPricingPageState extends State<ArtistPricingPage>
               ),
               clipBehavior: Clip.antiAlias,
               child: Image.asset(
-                'assets/images/gearsh_logo.png',
+                'assets/images/gearsh-logo.png',
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => Container(
                   color: _bg2,

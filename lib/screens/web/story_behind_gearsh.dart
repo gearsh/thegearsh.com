@@ -236,7 +236,7 @@ At its heart, Gearsh has always been about connecting people with the resources 
               cursor: SystemMouseCursors.click,
               child: Row(
                 children: [
-                  Image.asset('assets/images/gearsh_logo.png', height: 40),
+                  Image.asset('assets/images/gearsh-logo.png', height: 40),
                   const SizedBox(width: 10),
                   ShaderMask(
                     shaderCallback: (bounds) => const LinearGradient(

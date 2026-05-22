@@ -2,7 +2,7 @@
 /gearsh-app.html          /gearsh-app.html 200
 
 /onboarding               /gearsh-app.html 200
-/login                    /gearsh-app.html 200
+/login                    /login.html 200
 /register                 /gearsh-app.html 200
 /signup                   /gearsh-app.html 200
 /join                     /gearsh-app.html 200
@@ -37,6 +37,7 @@
 /privacy-policy           /gearsh-app.html 200
 
 # Marketing static pages — .html only (no extensionless rules; Pretty URLs causes loops)
+/login.html               /login.html 200
 /join-gig.html            /join-gig.html 200
 /artist-dashboard.html    /artist-dashboard.html 200
 /book-gig.html            /book-gig.html 200

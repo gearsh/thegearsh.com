@@ -335,7 +335,7 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Image.asset('assets/images/gearsh_logo.png', width: 36, height: 36),
+          Image.asset('assets/images/gearsh-logo.png', height: 44),
           Row(
             children: [
               _buildAppBarButton('About'),

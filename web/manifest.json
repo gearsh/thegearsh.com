@@ -3,15 +3,22 @@
     "short_name": "Gearsh",
     "start_url": "/",
     "display": "standalone",
-    "display_override": ["standalone", "minimal-ui"],
-    "background_color": "#020617",
-    "theme_color": "#020617",
+    "display_override": [
+        "standalone",
+        "minimal-ui"
+    ],
+    "background_color": "#FFFFFF",
+    "theme_color": "#0A0A0A",
     "description": "Connect with DJs, photographers, videographers and more. Book creative talent instantly for your next event.",
     "orientation": "portrait",
     "prefer_related_applications": false,
     "scope": "/",
     "lang": "en",
-    "categories": ["entertainment", "lifestyle", "social"],
+    "categories": [
+        "entertainment",
+        "lifestyle",
+        "social"
+    ],
     "screenshots": [],
     "shortcuts": [
         {
@@ -19,14 +26,24 @@
             "short_name": "Search",
             "description": "Find creative talent",
             "url": "/search",
-            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "icons/Icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
         },
         {
             "name": "My Bookings",
             "short_name": "Bookings",
             "description": "View your bookings",
             "url": "/bookings",
-            "icons": [{ "src": "icons/Icon-192.png", "sizes": "192x192" }]
+            "icons": [
+                {
+                    "src": "icons/Icon-192.png",
+                    "sizes": "192x192"
+                }
+            ]
         }
     ],
     "icons": [

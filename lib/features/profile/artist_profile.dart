@@ -136,8 +136,8 @@ class _ArtistProfileState extends State<ArtistProfile> {
       'location': 'South Africa',
       'rating': 4.5,
       'reviewCount': 50,
-      'headerImage': 'assets/images/gearsh_logo.png',
-      'avatar': 'assets/images/gearsh_logo.png',
+      'headerImage': 'assets/images/gearsh-logo.png',
+      'avatar': 'assets/images/gearsh-logo.png',
       'about': 'Professional artist available for bookings.',
       'discography': [],
       'services': [

@@ -1,4 +1,4 @@
-﻿// Gearsh App - Featured Artists Data
+// Gearsh App - Featured Artists Data
 // These are verified artists preloaded into the platform
 // Global marketplace - artists from around the world
 // 10,000 Hours Mastery System - Gamified artist progression
@@ -37,7 +37,7 @@ MasteryInfo getMasteryInfo(int hoursBooked) {
     return MasteryInfo(
       level: MasteryLevel.legend,
       title: 'Legend',
-      icon: 'ðŸ‘‘',
+      icon: '👑',
       minHours: 10000,
       maxHours: 10000,
       progressToNext: 1.0,
@@ -46,7 +46,7 @@ MasteryInfo getMasteryInfo(int hoursBooked) {
     return MasteryInfo(
       level: MasteryLevel.master,
       title: 'Master',
-      icon: 'ðŸ†',
+      icon: '🏆',
       minHours: 7500,
       maxHours: 9999,
       progressToNext: (hoursBooked - 7500) / 2500,
@@ -55,7 +55,7 @@ MasteryInfo getMasteryInfo(int hoursBooked) {
     return MasteryInfo(
       level: MasteryLevel.expert,
       title: 'Expert',
-      icon: 'â­',
+      icon: '⭐',
       minHours: 5000,
       maxHours: 7499,
       progressToNext: (hoursBooked - 5000) / 2500,
@@ -64,7 +64,7 @@ MasteryInfo getMasteryInfo(int hoursBooked) {
     return MasteryInfo(
       level: MasteryLevel.professional,
       title: 'Professional',
-      icon: 'ðŸ’Ž',
+      icon: '💎',
       minHours: 2000,
       maxHours: 4999,
       progressToNext: (hoursBooked - 2000) / 3000,
@@ -73,7 +73,7 @@ MasteryInfo getMasteryInfo(int hoursBooked) {
     return MasteryInfo(
       level: MasteryLevel.established,
       title: 'Established',
-      icon: 'ðŸ”¥',
+      icon: '🔥',
       minHours: 500,
       maxHours: 1999,
       progressToNext: (hoursBooked - 500) / 1500,
@@ -82,7 +82,7 @@ MasteryInfo getMasteryInfo(int hoursBooked) {
     return MasteryInfo(
       level: MasteryLevel.rising,
       title: 'Rising',
-      icon: 'ðŸš€',
+      icon: '🚀',
       minHours: 100,
       maxHours: 499,
       progressToNext: (hoursBooked - 100) / 400,
@@ -91,7 +91,7 @@ MasteryInfo getMasteryInfo(int hoursBooked) {
     return MasteryInfo(
       level: MasteryLevel.newcomer,
       title: 'Newcomer',
-      icon: 'ðŸŒ±',
+      icon: '🌱',
       minHours: 0,
       maxHours: 99,
       progressToNext: hoursBooked / 100,

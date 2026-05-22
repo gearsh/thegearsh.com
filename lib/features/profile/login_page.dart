@@ -320,7 +320,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(22),
                           child: Image.asset(
-                            'assets/images/gearsh_logo.png',
+                            'assets/images/gearsh-logo.png',
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => Container(
                               color: _slate800,

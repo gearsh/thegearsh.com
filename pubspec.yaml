@@ -46,16 +46,16 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/gearsh_logo.png"
+  image_path: "assets/images/gearsh-logo.png"
   min_sdk_android: 21
-  adaptive_icon_background: "#020617"
-  adaptive_icon_foreground: "assets/images/gearsh_logo.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/gearsh-logo.png"
   web:
     generate: true
-    image_path: "assets/images/gearsh_logo.png"
+    image_path: "assets/images/gearsh-logo.png"
   windows:
     generate: true
-    image_path: "assets/images/gearsh_logo.png"
+    image_path: "assets/images/gearsh-logo.png"
 flutter:
   uses-material-design: true
   fonts:
@@ -72,7 +72,7 @@ flutter:
         - asset: assets/fonts/Syne-ExtraBold.ttf
           weight: 800
   assets:
-    - assets/images/gearsh_logo.png
+    - assets/images/gearsh-logo.png
     - assets/images/storyboard.png
     - assets/images/storyboard2.png
     - assets/images/allthestars.jpg

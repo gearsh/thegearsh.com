@@ -66,7 +66,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             onTap: () => context.go('/'),
             child: Padding(
               padding: const EdgeInsets.only(right: 8.0),
-              child: Image.asset('assets/images/gearsh_logo.png', height: 32),
+              child: Image.asset('assets/images/gearsh-logo.png', height: 40),
             ),
           ),
           // Show the title when provided; otherwise show the topnav modes

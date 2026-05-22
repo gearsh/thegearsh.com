@@ -55,7 +55,8 @@ body {
   font-weight: 700; font-size: 18px; letter-spacing: -0.03em;
 }
 .g-nav-logo img {
-  width: 32px; height: 32px; border-radius: 9px;
+  height: 40px; width: auto; max-width: 140px;
+  border-radius: 0; object-fit: contain;
 }
 .g-nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
 .g-nav-links a {
@@ -69,6 +70,7 @@ body {
   transition: opacity 0.2s;
 }
 .g-nav-cta:hover { opacity: 0.88; }
+.g-nav-links a.active { color: var(--g-white); }
 .g-nav-menu-btn {
   display: none; background: none; border: none;
   color: var(--g-white); font-size: 22px; cursor: pointer;
@@ -101,7 +103,8 @@ body {
   font-size: 12px; color: var(--g-text-dim);
 }
 .g-footer-left img {
-  width: 22px; height: 22px; border-radius: 6px;
+  height: 28px; width: auto; max-width: 100px;
+  border-radius: 0; object-fit: contain;
 }
 .g-footer-links { display: flex; gap: 20px; list-style: none; }
 .g-footer-links a {
