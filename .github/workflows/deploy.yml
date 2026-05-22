@@ -51,8 +51,9 @@ jobs:
           cp web/privacy.html build/web/privacy.html
           cp web/_redirects build/web/_redirects
           # Cloudflare Pages Functions + D1 config
-          mkdir -p build/web/functions/api
+          mkdir -p build/web/functions/api build/web/functions/book
           cp -r functions/api/* build/web/functions/api/
+          cp -r functions/book/* build/web/functions/book/ 2>/dev/null || true
           for f in web/functions/api/*.js; do
             case "$(basename "$f")" in signup.js|login.js|auth-utils.js) continue ;; esac
             cp "$f" build/web/functions/api/

@@ -142,10 +142,11 @@
     var API_BASE = '/api';
 
     function getArtistSlug() {
-      var fromQuery = new URLSearchParams(window.location.search).get('artist');
-      if (fromQuery) return fromQuery;
-      var match = window.location.pathname.match(/^\/book\/([^/?#]+)\/?$/i);
-      if (match) return decodeURIComponent(match[1]);
+      var params = new URLSearchParams(window.location.search);
+      var fromQuery = params.get('artist') || params.get('username');
+      if (fromQuery) return fromQuery.trim();
+      var bookMatch = window.location.pathname.match(/^\/book\/([^/?#]+)\/?$/i);
+      if (bookMatch) return decodeURIComponent(bookMatch[1]).trim();
       return null;
     }
 
