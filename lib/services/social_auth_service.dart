@@ -19,7 +19,7 @@ class SocialAuthService {
   );
 
   // API base URL
-  static const String _apiBaseUrl = 'https://thegearsh-com.pages.dev/api';
+  static const String _apiBaseUrl = 'https://thegearsh.com/api';
 
   /// Sign in with Google
   Future<SocialAuthResult> signInWithGoogle() async {
@@ -74,7 +74,7 @@ class SocialAuthService {
         webAuthenticationOptions: kIsWeb
             ? WebAuthenticationOptions(
                 clientId: 'com.gearsh.app.web', // Your Service ID from Apple Developer
-                redirectUri: Uri.parse('https://thegearsh-com.pages.dev/api/auth/apple-callback'),
+                redirectUri: Uri.parse('https://thegearsh.com/api/auth/apple-callback'),
               )
             : null,
       );

@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class BookingService {
-  static const String _baseUrl = 'https://thegearsh-com.pages.dev/api';
+  static const String _baseUrl = 'https://thegearsh.com/api';
 
   /// Create a new booking
   Future<BookingResult> createBooking({

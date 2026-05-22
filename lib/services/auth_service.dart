@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  static const String _apiBaseUrl = 'https://thegearsh-com.pages.dev/api';
+  static const String _apiBaseUrl = 'https://thegearsh.com/api';
 
   /// Sign in with username or email and password
   Future<Map<String, dynamic>> signIn(String identifier, String password) async {

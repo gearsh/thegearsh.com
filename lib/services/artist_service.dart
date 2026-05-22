@@ -8,7 +8,7 @@ import '../models/artist.dart';
 import '../data/gearsh_artists.dart' as gearsh_data;
 
 class ArtistService {
-  static const String _baseUrl = 'https://thegearsh-com.pages.dev/api';
+  static const String _baseUrl = 'https://thegearsh.com/api';
 
   /// Fetch artists from API with optional filters
   Future<List<Artist>> fetchArtists({

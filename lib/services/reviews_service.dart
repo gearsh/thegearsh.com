@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class ReviewsService {
-  static const String _baseUrl = 'https://thegearsh-com.pages.dev/api';
+  static const String _baseUrl = 'https://thegearsh.com/api';
 
   /// Submit a review for a booking
   Future<ReviewResult> submitReview({

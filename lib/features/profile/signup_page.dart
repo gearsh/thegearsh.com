@@ -222,7 +222,7 @@ class _SignupPageState extends ConsumerState<SignupPage>
 
   Future<void> _saveAdditionalProfileData() async {
     try {
-      const apiBaseUrl = 'https://thegearsh-com.pages.dev/api/update-profile';
+      const apiBaseUrl = 'https://thegearsh.com/api/update-profile';
       final user = ref.read(currentFirebaseUserProvider);
       if (user == null) return;
       final idToken = await user.getIdToken();

@@ -3,13 +3,11 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 /// API configuration for Gearsh app
 class ApiConfig {
-  // Base URL for the API
-  // Use pages.dev URL while custom domain DNS propagates
-  // Change to 'https://www.thegearsh.com/api' after DNS is configured
-  static const String baseUrl = 'https://thegearsh-com.pages.dev/api';
+  // Production API (custom domain)
+  static const String baseUrl = 'https://thegearsh.com/api';
 
-  // Custom domain URL (use after DNS is properly configured)
-  static const String customDomainUrl = 'https://www.thegearsh.com/api';
+  // Fallback Pages URL
+  static const String pagesDevUrl = 'https://thegearsh-com.pages.dev/api';
 
   // Development URL (for local testing)
   // Android emulator uses 10.0.2.2 to access host machine

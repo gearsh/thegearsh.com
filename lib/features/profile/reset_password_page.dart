@@ -82,7 +82,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
 
   Future<void> _validateToken() async {
     try {
-      const apiBaseUrl = 'https://thegearsh-com.pages.dev/api/validate-reset-token';
+      const apiBaseUrl = 'https://thegearsh.com/api/validate-reset-token';
       final response = await http.post(
         Uri.parse(apiBaseUrl),
         headers: {
@@ -117,7 +117,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage>
       });
 
       try {
-        const apiBaseUrl = 'https://thegearsh-com.pages.dev/api/reset-password';
+        const apiBaseUrl = 'https://thegearsh.com/api/reset-password';
 
         final response = await http.post(
           Uri.parse(apiBaseUrl),

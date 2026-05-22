@@ -15,7 +15,7 @@ class FirebaseAuthService {
     scopes: ['email', 'profile'],
   );
 
-  static const String _apiBaseUrl = 'https://thegearsh-com.pages.dev/api';
+  static const String _apiBaseUrl = 'https://thegearsh.com/api';
 
   /// Get current user
   User? get currentUser => _firebaseAuth.currentUser;

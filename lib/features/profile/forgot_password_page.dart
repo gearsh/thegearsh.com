@@ -72,7 +72,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
 
       try {
         // API base URL - use pages.dev URL (Cloudflare Pages)
-        const apiBaseUrl = 'https://thegearsh-com.pages.dev/api/forgot-password';
+        const apiBaseUrl = 'https://thegearsh.com/api/forgot-password';
 
         final uri = Uri.parse(apiBaseUrl);
 

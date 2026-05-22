@@ -113,7 +113,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         final idToken = await firebaseUser.getIdToken();
 
         await http.post(
-          Uri.parse('https://thegearsh-com.pages.dev/api/update-profile'),
+          Uri.parse('https://thegearsh.com/api/update-profile'),
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -361,7 +361,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
       // Upload to backend
       final response = await http.post(
-        Uri.parse('https://thegearsh-com.pages.dev/api/upload-profile-photo'),
+        Uri.parse('https://thegearsh.com/api/upload-profile-photo'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

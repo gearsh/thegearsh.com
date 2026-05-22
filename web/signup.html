@@ -241,11 +241,12 @@
         </div>
         <div class="step-form">
           <div class="field-row">
-            <div class="field-group"><label class="field-label">First name</label><input type="text" class="field-input" placeholder="First name"></div>
-            <div class="field-group"><label class="field-label">Last name</label><input type="text" class="field-input" placeholder="Last name"></div>
+            <div class="field-group"><label class="field-label">First name</label><input type="text" id="first-name" class="field-input" placeholder="First name" required></div>
+            <div class="field-group"><label class="field-label">Last name</label><input type="text" id="last-name" class="field-input" placeholder="Last name" required></div>
           </div>
-          <div class="field-group"><label class="field-label">Email</label><input type="email" class="field-input" placeholder="you@email.com"></div>
-          <div class="field-group"><label class="field-label">Phone</label><input type="tel" class="field-input" placeholder="+27 00 000 0000"></div>
+          <div class="field-group"><label class="field-label">Email</label><input type="email" id="email" class="field-input" placeholder="you@email.com" required></div>
+          <div class="field-group"><label class="field-label">Phone</label><input type="tel" id="phone" class="field-input" placeholder="+27 00 000 0000"></div>
+          <div id="signup-error" class="terms-text" style="color:#f87171;display:none;margin-bottom:12px"></div>
           <button class="btn-signup" onclick="goStep(2)">Continue <i class="ti ti-arrow-right" style="font-size:18px"></i></button>
           <div class="divider-or">or</div>
           <button class="social-btn">
@@ -280,11 +281,11 @@
           </div>
           <div class="field-row">
             <div class="field-group"><label class="field-label">Country</label>
-              <select class="field-select"><option value="">Select</option><option value="ZA" selected>South Africa</option><option value="ZW">Zimbabwe</option><option value="ZM">Zambia</option><option value="MZ">Mozambique</option><option value="BW">Botswana</option><option value="NG">Nigeria</option><option value="KE">Kenya</option><option value="GH">Ghana</option><option value="GB">United Kingdom</option><option value="US">United States</option></select>
+              <select id="country" class="field-select"><option value="">Select</option><option value="South Africa" selected>South Africa</option><option value="Zimbabwe">Zimbabwe</option><option value="Zambia">Zambia</option><option value="Mozambique">Mozambique</option><option value="Botswana">Botswana</option><option value="Nigeria">Nigeria</option><option value="Kenya">Kenya</option><option value="Ghana">Ghana</option><option value="United Kingdom">United Kingdom</option><option value="United States">United States</option></select>
             </div>
-            <div class="field-group"><label class="field-label">City</label><input type="text" class="field-input" placeholder="Johannesburg"></div>
+            <div class="field-group"><label class="field-label">City</label><input type="text" id="city" class="field-input" placeholder="Johannesburg"></div>
           </div>
-          <div class="field-group"><label class="field-label">Artist / stage name (optional)</label><input type="text" class="field-input" placeholder="Your creative name"></div>
+          <div class="field-group"><label class="field-label">Artist / stage name (optional)</label><input type="text" id="stage-name" class="field-input" placeholder="Your creative name"></div>
           <div class="mastery-note">
             <div style="font-size:18px; flex-shrink:0;"><i class="ti ti-trophy" style="color:var(--g-accent)"></i></div>
             <p>You'll start as a <strong>Newcomer</strong> with an 80% introductory discount to help you land your first bookings.</p>
@@ -301,7 +302,7 @@
           <p>Set a strong password to protect your profile.</p>
         </div>
         <div class="step-form">
-          <div class="field-group"><label class="field-label">Username</label><input type="text" class="field-input" placeholder="Choose a username"></div>
+          <div class="field-group"><label class="field-label">Username</label><input type="text" id="username" class="field-input" placeholder="Choose a username"></div>
           <div class="field-group"><label class="field-label">Password</label><input type="password" class="field-input" placeholder="Create a password" id="pw1" oninput="checkPw()"></div>
           <div class="field-group"><label class="field-label">Confirm password</label><input type="password" class="field-input" placeholder="Re-enter password" id="pw2" oninput="checkPw()"></div>
           <div class="password-rules">
@@ -310,7 +311,7 @@
             <div class="pw-rule" id="pr-num"><span class="dot"></span> Number</div>
             <div class="pw-rule" id="pr-match"><span class="dot"></span> Passwords match</div>
           </div>
-          <button class="btn-signup" onclick="goStep(4)" style="margin-top:20px">Create account <i class="ti ti-check" style="font-size:18px"></i></button>
+          <button class="btn-signup" id="create-btn" onclick="submitSignup()" style="margin-top:20px">Create account <i class="ti ti-check" style="font-size:18px"></i></button>
           <button class="btn-back" onclick="goStep(2)"><i class="ti ti-arrow-left" style="font-size:14px"></i> Back</button>
         </div>
       </div>
@@ -321,7 +322,7 @@
           <div class="success-icon"><i class="ti ti-check" style="font-size:28px; color:var(--g-accent);"></i></div>
           <h2>You're in</h2>
           <p>Your free artist profile is live. Complete your portfolio and start getting booked.</p>
-          <button class="btn-signup" onclick="window.location.href='./'">Go to dashboard <i class="ti ti-arrow-right" style="font-size:18px"></i></button>
+          <button class="btn-signup" onclick="window.location.href='/login'">Go to dashboard <i class="ti ti-arrow-right" style="font-size:18px"></i></button>
         </div>
       </div>
 
@@ -330,8 +331,100 @@
   </div>
 
   <script>
+    var API_BASE = '/api';
+
     function toggleSkill(el) { el.classList.toggle('selected'); }
+
+    function getSelectedSkills() {
+      return Array.from(document.querySelectorAll('.skill-chip.selected'))
+        .map(function(el) { return el.textContent.trim(); })
+        .join(', ');
+    }
+
+    function showError(msg) {
+      var el = document.getElementById('signup-error');
+      if (!el) return;
+      el.textContent = msg;
+      el.style.display = msg ? 'block' : 'none';
+    }
+
+    function validateStep1() {
+      var first = document.getElementById('first-name').value.trim();
+      var last = document.getElementById('last-name').value.trim();
+      var email = document.getElementById('email').value.trim();
+      if (!first || !last || !email) {
+        showError('Please enter your first name, last name, and email.');
+        return false;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showError('Please enter a valid email address.');
+        return false;
+      }
+      showError('');
+      return true;
+    }
+
+    function passwordReady() {
+      var pw = document.getElementById('pw1').value;
+      var pw2 = document.getElementById('pw2').value;
+      return pw.length >= 8 && /[A-Z]/.test(pw) && /[0-9]/.test(pw) && pw === pw2;
+    }
+
+    async function submitSignup() {
+      if (!passwordReady()) {
+        showError('Please meet all password requirements.');
+        return;
+      }
+      showError('');
+      var btn = document.getElementById('create-btn');
+      btn.disabled = true;
+      btn.textContent = 'Creating account…';
+
+      var country = document.getElementById('country').value || 'South Africa';
+      var payload = {
+        email: document.getElementById('email').value.trim(),
+        password: document.getElementById('pw1').value,
+        first_name: document.getElementById('first-name').value.trim(),
+        last_name: document.getElementById('last-name').value.trim(),
+        user_type: 'artist',
+        phone: document.getElementById('phone').value.trim(),
+        location: document.getElementById('city').value.trim(),
+        country: country,
+        skill_set: getSelectedSkills()
+      };
+      var username = document.getElementById('username').value.trim();
+      if (username) payload.user_name = username;
+
+      try {
+        var res = await fetch(API_BASE + '/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        var data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || data.message || 'Signup failed. Please try again.');
+        }
+        if (data.data && data.data.token) {
+          localStorage.setItem('gearsh_token', data.data.token);
+          localStorage.setItem('gearsh_user_id', data.data.user_id || '');
+        }
+        goStep(4);
+      } catch (err) {
+        showError(err.message || 'Something went wrong. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Create account <i class="ti ti-check" style="font-size:18px"></i>';
+      }
+    }
+
     function goStep(n) {
+      if (n === 2 && !validateStep1()) return;
+      if (n === 3 && !getSelectedSkills()) {
+        showError('Please select at least one skill.');
+        return;
+      }
+      if (n === 4) showError('');
       document.querySelectorAll('.step-panel').forEach(function(p) { p.classList.remove('visible'); });
       var t = document.getElementById('step' + n);
       if (t) t.classList.add('visible');

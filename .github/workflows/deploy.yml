@@ -32,11 +32,18 @@ jobs:
           cp -r assets/images/artists/* build/web/assets/images/artists/
           cp -r web/icons build/web/icons 2>/dev/null || true
           cp web/gearsh-brand.css build/web/gearsh-brand.css 2>/dev/null || true
+          # Flutter shell → app.html, marketing landing → index.html
           mv build/web/index.html build/web/app.html
-          cp web/index.html build/web/index.html 2>/dev/null || true
-          cp web/signup.html build/web/signup.html 2>/dev/null || true
-          cp web/terms.html build/web/terms.html 2>/dev/null || true
-          cp web/privacy.html build/web/privacy.html 2>/dev/null || true
+          cp web/index.html build/web/index.html
+          cp web/_redirects build/web/_redirects
+          cp web/signup.html build/web/signup.html
+          cp web/terms.html build/web/terms.html
+          cp web/privacy.html build/web/privacy.html
+          # Cloudflare Pages Functions + D1 config
+          mkdir -p build/web/functions/api
+          cp -r functions/api/* build/web/functions/api/
+          cp web/functions/api/*.js build/web/functions/api/ 2>/dev/null || true
+          cp web/wrangler.toml build/web/wrangler.toml 2>/dev/null || true
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:

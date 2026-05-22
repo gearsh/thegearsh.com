@@ -1,19 +1,59 @@
-# Landing page is now the homepage (index.html)
-# App routes served by app.html
-/onboarding     /app.html 200
-/login          /app.html 200
-/register       /app.html 200
-/home           /app.html 200
-/profile        /app.html 200
-/booking/*      /app.html 200
-/artist/*       /app.html 200
-/search         /app.html 200
+# Flutter web shell (must come before any catch-all)
+/app.html                 /app.html 200
+/main.dart.js             /main.dart.js 200
+/flutter.js               /flutter.js 200
+/flutter_bootstrap.js     /flutter_bootstrap.js 200
+/flutter_service_worker.js /flutter_service_worker.js 200
+/version.json             /version.json 200
+/manifest.json            /manifest.json 200
+/canvaskit/*              /canvaskit/:splat 200
 
-# Static assets and known pages pass through
-/terms.html     /terms.html 200
-/privacy        /privacy 200
-/icons/*        /icons/:splat 200
-/assets/*       /assets/:splat 200
+# Flutter app routes (go_router paths)
+/onboarding               /app.html 200
+/login                    /app.html 200
+/register                 /app.html 200
+/signup                   /app.html 200
+/join                     /app.html 200
+/home                     /app.html 200
+/discover                 /app.html 200
+/discover/*               /app.html 200
+/profile                  /app.html 200
+/profile/*                /app.html 200
+/profile-settings         /app.html 200
+/edit-profile             /app.html 200
+/dashboard                /app.html 200
+/dashboard/*            /app.html 200
+/manager                  /app.html 200
+/booking/*               /app.html 200
+/book/*                   /app.html 200
+/artist/*                 /app.html 200
+/artists                  /app.html 200
+/category/*               /app.html 200
+/search                   /app.html 200
+/gigs                     /app.html 200
+/cart                     /app.html 200
+/cart/*                   /app.html 200
+/messages                 /app.html 200
+/bookings                 /app.html 200
+/my-bookings              /app.html 200
+/saved-artists            /app.html 200
+/forgot-password          /app.html 200
+/reset-password           /app.html 200
+/help                     /app.html 200
+/faq                      /app.html 200
+/settings                 /app.html 200
+/privacy-policy           /app.html 200
+/terms                    /app.html 200
 
-# Everything else → landing page
-/*              /index.html 200
+# Marketing & legal static pages
+/signup.html              /signup.html 200
+/terms.html               /terms.html 200
+/privacy.html             /privacy.html 200
+/privacy                  /privacy.html 200
+/landing.html             /landing.html 200
+
+/icons/*                  /icons/:splat 200
+/assets/*                 /assets/:splat 200
+
+# Homepage only (do not use /* — it breaks app.html and app routes)
+/                         /index.html 200
