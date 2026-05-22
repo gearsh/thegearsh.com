@@ -167,6 +167,11 @@ final GoRouter router = GoRouter(
     return null;
   },
   routes: [
+    // Cloudflare may strip .html and land users on /app
+    GoRoute(
+      path: '/app',
+      redirect: (context, state) => '/onboarding',
+    ),
     // Onboarding & Auth - use fade transition
     GoRoute(
       path: '/onboarding',

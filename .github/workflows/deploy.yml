@@ -25,25 +25,38 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Build web
-        run: flutter build web --release
+        run: flutter build web --release --base-href "/app/"
       - name: Copy static assets to build output
         run: |
+          # Move Flutter build into /app/ subdirectory
+          mkdir -p build/web/app
+          for item in index.html main.dart.js flutter.js flutter_bootstrap.js flutter_service_worker.js version.json canvaskit assets; do
+            if [ -e "build/web/$item" ]; then
+              mv "build/web/$item" "build/web/app/$item"
+            fi
+          done
+          # Marketing static assets at site root
           mkdir -p build/web/assets/images/artists
           cp -r assets/images/artists/* build/web/assets/images/artists/
           cp -r web/icons build/web/icons 2>/dev/null || true
           cp web/gearsh-brand.css build/web/gearsh-brand.css 2>/dev/null || true
-          # Flutter shell → app.html, marketing landing → index.html
-          mv build/web/index.html build/web/app.html
           cp web/index.html build/web/index.html
-          cp web/_redirects build/web/_redirects
-          cp web/signup.html build/web/signup.html
+          cp web/list-gig.html build/web/list-gig.html
           cp web/terms.html build/web/terms.html
           cp web/privacy.html build/web/privacy.html
+          cp web/_redirects build/web/_redirects
           # Cloudflare Pages Functions + D1 config
           mkdir -p build/web/functions/api
           cp -r functions/api/* build/web/functions/api/
           cp web/functions/api/*.js build/web/functions/api/ 2>/dev/null || true
           cp web/wrangler.toml build/web/wrangler.toml 2>/dev/null || true
+      - name: Verify deployment bundle
+        run: |
+          test -f build/web/_redirects
+          test -f build/web/app/index.html
+          grep -q "flutter_bootstrap" build/web/app/index.html
+          grep -q "list-gig.html" build/web/_redirects
+          echo "Deployment bundle OK"
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
