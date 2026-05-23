@@ -175,9 +175,9 @@
         }
 
         if (user.user_type === 'artist') {
-          window.location.href = '/artist-dashboard';
+          window.location.replace('/artist-dashboard.html');
         } else {
-          window.location.href = './';
+          window.location.replace('/');
         }
       } catch (err) {
         errEl.textContent = err.message || 'Something went wrong. Please try again.';
@@ -214,9 +214,9 @@
         var user = data.data;
         localStorage.setItem('gearsh_user_type', user.user_type || '');
         if (user.user_type === 'artist') {
-          window.location.href = '/artist-dashboard';
+          window.location.replace('/artist-dashboard.html');
         } else {
-          window.location.href = './';
+          window.location.replace('/');
         }
       } catch (_) {
         clearSession();

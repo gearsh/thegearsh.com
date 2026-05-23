@@ -1,10 +1,19 @@
-# Flutter shell (assets in /app/)
-/gearsh-app.html          /gearsh-app.html 200
+# Static auth & artist signup (must come before Flutter catch-alls)
+/login.html               /login.html 200
+/join-gig.html            /join-gig.html 200
+/artist-dashboard.html    /artist-dashboard.html 200
+/artist-onboarding.html   /artist-onboarding.html 200
+/onboarding               /join-gig.html 302
+/signup                   /join-gig.html 302
+/register                 /join-gig.html 302
+/join                     /join-gig.html 302
+/dashboard                /artist-dashboard.html 302
+/app/login                /login 302
+/app/onboarding           /join-gig.html 302
+/app/signup               /join-gig.html 302
 
-/onboarding               /gearsh-app.html 200
-/register                 /gearsh-app.html 200
-/signup                   /gearsh-app.html 200
-/join                     /gearsh-app.html 200
+# Flutter shell (explicit path only — use /gearsh-app.html for the mobile app)
+/gearsh-app.html          /gearsh-app.html 200
 /home                     /gearsh-app.html 200
 /discover                 /gearsh-app.html 200
 /discover/*               /gearsh-app.html 200
@@ -12,7 +21,6 @@
 /profile/*                /gearsh-app.html 200
 /profile-settings         /gearsh-app.html 200
 /edit-profile             /gearsh-app.html 200
-/dashboard                /gearsh-app.html 200
 /dashboard/*              /gearsh-app.html 200
 /manager                  /gearsh-app.html 200
 /booking/*                /gearsh-app.html 200
@@ -35,14 +43,10 @@
 /settings                 /gearsh-app.html 200
 /privacy-policy           /gearsh-app.html 200
 
-# Marketing static pages — .html only (no extensionless rules; Pretty URLs causes loops)
-/login.html               /login.html 200
-/join-gig.html            /join-gig.html 200
-/artist-onboarding.html   /artist-onboarding.html 200
-/artist-dashboard.html    /artist-dashboard.html 200
+# Other marketing static pages
 /gearsh-god.html          /gearsh-god.html 200
 /book-gig.html            /book-gig.html 200
-/claim-profile.html         /claim-profile.html 200
+/claim-profile.html       /claim-profile.html 200
 /terms.html               /terms.html 200
 /privacy.html             /privacy.html 200
 /landing.html             /landing.html 200

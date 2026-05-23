@@ -676,7 +676,7 @@
         var res = await fetch(API_BASE + '/session', { headers: { Authorization: 'Bearer ' + token } });
         var data = await res.json();
         if (!res.ok || !data.success) return;
-        var dashHref = data.data.user_type === 'artist' ? '/artist-dashboard' : './';
+        var dashHref = data.data.user_type === 'artist' ? '/artist-dashboard.html' : '/';
         var label = data.data.user_type === 'artist' ? 'Dashboard' : 'Home';
         document.querySelectorAll('.g-nav-mobile-login, .g-nav-menu-auth a[href="/login"]').forEach(function(el) {
           el.textContent = label;
@@ -685,7 +685,7 @@
         var heroSignIn = document.querySelector('.hero-actions .btn-ghost');
         if (heroSignIn && data.data.user_type === 'artist') {
           heroSignIn.textContent = 'Go to dashboard';
-          heroSignIn.href = '/artist-dashboard';
+          heroSignIn.href = '/artist-dashboard.html';
         }
       } catch (_) {}
     })();
