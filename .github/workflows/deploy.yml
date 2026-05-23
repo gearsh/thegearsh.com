@@ -37,8 +37,9 @@ jobs:
             fi
           done
           # Marketing static assets at site root
-          mkdir -p build/web/assets/images/artists
+          mkdir -p build/web/assets/images/artists build/web/assets/images
           cp -r assets/images/artists/* build/web/assets/images/artists/
+          cp assets/images/command-header.png build/web/assets/images/command-header.png 2>/dev/null || true
           cp -r web/icons build/web/icons 2>/dev/null || true
           cp web/gearsh-brand.css build/web/gearsh-brand.css 2>/dev/null || true
           cp web/marketing.html build/web/index.html

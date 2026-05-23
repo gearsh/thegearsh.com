@@ -10,13 +10,55 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <style>
     body { min-height: 100vh; background: var(--g-black); }
-    .god-wrap { max-width: 1280px; margin: 0 auto; padding: 88px 20px 48px; }
+    .god-hero {
+      position: relative; width: 100%; overflow: hidden;
+      border-bottom: 0.5px solid var(--g-border);
+    }
+    .god-hero-img {
+      width: 100%; height: clamp(200px, 32vw, 320px);
+      object-fit: cover; object-position: center 35%;
+      display: block;
+      filter: grayscale(100%) contrast(1.12) brightness(0.82);
+    }
+    .god-hero-overlay {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(105deg, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.45) 42%, rgba(10,10,10,0.78) 100%),
+        linear-gradient(to top, var(--g-black) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .god-hero-inner {
+      position: absolute; inset: 0;
+      max-width: 1280px; margin: 0 auto; padding: 24px 20px 28px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      left: 0; right: 0;
+    }
+    .god-hero-badge {
+      display: inline-flex; align-items: center; gap: 6px; width: fit-content;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--g-accent); background: rgba(0,191,255,0.1);
+      border: 0.5px solid rgba(0,191,255,0.22); padding: 5px 11px; border-radius: 999px;
+      margin-bottom: 10px;
+    }
+    .god-hero-inner h1 {
+      font-family: var(--g-serif); font-size: clamp(32px, 5vw, 44px);
+      font-weight: 400; color: var(--g-white); letter-spacing: -0.03em; line-height: 1.05;
+    }
+    .god-hero-inner p {
+      font-size: 14px; color: rgba(255,255,255,0.62); margin-top: 8px; max-width: 520px; line-height: 1.5;
+    }
+    .god-hero-actions {
+      position: absolute; top: 20px; right: 20px;
+      display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end;
+    }
+    .god-wrap { max-width: 1280px; margin: 0 auto; padding: 28px 20px 48px; }
     .god-login {
-      max-width: 420px; margin: 10vh auto 0; padding: 32px;
+      max-width: 420px; margin: 0 auto 48px; padding: 32px;
       background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 16px;
+      transform: translateY(-24px);
     }
     .god-login h1 {
-      font-family: var(--g-serif); font-size: 28px; font-weight: 400; color: var(--g-white);
+      font-family: var(--g-serif); font-size: 22px; font-weight: 400; color: var(--g-white);
       margin-bottom: 8px;
     }
     .god-login p { font-size: 13px; color: var(--g-text-muted); margin-bottom: 24px; line-height: 1.5; }
@@ -42,8 +84,7 @@
       display: flex; align-items: center; justify-content: space-between; gap: 16px;
       margin-bottom: 28px; flex-wrap: wrap;
     }
-    .god-top h1 { font-family: var(--g-serif); font-size: 32px; color: var(--g-white); font-weight: 400; }
-    .god-top p { font-size: 13px; color: var(--g-text-dim); margin-top: 4px; }
+    .god-top p { font-size: 13px; color: var(--g-text-dim); }
     .god-actions { display: flex; gap: 10px; flex-wrap: wrap; }
     .god-btn {
       display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 16px;
@@ -113,13 +154,29 @@
     }
     @media (max-width: 520px) {
       .god-grid { grid-template-columns: 1fr; }
+      .god-login { transform: none; margin-top: -12px; }
+      .god-hero-actions { position: static; margin-top: 12px; justify-content: flex-start; }
     }
   </style>
 </head>
 <body>
+  <header class="god-hero">
+    <img class="god-hero-img" src="assets/images/command-header.png" alt="">
+    <div class="god-hero-overlay" aria-hidden="true"></div>
+    <div class="god-hero-inner">
+      <span class="god-hero-badge"><i class="ti ti-shield-lock"></i> Founder access</span>
+      <h1>Gearsh Command</h1>
+      <p id="hero-subtitle">Private control panel — platform intelligence, artist approvals, and live bookings.</p>
+      <div class="god-hero-actions hidden" id="hero-actions">
+        <button class="god-btn" type="button" onclick="refreshAll()"><i class="ti ti-refresh"></i> Refresh</button>
+        <button class="god-btn danger" type="button" onclick="signOut()"><i class="ti ti-logout"></i> Sign out</button>
+      </div>
+    </div>
+  </header>
+
   <div id="login-view" class="god-login">
-    <h1>Gearsh Command</h1>
-    <p>Founder-only control panel. This page is private — not linked anywhere on the public site.</p>
+    <h1>Sign in</h1>
+    <p>Founder-only access. This page is not linked on the public site.</p>
     <div class="god-error" id="login-error"></div>
     <div class="god-success" id="login-success"></div>
     <form id="login-form">
@@ -164,12 +221,7 @@
   <div id="app-view" class="god-wrap hidden">
     <div class="god-top">
       <div>
-        <h1>Gearsh Command</h1>
         <p id="founder-meta">Founder dashboard · live platform intelligence</p>
-      </div>
-      <div class="god-actions">
-        <button class="god-btn" type="button" onclick="refreshAll()"><i class="ti ti-refresh"></i> Refresh</button>
-        <button class="god-btn danger" type="button" onclick="signOut()"><i class="ti ti-logout"></i> Sign out</button>
       </div>
     </div>
 
@@ -365,6 +417,10 @@
     function showApp(show) {
       document.getElementById('login-view').classList.toggle('hidden', show);
       document.getElementById('app-view').classList.toggle('hidden', !show);
+      document.getElementById('hero-actions').classList.toggle('hidden', !show);
+      document.getElementById('hero-subtitle').textContent = show
+        ? 'Live platform intelligence — artists, bookings, and revenue.'
+        : 'Private control panel — platform intelligence, artist approvals, and live bookings.';
     }
 
     function signOut() {
