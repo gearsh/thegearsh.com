@@ -444,7 +444,7 @@
       ['gearsh_token', 'gearsh_user_id', 'gearsh_user_name', 'gearsh_user_type', 'gearsh_skills', 'gearsh_artist_id', 'gearsh_profile_url'].forEach(function(k) {
         localStorage.removeItem(k);
       });
-      window.location.replace('/login.html?logout=1');
+      window.location.replace('/auth.html?logout=1');
     }
 
     function copyDashboardLink() {
@@ -643,7 +643,7 @@
     async function loadDashboard() {
       var token = localStorage.getItem('gearsh_token');
       if (!token) {
-        window.location.replace('/login.html?logout=1');
+        window.location.replace('/auth.html?logout=1');
         return;
       }
 

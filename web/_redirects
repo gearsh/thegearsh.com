@@ -1,9 +1,10 @@
 # Static auth & artist signup (must come before Flutter catch-alls)
-# Pretty URLs strips .html → serve login via rewrite on /login (never redirect /login ↔ /sign-in)
-/login                    /login.html 200
-/login.html               /login.html 200
-/sign-in                  /login.html 200
-/sign-in.html             /login.html 200
+# Use /auth.html — Cloudflare Pretty URLs breaks /login with a redirect loop.
+/auth.html                /auth.html 200
+/login.html               /auth.html 200
+/sign-in                  /auth.html 200
+/sign-in.html             /auth.html 200
+/app/login                /auth.html 200
 /join-gig.html            /join-gig.html 200
 /artist-dashboard.html    /artist-dashboard.html 200
 /artist-onboarding.html   /artist-onboarding.html 200
@@ -12,7 +13,7 @@
 /register                 /join-gig.html 200
 /join                     /join-gig.html 200
 /dashboard                /artist-dashboard.html 200
-/app/login                /login.html 200
+/app/login                /auth.html 200
 /app/onboarding           /join-gig.html 302
 /app/signup               /join-gig.html 302
 
