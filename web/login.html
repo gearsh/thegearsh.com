@@ -81,7 +81,7 @@
         </button>
       </div>
       <ul class="g-nav-links">
-        <li class="g-nav-menu-auth"><a href="login.html" class="active">Login</a></li>
+        <li class="g-nav-menu-auth"><a href="/login" class="active">Login</a></li>
         <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
         <li><a href="./">Home</a></li>
       </ul>
@@ -110,6 +110,7 @@
         </form>
         <div class="auth-footer">
           New to Gearsh? <a href="join-gig.html">List your gig free</a>
+          · <a href="/login?logout=1">Use a different account</a>
         </div>
       </div>
     </div>
@@ -174,7 +175,11 @@
         }
 
         if (user.user_type === 'artist') {
-          window.location.href = 'artist-dashboard.html';
+          if (user.onboarding_status === 'draft') {
+            window.location.href = 'artist-onboarding.html';
+          } else {
+            window.location.href = '/artist-dashboard';
+          }
         } else {
           window.location.href = './';
         }
@@ -187,10 +192,46 @@
       }
     }
 
-    if (localStorage.getItem('gearsh_token')) {
-      var type = localStorage.getItem('gearsh_user_type');
-      window.location.href = type === 'artist' ? 'artist-dashboard.html' : './';
+    function clearSession() {
+      ['gearsh_token', 'gearsh_user_id', 'gearsh_user_name', 'gearsh_user_type',
+        'gearsh_skills', 'gearsh_artist_id', 'gearsh_profile_url', 'gearsh_username'].forEach(function(k) {
+        localStorage.removeItem(k);
+      });
     }
+
+    async function resumeIfSignedIn() {
+      if (new URLSearchParams(window.location.search).get('logout') === '1') {
+        clearSession();
+        return;
+      }
+      var token = localStorage.getItem('gearsh_token');
+      if (!token) return;
+      try {
+        var res = await fetch(API_BASE + '/session', {
+          headers: { Authorization: 'Bearer ' + token },
+        });
+        var data = await res.json();
+        if (!res.ok || !data.success) {
+          clearSession();
+          return;
+        }
+        var user = data.data;
+        localStorage.setItem('gearsh_user_type', user.user_type || '');
+        if (user.user_type === 'artist') {
+          if (user.onboarding_status === 'draft') {
+            window.location.href = 'artist-onboarding.html';
+          } else {
+            window.location.href = '/artist-dashboard';
+          }
+        } else {
+          window.location.href = './';
+        }
+      } catch (_) {
+        clearSession();
+      }
+    }
+
+    resumeIfSignedIn();
   </script>
 </body>
 </html>

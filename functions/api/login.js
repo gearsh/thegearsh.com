@@ -9,6 +9,7 @@ import {
   ensureArtistUsername,
   ensureAuthTables,
 } from './auth-utils.js';
+import { ensureOnboardingTables } from './onboarding-utils.js';
 
 export async function onRequestPost(context) {
   try {
@@ -17,6 +18,7 @@ export async function onRequestPost(context) {
     }
 
     await ensureAuthTables(context.env.DB);
+    await ensureOnboardingTables(context.env.DB);
 
     const body = await context.request.json();
     const identifier = (body.identifier || body.email || '').trim();
@@ -38,6 +40,14 @@ export async function onRequestPost(context) {
     if (!valid) {
       return jsonResponse({ success: false, error: 'Invalid credentials' }, 401);
     }
+
+    let onboardingStatus = null;
+    try {
+      const statusRow = await context.env.DB.prepare(
+        `SELECT onboarding_status FROM users WHERE id = ?`
+      ).bind(user.id).first();
+      onboardingStatus = statusRow?.onboarding_status || null;
+    } catch (_) {}
 
     let artistProfile = null;
     let profileUrl = null;
@@ -74,6 +84,7 @@ export async function onRequestPost(context) {
         username: artistUsername,
         profile_picture_url: user.profile_picture_url,
         is_verified: Boolean(user.is_verified),
+        onboarding_status: onboardingStatus,
         artist_profile: artistProfile,
         profile_url: profileUrl,
         token,

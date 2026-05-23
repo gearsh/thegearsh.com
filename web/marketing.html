@@ -248,13 +248,13 @@
         <img src="icons/Icon-512.png" alt="The Gearsh">
       </a>
       <div class="g-nav-right">
-        <a href="login.html" class="g-nav-mobile-login">Login</a>
+        <a href="/login" class="g-nav-mobile-login">Login</a>
         <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu">
           <i class="ti ti-menu-2"></i>
         </button>
       </div>
       <ul class="g-nav-links">
-        <li class="g-nav-menu-auth"><a href="login.html">Login</a></li>
+        <li class="g-nav-menu-auth"><a href="/login">Login</a></li>
         <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
         <li><a href="#feed">Explore</a></li>
         <li><a href="#how">How it works</a></li>
@@ -286,7 +286,7 @@
       <p class="hero-sub">The platform where talented artists get discovered, booked, and paid — without the middleman.</p>
       <div class="hero-actions">
         <a href="join-gig.html" class="btn-main">List your gig free <i class="ti ti-arrow-right" style="font-size:18px"></i></a>
-        <a href="login.html" class="btn-ghost">Sign in</a>
+        <a href="/login" class="btn-ghost">Sign in</a>
       </div>
       <div class="stats-row">
         <div class="stat-item"><div class="stat-value accent">Free</div><div class="stat-label">To list your profile</div></div>
@@ -407,7 +407,7 @@
       <ul class="g-footer-links">
         <li><a href="terms.html">Terms</a></li>
         <li><a href="privacy.html">Privacy</a></li>
-        <li><a href="login.html">Sign in</a></li>
+        <li><a href="/login">Sign in</a></li>
         <li><a href="join-gig.html">List your gig</a></li>
       </ul>
     </div>
@@ -668,6 +668,27 @@
     document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
 
     loadTalentFeed();
+
+    (async function updateNavForSession() {
+      var token = localStorage.getItem('gearsh_token');
+      if (!token) return;
+      try {
+        var res = await fetch(API_BASE + '/session', { headers: { Authorization: 'Bearer ' + token } });
+        var data = await res.json();
+        if (!res.ok || !data.success) return;
+        var dashHref = data.data.user_type === 'artist' ? '/artist-dashboard' : './';
+        var label = data.data.user_type === 'artist' ? 'Dashboard' : 'Home';
+        document.querySelectorAll('.g-nav-mobile-login, .g-nav-menu-auth a[href="/login"]').forEach(function(el) {
+          el.textContent = label;
+          el.href = dashHref;
+        });
+        var heroSignIn = document.querySelector('.hero-actions .btn-ghost');
+        if (heroSignIn && data.data.user_type === 'artist') {
+          heroSignIn.textContent = 'Go to dashboard';
+          heroSignIn.href = '/artist-dashboard';
+        }
+      } catch (_) {}
+    })();
   </script>
 </body>
 </html>
