@@ -1,5 +1,12 @@
 // GET /api/session — validate bearer token and return current user
-import { parseToken, jsonResponse, corsPreflightResponse, ensureAuthTables } from './auth-utils.js';
+import {
+  parseToken,
+  jsonResponse,
+  corsPreflightResponse,
+  ensureAuthTables,
+  getArtistProfileSummary,
+  resolvePostLoginPath,
+} from './auth-utils.js';
 import { ensureOnboardingTables } from './onboarding-utils.js';
 
 export async function onRequestGet(context) {
@@ -14,12 +21,15 @@ export async function onRequestGet(context) {
     const user = await context.env.DB.prepare(`
       SELECT id, email, user_type, display_name, first_name, username, is_verified, onboarding_status
       FROM users
-      WHERE id = ? AND is_active = 1
+      WHERE id = ? AND (is_active = 1 OR user_type = 'admin')
     `).bind(userId).first();
 
     if (!user) {
       return jsonResponse({ success: false, error: 'Not signed in' }, 401);
     }
+
+    const artistProfile = await getArtistProfileSummary(context.env.DB, user.id);
+    const hasArtistDashboard = Boolean(artistProfile);
 
     return jsonResponse({
       success: true,
@@ -31,6 +41,8 @@ export async function onRequestGet(context) {
         username: user.username,
         is_verified: Boolean(user.is_verified),
         onboarding_status: user.onboarding_status || null,
+        has_artist_dashboard: hasArtistDashboard,
+        redirect_path: resolvePostLoginPath(user, hasArtistDashboard),
       },
     });
   } catch (err) {

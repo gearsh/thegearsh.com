@@ -130,6 +130,16 @@
   <script>
     var API_BASE = '/api';
 
+    function redirectAfterAuth(user) {
+      var path = user.redirect_path;
+      if (!path) {
+        path = (user.has_artist_dashboard || user.user_type === 'artist')
+          ? '/artist-dashboard.html'
+          : (user.user_type === 'admin' ? '/gearsh-god.html' : '/');
+      }
+      window.location.replace(path);
+    }
+
     async function submitLogin(e) {
       e.preventDefault();
       var errEl = document.getElementById('login-error');
@@ -174,11 +184,7 @@
           localStorage.setItem('gearsh_username', user.username);
         }
 
-        if (user.user_type === 'artist') {
-          window.location.replace('/artist-dashboard.html');
-        } else {
-          window.location.replace('/');
-        }
+        redirectAfterAuth(user);
       } catch (err) {
         errEl.textContent = err.message || 'Something went wrong. Please try again.';
         errEl.style.display = 'block';
@@ -213,11 +219,7 @@
         }
         var user = data.data;
         localStorage.setItem('gearsh_user_type', user.user_type || '');
-        if (user.user_type === 'artist') {
-          window.location.replace('/artist-dashboard.html');
-        } else {
-          window.location.replace('/');
-        }
+        redirectAfterAuth(user);
       } catch (_) {
         clearSession();
       }

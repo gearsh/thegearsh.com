@@ -10,6 +10,8 @@ import {
   buildProfileUrl,
   ensureArtistUsername,
   ensureAuthTables,
+  getArtistProfileSummary,
+  resolvePostLoginPath,
 } from './auth-utils.js';
 import { ensureOnboardingTables } from './onboarding-utils.js';
 
@@ -61,23 +63,28 @@ export async function onRequestPost(context) {
     let artistProfile = null;
     let profileUrl = null;
     let artistUsername = user.username || null;
-    if (user.user_type === 'artist') {
-      try {
-        artistProfile = await context.env.DB.prepare(
-          `SELECT id, category, avg_rating, total_bookings
-           FROM artist_profiles WHERE user_id = ?`
-        ).bind(user.id).first();
+    try {
+      artistProfile = await getArtistProfileSummary(context.env.DB, user.id);
+      if (artistProfile) {
         artistUsername = await ensureArtistUsername(
           context.env.DB,
           user.id,
           user.display_name || user.first_name
         );
         profileUrl = buildProfileUrl(artistUsername);
-      } catch (artistErr) {
-        console.error('Artist profile load failed:', artistErr);
+      } else if (user.user_type === 'artist') {
+        artistUsername = await ensureArtistUsername(
+          context.env.DB,
+          user.id,
+          user.display_name || user.first_name
+        );
+        profileUrl = buildProfileUrl(artistUsername);
       }
+    } catch (artistErr) {
+      console.error('Artist profile load failed:', artistErr);
     }
 
+    const hasArtistDashboard = Boolean(artistProfile);
     const token = await generateToken(user.id, context.env);
 
     return jsonResponse({
@@ -96,6 +103,8 @@ export async function onRequestPost(context) {
         onboarding_status: onboardingStatus,
         artist_profile: artistProfile,
         profile_url: profileUrl,
+        has_artist_dashboard: hasArtistDashboard,
+        redirect_path: resolvePostLoginPath(user, hasArtistDashboard),
         token,
       },
     });

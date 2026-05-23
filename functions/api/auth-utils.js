@@ -378,7 +378,30 @@ export async function ensureAuthTables(db) {
   `).run();
 }
 
+export async function getArtistProfileSummary(db, userId) {
+  try {
+    return await db.prepare(
+      `SELECT id, category, avg_rating, total_bookings
+       FROM artist_profiles WHERE user_id = ?`
+    ).bind(userId).first();
+  } catch (_) {
+    return null;
+  }
+}
+
+/** Where static web should send the user after sign-in. */
+export function resolvePostLoginPath(user, hasArtistProfile) {
+  if (hasArtistProfile || user.user_type === 'artist') {
+    return '/artist-dashboard.html';
+  }
+  if (user.user_type === 'admin') {
+    return '/gearsh-god.html';
+  }
+  return '/';
+}
+
 export function formatUserResponse(user, token, artistProfile = null) {
+  const hasArtistProfile = Boolean(artistProfile && artistProfile.id);
   return {
     user_id: user.id,
     email: user.email,
@@ -390,6 +413,8 @@ export function formatUserResponse(user, token, artistProfile = null) {
     profile_picture_url: user.profile_picture_url,
     is_verified: Boolean(user.is_verified),
     artist_profile: artistProfile,
+    has_artist_dashboard: hasArtistProfile,
+    redirect_path: resolvePostLoginPath(user, hasArtistProfile),
     token,
   };
 }

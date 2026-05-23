@@ -83,9 +83,6 @@ export async function onRequestGet(context) {
     `).bind(userId).first();
 
     if (!user) return unauthorizedResponse('User not found');
-    if (user.user_type !== 'artist') {
-      return jsonResponse({ success: false, error: 'Artist dashboard only' }, 403);
-    }
 
     const artistProfile = await context.env.DB.prepare(`
       SELECT *
@@ -94,7 +91,13 @@ export async function onRequestGet(context) {
     `).bind(userId).first();
 
     if (!artistProfile) {
-      return jsonResponse({ success: false, error: 'Artist profile not found' }, 404);
+      if (user.user_type === 'artist') {
+        return jsonResponse({
+          success: false,
+          error: 'Artist profile not found. Complete signup at /join-gig.html',
+        }, 404);
+      }
+      return jsonResponse({ success: false, error: 'Artist dashboard only' }, 403);
     }
 
     const servicesResult = await context.env.DB.prepare(`

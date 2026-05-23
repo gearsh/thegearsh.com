@@ -676,14 +676,20 @@
         var res = await fetch(API_BASE + '/session', { headers: { Authorization: 'Bearer ' + token } });
         var data = await res.json();
         if (!res.ok || !data.success) return;
-        var dashHref = data.data.user_type === 'artist' ? '/artist-dashboard.html' : '/';
-        var label = data.data.user_type === 'artist' ? 'Dashboard' : 'Home';
+        var dashHref = data.data.redirect_path || (
+          data.data.has_artist_dashboard || data.data.user_type === 'artist'
+            ? '/artist-dashboard.html'
+            : (data.data.user_type === 'admin' ? '/gearsh-god.html' : '/')
+        );
+        var label = (data.data.has_artist_dashboard || data.data.user_type === 'artist')
+          ? 'Dashboard'
+          : (data.data.user_type === 'admin' ? 'Command' : 'Home');
         document.querySelectorAll('.g-nav-mobile-login, .g-nav-menu-auth a[href="/sign-in"]').forEach(function(el) {
           el.textContent = label;
           el.href = dashHref;
         });
         var heroSignIn = document.querySelector('.hero-actions .btn-ghost');
-        if (heroSignIn && data.data.user_type === 'artist') {
+        if (heroSignIn && (data.data.has_artist_dashboard || data.data.user_type === 'artist')) {
           heroSignIn.textContent = 'Go to dashboard';
           heroSignIn.href = '/artist-dashboard.html';
         }
