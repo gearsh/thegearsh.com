@@ -39,6 +39,7 @@
 # Marketing static pages — .html only (no extensionless rules; Pretty URLs causes loops)
 /login.html               /login.html 200
 /join-gig.html            /join-gig.html 200
+/artist-onboarding.html   /artist-onboarding.html 200
 /artist-dashboard.html    /artist-dashboard.html 200
 /gearsh-god.html          /gearsh-god.html 200
 /book-gig.html            /book-gig.html 200

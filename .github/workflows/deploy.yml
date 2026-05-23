@@ -43,6 +43,7 @@ jobs:
           cp web/gearsh-brand.css build/web/gearsh-brand.css 2>/dev/null || true
           cp web/marketing.html build/web/index.html
           cp web/join-gig.html build/web/join-gig.html
+          cp web/artist-onboarding.html build/web/artist-onboarding.html
           cp web/login.html build/web/login.html
           cp web/artist-dashboard.html build/web/artist-dashboard.html
           cp web/gearsh-god.html build/web/gearsh-god.html

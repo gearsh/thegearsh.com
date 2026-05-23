@@ -141,8 +141,6 @@
       transition: transform 0.2s, border-color 0.2s;
     }
     .feed-card:hover { transform: translateY(-2px); border-color: rgba(0,191,255,0.25); }
-    .feed-card.is-static { cursor: pointer; }
-    .feed-card.is-static:hover { transform: translateY(-2px); border-color: rgba(0,191,255,0.15); }
     .feed-card-media { position: relative; aspect-ratio: 1; overflow: hidden; }
     .feed-card-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
     .feed-card:hover .feed-card-media img { transform: scale(1.05); }
@@ -159,11 +157,17 @@
       position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
       background: rgba(0,0,0,0.45); opacity: 0; transition: opacity 0.25s;
       font-size: 12px; font-weight: 700; color: var(--g-black);
+      pointer-events: none;
     }
     .feed-card-action span {
       background: var(--g-accent); padding: 8px 14px; border-radius: 999px;
     }
     .feed-card.is-bookable:hover .feed-card-action { opacity: 1; }
+    @media (hover: none) {
+      .feed-card.is-bookable .feed-card-action { opacity: 1; }
+    }
+    .feed-card.is-static { cursor: default; pointer-events: none; }
+    .feed-card.is-static:hover { transform: none; border-color: var(--g-border); }
     .feed-empty {
       font-size: 13px; color: var(--g-text-dim); padding: 18px 0 4px;
     }
@@ -440,13 +444,18 @@
     }
 
     function bookUrl(artist) {
+      if (!artist || !artist.bookable) return null;
       if (artist.username) return 'book-gig?artist=' + encodeURIComponent(String(artist.username).toLowerCase());
       if (artist.profile_url) {
         var match = String(artist.profile_url).match(/\/book\/([^/?#]+)/i);
         if (match) return 'book-gig?artist=' + encodeURIComponent(match[1].toLowerCase());
       }
       if (artist.artist_id) return 'book-gig?artist=' + encodeURIComponent(artist.artist_id);
-      return 'join-gig.html';
+      return null;
+    }
+
+    function cardHref(item) {
+      return bookUrl(item) || '#feed';
     }
 
     function formatPrice(amount) {
@@ -524,8 +533,10 @@
 
     function mergeCategoryArtists(categoryId, apiArtists, index) {
       var cards = (apiArtists || []).map(apiArtistToCard);
+      var usedIds = {};
       var usedNames = {};
       cards.forEach(function(card) {
+        if (card.artist_id) usedIds[card.artist_id] = true;
         usedNames[normalizeName(card.name)] = true;
       });
 
@@ -534,9 +545,15 @@
         var key = normalizeName(item.name);
         if (usedNames[key]) return;
         var match = findArtistMatch(item.name, index);
-        if (match && cards.some(function(card) { return card.artist_id === match.artist_id; })) return;
+        if (match && usedIds[match.artist_id]) return;
         cards.push(showcaseToCard(item, match));
         usedNames[key] = true;
+        if (match && match.artist_id) usedIds[match.artist_id] = true;
+      });
+
+      cards.sort(function(a, b) {
+        if (a.bookable === b.bookable) return 0;
+        return a.bookable ? -1 : 1;
       });
 
       return cards.slice(0, 16);
@@ -557,9 +574,9 @@
         '</div>';
 
       if (item.bookable) {
-        return '<a class="' + classes + '" href="' + bookUrl(item) + '" aria-label="Book ' + item.name + '">' + inner + '</a>';
+        return '<a class="' + classes + '" href="' + cardHref(item) + '" aria-label="Book ' + item.name + '">' + inner + '</a>';
       }
-      return '<a class="' + classes + '" href="join-gig.html" aria-label="List your gig on Gearsh like ' + item.name + '">' + inner + '</a>';
+      return '<div class="' + classes + '" aria-label="' + item.name + ' — featured artist">' + inner + '</div>';
     }
 
     function renderCategorySection(category, cards) {
@@ -579,8 +596,8 @@
     }
 
     function renderStory(item) {
-      var href = item.bookable ? bookUrl(item) : 'join-gig.html';
-      return '<a class="story-item" href="' + href + '">' +
+      if (!item.bookable) return '';
+      return '<a class="story-item" href="' + cardHref(item) + '">' +
         '<div class="story-ring"><img src="' + item.image + '" alt="' + item.name + '"></div>' +
         '<span class="story-name">' + item.name + '</span></a>';
     }
@@ -616,7 +633,7 @@
       if (categories.length) {
         container.innerHTML = categories.map(function(category) {
           var cards = mergeCategoryArtists(category.id, category.artists, index);
-          cards.slice(0, 4).forEach(function(card) {
+          cards.filter(function(card) { return card.bookable; }).slice(0, 4).forEach(function(card) {
             var storyKey = card.artist_id || normalizeName(card.name);
             if (seenStories[storyKey]) return;
             seenStories[storyKey] = true;
@@ -632,16 +649,17 @@
           subtitle: 'Book artists on Gearsh',
           icon: 'ti ti-flame'
         }, fallbackCards);
-        storyCards = fallbackCards.slice(0, 16);
+        storyCards = fallbackCards.filter(function(card) { return card.bookable; }).slice(0, 16);
       }
 
       if (!storyCards.length) {
-        storyCards = SHOWCASE.slice(0, 16).map(function(item) {
-          return showcaseToCard(item, findArtistMatch(item.name, index));
-        });
+        storyCards = apiArtists.map(apiArtistToCard).slice(0, 16);
       }
 
-      stories.innerHTML = storyCards.slice(0, 16).map(renderStory).join('');
+      stories.innerHTML = storyCards.slice(0, 16).map(renderStory).filter(Boolean).join('');
+      if (!stories.innerHTML) {
+        stories.innerHTML = '<a class="story-item" href="#feed"><div class="story-ring" style="display:flex;align-items:center;justify-content:center;background:var(--g-surface)"><i class="ti ti-search" style="color:var(--g-accent);font-size:24px"></i></div><span class="story-name">Explore</span></a>';
+      }
     }
 
     var obs = new IntersectionObserver(function(entries) {

@@ -135,8 +135,9 @@
           <div class="field-group"><label class="field-label">Phone</label><input class="field-input" id="client-phone" type="tel" required placeholder="+27 00 000 0000"></div>
           <div class="field-group"><label class="field-label">Email (optional)</label><input class="field-input" id="client-email" type="email" placeholder="you@email.com"></div>
           <div class="field-group"><label class="field-label">Preferred date</label><input class="field-input" id="event-date" type="date" required></div>
+          <div class="field-group"><label class="field-label">Venue</label><input class="field-input" id="event-venue" required placeholder="Venue name and address (where the gig takes place)"></div>
           <div class="field-group"><label class="field-label">Service</label><select class="field-select" id="service-id"><option value="">Select a service</option></select></div>
-          <div class="field-group"><label class="field-label">Notes</label><textarea class="field-textarea" id="notes" placeholder="Car details, address, special requests…"></textarea></div>
+          <div class="field-group"><label class="field-label">Notes</label><textarea class="field-textarea" id="notes" placeholder="Setup requirements, parking, special requests…"></textarea></div>
           <button class="btn-main" type="submit" id="submit-btn" style="width:100%;justify-content:center">Send booking request</button>
           <div class="book-msg" id="book-msg"></div>
           <a class="wa-btn" id="wa-link" href="#" target="_blank" rel="noopener" style="display:none">
@@ -268,6 +269,7 @@
             client_phone: document.getElementById('client-phone').value.trim(),
             client_email: document.getElementById('client-email').value.trim(),
             event_date: document.getElementById('event-date').value,
+            event_location: document.getElementById('event-venue').value.trim(),
             service_id: document.getElementById('service-id').value || null,
             notes: document.getElementById('notes').value.trim(),
           }),

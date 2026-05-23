@@ -145,7 +145,9 @@ export async function onRequestGet(context) {
         id: booking.id,
         type: 'booking',
         title: booking.client_name + ' — ' + (booking.service_name || booking.event_type || 'Booking request'),
-        subtitle: booking.event_date + (booking.event_time ? ' · ' + booking.event_time : ''),
+        subtitle: booking.event_date +
+          (booking.event_time ? ' · ' + booking.event_time : '') +
+          (booking.event_location ? ' · ' + booking.event_location : ''),
         status: booking.status,
         created_at: booking.created_at,
       };

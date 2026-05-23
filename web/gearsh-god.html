@@ -244,7 +244,7 @@
       <div class="god-table-wrap">
         <table class="god-table">
           <thead>
-            <tr><th>Artist</th><th>Client</th><th>Date</th><th>Amount</th><th>Status</th></tr>
+            <tr><th>Artist</th><th>Client</th><th>Date</th><th>Venue</th><th>Amount</th><th>Status</th></tr>
           </thead>
           <tbody id="bookings-body"></tbody>
         </table>
@@ -454,10 +454,11 @@
           '<td><strong>' + (row.artist_name || '—') + '</strong></td>' +
           '<td>' + (row.client_name || 'Guest') + '</td>' +
           '<td>' + formatDate(row.event_date || row.created_at) + '</td>' +
+          '<td>' + (row.event_location || '—') + '</td>' +
           '<td>' + money(row.total_price) + '</td>' +
           '<td><span class="pill neutral">' + row.status + '</span></td>' +
         '</tr>';
-      }).join('') || '<tr><td colspan="5">No bookings yet</td></tr>';
+      }).join('') || '<tr><td colspan="6">No bookings yet</td></tr>';
     }
 
     async function loadStats() {

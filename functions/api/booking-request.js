@@ -16,16 +16,19 @@ export async function onRequestPost(context) {
       client_phone,
       client_email,
       event_date,
+      event_location,
+      venue,
       service_id,
       notes,
     } = body;
 
     const artistIdentifier = artist_id || artist_username;
+    const venueName = String(event_location || venue || '').trim();
 
-    if (!artistIdentifier || !client_name || !client_phone || !event_date) {
+    if (!artistIdentifier || !client_name || !client_phone || !event_date || !venueName) {
       return jsonResponse({
         success: false,
-        error: 'Please fill in your name, phone, date, and select a provider.',
+        error: 'Please fill in your name, phone, date, venue, and select a provider.',
       }, 400);
     }
 
@@ -85,14 +88,15 @@ export async function onRequestPost(context) {
     const bookingId = `book_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     await context.env.DB.prepare(`
       INSERT INTO bookings (
-        id, client_id, artist_id, service_id, event_date, total_price, notes, status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'), datetime('now'))
+        id, client_id, artist_id, service_id, event_date, event_location, total_price, notes, status, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'), datetime('now'))
     `).bind(
       bookingId,
       client.id,
       resolvedArtistId,
       service_id || null,
       event_date,
+      venueName,
       totalPrice,
       notes || null
     ).run();
