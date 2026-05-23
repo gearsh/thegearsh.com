@@ -3,11 +3,11 @@
 /join-gig.html            /join-gig.html 200
 /artist-dashboard.html    /artist-dashboard.html 200
 /artist-onboarding.html   /artist-onboarding.html 200
-/onboarding               /join-gig.html 302
-/signup                   /join-gig.html 302
-/register                 /join-gig.html 302
-/join                     /join-gig.html 302
-/dashboard                /artist-dashboard.html 302
+/onboarding               /join-gig.html 200
+/signup                   /join-gig.html 200
+/register                 /join-gig.html 200
+/join                     /join-gig.html 200
+/dashboard                /artist-dashboard.html 200
 /app/login                /login 302
 /app/onboarding           /join-gig.html 302
 /app/signup               /join-gig.html 302
