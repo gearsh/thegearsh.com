@@ -12,6 +12,7 @@ import {
   buildProfileUrl,
   isValidUsername,
 } from './auth-utils.js';
+import { ensureOnboardingTables, sendWelcomeEmail } from './onboarding-utils.js';
 
 export async function onRequestPost(context) {
   try {
@@ -65,15 +66,16 @@ export async function onRequestPost(context) {
     }
 
     // Validate password length
-    if (password.length < 6) {
+    if (password.length < 8) {
       return jsonResponse({
         success: false,
-        error: "Password must be at least 6 characters long"
+        error: "Password must be at least 8 characters long"
       }, 400);
     }
 
     try {
       await ensureAuthTables(context.env.DB);
+      await ensureOnboardingTables(context.env.DB);
       console.log("Tables ensured");
     } catch (tableErr) {
       console.error("Table creation error:", tableErr);
@@ -127,8 +129,9 @@ export async function onRequestPost(context) {
       await context.env.DB.prepare(`
         INSERT INTO users (
           id, email, password_hash, user_type, first_name, last_name,
-          display_name, username, phone, location, country, bio, is_verified, is_active, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 1, ?, ?)
+          display_name, username, phone, location, country, bio, is_verified, is_active,
+          email_verified, phone_verified, onboarding_status, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 1, 1, ?, 'complete', ?, ?)
       `).bind(
         userId,
         email.toLowerCase(),
@@ -141,7 +144,8 @@ export async function onRequestPost(context) {
         phone || null,
         location || null,
         country,
-        skill_set || null,
+        null,
+        phone ? 1 : 0,
         createdAt,
         createdAt
       ).run();
@@ -162,12 +166,17 @@ export async function onRequestPost(context) {
     if (user_type === 'artist') {
       try {
         artistId = `artist_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        const category = categoryFromSkills(skill_set);
+        const skillsList = parseSkills(skill_set);
+        const category = categoryFromSkills(skillsList);
         const baseRate = starting_price ? Number(starting_price) : null;
+        const skillsJson = JSON.stringify(skillsList);
         await context.env.DB.prepare(`
-          INSERT INTO artist_profiles (id, user_id, category, skills, base_rate, availability_status, created_at, updated_at)
-          VALUES (?, ?, ?, ?, ?, 'available', ?, ?)
-        `).bind(artistId, userId, category, skill_set || null, baseRate, createdAt, createdAt).run();
+          INSERT INTO artist_profiles (
+            id, user_id, category, skills, base_rate, hourly_rate, availability_status, created_at, updated_at
+          ) VALUES (?, ?, ?, ?, ?, ?, 'available', ?, ?)
+        `).bind(
+          artistId, userId, category, skillsJson, baseRate, baseRate, createdAt, createdAt
+        ).run();
 
         const skills = parseSkills(skill_set);
         const isCarWash = skills.some(function(s) { return s.toLowerCase().includes('car wash'); });
@@ -214,6 +223,15 @@ export async function onRequestPost(context) {
 
     // Generate token
     const token = generateToken(userId);
+    const profileUrl = artistId && chosenUsername ? buildProfileUrl(chosenUsername) : null;
+
+    if (user_type === 'artist' && profileUrl) {
+      try {
+        await sendWelcomeEmail(context.env, email.toLowerCase(), displayName, profileUrl);
+      } catch (emailErr) {
+        console.error('Welcome email skipped:', emailErr);
+      }
+    }
 
     return jsonResponse({
       success: true,
@@ -227,7 +245,7 @@ export async function onRequestPost(context) {
         display_name: displayName,
         artist_id: artistId,
         username: chosenUsername,
-        profile_url: artistId && chosenUsername ? buildProfileUrl(chosenUsername) : null,
+        profile_url: profileUrl,
         token
       }
     }, 201);

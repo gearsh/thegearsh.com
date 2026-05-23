@@ -175,11 +175,7 @@
         }
 
         if (user.user_type === 'artist') {
-          if (user.onboarding_status === 'draft') {
-            window.location.href = 'artist-onboarding.html';
-          } else {
-            window.location.href = '/artist-dashboard';
-          }
+          window.location.href = '/artist-dashboard';
         } else {
           window.location.href = './';
         }
@@ -218,11 +214,7 @@
         var user = data.data;
         localStorage.setItem('gearsh_user_type', user.user_type || '');
         if (user.user_type === 'artist') {
-          if (user.onboarding_status === 'draft') {
-            window.location.href = 'artist-onboarding.html';
-          } else {
-            window.location.href = '/artist-dashboard';
-          }
+          window.location.href = '/artist-dashboard';
         } else {
           window.location.href = './';
         }
