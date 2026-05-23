@@ -3,7 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 /// Marketing-site URLs served outside the Flutter shell (/app/).
 class StaticSiteUrls {
-  static const signIn = '/sign-in';
+  static const signIn = '/login.html';
   static const joinGig = '/join-gig.html';
   static const artistDashboard = '/artist-dashboard.html';
 }
