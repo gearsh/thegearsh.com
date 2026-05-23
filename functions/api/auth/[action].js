@@ -4,7 +4,6 @@ import {
   jsonResponse,
   hashPassword,
   verifyPassword,
-  hashPassword,
   passwordNeedsRehash,
   generateToken,
   findUserByIdentifier,

@@ -71,6 +71,8 @@ jobs:
           grep -q "flutter_bootstrap" build/web/gearsh-app.html
           grep -q "gearsh-app.html" build/web/_redirects
           echo "Deployment bundle OK"
+      - name: Validate Pages Functions bundle
+        run: npx wrangler@3 pages functions build build/web/functions --outdir /tmp/gearsh-functions-bundle
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
