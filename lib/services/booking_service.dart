@@ -4,9 +4,21 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BookingService {
   static const String _baseUrl = 'https://thegearsh.com/api';
+  static const String _tokenKey = 'gearsh_auth_token';
+
+  Future<Map<String, String>> _headers() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(_tokenKey);
+    return {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+  }
 
   /// Create a new booking
   Future<BookingResult> createBooking({
@@ -24,10 +36,7 @@ class BookingService {
     try {
       final response = await http.post(
         Uri.parse('$_baseUrl/bookings'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers: await _headers(),
         body: jsonEncode({
           'client_id': clientId,
           'artist_id': artistId,
@@ -74,7 +83,7 @@ class BookingService {
       final uri = Uri.parse('$_baseUrl/bookings').replace(queryParameters: queryParams);
       final response = await http.get(
         uri,
-        headers: {'Accept': 'application/json'},
+        headers: await _headers(),
       ).timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
@@ -96,10 +105,7 @@ class BookingService {
     try {
       final response = await http.patch(
         Uri.parse('$_baseUrl/bookings/$bookingId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers: await _headers(),
         body: jsonEncode({'status': 'cancelled'}),
       ).timeout(const Duration(seconds: 30));
 
@@ -115,10 +121,7 @@ class BookingService {
     try {
       final response = await http.patch(
         Uri.parse('$_baseUrl/bookings/$bookingId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers: await _headers(),
         body: jsonEncode({'status': 'confirmed'}),
       ).timeout(const Duration(seconds: 30));
 
@@ -134,10 +137,7 @@ class BookingService {
     try {
       final response = await http.patch(
         Uri.parse('$_baseUrl/bookings/$bookingId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+        headers: await _headers(),
         body: jsonEncode({'status': 'completed'}),
       ).timeout(const Duration(seconds: 30));
 

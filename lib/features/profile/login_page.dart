@@ -5,6 +5,7 @@ import 'package:gearsh_app/services/user_role_service.dart';
 import 'package:gearsh_app/providers/auth_providers.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:gearsh_app/utils/static_site_navigation.dart';
 import 'dart:math' as math;
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -57,6 +58,13 @@ class _LoginPageState extends ConsumerState<LoginPage>
     );
     _fadeController.forward();
 
+    if (kIsWeb) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        openStaticSignIn();
+      });
+      return;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.listen<AuthState>(authStateProvider, (previous, next) {
         if (next == AuthState.authenticated) {
@@ -96,6 +104,15 @@ class _LoginPageState extends ConsumerState<LoginPage>
             name: authUser.fullName,
             email: authUser.email,
           );
+
+          if (kIsWeb) {
+            if (authUser.isArtist) {
+              await openStaticArtistDashboard();
+            } else {
+              await openStaticPage('/');
+            }
+            return;
+          }
 
           if (authUser.isArtist) {
             GoRouter.of(context).go('/dashboard');

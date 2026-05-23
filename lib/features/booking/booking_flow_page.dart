@@ -4,6 +4,9 @@ import 'package:gearsh_app/services/user_role_service.dart';
 import 'package:gearsh_app/widgets/auth_prompt.dart';
 import 'package:gearsh_app/data/gearsh_artists.dart';
 import 'package:gearsh_app/services/payfast_service.dart';
+import 'package:gearsh_app/services/booking_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class BookingFlowPage extends StatefulWidget {
   final String artistId;
@@ -148,10 +151,28 @@ class _BookingFlowPageState extends State<BookingFlowPage>
   }
 
   Future<void> _processPayFastPayment() async {
-    // Generate a unique booking ID
-    final bookingId = 'GRS-${DateTime.now().millisecondsSinceEpoch}';
+    final prefs = await SharedPreferences.getInstance();
+    final userData = prefs.getString('gearsh_user_data');
+    String? clientId;
+    if (userData != null) {
+      try {
+        clientId = (jsonDecode(userData) as Map)['user_id'] as String?;
+      } catch (_) {}
+    }
+    if (clientId == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please sign in to complete booking')),
+        );
+      }
+      return;
+    }
 
-    // Show loading indicator
+    final artistId = widget.artistId;
+    final bookingService = BookingService();
+    final eventDate = '${_selectedDate.year.toString().padLeft(4, '0')}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}';
+    final eventTime = _selectedTime.format(context);
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -179,8 +200,35 @@ class _BookingFlowPageState extends State<BookingFlowPage>
     );
 
     try {
-      // Launch PayFast payment
-      final success = await PayFastService.launchPayment(
+      final createResult = await bookingService.createBooking(
+        clientId: clientId,
+        artistId: artistId,
+        serviceId: widget.serviceId ?? _selectedService?['id'] as String?,
+        eventDate: eventDate,
+        eventTime: eventTime,
+        eventLocation: _locationController.text.trim(),
+        eventType: _selectedService?['name'] as String? ?? widget.serviceName,
+        durationHours: (_selectedService?['duration'] as num?)?.toDouble(),
+        totalPrice: _servicePrice,
+        notes: _notesController.text.trim(),
+      );
+
+      if (!createResult.success || createResult.bookingId == null) {
+        if (mounted) Navigator.pop(context);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(createResult.error ?? 'Could not create booking')),
+          );
+        }
+        return;
+      }
+
+      final bookingId = createResult.bookingId!;
+      final success = await PayFastService.launchPaymentViaServer(
+        bookingId: bookingId,
+        itemName: 'Gearsh Booking - $_artistName',
+        itemDescription: _serviceName,
+      ) || await PayFastService.launchPayment(
         bookingId: bookingId,
         amount: _total,
         artistName: _artistName,

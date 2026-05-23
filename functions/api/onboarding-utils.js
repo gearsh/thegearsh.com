@@ -38,8 +38,8 @@ export async function ensureOnboardingTables(db) {
   `).run();
 }
 
-export function requireUser(context) {
-  const userId = parseToken(context.request.headers.get('Authorization'));
+export async function requireUser(context) {
+  const userId = await parseToken(context.request.headers.get('Authorization'), context.env);
   if (!userId) return { error: jsonResponse({ success: false, error: 'Please sign in to continue' }, 401) };
   return { userId };
 }
@@ -168,7 +168,7 @@ export async function registerArtist(context, body) {
   await storeCode(context.env.DB, email, 'email', code);
   const emailResult = await sendEmailCode(context.env, email, code, 'Artist');
 
-  const token = generateToken(userId);
+  const token = await generateToken(userId, context.env);
   return jsonResponse({
     success: true,
     message: 'Account created. Check your email for a verification code.',
@@ -183,7 +183,7 @@ export async function registerArtist(context, body) {
 }
 
 export async function verifyEmail(context, body) {
-  const auth = requireUser(context);
+  const auth = await requireUser(context);
   if (auth.error) return auth.error;
   const code = String(body.code || '').trim();
   const user = await context.env.DB.prepare(
@@ -199,7 +199,7 @@ export async function verifyEmail(context, body) {
 }
 
 export async function resendEmailCode(context) {
-  const auth = requireUser(context);
+  const auth = await requireUser(context);
   if (auth.error) return auth.error;
   const user = await context.env.DB.prepare(
     `SELECT email, display_name FROM users WHERE id = ?`
@@ -216,7 +216,7 @@ export async function resendEmailCode(context) {
 }
 
 export async function sendPhoneCode(context, body) {
-  const auth = requireUser(context);
+  const auth = await requireUser(context);
   if (auth.error) return auth.error;
   const phone = String(body.phone || '').replace(/\s/g, '');
   if (!phone || phone.length < 9) {
@@ -236,7 +236,7 @@ export async function sendPhoneCode(context, body) {
 }
 
 export async function verifyPhone(context, body) {
-  const auth = requireUser(context);
+  const auth = await requireUser(context);
   if (auth.error) return auth.error;
   const phone = String(body.phone || '').replace(/\s/g, '');
   const code = String(body.code || '').trim();
@@ -249,7 +249,7 @@ export async function verifyPhone(context, body) {
 }
 
 export async function saveProfile(context, body) {
-  const auth = requireUser(context);
+  const auth = await requireUser(context);
   if (auth.error) return auth.error;
   const now = new Date().toISOString();
   const {
@@ -384,7 +384,7 @@ export async function saveProfile(context, body) {
 }
 
 export async function getPreview(context) {
-  const auth = requireUser(context);
+  const auth = await requireUser(context);
   if (auth.error) return auth.error;
   const row = await context.env.DB.prepare(`
     SELECT
@@ -414,7 +414,7 @@ export async function getPreview(context) {
 }
 
 export async function submitForReview(context) {
-  const auth = requireUser(context);
+  const auth = await requireUser(context);
   if (auth.error) return auth.error;
   const user = await context.env.DB.prepare(`
     SELECT u.id, u.email, u.display_name, u.username, u.email_verified, u.phone_verified

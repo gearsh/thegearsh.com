@@ -296,9 +296,49 @@
       <div class="god-table-wrap">
         <table class="god-table">
           <thead>
-            <tr><th>Artist</th><th>Client</th><th>Date</th><th>Venue</th><th>Amount</th><th>Status</th></tr>
+            <tr><th>Artist</th><th>Client</th><th>Date</th><th>Venue</th><th>Amount</th><th>Status</th><th>Actions</th></tr>
           </thead>
           <tbody id="bookings-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="god-panel">
+      <h2>Verification queue</h2>
+      <div class="sub">Artists waiting for approval</div>
+      <div class="god-table-wrap">
+        <table class="god-table">
+          <thead>
+            <tr><th>Artist</th><th>Email</th><th>Category</th><th>Rate</th><th>Status</th><th>Joined</th></tr>
+          </thead>
+          <tbody id="verification-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="god-panel">
+      <h2>Payments & escrow</h2>
+      <div class="sub">PayFast transactions and escrow events</div>
+      <div id="escrow-summary" class="god-list" style="margin-bottom:16px"></div>
+      <div class="god-table-wrap">
+        <table class="god-table">
+          <thead>
+            <tr><th>Payment</th><th>Booking</th><th>Client</th><th>Amount</th><th>Fee</th><th>Status</th><th>Date</th></tr>
+          </thead>
+          <tbody id="payments-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="god-panel">
+      <h2>Disputes inbox</h2>
+      <div class="sub">Open booking disputes</div>
+      <div class="god-table-wrap">
+        <table class="god-table">
+          <thead>
+            <tr><th>Subject</th><th>Reporter</th><th>Booking</th><th>Severity</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="disputes-body"></tbody>
         </table>
       </div>
     </div>
@@ -513,8 +553,72 @@
           '<td>' + (row.event_location || '—') + '</td>' +
           '<td>' + money(row.total_price) + '</td>' +
           '<td><span class="pill neutral">' + row.status + '</span></td>' +
+          '<td><button class="god-btn" type="button" onclick="forceBookingStatus(\'' + row.id + '\', \'confirmed\')">Confirm</button></td>' +
         '</tr>';
-      }).join('') || '<tr><td colspan="6">No bookings yet</td></tr>';
+      }).join('') || '<tr><td colspan="7">No bookings yet</td></tr>';
+    }
+
+    async function forceBookingStatus(bookingId, status) {
+      await founderFetch('/founder/bookings', {
+        method: 'PATCH',
+        body: JSON.stringify({ booking_id: bookingId, status: status })
+      });
+      await refreshAll();
+    }
+
+    async function loadVerificationQueue() {
+      var rows = await founderFetch('/founder/verification-queue');
+      document.getElementById('verification-body').innerHTML = (rows || []).map(function(row) {
+        return '<tr>' +
+          '<td><strong>' + (row.display_name || '—') + '</strong></td>' +
+          '<td>' + row.email + '</td>' +
+          '<td>' + (row.category || '—') + '</td>' +
+          '<td>' + (row.hourly_rate ? money(row.hourly_rate) : '—') + '</td>' +
+          '<td>' + (row.onboarding_status || 'pending') + '</td>' +
+          '<td>' + formatDate(row.created_at) + '</td>' +
+        '</tr>';
+      }).join('') || '<tr><td colspan="6">No pending verifications</td></tr>';
+    }
+
+    async function loadPayments() {
+      var data = await founderFetch('/founder/payments');
+      var summary = data.escrow_summary || [];
+      document.getElementById('escrow-summary').innerHTML = summary.map(function(row) {
+        return '<div class="god-list-item"><span>' + row.event_type + '</span><span>' + money(row.total) + '</span></div>';
+      }).join('') || '<div class="god-list-item"><span>No escrow events yet</span><span>—</span></div>';
+      document.getElementById('payments-body').innerHTML = (data.payments || []).map(function(row) {
+        return '<tr>' +
+          '<td>' + row.id + '</td>' +
+          '<td>' + row.booking_id + '</td>' +
+          '<td>' + (row.client_name || '—') + '</td>' +
+          '<td>' + money(row.amount) + '</td>' +
+          '<td>' + money(row.platform_fee || 0) + '</td>' +
+          '<td>' + row.status + '</td>' +
+          '<td>' + formatDate(row.created_at) + '</td>' +
+        '</tr>';
+      }).join('') || '<tr><td colspan="7">No payments yet</td></tr>';
+    }
+
+    async function resolveDispute(disputeId, status) {
+      await founderFetch('/founder/disputes', {
+        method: 'PATCH',
+        body: JSON.stringify({ dispute_id: disputeId, status: status, resolution_notes: 'Resolved in Gearsh Command' })
+      });
+      await loadDisputes();
+    }
+
+    async function loadDisputes() {
+      var rows = await founderFetch('/founder/disputes?status=open');
+      document.getElementById('disputes-body').innerHTML = (rows || []).map(function(row) {
+        return '<tr>' +
+          '<td><strong>' + row.subject + '</strong><br><span style="font-size:12px">' + (row.description || '') + '</span></td>' +
+          '<td>' + (row.reporter_name || row.reporter_email) + '</td>' +
+          '<td>' + row.booking_id + '</td>' +
+          '<td>' + row.severity + '</td>' +
+          '<td>' + row.status + '</td>' +
+          '<td><button class="god-btn" type="button" onclick="resolveDispute(\'' + row.id + '\', \'resolved\')">Resolve</button></td>' +
+        '</tr>';
+      }).join('') || '<tr><td colspan="6">No open disputes</td></tr>';
     }
 
     async function loadStats() {
@@ -586,7 +690,7 @@
     }
 
     async function refreshAll() {
-      await Promise.all([loadStats(), loadArtists()]);
+      await Promise.all([loadStats(), loadArtists(), loadVerificationQueue(), loadPayments(), loadDisputes()]);
     }
 
     document.getElementById('artist-search').addEventListener('keydown', function(e) {

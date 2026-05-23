@@ -94,6 +94,47 @@ CREATE TABLE IF NOT EXISTS messages (
   created_at TEXT DEFAULT (datetime('now'))
 );
 
+-- Payments
+CREATE TABLE IF NOT EXISTS payments (
+  id TEXT PRIMARY KEY,
+  booking_id TEXT NOT NULL REFERENCES bookings(id),
+  payfast_payment_id TEXT,
+  amount REAL NOT NULL,
+  platform_fee REAL DEFAULT 0,
+  status TEXT DEFAULT 'pending',
+  currency TEXT DEFAULT 'ZAR',
+  raw_payload TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
+-- Escrow ledger
+CREATE TABLE IF NOT EXISTS escrow_ledger (
+  id TEXT PRIMARY KEY,
+  booking_id TEXT NOT NULL REFERENCES bookings(id),
+  payment_id TEXT REFERENCES payments(id),
+  event_type TEXT NOT NULL,
+  amount REAL NOT NULL,
+  note TEXT,
+  created_by TEXT,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
+-- Disputes
+CREATE TABLE IF NOT EXISTS disputes (
+  id TEXT PRIMARY KEY,
+  booking_id TEXT NOT NULL REFERENCES bookings(id),
+  reporter_id TEXT NOT NULL REFERENCES users(id),
+  subject TEXT NOT NULL,
+  description TEXT,
+  severity TEXT DEFAULT 'medium',
+  status TEXT DEFAULT 'open',
+  resolution_notes TEXT,
+  assigned_to TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
 
 -- Search index for artists (FTS5)
 CREATE VIRTUAL TABLE IF NOT EXISTS artists_search USING fts5(
@@ -117,6 +158,10 @@ CREATE INDEX IF NOT EXISTS idx_bookings_artist ON bookings(artist_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
 CREATE INDEX IF NOT EXISTS idx_reviews_artist ON reviews(artist_id);
 CREATE INDEX IF NOT EXISTS idx_messages_receiver ON messages(receiver_id);
+CREATE INDEX IF NOT EXISTS idx_messages_booking ON messages(booking_id);
+CREATE INDEX IF NOT EXISTS idx_payments_booking ON payments(booking_id);
+CREATE INDEX IF NOT EXISTS idx_escrow_booking ON escrow_ledger(booking_id);
+CREATE INDEX IF NOT EXISTS idx_disputes_booking ON disputes(booking_id);
 
 -- Signups table (for user registration before full account activation)
 CREATE TABLE IF NOT EXISTS signups (

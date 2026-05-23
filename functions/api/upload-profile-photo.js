@@ -7,7 +7,7 @@ export async function onRequestPost(context) {
     const body = await context.request.json();
     const { firebase_uid, image_data, mime_type, type } = body;
 
-    let userId = firebase_uid || parseToken(context.request.headers.get('Authorization'));
+    let userId = firebase_uid || await parseToken(context.request.headers.get('Authorization'), context.env);
     if (!userId || !image_data) {
       return jsonResponse({ success: false, error: 'Missing required fields' }, 400);
     }

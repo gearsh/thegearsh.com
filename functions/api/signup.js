@@ -222,7 +222,7 @@ export async function onRequestPost(context) {
     }
 
     // Generate token
-    const token = generateToken(userId);
+    const token = await generateToken(userId, context.env);
     const profileUrl = artistId && chosenUsername ? buildProfileUrl(chosenUsername) : null;
 
     if (user_type === 'artist' && profileUrl) {

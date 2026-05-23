@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/services/dashboard_service.dart';
 
 class ArtistDashboardPage extends StatefulWidget {
   const ArtistDashboardPage({super.key});
@@ -11,6 +12,40 @@ class ArtistDashboardPage extends StatefulWidget {
 
 class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
   String _activeTab = 'overview';
+  final DashboardService _dashboardService = DashboardService();
+  Map<String, dynamic>? _dashboardData;
+  bool _loadingDashboard = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDashboard();
+  }
+
+  Future<void> _loadDashboard() async {
+    final data = await _dashboardService.fetchDashboard();
+    if (!mounted) return;
+    setState(() {
+      _dashboardData = data;
+      _loadingDashboard = false;
+    });
+  }
+
+  int get _bookingsCount {
+    final stats = _dashboardData?['stats'] as Map<String, dynamic>?;
+    return (stats?['bookings'] as num?)?.toInt() ?? 0;
+  }
+
+  String get _earningsLabel {
+    final stats = _dashboardData?['stats'] as Map<String, dynamic>?;
+    final earnings = (stats?['earnings'] as num?)?.toDouble() ?? 0;
+    return 'R${earnings.toStringAsFixed(0)}';
+  }
+
+  int get _viewsCount {
+    final stats = _dashboardData?['stats'] as Map<String, dynamic>?;
+    return (stats?['profile_views'] as num?)?.toInt() ?? 0;
+  }
 
   static const Color _bg      = Color(0xFF020617);
   static const Color _surface = Color(0xFF111827);
@@ -141,11 +176,11 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
       _buildSetupChecklist(),
       const SizedBox(height: 28),
       Row(children: [
-        Expanded(child: _statCard(Icons.calendar_today_rounded, 'Bookings', '0')),
+        Expanded(child: _statCard(Icons.calendar_today_rounded, 'Bookings', '$_bookingsCount')),
         const SizedBox(width: 12),
-        Expanded(child: _statCard(Icons.attach_money_rounded, 'Earnings', 'R0')),
+        Expanded(child: _statCard(Icons.attach_money_rounded, 'Earnings', _earningsLabel)),
         const SizedBox(width: 12),
-        Expanded(child: _statCard(Icons.visibility_outlined, 'Views', '0')),
+        Expanded(child: _statCard(Icons.visibility_outlined, 'Views', '$_viewsCount')),
       ]),
       const SizedBox(height: 28),
       const Text('Recent Activity', style: TextStyle(fontFamily: 'Syne',

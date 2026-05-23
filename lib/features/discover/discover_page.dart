@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gearsh_app/data/gearsh_artists.dart';
+import 'package:gearsh_app/services/artist_api_service.dart';
+import 'package:gearsh_app/utils/artist_adapter.dart';
 import 'package:gearsh_app/features/search/presentation/widgets/filter_panel.dart';
 import 'package:gearsh_app/providers/search_provider.dart';
 import 'package:gearsh_app/providers/selection_provider.dart';
@@ -32,6 +34,9 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   bool _showSearchBar = false;
+  List<GearshArtist> _catalogArtists = gearshArtists;
+
+  List<GearshArtist> get catalogArtists => _catalogArtists;
 
   // App theme colors
   static const Color _primaryColor = primaryColor; // Deep Sky Blue #00BFFF
@@ -126,7 +131,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     for (final category in mainCategories.keys) {
       grouped[category] = [];
     }
-    for (final artist in uniqueArtists()) {
+    for (final artist in uniqueArtists(catalogArtists)) {
       final mainCategory = categoryMapping[artist.category] ?? 'Music';
       grouped[mainCategory]?.add(artist);
     }
@@ -136,7 +141,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
   // Get artists grouped by category (deduplicated)
   Map<String, List<GearshArtist>> get artistsByGenre {
     final Map<String, List<GearshArtist>> grouped = {};
-    for (final artist in uniqueArtists()) {
+    for (final artist in uniqueArtists(catalogArtists)) {
       if (!grouped.containsKey(artist.category)) {
         grouped[artist.category] = [];
       }
@@ -147,19 +152,23 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
 
   // Get featured artists (high rating, verified) - deduplicated
   List<GearshArtist> get featuredArtists {
-    return getUniqueFeaturedArtists(limit: 10);
+    return uniqueArtists(catalogArtists)
+        .where((artist) => artist.isVerified || artist.rating >= 4.5)
+        .take(10)
+        .toList();
   }
 
-  // Get trending artists - deduplicated
   List<GearshArtist> get trendingArtists {
-    final trending = getUniqueTrendingArtists(limit: 15);
+    final trending = uniqueArtists(catalogArtists)
+        .where((artist) => artist.hoursBooked >= 100 || artist.isVerified)
+        .take(15)
+        .toList();
     trending.shuffle();
     return trending;
   }
 
-  // Get new additions (last items in list, assuming newer) - deduplicated
   List<GearshArtist> get newArtists {
-    return getUniqueNewArtists(limit: 10);
+    return uniqueArtists(catalogArtists).reversed.take(10).toList();
   }
 
   @override
@@ -187,6 +196,14 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(apiArtistsProvider, (previous, next) {
+      next.whenData((artists) {
+        final live = artists.map(apiArtistToGearsh).toList();
+        setState(() {
+          _catalogArtists = mergeArtists(live, gearshArtists);
+        });
+      });
+    });
     final theme = Theme.of(context);
     final searchQuery = ref.watch(searchQueryProvider);
     final sortedGenres = artistsByGenre.keys.toList()
@@ -474,7 +491,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              '${gearshArtists.length}+ verified artists ready to book',
+              '${catalogArtists.length}+ verified artists ready to book',
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: Colors.white60,
               ),
@@ -989,7 +1006,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
     final searchTerms = query.toLowerCase().trim().split(RegExp(r'\s+'));
     final List<_SearchResult> scoredResults = [];
 
-    for (final artist in gearshArtists) {
+    for (final artist in catalogArtists) {
       // Apply shared provider filters (quick reject)
       if (filters.minRating > 0 && artist.rating < filters.minRating) continue;
       if (filters.showVerifiedOnly && !artist.isVerified) continue;

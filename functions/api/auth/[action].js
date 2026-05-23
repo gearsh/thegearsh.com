@@ -4,6 +4,8 @@ import {
   jsonResponse,
   hashPassword,
   verifyPassword,
+  hashPassword,
+  passwordNeedsRehash,
   generateToken,
   findUserByIdentifier,
   ensureAuthTables,
@@ -108,7 +110,7 @@ async function handleRegister(context, body) {
       `).bind(artistId, userId, skill_set || null).run();
     }
 
-    const token = generateToken(userId);
+    const token = await generateToken(userId, context.env);
 
     return jsonResponse({
       success: true,
@@ -152,6 +154,13 @@ async function handleLogin(context, body) {
     return jsonResponse({ success: false, error: 'Invalid credentials' }, 401);
   }
 
+  if (passwordNeedsRehash(user.password_hash)) {
+    const newHash = await hashPassword(password);
+    await context.env.DB.prepare(
+      `UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?`
+    ).bind(newHash, new Date().toISOString(), user.id).run();
+  }
+
   let artistProfile = null;
   if (user.user_type === 'artist') {
     artistProfile = await context.env.DB.prepare(
@@ -159,7 +168,7 @@ async function handleLogin(context, body) {
     ).bind(user.id).first();
   }
 
-  const token = generateToken(user.id);
+  const token = await generateToken(user.id, context.env);
 
   return jsonResponse({
     success: true,

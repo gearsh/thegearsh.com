@@ -114,7 +114,7 @@ export async function onRequestPost(context) {
       WHERE id = ?
     `).bind(email, passwordHash, phone, now, user.id).run();
 
-    const token = generateToken(user.id);
+    const token = await generateToken(user.id, context.env);
 
     return jsonResponse({
       success: true,

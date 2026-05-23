@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gearsh_app/services/messages_service.dart';
 
 class MessagesScreen extends StatefulWidget {
   final Function(String)? onOpenChat;
@@ -17,6 +18,11 @@ class MessagesScreen extends StatefulWidget {
 class _MessagesScreenState extends State<MessagesScreen> {
   String? _selectedConversationId;
   final TextEditingController _messageController = TextEditingController();
+  final MessagesService _messagesService = MessagesService();
+  List<MessageConversation> _conversations = [];
+  List<ChatMessage> _chatMessages = [];
+  bool _loading = true;
+  bool _sending = false;
 
   // Color constants - Deep Sky Blue theme
   static const Color _slate950 = Color(0xFF020617);
@@ -27,85 +33,51 @@ class _MessagesScreenState extends State<MessagesScreen> {
   static const Color _sky400 = Color(0xFF38BDF8);
   static const Color _cyan500 = Color(0xFF06B6D4);
 
-  // Mock conversations data - Using real Gearsh artists
-  static const List<Map<String, dynamic>> _conversations = [
-    {
-      'id': 'conv1',
-      'artistId': 'yde',
-      'artistName': 'Y.D.E',
-      'artistImage': 'assets/images/artists/yde.png',
-      'lastMessage': "Thanks for the booking! I'll be ready at 6 PM 🎤",
-      'timestamp': '2m ago',
-      'unread': 2,
-      'online': true,
-    },
-    {
-      'id': 'conv2',
-      'artistId': 'zj90',
-      'artistName': 'ZJ90',
-      'artistImage': 'assets/images/artists/ZJ90.jpg',
-      'lastMessage': 'I can bring my full DJ setup with lighting',
-      'timestamp': '1h ago',
-      'unread': 0,
-      'online': true,
-    },
-    {
-      'id': 'conv3',
-      'artistId': 'rix-elton',
-      'artistName': 'Rix Elton',
-      'artistImage': 'assets/images/artists/rixelton.jpg',
-      'lastMessage': 'Looking forward to the event! The Amapiano set is ready 🔥',
-      'timestamp': '3h ago',
-      'unread': 0,
-      'online': false,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadConversations();
+  }
 
-  // Mock chat messages - Demo conversation
-  static const List<Map<String, dynamic>> _chatMessages = [
-    {
-      'id': 'm1',
-      'sender': 'them',
-      'text': 'Hi! Thanks for booking me through Gearsh 🎵',
-      'timestamp': '10:30 AM',
-    },
-    {
-      'id': 'm2',
-      'sender': 'me',
-      'text': 'Excited to have you at our event! What equipment do you need?',
-      'timestamp': '10:32 AM',
-    },
-    {
-      'id': 'm3',
-      'sender': 'them',
-      'text': "I'll bring my full setup - just need access to power outlets near the stage",
-      'timestamp': '10:35 AM',
-    },
-    {
-      'id': 'm4',
-      'sender': 'me',
-      'text': 'Perfect! We have 4 power outlets ready. Anything else you need?',
-      'timestamp': '10:37 AM',
-    },
-    {
-      'id': 'm5',
-      'sender': 'them',
-      'text': "That's everything! I'll arrive at 5 PM for setup. Can't wait! 🔥",
-      'timestamp': '10:40 AM',
-    },
-    {
-      'id': 'm6',
-      'sender': 'me',
-      'text': 'Amazing! See you then 🙌',
-      'timestamp': '10:42 AM',
-    },
-  ];
+  Future<void> _loadConversations() async {
+    setState(() => _loading = true);
+    final conversations = await _messagesService.fetchConversations();
+    if (!mounted) return;
+    setState(() {
+      _conversations = conversations;
+      _loading = false;
+    });
+  }
 
-  Map<String, dynamic>? get _activeConversation {
+  Future<void> _openConversation(String bookingId) async {
+    setState(() {
+      _selectedConversationId = bookingId;
+      _chatMessages = [];
+    });
+    final messages = await _messagesService.fetchMessages(bookingId);
+    if (!mounted) return;
+    setState(() => _chatMessages = messages);
+  }
+
+  Future<void> _sendMessage() async {
+    final text = _messageController.text.trim();
+    if (text.isEmpty || _selectedConversationId == null || _sending) return;
+    setState(() => _sending = true);
+    final sent = await _messagesService.sendMessage(_selectedConversationId!, text);
+    if (sent != null && mounted) {
+      setState(() {
+        _chatMessages = [..._chatMessages, sent];
+        _messageController.clear();
+      });
+    }
+    if (mounted) setState(() => _sending = false);
+  }
+
+  MessageConversation? get _activeConversation {
     if (_selectedConversationId == null) return null;
     try {
-      return _conversations.firstWhere((c) => c['id'] == _selectedConversationId);
-    } catch (e) {
+      return _conversations.firstWhere((c) => c.bookingId == _selectedConversationId);
+    } catch (_) {
       return null;
     }
   }
@@ -118,6 +90,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
     if (_activeConversation != null) {
       return _buildChatView();
     }
@@ -169,12 +144,11 @@ class _MessagesScreenState extends State<MessagesScreen> {
     );
   }
 
-  Widget _buildConversationItem(Map<String, dynamic> conv) {
-    final hasUnread = (conv['unread'] as int) > 0;
-    final isOnline = conv['online'] as bool? ?? false;
+  Widget _buildConversationItem(MessageConversation conv) {
+    final hasUnread = conv.unread > 0;
 
     return GestureDetector(
-      onTap: () => setState(() => _selectedConversationId = conv['id']),
+      onTap: () => _openConversation(conv.bookingId),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         color: Colors.transparent,
@@ -191,14 +165,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     border: Border.all(color: _sky500.withAlpha(77), width: 2),
                   ),
                   child: ClipOval(
-                    child: Image.asset(
-                      conv['artistImage'],
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
-                        color: _slate900,
-                        child: const Icon(Icons.person, color: _sky400, size: 28),
-                      ),
-                    ),
+                    child: _avatarImage(conv.artistImage, 28),
                   ),
                 ),
                 // Unread badge
@@ -224,7 +191,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          '${conv['unread']}',
+                          '${conv.unread}',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 11,
@@ -234,21 +201,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       ),
                     ),
                   ),
-                // Online indicator
-                if (isOnline && !hasUnread)
-                  Positioned(
-                    bottom: 2,
-                    right: 2,
-                    child: Container(
-                      width: 14,
-                      height: 14,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF4ADE80),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: _slate950, width: 2),
-                      ),
-                    ),
-                  ),
+                // Online indicator removed for API-driven list
               ],
             ),
             const SizedBox(width: 14),
@@ -263,7 +216,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     children: [
                       Expanded(
                         child: Text(
-                          conv['artistName'],
+                          conv.artistName,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -275,7 +228,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        conv['timestamp'],
+                        conv.timestamp,
                         style: TextStyle(
                           color: hasUnread ? _sky400 : _slate400,
                           fontSize: 12,
@@ -285,7 +238,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    conv['lastMessage'],
+                    conv.lastMessage,
                     style: TextStyle(
                       color: hasUnread ? Colors.white.withAlpha(204) : _slate400,
                       fontSize: 14,
@@ -350,7 +303,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 child: GestureDetector(
                   onTap: () {
                     if (widget.onViewProfile != null) {
-                      widget.onViewProfile!(conv['artistId']);
+                      widget.onViewProfile!(conv.bookingId);
                     }
                   },
                   child: Row(
@@ -363,14 +316,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                           border: Border.all(color: _sky500.withAlpha(77), width: 2),
                         ),
                         child: ClipOval(
-                          child: Image.asset(
-                            conv['artistImage'],
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
-                              color: _slate900,
-                              child: const Icon(Icons.person, color: _sky400, size: 20),
-                            ),
-                          ),
+                          child: _avatarImage(conv.artistImage, 20),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -378,7 +324,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            conv['artistName'],
+                            conv.artistName,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -480,7 +426,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
               const SizedBox(width: 12),
 
               // Send button
-              Container(
+              GestureDetector(
+                onTap: _sendMessage,
+                child: Container(
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
@@ -500,6 +448,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   color: Colors.white,
                   size: 20,
                 ),
+              ),
               ),
             ],
           ),
@@ -521,8 +470,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
     );
   }
 
-  Widget _buildMessageBubble(Map<String, dynamic> msg) {
-    final isMe = msg['sender'] == 'me';
+  Widget _buildMessageBubble(ChatMessage msg) {
+    final isMe = msg.sender == 'me';
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -556,7 +505,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     border: isMe ? null : Border.all(color: _sky500.withAlpha(51)),
                   ),
                   child: Text(
-                    msg['text'],
+                    msg.text,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 15,
@@ -566,7 +515,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  msg['timestamp'],
+                  msg.timestamp,
                   style: const TextStyle(
                     color: _slate500,
                     fontSize: 11,
@@ -577,6 +526,23 @@ class _MessagesScreenState extends State<MessagesScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _avatarImage(String? source, double iconSize) {
+    if (source != null && (source.startsWith('http') || source.startsWith('/'))) {
+      return Image.network(
+        source.startsWith('/') ? 'https://thegearsh.com$source' : source,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Container(
+          color: _slate900,
+          child: Icon(Icons.person, color: _sky400, size: iconSize),
+        ),
+      );
+    }
+    return Container(
+      color: _slate900,
+      child: Icon(Icons.person, color: _sky400, size: iconSize),
     );
   }
 }

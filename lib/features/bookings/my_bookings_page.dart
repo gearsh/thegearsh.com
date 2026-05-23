@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gearsh_app/services/booking_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class MyBookingsPage extends ConsumerStatefulWidget {
   const MyBookingsPage({super.key});
@@ -25,63 +28,77 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> with SingleTick
   static const Color _red500 = Color(0xFFEF4444);
   static const Color _purple500 = Color(0xFF8B5CF6);
 
-  // Mock bookings data - Using real Gearsh artists
-  final List<Map<String, dynamic>> _upcomingBookings = [
-    {
-      'id': 'b1',
-      'artistName': 'Y.D.E',
-      'artistImage': 'assets/images/artists/yde.png',
-      'service': 'Live Performance (1 hour)',
-      'date': 'Jan 25, 2026',
-      'time': '8:00 PM',
-      'location': 'Zone 6 Venue, Soweto',
-      'price': 2000,
-      'status': 'confirmed',
-    },
-    {
-      'id': 'b2',
-      'artistName': 'ZJ90',
-      'artistImage': 'assets/images/artists/ZJ90.jpg',
-      'service': 'Club Set (2 hours)',
-      'date': 'Feb 1, 2026',
-      'time': '9:00 PM',
-      'location': 'Altitude Beach Club, Fourways',
-      'price': 25000,
-      'status': 'pending',
-    },
-  ];
+  List<Map<String, dynamic>> _upcomingBookings = [];
+  List<Map<String, dynamic>> _pastBookings = [];
+  bool _loading = true;
 
-  final List<Map<String, dynamic>> _pastBookings = [
-    {
-      'id': 'b3',
-      'artistName': 'Rix Elton',
-      'artistImage': 'assets/images/artists/rixelton.jpg',
-      'service': 'Festival Slot (1 hour)',
-      'date': 'Dec 15, 2025',
-      'time': '7:00 PM',
-      'location': 'Konka, Johannesburg',
-      'price': 35000,
-      'status': 'completed',
-      'rating': 5,
-    },
-    {
-      'id': 'b4',
-      'artistName': 'Y.D.E',
-      'artistImage': 'assets/images/artists/yde.png',
-      'service': 'Event Appearance',
-      'date': 'Dec 1, 2025',
-      'time': '6:00 PM',
-      'location': 'Private Event, Pretoria',
-      'price': 3500,
-      'status': 'completed',
-      'rating': 5,
-    },
-  ];
+  Map<String, dynamic> _bookingToMap(Booking booking) {
+    return {
+      'id': booking.id,
+      'artistName': booking.artistName ?? 'Artist',
+      'artistImage': booking.artistImage ?? '',
+      'service': booking.serviceName ?? booking.eventType ?? 'Booking',
+      'date': booking.eventDate,
+      'time': booking.eventTime ?? '',
+      'location': booking.eventLocation ?? '',
+      'price': booking.totalPrice.round(),
+      'status': booking.status,
+    };
+  }
+
+  Future<void> _loadBookings() async {
+    setState(() => _loading = true);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userData = prefs.getString('gearsh_user_data');
+      String? userId;
+      if (userData != null) {
+        userId = (jsonDecode(userData) as Map)['user_id'] as String?;
+      }
+      userId ??= prefs.getString('gearsh_user_id');
+      if (userId == null) {
+        setState(() {
+          _upcomingBookings = [];
+          _pastBookings = [];
+          _loading = false;
+        });
+        return;
+      }
+
+      final service = BookingService();
+      final bookings = await service.getBookings(userId: userId);
+      final now = DateTime.now();
+      final upcoming = <Map<String, dynamic>>[];
+      final past = <Map<String, dynamic>>[];
+
+      for (final booking in bookings) {
+        final map = _bookingToMap(booking);
+        final eventDate = DateTime.tryParse(booking.eventDate);
+        final isPast = booking.status == 'completed' ||
+            booking.status == 'cancelled' ||
+            (eventDate != null && eventDate.isBefore(now));
+        if (isPast) {
+          past.add(map);
+        } else {
+          upcoming.add(map);
+        }
+      }
+
+      setState(() {
+        _upcomingBookings = upcoming;
+        _pastBookings = past;
+        _loading = false;
+      });
+    } catch (_) {
+      setState(() => _loading = false);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _loadBookings();
   }
 
   @override
@@ -137,6 +154,11 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> with SingleTick
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final padding = MediaQuery.of(context).padding;

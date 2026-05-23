@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:go_router/go_router.dart';
 import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/utils/static_site_navigation.dart';
 
 /// The Gearsh onboarding page.
 ///
@@ -236,12 +238,12 @@ class _RoleSelectionSheet extends StatelessWidget {
   static const Color _brandBlue = Color(0xFF0EA5E9);
 
   void _selectClient(BuildContext context) {
-    userRoleService.setRole(UserRole.client);
+    userRoleService.setGuestRole(UserRole.client);
     context.go('/home');
   }
 
   void _selectArtist(BuildContext context) {
-    userRoleService.setRole(UserRole.artist);
+    userRoleService.setGuestRole(UserRole.artist);
     context.go('/join');
   }
 
@@ -307,6 +309,10 @@ class _RoleSelectionSheet extends StatelessWidget {
           // Existing user link
           TextButton(
             onPressed: () {
+              if (kIsWeb) {
+                openStaticSignIn();
+                return;
+              }
               Navigator.of(context).pop();
               context.push('/login');
             },

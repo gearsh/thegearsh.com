@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:go_router/go_router.dart';
+import 'package:gearsh_app/utils/static_site_navigation.dart';
 
 class WebLandingPage extends StatefulWidget {
   const WebLandingPage({super.key});
@@ -343,7 +345,13 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
               _buildAppBarButton('Discover'),
               const SizedBox(width: 20),
               ElevatedButton(
-                onPressed: () => context.go('/login'),
+                onPressed: () {
+                  if (kIsWeb) {
+                    openStaticSignIn();
+                    return;
+                  }
+                  context.go('/login');
+                },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                   backgroundColor: _sky500,

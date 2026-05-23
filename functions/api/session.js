@@ -6,7 +6,7 @@ export async function onRequestGet(context) {
   try {
     await ensureAuthTables(context.env.DB);
     await ensureOnboardingTables(context.env.DB);
-    const userId = parseToken(context.request.headers.get('Authorization'));
+    const userId = await parseToken(context.request.headers.get('Authorization'), context.env);
     if (!userId) {
       return jsonResponse({ success: false, error: 'Not signed in' }, 401);
     }

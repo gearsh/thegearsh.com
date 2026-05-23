@@ -2,10 +2,13 @@
 
 export const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-founder-key',
   'Content-Type': 'application/json',
 };
+
+const LEGACY_SALT = 'gearsh_salt_2025';
+const PBKDF2_ITERATIONS = 100000;
 
 export function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -18,30 +21,127 @@ export function corsPreflightResponse() {
   return new Response(null, { headers: corsHeaders });
 }
 
-export async function hashPassword(password) {
+function bytesToBase64(bytes) {
+  return btoa(String.fromCharCode(...new Uint8Array(bytes)));
+}
+
+function base64UrlEncode(bytes) {
+  return bytesToBase64(bytes)
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
+
+function base64UrlDecode(value) {
+  const padded = value.replace(/-/g, '+').replace(/_/g, '/');
+  const pad = padded.length % 4 === 0 ? '' : '='.repeat(4 - (padded.length % 4));
+  const binary = atob(padded + pad);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
+function getJwtSecret(env) {
+  return env.JWT_SECRET || env.AUTH_SECRET || 'gearsh-dev-secret-change-in-production';
+}
+
+async function importHmacKey(secret) {
+  return crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign', 'verify']
+  );
+}
+
+async function legacyHashPassword(password) {
   const encoder = new TextEncoder();
-  const data = encoder.encode(password + 'gearsh_salt_2025');
+  const data = encoder.encode(password + LEGACY_SALT);
   const hash = await crypto.subtle.digest('SHA-256', data);
   return btoa(String.fromCharCode(...new Uint8Array(hash)));
 }
 
-export async function verifyPassword(password, hash) {
-  const computed = await hashPassword(password);
-  return computed === hash;
+export async function hashPassword(password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+  const derived = await crypto.subtle.deriveBits(
+    {
+      name: 'PBKDF2',
+      salt,
+      iterations: PBKDF2_ITERATIONS,
+      hash: 'SHA-256',
+    },
+    keyMaterial,
+    256
+  );
+  return `pbkdf2:${bytesToBase64(salt)}:${bytesToBase64(derived)}`;
 }
 
-export function generateToken(userId) {
-  const payload = {
+export async function verifyPassword(password, storedHash) {
+  if (!storedHash) return false;
+  if (String(storedHash).startsWith('pbkdf2:')) {
+    const parts = String(storedHash).split(':');
+    if (parts.length !== 3) return false;
+    const salt = Uint8Array.from(atob(parts[1]), function(c) { return c.charCodeAt(0); });
+    const expected = Uint8Array.from(atob(parts[2]), function(c) { return c.charCodeAt(0); });
+    const keyMaterial = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(password),
+      'PBKDF2',
+      false,
+      ['deriveBits']
+    );
+    const derived = await crypto.subtle.deriveBits(
+      {
+        name: 'PBKDF2',
+        salt,
+        iterations: PBKDF2_ITERATIONS,
+        hash: 'SHA-256',
+      },
+      keyMaterial,
+      256
+    );
+    const actual = new Uint8Array(derived);
+    if (actual.length !== expected.length) return false;
+    let diff = 0;
+    for (let i = 0; i < actual.length; i += 1) {
+      diff |= actual[i] ^ expected[i];
+    }
+    return diff === 0;
+  }
+  const computed = await legacyHashPassword(password);
+  return computed === storedHash;
+}
+
+export function passwordNeedsRehash(storedHash) {
+  return !String(storedHash || '').startsWith('pbkdf2:');
+}
+
+export async function generateToken(userId, env) {
+  const header = base64UrlEncode(new TextEncoder().encode(JSON.stringify({ alg: 'HS256', typ: 'JWT' })));
+  const payload = base64UrlEncode(new TextEncoder().encode(JSON.stringify({
     userId,
     exp: Date.now() + 7 * 24 * 60 * 60 * 1000,
-  };
-  return btoa(JSON.stringify(payload));
+    iat: Date.now(),
+  })));
+  const unsigned = `${header}.${payload}`;
+  const key = await importHmacKey(getJwtSecret(env));
+  const signature = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(unsigned));
+  return `${unsigned}.${base64UrlEncode(signature)}`;
 }
 
-export function parseToken(authHeader) {
-  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+function parseLegacyToken(token) {
   try {
-    const payload = JSON.parse(atob(authHeader.slice(7)));
+    const payload = JSON.parse(atob(token));
     if (!payload.userId || !payload.exp || payload.exp < Date.now()) return null;
     return payload.userId;
   } catch (_) {
@@ -49,8 +149,54 @@ export function parseToken(authHeader) {
   }
 }
 
+async function parseJwtToken(token, env) {
+  const parts = String(token || '').split('.');
+  if (parts.length !== 3) return null;
+  const unsigned = `${parts[0]}.${parts[1]}`;
+  const key = await importHmacKey(getJwtSecret(env));
+  const signature = base64UrlDecode(parts[2]);
+  const valid = await crypto.subtle.verify(
+    'HMAC',
+    key,
+    signature,
+    new TextEncoder().encode(unsigned)
+  );
+  if (!valid) return null;
+  const payloadJson = new TextDecoder().decode(base64UrlDecode(parts[1]));
+  const payload = JSON.parse(payloadJson);
+  if (!payload.userId || !payload.exp || payload.exp < Date.now()) return null;
+  return payload.userId;
+}
+
+export async function parseToken(authHeader, env) {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+  const token = authHeader.slice(7).trim();
+  if (!token) return null;
+  if (token.includes('.')) {
+    const jwtUserId = await parseJwtToken(token, env);
+    if (jwtUserId) return jwtUserId;
+  }
+  return parseLegacyToken(token);
+}
+
 export function unauthorizedResponse(message = 'Unauthorized') {
   return jsonResponse({ success: false, error: message }, 401);
+}
+
+export async function requireAuth(context) {
+  const userId = await parseToken(context.request.headers.get('Authorization'), context.env);
+  if (!userId) {
+    return { error: unauthorizedResponse() };
+  }
+  const user = await context.env.DB.prepare(`
+    SELECT id, email, user_type, first_name, last_name, display_name, username, is_verified, is_active
+    FROM users
+    WHERE id = ? AND is_active = 1
+  `).bind(userId).first();
+  if (!user) {
+    return { error: unauthorizedResponse('User not found') };
+  }
+  return { userId, user };
 }
 
 export function parseSkills(value) {
@@ -71,7 +217,7 @@ export function categoryFromSkills(skillSet) {
 const RESERVED_USERNAMES = new Set([
   'admin', 'api', 'app', 'artist', 'artists', 'book', 'booking', 'bookings',
   'dashboard', 'discover', 'help', 'home', 'join', 'login', 'logout', 'privacy',
-  'profile', 'register', 'search', 'settings', 'signup', 'terms', 'www',
+  'profile', 'register', 'search', 'settings', 'signup', 'terms', 'www', 'sign-in',
 ]);
 
 export function slugifyUsername(input) {
@@ -178,7 +324,6 @@ export async function findUserByIdentifier(db, identifier) {
          AND ${activeClause}`
     ).bind(value, value).first();
   } catch (err) {
-    // Older databases may not have the username column yet.
     if (isEmail) {
       return db.prepare(
         `SELECT ${baseColumns} FROM users WHERE LOWER(email) = LOWER(?) AND ${activeClause}`
@@ -217,9 +362,7 @@ export async function ensureAuthTables(db) {
 
   try {
     await db.prepare(`ALTER TABLE users ADD COLUMN username TEXT`).run();
-  } catch (_) {
-    // Column may already exist
-  }
+  } catch (_) {}
 
   try {
     await db.prepare(`ALTER TABLE users ADD COLUMN firebase_uid TEXT`).run();

@@ -57,7 +57,7 @@ export async function requireFounder(context) {
     return { error: jsonResponse({ success: false, error: 'Invalid founder access key' }, 403) };
   }
 
-  const userId = parseToken(context.request.headers.get('Authorization'));
+  const userId = await parseToken(context.request.headers.get('Authorization'), context.env);
   if (!userId) {
     return { error: unauthorizedResponse('Founder session required') };
   }
@@ -108,7 +108,7 @@ export async function founderLogin(context, body) {
     return jsonResponse({ success: false, error: 'Invalid credentials' }, 401);
   }
 
-  const token = generateToken(user.id);
+  const token = await generateToken(user.id, context.env);
   return jsonResponse({
     success: true,
     message: 'Welcome, founder',

@@ -71,7 +71,7 @@ function buildChecklist(user, artistProfile, services) {
 
 export async function onRequestGet(context) {
   try {
-    const userId = parseToken(context.request.headers.get('Authorization'));
+    const userId = await parseToken(context.request.headers.get('Authorization'), context.env);
     if (!userId) return unauthorizedResponse();
 
     const user = await context.env.DB.prepare(`

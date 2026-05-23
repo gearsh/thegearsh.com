@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:go_router/go_router.dart';
 import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/utils/static_site_navigation.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({super.key});
@@ -111,6 +113,10 @@ class BottomNavBar extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 Navigator.pop(context);
+                if (kIsWeb) {
+                  openStaticSignIn();
+                  return;
+                }
                 context.go('/login');
               },
               child: Container(

@@ -228,14 +228,24 @@ class AuthApiService {
     }));
   }
 
-  /// Decode JWT-like token
+  /// Decode JWT or legacy base64 token expiry
   Map<String, dynamic>? _decodeToken(String token) {
     try {
+      if (token.contains('.')) {
+        final parts = token.split('.');
+        if (parts.length == 3) {
+          var payload = parts[1];
+          final pad = payload.length % 4;
+          if (pad > 0) payload += '=' * (4 - pad);
+          payload = payload.replaceAll('-', '+').replaceAll('_', '/');
+          final decoded = utf8.decode(base64Decode(payload));
+          final json = jsonDecode(decoded);
+          if (json is Map<String, dynamic>) return json;
+        }
+      }
       final decoded = utf8.decode(base64Decode(token));
       final json = jsonDecode(decoded);
-      if (json is Map<String, dynamic>) {
-        return json;
-      }
+      if (json is Map<String, dynamic>) return json;
       return null;
     } catch (e) {
       return null;

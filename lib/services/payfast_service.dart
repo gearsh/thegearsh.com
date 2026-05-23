@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:gearsh_app/config/api_config.dart';
 
 /// PayFast Payment Service for Gearsh
 /// Handles payment processing for artist bookings
@@ -75,6 +78,49 @@ class PayFastService {
 
     // Generate MD5 hash
     return md5.convert(utf8.encode(stringToHash)).toString();
+  }
+
+  /// Launch PayFast using server-generated signed params (preferred)
+  static Future<bool> launchPaymentViaServer({
+    required String bookingId,
+    required String itemName,
+    required String itemDescription,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('gearsh_auth_token');
+      if (token == null) return false;
+
+      final response = await http.post(
+        Uri.parse('${ApiConfig.apiBaseUrl}/payfast/initiate'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'booking_id': bookingId,
+          'item_name': itemName,
+          'item_description': itemDescription,
+        }),
+      );
+
+      if (response.statusCode != 200) return false;
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      if (body['success'] != true) return false;
+      final data = Map<String, dynamic>.from(body['data'] as Map);
+      final processUrl = data['process_url'] as String;
+      final fields = Map<String, dynamic>.from(data['fields'] as Map);
+      final uri = Uri.parse(processUrl).replace(
+        queryParameters: fields.map((k, v) => MapEntry(k, '$v')),
+      );
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        return true;
+      }
+    } catch (e) {
+      debugPrint('Server PayFast launch failed: $e');
+    }
+    return false;
   }
 
   /// Launch PayFast payment page

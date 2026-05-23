@@ -4,6 +4,8 @@ import {
   jsonResponse,
   verifyPassword,
   generateToken,
+  hashPassword,
+  passwordNeedsRehash,
   findUserByIdentifier,
   buildProfileUrl,
   ensureArtistUsername,
@@ -41,6 +43,13 @@ export async function onRequestPost(context) {
       return jsonResponse({ success: false, error: 'Invalid credentials' }, 401);
     }
 
+    if (passwordNeedsRehash(user.password_hash)) {
+      const newHash = await hashPassword(password);
+      await context.env.DB.prepare(
+        `UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?`
+      ).bind(newHash, new Date().toISOString(), user.id).run();
+    }
+
     let onboardingStatus = null;
     try {
       const statusRow = await context.env.DB.prepare(
@@ -69,7 +78,7 @@ export async function onRequestPost(context) {
       }
     }
 
-    const token = generateToken(user.id);
+    const token = await generateToken(user.id, context.env);
 
     return jsonResponse({
       success: true,
