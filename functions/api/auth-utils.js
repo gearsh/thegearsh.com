@@ -211,7 +211,11 @@ export function parseSkills(value) {
 
 export function categoryFromSkills(skillSet) {
   const skills = parseSkills(skillSet);
-  return skills[0] || 'Services';
+  if (!skills.length) return 'Services';
+  const first = String(skills[0]).toLowerCase();
+  if (first.includes('tech artist') || first === 'tech') return 'Tech artist';
+  if (first.includes('car wash')) return 'Car wash';
+  return skills[0];
 }
 
 const RESERVED_USERNAMES = new Set([

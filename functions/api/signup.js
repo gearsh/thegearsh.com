@@ -180,11 +180,19 @@ export async function onRequestPost(context) {
 
         const skills = parseSkills(skill_set);
         const isCarWash = skills.some(function(s) { return s.toLowerCase().includes('car wash'); });
-        const price = baseRate || (isCarWash ? 200 : 500);
-        const serviceName = isCarWash ? 'Mobile car wash' : (category + ' booking');
-        const serviceDesc = isCarWash
+        const isTechArtist = skills.some(function(s) { return s.toLowerCase().includes('tech artist'); });
+        const price = baseRate || (isCarWash ? 200 : (isTechArtist ? 3500 : 500));
+        let serviceName = isCarWash ? 'Mobile car wash' : (category + ' booking');
+        let serviceDesc = isCarWash
           ? 'Professional mobile car wash at your location.'
           : ('Book ' + displayName + ' for your next event.');
+        let serviceHours = isCarWash ? 1 : 2;
+
+        if (isTechArtist) {
+          serviceName = 'Website design & build';
+          serviceDesc = 'Custom website for your brand or business — design, build, and launch with ' + displayName + '.';
+          serviceHours = 8;
+        }
 
         const serviceId = `svc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         await context.env.DB.prepare(`
@@ -196,7 +204,7 @@ export async function onRequestPost(context) {
           serviceName,
           serviceDesc,
           price,
-          isCarWash ? 1 : 2,
+          serviceHours,
           createdAt
         ).run();
 
@@ -204,6 +212,30 @@ export async function onRequestPost(context) {
           const extras = [
             { name: 'Full valet wash', description: 'Exterior wash, interior vacuum, and tyre shine.', price: Math.round(price * 1.6), hours: 1.5 },
             { name: 'Interior detail', description: 'Deep interior clean and dashboard polish.', price: Math.round(price * 2.2), hours: 2 },
+          ];
+          for (const extra of extras) {
+            const extraId = `svc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            await context.env.DB.prepare(`
+              INSERT INTO services (id, artist_id, name, description, price, duration_hours, is_active, created_at)
+              VALUES (?, ?, ?, ?, ?, ?, 1, ?)
+            `).bind(extraId, artistId, extra.name, extra.description, extra.price, extra.hours, createdAt).run();
+          }
+        }
+
+        if (isTechArtist) {
+          const extras = [
+            {
+              name: 'Mobile & web app',
+              description: 'End-to-end app development — mobile, web, or both.',
+              price: Math.round(price * 2.5),
+              hours: 24,
+            },
+            {
+              name: 'Bots & automation',
+              description: 'Chatbots, workflow automation, and custom integrations.',
+              price: Math.round(price * 1.5),
+              hours: 12,
+            },
           ];
           for (const extra of extras) {
             const extraId = `svc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
