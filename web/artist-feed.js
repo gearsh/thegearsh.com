@@ -194,6 +194,9 @@
     });
 
     cards.sort(function (a, b) {
+      if (categoryId.indexOf('genre-') === 0 && typeof compareArtistsForGenre === 'function') {
+        return compareArtistsForGenre(categoryId.slice(6), a, b);
+      }
       var hoursDiff = cardMasteryHours(b) - cardMasteryHours(a);
       if (hoursDiff !== 0) return hoursDiff;
       if (a.bookable === b.bookable) return 0;
@@ -463,7 +466,7 @@
     });
   }
 
-  function sortCards(cards, sortBy) {
+  function sortCards(cards, sortBy, genreSlug) {
     var list = cards.slice();
     switch (sortBy) {
       case 'alpha':
@@ -480,7 +483,11 @@
         break;
       case 'popular':
       default:
-        list.sort(function (a, b) { return cardMasteryHours(b) - cardMasteryHours(a); });
+        if (genreSlug && genreSlug !== 'all' && typeof compareArtistsForGenre === 'function') {
+          list.sort(function (a, b) { return compareArtistsForGenre(genreSlug, a, b); });
+        } else {
+          list.sort(function (a, b) { return cardMasteryHours(b) - cardMasteryHours(a); });
+        }
     }
     return list;
   }

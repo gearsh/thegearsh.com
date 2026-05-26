@@ -708,22 +708,6 @@ export const SA_SHOWCASE_ARTISTS = [
     skills: ['Dance', 'Live Performance'],
   },
   {
-    name: 'William Last KRM',
-    username: 'william-last-krm',
-    image: 'assets/images/artists/lastkrm.png',
-    category: 'Comedy',
-    genre: 'Comedy · Music',
-    genreSlug: 'other',
-    location: 'South Africa',
-    country: 'South Africa',
-    masteryHours: 2800,
-    badge: 'Rising',
-    badgeClass: 'fb-rise',
-    hourlyRate: 25000,
-    bio: 'William Last KRM — available to book on Gearsh. Claim this profile to manage bookings and payments.',
-    skills: ['Comedy', 'Live Performance'],
-  },
-  {
     name: 'Pabi Cooper',
     username: 'pabi-cooper',
     image: 'assets/images/artists/pabicooper.png',
@@ -1348,103 +1332,6 @@ export const SA_SHOWCASE_ARTISTS = [
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
-    name: 'Costa Titch',
-    username: 'costa-titch',
-    image: 'assets/images/artists/artists.png',
-    category: 'Hip Hop',
-    genre: 'Hip Hop · Mpumalanga',
-    genreSlug: 'hip-hop',
-    location: 'Mpumalanga',
-    country: 'South Africa',
-    masteryHours: 280,
-    badge: 'Rising',
-    badgeClass: 'fb-rise',
-    hourlyRate: 12000,
-    bio: 'Costa Titch — available to book on Gearsh. Claim this profile to manage bookings and payments.',
-    skills: ['Hip Hop', 'Rap', 'Live Performance'],
-  },
-  {
-    name: 'AKA',
-    username: 'aka',
-    image: 'assets/images/artists/artists.png',
-    category: 'Hip Hop',
-    genre: 'Hip Hop · Cape Town',
-    genreSlug: 'hip-hop',
-    location: 'Cape Town',
-    country: 'South Africa',
-    masteryHours: 8600,
-    badge: 'Expert',
-    badgeClass: 'fb-feat',
-    hourlyRate: 150000,
-    bio: 'AKA — available to book on Gearsh. Claim this profile to manage bookings and payments.',
-    skills: ['Hip Hop', 'Rap', 'Live Performance'],
-  },
-  {
-    name: 'Riky Rick',
-    username: 'riky-rick',
-    image: 'assets/images/artists/artists.png',
-    category: 'Hip Hop',
-    genre: 'Hip Hop · Durban',
-    genreSlug: 'hip-hop',
-    location: 'Durban',
-    country: 'South Africa',
-    masteryHours: 260,
-    badge: 'Rising',
-    badgeClass: 'fb-rise',
-    hourlyRate: 12000,
-    bio: 'Riky Rick — available to book on Gearsh. Claim this profile to manage bookings and payments.',
-    skills: ['Hip Hop', 'Rap', 'Live Performance'],
-  },
-  {
-    name: 'Malome Vector',
-    username: 'malome-vector',
-    image: 'assets/images/artists/artists.png',
-    category: 'Hip Hop',
-    genre: 'Hip Hop · Free State',
-    genreSlug: 'hip-hop',
-    location: 'Free State',
-    country: 'South Africa',
-    masteryHours: 240,
-    badge: 'Rising',
-    badgeClass: 'fb-rise',
-    hourlyRate: 12000,
-    bio: 'Malome Vector — available to book on Gearsh. Claim this profile to manage bookings and payments.',
-    skills: ['Hip Hop', 'Rap', 'Live Performance'],
-  },
-  {
-    name: 'Lucky Dube',
-    username: 'lucky-dube',
-    image: 'assets/images/artists/artists.png',
-    category: 'Reggae',
-    genre: 'Reggae · Johannesburg',
-    genreSlug: 'other',
-    location: 'Johannesburg',
-    country: 'South Africa',
-    masteryHours: 10000,
-    badge: 'Legend',
-    badgeClass: 'fb-feat',
-    large: true,
-    hourlyRate: 500000,
-    bio: 'Lucky Dube — available to book on Gearsh. Claim this profile to manage bookings and payments.',
-    skills: ['Reggae', 'Live Performance'],
-  },
-  {
-    name: 'Alice Phoebe Lou',
-    username: 'alice-phoebe-lou',
-    image: 'assets/images/artists/artists.png',
-    category: 'Folk',
-    genre: 'Folk · Cape Town',
-    genreSlug: 'other',
-    location: 'Cape Town',
-    country: 'South Africa',
-    masteryHours: 220,
-    badge: 'Rising',
-    badgeClass: 'fb-rise',
-    hourlyRate: 12000,
-    bio: 'Alice Phoebe Lou — available to book on Gearsh. Claim this profile to manage bookings and payments.',
-    skills: ['Folk', 'Live Performance'],
-  },
-  {
     name: 'TXC',
     username: 'txc',
     image: 'assets/images/artists/artists.png',
@@ -1605,6 +1492,30 @@ export const SA_SHOWCASE_ARTISTS = [
     skills: ['Afropop', 'Live Performance'],
   },
 ];
+
+export const GENRE_FEATURED_ORDER = {
+  'hip-hop': ['a-reece'],
+};
+
+export function compareArtistsForGenre(genreSlug, a, b) {
+  const order = GENRE_FEATURED_ORDER[genreSlug] || [];
+  const usernameA = String(a.username || '').toLowerCase();
+  const usernameB = String(b.username || '').toLowerCase();
+  const rankA = order.indexOf(usernameA);
+  const rankB = order.indexOf(usernameB);
+  const featuredA = rankA >= 0 ? rankA : order.length;
+  const featuredB = rankB >= 0 ? rankB : order.length;
+
+  if (featuredA !== featuredB) return featuredA - featuredB;
+
+  const hoursA = Number(a.mastery_hours ?? a.masteryHours ?? 0);
+  const hoursB = Number(b.mastery_hours ?? b.masteryHours ?? 0);
+  if (hoursB !== hoursA) return hoursB - hoursA;
+
+  return Number(b.rating || 0) - Number(a.rating || 0)
+    || Number(b.review_count || 0) - Number(a.review_count || 0)
+    || Number(b.total_bookings || 0) - Number(a.total_bookings || 0);
+}
 
 export const GENRE_FEED_CATEGORIES = [
   {

@@ -2,7 +2,7 @@
 
 import { parseSkills, buildProfileUrl } from '../auth-utils.js';
 import { seedShowcaseArtistsBatch, SA_SHOWCASE_ARTISTS } from '../sa-showcase-artists.js';
-import { GENRE_FEED_CATEGORIES, resolveArtistGenreSlug } from '../sa-showcase-data.js';
+import { GENRE_FEED_CATEGORIES, resolveArtistGenreSlug, compareArtistsForGenre } from '../sa-showcase-data.js';
 
 const showcaseByUsername = new Map(
   SA_SHOWCASE_ARTISTS.map(function(artist) {
@@ -112,7 +112,9 @@ function buildCategories(artists) {
       });
       return {
         ...section,
-        artists: takeUnique(filtered.sort(compareByMastery), 16),
+        artists: takeUnique(filtered.sort(function(a, b) {
+          return compareArtistsForGenre(slug, a, b);
+        }), 16),
       };
     }
 

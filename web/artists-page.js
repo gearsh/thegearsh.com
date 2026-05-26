@@ -84,7 +84,7 @@
 
   function applyFilters() {
     filtered = GearshFeed.filterCards(allCards, filters);
-    filtered = GearshFeed.sortCards(filtered, filters.sort);
+    filtered = GearshFeed.sortCards(filtered, filters.sort, filters.genre);
     page = 1;
     renderPage();
     writeUrlState();

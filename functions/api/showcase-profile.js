@@ -89,7 +89,6 @@ export const SOLO_PORTRAIT_IMAGES = {
   'big-zulu': 'assets/images/artists/bigzulu.png',
   'usimamane': 'assets/images/artists/usimamane.png',
   'blaq-diamond': 'assets/images/artists/blaq.png',
-  'william-last-krm': 'assets/images/artists/lastkrm.png',
   'boohle': 'assets/images/artists/boohle.png',
   'the-kiffness': 'assets/images/artists/kiffness.png',
   'lloyiso': 'assets/images/artists/lloyiso.png',
