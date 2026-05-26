@@ -147,28 +147,33 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
       }
       grouped[artist.category]!.add(artist);
     }
+    for (final list in grouped.values) {
+      list.sort((a, b) => b.hoursBooked.compareTo(a.hoursBooked));
+    }
     return grouped;
   }
 
-  // Get featured artists (high rating, verified) - deduplicated
+  // Get featured artists (high rating, verified) - deduplicated, mastery-first
   List<GearshArtist> get featuredArtists {
-    return uniqueArtists(catalogArtists)
+    final list = uniqueArtists(catalogArtists)
         .where((artist) => artist.isVerified || artist.rating >= 4.5)
-        .take(10)
-        .toList();
+        .toList()
+      ..sort((a, b) => b.hoursBooked.compareTo(a.hoursBooked));
+    return list.take(10).toList();
   }
 
   List<GearshArtist> get trendingArtists {
-    final trending = uniqueArtists(catalogArtists)
+    final list = uniqueArtists(catalogArtists)
         .where((artist) => artist.hoursBooked >= 100 || artist.isVerified)
-        .take(15)
-        .toList();
-    trending.shuffle();
-    return trending;
+        .toList()
+      ..sort((a, b) => b.hoursBooked.compareTo(a.hoursBooked));
+    return list.take(15).toList();
   }
 
   List<GearshArtist> get newArtists {
-    return uniqueArtists(catalogArtists).reversed.take(10).toList();
+    final list = uniqueArtists(catalogArtists).toList()
+      ..sort((a, b) => a.hoursBooked.compareTo(b.hoursBooked));
+    return list.take(10).toList();
   }
 
   @override

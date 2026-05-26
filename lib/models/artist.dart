@@ -58,7 +58,7 @@ class Artist {
       bio: json['bio'] ?? '',
       image: json['image'] ?? json['profile_picture_url'] ?? '',
       category: json['category'],
-      hoursWorked: json['hours_worked']?.toDouble(),
+      hoursWorked: (json['mastery_hours'] ?? json['hours_worked'])?.toDouble(),
       location: json['location'],
       availability: json['availability_status'] == 'available',
       skills: json['skills'] is List ? List<String>.from(json['skills']) : null,

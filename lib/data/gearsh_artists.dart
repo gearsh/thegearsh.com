@@ -580,28 +580,28 @@ GearshArtist? getArtistById(String id) {
   }
 }
 
-// Helper: sorted list of artists (by name)
+// Helper: sorted list of artists (mastery-first)
 List<GearshArtist> getSortedArtists() {
   final sorted = List<GearshArtist>.from(gearshArtists);
-  sorted.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  sorted.sort((a, b) => b.hoursBooked.compareTo(a.hoursBooked));
   return sorted;
 }
 
 // Helper: all available artists
 List<GearshArtist> getAvailableArtists() {
   final available = gearshArtists.where((a) => a.isAvailable).toList();
-  available.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  available.sort((a, b) => b.hoursBooked.compareTo(a.hoursBooked));
   return available;
 }
 
 // Helper: get artists by category or subcategory (case-insensitive)
 List<GearshArtist> getArtistsByCategory(String category) {
-  if (category == 'All') return List<GearshArtist>.from(gearshArtists);
+  if (category == 'All') return getSortedArtists();
   final filtered = gearshArtists.where((a) =>
     a.category.toLowerCase() == category.toLowerCase() ||
     a.subcategories.any((s) => s.toLowerCase() == category.toLowerCase())
   ).toList();
-  filtered.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  filtered.sort((a, b) => b.hoursBooked.compareTo(a.hoursBooked));
   return filtered;
 }
 
@@ -619,22 +619,22 @@ List<GearshArtist> uniqueArtists([List<GearshArtist>? artists]) {
   return unique;
 }
 
-// Helper: get unique featured artists (high rating, verified)
+// Helper: get unique featured artists (high rating, verified) — mastery-first
 List<GearshArtist> getUniqueFeaturedArtists({int limit = 10}) {
   final featured = uniqueArtists()
       .where((a) => a.isVerified && a.rating >= 4.4)
-      .take(limit)
-      .toList();
-  return featured;
+      .toList()
+    ..sort((a, b) => b.hoursBooked.compareTo(a.hoursBooked));
+  return featured.take(limit).toList();
 }
 
-// Helper: get unique trending artists
+// Helper: get unique trending artists — mastery-first
 List<GearshArtist> getUniqueTrendingArtists({int limit = 15}) {
   final trending = uniqueArtists()
       .where((a) => a.isAvailable && a.rating >= 4.0)
-      .take(limit)
-      .toList();
-  return trending;
+      .toList()
+    ..sort((a, b) => b.hoursBooked.compareTo(a.hoursBooked));
+  return trending.take(limit).toList();
 }
 
 // Helper: get unique new additions (last items in list)

@@ -39,7 +39,24 @@ function mapArtist(artist) {
     rating: Number(artist.rating || 0),
     review_count: Number(artist.review_count || 0),
     total_bookings: Number(artist.total_bookings || 0),
+    mastery_hours: Math.round(Number(artist.mastery_hours || 0)),
   };
+}
+
+function compareByMastery(a, b) {
+  const hoursA = Number(a.mastery_hours || 0);
+  const hoursB = Number(b.mastery_hours || 0);
+  if (hoursB !== hoursA) return hoursB - hoursA;
+  return b.rating - a.rating
+    || b.review_count - a.review_count
+    || b.total_bookings - a.total_bookings;
+}
+
+function masteryBadge(hours) {
+  if (hours >= 10000) return 'Legend';
+  if (hours >= 5000) return 'Expert';
+  if (hours >= 100) return 'Rising';
+  return null;
 }
 
 function uniqueById(artists) {
@@ -57,6 +74,12 @@ function takeUnique(artists, limit) {
 
 function buildCategories(artists) {
   const all = artists.map(mapArtist);
+
+  const masteryLegends = takeUnique(
+    [...all].sort(compareByMastery),
+    12
+  );
+
   const newest = takeUnique(
     [...all].sort(function(a, b) {
       return new Date(b.profile_created_at || b.user_created_at || 0)
@@ -74,54 +97,45 @@ function buildCategories(artists) {
 
   const mostBooked = takeUnique(
     [...all].sort(function(a, b) {
+      const byMastery = compareByMastery(a, b);
+      if (byMastery !== 0) return byMastery;
       return b.total_bookings - a.total_bookings || b.review_count - a.review_count;
-    }).filter(function(artist) { return artist.total_bookings > 0; })
-      .concat([...all].sort(function(a, b) { return b.total_bookings - a.total_bookings; })),
+    }),
     12
   );
 
   const mostPopular = takeUnique(
-    [...all].sort(function(a, b) {
-      return b.review_count - a.review_count
-        || b.rating - a.rating
-        || b.total_bookings - a.total_bookings;
-    }),
+    [...all].sort(compareByMastery),
     12
   );
 
   const local = takeUnique(
-    all.filter(isLocal).sort(function(a, b) {
-      return b.total_bookings - a.total_bookings || b.rating - a.rating;
-    }),
+    all.filter(isLocal).sort(compareByMastery),
     12
   );
 
   const international = takeUnique(
-    all.filter(isInternational).sort(function(a, b) {
-      return b.rating - a.rating || b.review_count - a.review_count;
-    }),
+    all.filter(isInternational).sort(compareByMastery),
     12
   );
 
   const trending = takeUnique(
     all.filter(function(artist) { return artist.is_trending; })
-      .concat([...all].sort(function(a, b) {
-        return b.review_count - a.review_count || b.total_bookings - a.total_bookings;
-      })),
+      .concat([...all].sort(compareByMastery)),
     12
   );
 
   const topRated = takeUnique(
     [...all]
       .filter(function(artist) { return artist.rating >= 4 && artist.review_count > 0; })
-      .sort(function(a, b) { return b.rating - a.rating || b.review_count - a.review_count; })
-      .concat([...all].sort(function(a, b) { return b.rating - a.rating; })),
+      .sort(compareByMastery)
+      .concat([...all].sort(compareByMastery)),
     12
   );
 
   const verified = takeUnique(
     all.filter(function(artist) { return artist.is_verified; })
-      .sort(function(a, b) { return b.total_bookings - a.total_bookings; })
+      .sort(compareByMastery)
       .concat(all),
     12
   );
@@ -138,11 +152,11 @@ function buildCategories(artists) {
 
   return [
     {
-      id: 'new',
-      title: 'New artists',
-      subtitle: 'Fresh talent that just joined Gearsh',
-      icon: 'ti ti-sparkles',
-      artists: newest,
+      id: 'mastery-legends',
+      title: 'Mastery legends',
+      subtitle: 'Top artists — 10,000 hours of craft and countless stages',
+      icon: 'ti ti-crown',
+      artists: masteryLegends,
     },
     {
       id: 'most-booked',
@@ -152,11 +166,25 @@ function buildCategories(artists) {
       artists: mostBooked,
     },
     {
+      id: 'top-rated',
+      title: 'Top rated',
+      subtitle: 'Five-star favourites from clients',
+      icon: 'ti ti-star',
+      artists: topRated,
+    },
+    {
       id: 'most-popular',
       title: 'Most popular',
       subtitle: 'Highest demand across the platform',
       icon: 'ti ti-flame',
       artists: mostPopular,
+    },
+    {
+      id: 'new',
+      title: 'New artists',
+      subtitle: 'Fresh talent that just joined Gearsh',
+      icon: 'ti ti-sparkles',
+      artists: newest,
     },
     {
       id: 'local',
@@ -178,13 +206,6 @@ function buildCategories(artists) {
       subtitle: 'Hot picks getting attention right now',
       icon: 'ti ti-trending-up',
       artists: trending,
-    },
-    {
-      id: 'top-rated',
-      title: 'Top rated',
-      subtitle: 'Five-star favourites from clients',
-      icon: 'ti ti-star',
-      artists: topRated,
     },
     {
       id: 'verified',
@@ -235,7 +256,12 @@ export async function onRequestGet(context) {
         ap.is_trending,
         ap.skills,
         ap.created_at as profile_created_at,
-        (SELECT MIN(s.price) FROM services s WHERE s.artist_id = ap.id AND s.is_active = 1) AS min_price
+        (SELECT MIN(s.price) FROM services s WHERE s.artist_id = ap.id AND s.is_active = 1) AS min_price,
+        COALESCE((
+          SELECT SUM(COALESCE(b.duration_hours, 0))
+          FROM bookings b
+          WHERE b.artist_id = ap.id AND b.status = 'completed'
+        ), 0) AS mastery_hours
       FROM artist_profiles ap
       JOIN users u ON ap.user_id = u.id
       WHERE u.is_active = 1

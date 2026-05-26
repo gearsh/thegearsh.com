@@ -33,5 +33,6 @@ List<GearshArtist> mergeArtists(List<GearshArtist> live, List<GearshArtist> fall
     final key = artist.id.toLowerCase();
     if (seen.add(key)) merged.add(artist);
   }
+  merged.sort((a, b) => b.hoursBooked.compareTo(a.hoursBooked));
   return merged;
 }

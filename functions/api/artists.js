@@ -31,7 +31,12 @@ export async function onRequestGet(context) {
         ap.is_trending,
         ap.skills,
         ap.years_experience,
-        (SELECT MIN(s.price) FROM services s WHERE s.artist_id = ap.id AND s.is_active = 1) AS min_price
+        (SELECT MIN(s.price) FROM services s WHERE s.artist_id = ap.id AND s.is_active = 1) AS min_price,
+        COALESCE((
+          SELECT SUM(COALESCE(b.duration_hours, 0))
+          FROM bookings b
+          WHERE b.artist_id = ap.id AND b.status = 'completed'
+        ), 0) AS mastery_hours
       FROM artist_profiles ap
       JOIN users u ON ap.user_id = u.id
       WHERE u.is_active = 1
@@ -53,7 +58,7 @@ export async function onRequestGet(context) {
       query += ` AND u.is_verified = 1`;
     }
 
-    query += ` ORDER BY ap.avg_rating DESC, ap.total_reviews DESC LIMIT ? OFFSET ?`;
+    query += ` ORDER BY mastery_hours DESC, ap.avg_rating DESC, ap.total_reviews DESC LIMIT ? OFFSET ?`;
     params.push(parseInt(limit), parseInt(offset));
 
     const stmt = context.env.DB.prepare(query);
@@ -66,6 +71,7 @@ export async function onRequestGet(context) {
       skills: parseSkills(artist.skills),
       is_verified: Boolean(artist.is_verified),
       is_trending: Boolean(artist.is_trending),
+      mastery_hours: Math.round(Number(artist.mastery_hours || 0)),
     }));
 
     return new Response(JSON.stringify({

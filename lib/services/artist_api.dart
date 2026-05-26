@@ -276,8 +276,8 @@ class ArtistApiService {
           artists.sort((a, b) => b.hoursBooked.compareTo(a.hoursBooked));
           break;
         default:
-          // Default: sort by rating
-          artists.sort((a, b) => b.rating.compareTo(a.rating));
+          // Default: mastery hours first — legends earned their spot
+          artists.sort((a, b) => b.hoursBooked.compareTo(a.hoursBooked));
       }
 
       // Apply pagination
