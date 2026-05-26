@@ -1,0 +1,87 @@
+name: Disable Cloudflare Pages auto-build
+
+# One-shot maintenance workflow.
+# Run manually from the Actions tab when you want Cloudflare Pages to stop
+# auto-building from the connected Git repo on every push. The real deploy
+# pipeline (see deploy.yml) uses wrangler-action's Direct Upload and is
+# unaffected.
+#
+# Requires repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  disable:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check required secrets
+        run: |
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] || [ -z "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID must be set as repo secrets."
+            exit 1
+          fi
+      - name: Show current Pages project config
+        run: |
+          curl -fsSL \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/thegearsh-com" \
+            > /tmp/before.json
+          jq '{source: .result.source, build_config: .result.build_config}' /tmp/before.json
+      - name: Disable Git-triggered deployments
+        run: |
+          set -euo pipefail
+          # Strategy 1: keep the Git connection but switch all triggers off.
+          # production_deployment_enabled=false stops auto-builds on the
+          # production branch; preview_deployment_setting=none stops every
+          # other branch/PR.
+          BODY='{
+            "source": {
+              "config": {
+                "deployments_enabled": false,
+                "production_deployment_enabled": false,
+                "preview_deployment_setting": "none",
+                "pr_comments_enabled": false
+              }
+            }
+          }'
+          HTTP_STATUS=$(curl -sS -o /tmp/result.json -w "%{http_code}" -X PATCH \
+            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/thegearsh-com" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data "$BODY")
+          echo "HTTP $HTTP_STATUS"
+          cat /tmp/result.json | jq .
+
+          if ! jq -e '.success == true' /tmp/result.json >/dev/null; then
+            echo "::warning::Strategy 1 failed. Trying Strategy 2 (set production_branch to a branch that doesn't exist)."
+            FALLBACK='{
+              "source": {
+                "config": {
+                  "production_branch": "do-not-build-via-cloudflare",
+                  "preview_deployment_setting": "none",
+                  "pr_comments_enabled": false
+                }
+              }
+            }'
+            curl -fsSL -X PATCH \
+              "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/thegearsh-com" \
+              -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+              -H "Content-Type: application/json" \
+              --data "$FALLBACK" | jq .
+          fi
+      - name: Show new Pages project config
+        run: |
+          curl -fsSL \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/thegearsh-com" \
+            | jq '{source: .result.source, build_config: .result.build_config}'
+      - name: Done
+        run: |
+          echo ""
+          echo "Cloudflare Pages auto-build for thegearsh-com has been disabled."
+          echo "Your GitHub Actions deploy.yml workflow continues to deploy via wrangler Direct Upload."
+          echo "To re-enable Git builds later, set deployments_enabled=true via the dashboard or the same API."
