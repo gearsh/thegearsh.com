@@ -11,9 +11,17 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <style>
     .book-page { padding: 80px 20px 60px; max-width: 960px; margin: 0 auto; }
-    .book-hero {
+    .book-profile {
+      display: grid; grid-template-columns: 220px 1fr; gap: 28px; align-items: start;
       background: var(--g-surface); border: 0.5px solid var(--g-border);
-      border-radius: 20px; padding: 32px; margin-bottom: 20px;
+      border-radius: 20px; padding: 28px; margin-bottom: 20px;
+    }
+    .book-profile-photo {
+      width: 100%; aspect-ratio: 1; border-radius: 16px; object-fit: cover;
+      border: 0.5px solid var(--g-border); background: var(--g-black);
+    }
+    .book-hero {
+      background: transparent; border: none; border-radius: 0; padding: 0; margin-bottom: 0;
     }
     .book-badge {
       display: inline-flex; align-items: center; gap: 6px;
@@ -81,7 +89,33 @@
       display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
       color: var(--g-accent); font-size: 13px; font-weight: 700; text-decoration: none;
     }
-    @media (max-width: 768px) { .book-grid { grid-template-columns: 1fr; } }
+    .book-bio {
+      font-size: 14px; color: var(--g-text-muted); line-height: 1.65; margin-top: 14px; max-width: 56ch;
+    }
+    .book-portfolio { margin-bottom: 20px; }
+    .book-portfolio h2 {
+      font-family: var(--g-serif); font-size: 22px; color: var(--g-white);
+      font-weight: 400; margin-bottom: 14px;
+    }
+    .portfolio-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;
+    }
+    .portfolio-grid img {
+      width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px;
+      border: 0.5px solid var(--g-border); background: var(--g-black); cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .portfolio-grid img:hover {
+      transform: scale(1.02); border-color: rgba(0,191,255,0.35);
+    }
+    .fee-note {
+      font-size: 11px; color: var(--g-text-muted); margin-top: 8px;
+    }
+    @media (max-width: 768px) {
+      .book-grid { grid-template-columns: 1fr; }
+      .book-profile { grid-template-columns: 1fr; }
+      .book-profile-photo { max-width: 220px; }
+    }
   </style>
 </head>
 <body>
@@ -113,14 +147,24 @@
       <p id="claim-banner-copy">This is a Gearsh demo profile created with the artist's permission. Claim it with your private code to manage bookings and update your details.</p>
       <a id="claim-banner-link" href="#"><i class="ti ti-key"></i> Claim this profile</a>
     </div>
-    <div class="book-hero">
-      <div class="book-badge" id="book-badge"><i class="ti ti-seedling"></i> Available to book</div>
-      <h1 class="book-title">Book <em id="artist-name">…</em></h1>
-      <div class="book-meta">
-        <span id="artist-location"><i class="ti ti-map-pin"></i> —</span>
-        <span id="artist-category"><i class="ti ti-tag"></i> —</span>
+    <div class="book-profile">
+      <img id="artist-photo" class="book-profile-photo" src="icons/Icon-512.png" alt="">
+      <div class="book-hero">
+        <div class="book-badge" id="book-badge"><i class="ti ti-seedling"></i> Available to book</div>
+        <h1 class="book-title">Book <em id="artist-name">…</em></h1>
+        <div class="book-meta">
+          <span id="artist-location"><i class="ti ti-map-pin"></i> —</span>
+          <span id="artist-category"><i class="ti ti-tag"></i> —</span>
+        </div>
+        <div class="skill-tags" id="skill-tags"></div>
+        <p class="book-bio" id="artist-bio" style="display:none"></p>
+        <p class="fee-note" id="fee-note" style="display:none">Fees based on published booking rates and may vary by event type, travel, and production.</p>
       </div>
-      <div class="skill-tags" id="skill-tags"></div>
+    </div>
+
+    <div class="book-portfolio card" id="portfolio-section" style="display:none">
+      <h2 id="portfolio-title">Portfolio</h2>
+      <div class="portfolio-grid" id="portfolio-grid"></div>
     </div>
 
     <div class="book-grid">
@@ -174,6 +218,20 @@
       return 'R' + Number(amount || 0).toLocaleString('en-ZA');
     }
 
+    function resolveImageUrl(path) {
+      if (!path) return 'icons/Icon-512.png';
+      if (/^https?:\/\//i.test(path)) return path;
+      if (path.startsWith('/')) return path;
+      return path.replace(/^assets\//, '/assets/');
+    }
+
+    function portfolioLabel(category) {
+      var cat = String(category || '').toLowerCase();
+      if (cat.indexOf('dj') >= 0 || cat.indexOf('amapiano') >= 0 || cat.indexOf('house') >= 0) return 'Press & performances';
+      if (cat.indexOf('gospel') >= 0 || cat.indexOf('choir') >= 0) return 'Gallery';
+      return 'Portfolio';
+    }
+
     function showError() {
       document.getElementById('loading').style.display = 'none';
       document.getElementById('error').style.display = 'block';
@@ -187,11 +245,35 @@
       document.getElementById('artist-category').innerHTML =
         '<i class="ti ti-tag"></i> ' + (data.category || 'Services');
 
+      var photo = document.getElementById('artist-photo');
+      var imageUrl = resolveImageUrl(data.image);
+      photo.src = imageUrl;
+      photo.alt = data.name || 'Artist photo';
+
       var badge = document.getElementById('book-badge');
-      if (data.hourly_rate) {
-        badge.innerHTML = '<i class="ti ti-clock"></i> R' + Number(data.hourly_rate).toLocaleString('en-ZA') + '/hour';
+      var fee = data.booking_fee || data.hourly_rate;
+      if (fee) {
+        badge.innerHTML = '<i class="ti ti-currency-rand"></i> From ' + formatMoney(fee) + ' per show';
+        document.getElementById('fee-note').style.display = 'block';
       } else if (data.is_verified) {
         badge.innerHTML = '<i class="ti ti-rosette-discount-check"></i> Verified on Gearsh';
+      }
+
+      if (data.bio) {
+        var bioEl = document.getElementById('artist-bio');
+        bioEl.textContent = data.bio;
+        bioEl.style.display = 'block';
+      }
+
+      var portfolio = Array.isArray(data.portfolio_urls) ? data.portfolio_urls : [];
+      if (!portfolio.length && data.image) portfolio = [data.image];
+      if (portfolio.length) {
+        document.getElementById('portfolio-title').textContent = portfolioLabel(data.category);
+        document.getElementById('portfolio-grid').innerHTML = portfolio.map(function(url, index) {
+          var src = resolveImageUrl(url);
+          return '<img src="' + src + '" alt="' + (data.name || 'Portfolio') + ' ' + (index + 1) + '" loading="lazy" decoding="async">';
+        }).join('');
+        document.getElementById('portfolio-section').style.display = 'block';
       }
 
       if (data.is_claimable && data.claim_url) {

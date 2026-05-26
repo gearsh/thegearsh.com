@@ -57,14 +57,14 @@
       return;
     }
     suggestions.innerHTML = items.map(function (item, i) {
-      var href = GearshFeed.bookUrl(item) || GearshFeed.claimUrl(item) || '#';
+      var href = GearshFeed.bookUrl(item) || (item.username ? 'book-gig?artist=' + encodeURIComponent(item.username) : '#');
       return '<a class="search-suggestion" href="' + href + '" data-idx="' + i + '" role="option">' +
         '<img src="' + (item.image || 'icons/Icon-512.png') + '" alt="" loading="lazy">' +
         '<div class="search-suggestion-meta">' +
           '<div class="search-suggestion-name">' + GearshFeed.escapeHtml(item.name) + '</div>' +
           '<div class="search-suggestion-sub">' + GearshFeed.escapeHtml(item.genre) + '</div>' +
         '</div>' +
-        '<span class="search-suggestion-tag">' + (item.bookable ? 'Book' : 'Claim') + '</span>' +
+        '<span class="search-suggestion-tag">' + (item.bookable !== false ? 'Book' : 'Artist') + '</span>' +
       '</a>';
     }).join('');
     suggestions.classList.add('is-open');

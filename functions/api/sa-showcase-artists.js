@@ -1,6 +1,13 @@
 import { hashPassword, buildProfileUrl } from './auth-utils.js';
 import { SA_SHOWCASE_ARTISTS } from './sa-showcase-data.js';
 import { ensureDemoColumns } from './demo-artists.js';
+import {
+  getBookingFee,
+  resolveShowcaseImage,
+  buildShowcasePortfolio,
+  seedShowcaseServices,
+  seedShowcasePortfolio,
+} from './showcase-profile.js';
 
 let cachedDemoPasswordHash = null;
 
@@ -34,6 +41,9 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
   const artistId = slugToId('artist_demo', artist.username);
   const placeholderEmail = `unclaimed+${artist.username}@thegearsh.com`;
   const skillsJson = JSON.stringify(artist.skills || [artist.category]);
+  const profileImage = resolveShowcaseImage(artist);
+  const bookingFee = getBookingFee(artist);
+  const portfolioJson = JSON.stringify(buildShowcasePortfolio(artist));
   const demoPasswordHash = passwordHash || await getDemoPasswordHash();
 
   const existing = await db.prepare(`
@@ -70,7 +80,7 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
       '—',
       artist.name,
       artist.username,
-      artist.image,
+      profileImage,
       artist.location,
       artist.country || 'South Africa',
       artist.bio,
@@ -92,7 +102,7 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
       artist.name,
       artist.name,
       artist.username,
-      artist.image,
+      profileImage,
       artist.location,
       artist.country || 'South Africa',
       artist.bio,
@@ -106,21 +116,22 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
     SELECT id FROM artist_profiles WHERE id = ? OR user_id = ?
   `).bind(artistId, resolvedUserId).first();
 
-  const hourlyRate = Number(artist.hourlyRate || 5000);
   const isTrending = Number(artist.masteryHours || 0) >= 5000 ? 1 : 0;
+  const resolvedArtistId = profileExists?.id || artistId;
 
   if (profileExists) {
     await db.prepare(`
       UPDATE artist_profiles
       SET category = ?, genre = ?, skills = ?, base_rate = ?, hourly_rate = ?,
-          availability_status = 'available', is_trending = ?, updated_at = ?
+          portfolio_urls = ?, availability_status = 'available', is_trending = ?, updated_at = ?
       WHERE id = ?
     `).bind(
       artist.category,
       artist.genre,
       skillsJson,
-      hourlyRate,
-      hourlyRate,
+      bookingFee,
+      bookingFee,
+      portfolioJson,
       isTrending,
       now,
       profileExists.id
@@ -128,22 +139,26 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
   } else {
     await db.prepare(`
       INSERT INTO artist_profiles (
-        id, user_id, category, genre, skills, base_rate, hourly_rate,
+        id, user_id, category, genre, skills, base_rate, hourly_rate, portfolio_urls,
         availability_status, is_trending, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, 'available', ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'available', ?, ?, ?)
     `).bind(
       artistId,
       resolvedUserId,
       artist.category,
       artist.genre,
       skillsJson,
-      hourlyRate,
-      hourlyRate,
+      bookingFee,
+      bookingFee,
+      portfolioJson,
       isTrending,
       now,
       now
     ).run();
   }
+
+  await seedShowcaseServices(db, resolvedArtistId, artist, bookingFee);
+  await seedShowcasePortfolio(db, resolvedArtistId, artist);
 
   return {
     seeded: true,
@@ -152,6 +167,40 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
     claim_url: `/claim-profile.html?artist=${artist.username}`,
     claim_code: claimToken,
   };
+}
+
+export async function enrichShowcaseArtist(db, artist) {
+  await ensureDemoColumns(db);
+
+  const existing = await db.prepare(`
+    SELECT u.id AS user_id, ap.id AS artist_id
+    FROM users u
+    JOIN artist_profiles ap ON ap.user_id = u.id
+    WHERE LOWER(u.username) = LOWER(?)
+    LIMIT 1
+  `).bind(artist.username).first();
+
+  if (!existing) return false;
+
+  const bookingFee = getBookingFee(artist);
+  const profileImage = resolveShowcaseImage(artist);
+  const portfolioJson = JSON.stringify(buildShowcasePortfolio(artist));
+  const now = new Date().toISOString();
+
+  await db.prepare(`
+    UPDATE users
+    SET profile_picture_url = ?, updated_at = ?
+    WHERE id = ?
+  `).bind(profileImage, now, existing.user_id).run();
+
+  await db.prepare(`
+    UPDATE artist_profiles
+    SET base_rate = ?, hourly_rate = ?, portfolio_urls = ?, updated_at = ?
+    WHERE id = ?
+  `).bind(bookingFee, bookingFee, portfolioJson, now, existing.artist_id).run();
+
+  await seedShowcaseServices(db, existing.artist_id, artist, bookingFee);
+  return true;
 }
 
 export async function seedShowcaseArtistsBatch(db, limit = 20) {

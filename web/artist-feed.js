@@ -154,8 +154,7 @@
       badgeClass: match ? (tier ? tier.badgeClass : 'fb-deal') : (tier ? tier.badgeClass : (item.badgeClass || 'fb-feat')),
       price: item.price || (match && match.min_price ? formatPrice(match.min_price) : ''),
       mastery_hours: hours,
-      bookable: !!match,
-      claimable: !match && !!item.username,
+      bookable: !!(match || item.username),
       is_verified: match ? !!match.is_verified : false,
       is_trending: match ? !!match.is_trending : false
     };
@@ -229,16 +228,11 @@
   function renderFeedCard(item, opts) {
     opts = opts || {};
     var href = bookUrl(item);
-    var claim = claimUrl(item);
     var actionLabel = 'Book now';
     var classes = 'feed-card';
 
     if (item.bookable && href) {
       classes += ' is-bookable';
-    } else if (item.claimable && claim) {
-      classes += ' is-claimable';
-      href = claim;
-      actionLabel = 'Claim profile';
     } else {
       classes += ' is-static';
     }
@@ -247,7 +241,7 @@
       '<div class="feed-card-media">' +
         lazyImgTag(item.image, item.name) +
         '<span class="feed-card-badge ' + item.badgeClass + '">' + escapeHtml(item.badge) + '</span>' +
-        ((item.bookable || item.claimable) && href
+        (item.bookable && href
           ? '<div class="feed-card-action"><span>' + actionLabel + '</span></div>'
           : '') +
       '</div>' +
@@ -257,7 +251,7 @@
         (item.price ? '<div class="feed-card-price">' + escapeHtml(item.price) + '</div>' : '') +
       '</div>';
 
-    if (href && (item.bookable || item.claimable)) {
+    if (href && item.bookable) {
       return '<a class="' + classes + '" href="' + href + '" aria-label="' + escapeHtml(actionLabel + ' — ' + item.name) + '">' + inner + '</a>';
     }
     return '<div class="' + classes + '" aria-label="' + escapeHtml(item.name) + ' — featured artist">' + inner + '</div>';
@@ -294,7 +288,7 @@
 
   function renderStory(item) {
     if (!item.image || !item.name) return '';
-    var href = bookUrl(item) || claimUrl(item) || '#cat-mastery-legends';
+    var href = bookUrl(item) || '#cat-mastery-legends';
     return '<a class="story-item" href="' + href + '">' +
       '<div class="story-ring">' + lazyImgTag(item.image, item.name) + '</div>' +
       '<span class="story-name">' + escapeHtml(item.name) + '</span></a>';

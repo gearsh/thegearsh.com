@@ -2,21 +2,73 @@
 
 import { parseSkills, resolveArtistProfile } from '../auth-utils.js';
 import { ensureDemoColumns } from '../demo-artists.js';
+import { seedShowcaseArtist } from '../sa-showcase-artists.js';
+import {
+  findShowcaseArtist,
+  buildShowcaseArtistResponse,
+  getBookingFee,
+  resolveShowcaseImage,
+  buildShowcasePortfolio,
+  buildShowcaseServices,
+} from '../showcase-profile.js';
+
+function enrichFromShowcase(artistData, showcase) {
+  const fee = getBookingFee(showcase);
+  const image = resolveShowcaseImage(showcase);
+
+  if (!artistData.image) artistData.image = image;
+  if (!artistData.bio && showcase.bio) artistData.bio = showcase.bio;
+  if (!artistData.genre && showcase.genre) artistData.genre = showcase.genre;
+
+  const portfolio = artistData.portfolio_urls?.length
+    ? artistData.portfolio_urls
+    : buildShowcasePortfolio(showcase);
+  artistData.portfolio_urls = portfolio;
+
+  if (!artistData.services?.length) {
+    artistData.services = buildShowcaseServices(showcase, fee);
+  }
+
+  artistData.hourly_rate = fee;
+  artistData.base_rate = fee;
+  artistData.booking_fee = fee;
+  artistData.mastery_hours = Number(showcase.masteryHours || artistData.mastery_hours || 0);
+  return artistData;
+}
 
 export async function onRequestGet(context) {
   try {
     await ensureDemoColumns(context.env.DB);
     const identifier = context.params.id;
-    const resolved = await resolveArtistProfile(context.env.DB, identifier);
+    const showcase = findShowcaseArtist(identifier);
+    let resolved = await resolveArtistProfile(context.env.DB, identifier);
+
+    if (!resolved && showcase) {
+      await seedShowcaseArtist(context.env.DB, showcase);
+      resolved = await resolveArtistProfile(context.env.DB, identifier);
+    }
 
     if (!resolved) {
+      if (showcase) {
+        return new Response(JSON.stringify({
+          success: true,
+          data: buildShowcaseArtistResponse(showcase),
+        }), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          status: 200,
+        });
+      }
+
       return new Response(JSON.stringify({
         success: false,
-        error: "Artist not found"
+        error: 'Artist not found',
       }), {
         headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*"
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
         status: 404,
       });
@@ -62,13 +114,26 @@ export async function onRequestGet(context) {
     const artist = await context.env.DB.prepare(query).bind(artistId).first();
 
     if (!artist) {
+      if (showcase) {
+        return new Response(JSON.stringify({
+          success: true,
+          data: buildShowcaseArtistResponse(showcase),
+        }), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          status: 200,
+        });
+      }
+
       return new Response(JSON.stringify({
         success: false,
-        error: "Artist not found"
+        error: 'Artist not found',
       }), {
         headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*"
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
         },
         status: 404,
       });
@@ -113,25 +178,29 @@ export async function onRequestGet(context) {
     };
     delete artistData.claim_token;
 
+    if (showcase) {
+      enrichFromShowcase(artistData, showcase);
+    }
+
     return new Response(JSON.stringify({
       success: true,
-      data: artistData
+      data: artistData,
     }), {
       headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
       status: 200,
     });
   } catch (err) {
-    console.error("Error fetching artist:", err);
+    console.error('Error fetching artist:', err);
     return new Response(JSON.stringify({
       success: false,
-      error: "Failed to fetch artist"
+      error: 'Failed to fetch artist',
     }), {
       headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
       },
       status: 500,
     });
@@ -141,9 +210,9 @@ export async function onRequestGet(context) {
 export async function onRequestOptions() {
   return new Response(null, {
     headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     },
   });
 }
