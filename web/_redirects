@@ -47,9 +47,12 @@
 /help                     /gearsh-app.html 200
 /faq                      /gearsh-app.html 200
 /settings                 /gearsh-app.html 200
-/privacy-policy           /privacy.html 200
-/privacy                  /privacy.html 200
-/terms                    /terms.html 200
+# NOTE: do NOT add rewrite rules like `/terms /terms.html 200`.
+# Cloudflare Pages' Pretty URLs auto-serves /terms from terms.html, and an
+# explicit rewrite causes a 308 redirect loop (Pretty URLs strips .html each
+# time the rewrite serves terms.html). The same applies to /privacy and
+# /login (see comment at the top of this file).
+/privacy-policy           /privacy 301
 
 # Other marketing static pages
 /gearsh-god.html          /gearsh-god.html 200
