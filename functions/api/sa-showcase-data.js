@@ -1620,6 +1620,7 @@ export function toMarketingShowcase(artist) {
     badge: artist.badge,
     badgeClass: artist.badgeClass,
     masteryHours: artist.masteryHours,
+    hourlyRate: artist.hourlyRate,
     large: artist.large || false,
   };
 }

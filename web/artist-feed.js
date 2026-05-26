@@ -6,7 +6,7 @@
   'use strict';
 
   var API_BASE = '/api';
-  var CACHE_KEY = 'gearsh_feed_cache_v2';
+  var CACHE_KEY = 'gearsh_feed_cache_v3';
   var CACHE_TTL = 5 * 60 * 1000;
   var PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><rect fill="#181818" width="1" height="1"/></svg>'
@@ -86,6 +86,39 @@
     return null;
   }
 
+  function getShowcaseArtists() {
+    if (typeof SA_SHOWCASE_ARTISTS !== 'undefined') return SA_SHOWCASE_ARTISTS;
+    return getShowcase();
+  }
+
+  function findShowcaseRecord(source) {
+    if (!source) return null;
+    var list = getShowcaseArtists();
+    var username = String(source.username || '').toLowerCase();
+    if (username) {
+      for (var i = 0; i < list.length; i++) {
+        if (String(list[i].username || '').toLowerCase() === username) return list[i];
+      }
+    }
+    var nameKey = normalizeName(source.name);
+    for (var j = 0; j < list.length; j++) {
+      if (normalizeName(list[j].name) === nameKey) return list[j];
+    }
+    return findShowcaseImage(source.name);
+  }
+
+  function resolveListingPrice(source) {
+    var showcase = findShowcaseRecord(source);
+    if (showcase && showcase.hourlyRate != null && Number(showcase.hourlyRate) > 0) {
+      return formatPrice(showcase.hourlyRate);
+    }
+    if (source.booking_fee) return formatPrice(source.booking_fee);
+    if (source.hourly_rate) return formatPrice(source.hourly_rate);
+    if (source.base_rate) return formatPrice(source.base_rate);
+    if (source.min_price) return formatPrice(source.min_price);
+    return '';
+  }
+
   function findShowcaseImage(name) {
     return getShowcase().find(function (item) {
       return normalizeName(item.name) === normalizeName(name);
@@ -129,7 +162,7 @@
       genreSlug: artistGenreSlugFromRecord(artist),
       badge: tier ? tier.label : (artist.is_verified ? 'Verified' : (artist.is_trending ? 'Trending' : 'Book now')),
       badgeClass: tier ? tier.badgeClass : (artist.is_verified ? 'fb-feat' : (artist.is_trending ? 'fb-rise' : 'fb-deal')),
-      price: artist.min_price ? formatPrice(artist.min_price) : (artist.base_rate ? formatPrice(artist.base_rate) : ''),
+      price: resolveListingPrice(artist),
       mastery_hours: hours,
       bookable: true,
       is_verified: !!artist.is_verified,
@@ -152,7 +185,7 @@
       genreSlug: item.genreSlug || artistGenreSlugFromRecord(item),
       badge: match ? (tier ? tier.label : 'Book now') : (tier ? tier.label : (item.badge || 'Featured')),
       badgeClass: match ? (tier ? tier.badgeClass : 'fb-deal') : (tier ? tier.badgeClass : (item.badgeClass || 'fb-feat')),
-      price: item.price || (match && match.min_price ? formatPrice(match.min_price) : ''),
+      price: resolveListingPrice(item),
       mastery_hours: hours,
       bookable: !!(match || item.username),
       is_verified: match ? !!match.is_verified : false,

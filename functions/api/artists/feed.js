@@ -3,6 +3,7 @@
 import { parseSkills, buildProfileUrl } from '../auth-utils.js';
 import { seedShowcaseArtistsBatch, SA_SHOWCASE_ARTISTS } from '../sa-showcase-artists.js';
 import { GENRE_FEED_CATEGORIES, resolveArtistGenreSlug, compareArtistsForGenre } from '../sa-showcase-data.js';
+import { getBookingFee } from '../showcase-profile.js';
 
 const showcaseByUsername = new Map(
   SA_SHOWCASE_ARTISTS.map(function(artist) {
@@ -10,14 +11,22 @@ const showcaseByUsername = new Map(
   })
 );
 
-function applyShowcaseMastery(artist) {
+function applyShowcaseMetadata(artist) {
   const entry = showcaseByUsername.get(String(artist.username || '').toLowerCase());
-  const listedHours = Number(entry?.masteryHours || 0);
+  if (!entry) return artist;
+
+  const listedHours = Number(entry.masteryHours || 0);
   const liveHours = Number(artist.mastery_hours || 0);
-  if (listedHours > liveHours) {
-    return { ...artist, mastery_hours: listedHours };
-  }
-  return artist;
+  const bookingFee = getBookingFee(entry);
+
+  return {
+    ...artist,
+    genreSlug: entry.genreSlug || artist.genreSlug,
+    mastery_hours: listedHours > liveHours ? listedHours : artist.mastery_hours,
+    booking_fee: bookingFee,
+    base_rate: bookingFee,
+    min_price: bookingFee,
+  };
 }
 
 const SA_COUNTRIES = new Set([
@@ -165,7 +174,7 @@ export async function onRequestGet(context) {
     `;
 
     const result = await context.env.DB.prepare(query).all();
-    const artists = (result.results || []).map(applyShowcaseMastery);
+    const artists = (result.results || []).map(applyShowcaseMetadata);
     const categories = buildCategories(artists);
 
     return new Response(JSON.stringify({
