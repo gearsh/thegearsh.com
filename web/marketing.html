@@ -609,15 +609,64 @@
     }
 
     function renderStory(item) {
-      if (!item.bookable) return '';
-      return '<a class="story-item" href="' + cardHref(item) + '">' +
+      if (!item.image || !item.name) return '';
+      var href = item.bookable ? cardHref(item) : '#cat-mastery-legends';
+      return '<a class="story-item" href="' + href + '">' +
         '<div class="story-ring"><img src="' + item.image + '" alt="' + item.name + '"></div>' +
         '<span class="story-name">' + item.name + '</span></a>';
     }
 
-    async function loadTalentFeed() {
+    var STATIC_FEED_CATEGORIES = [
+      { id: 'mastery-legends', title: 'Mastery legends', subtitle: 'Top artists — 10,000 hours of craft and countless stages', icon: 'ti ti-crown' },
+      { id: 'most-booked', title: 'Most booked', subtitle: 'Artists clients keep coming back to', icon: 'ti ti-calendar-check' },
+      { id: 'top-rated', title: 'Top rated', subtitle: 'Five-star favourites from clients', icon: 'ti ti-star' },
+      { id: 'most-popular', title: 'Most popular', subtitle: 'Highest demand across the platform', icon: 'ti ti-flame' },
+      { id: 'local', title: 'Local', subtitle: 'Book talent near you in South Africa', icon: 'ti ti-map-pin' },
+      { id: 'trending', title: 'Trending now', subtitle: 'Hot picks getting attention right now', icon: 'ti ti-trending-up' }
+    ];
+
+    function paintTalentFeed(categories, apiArtists) {
       var container = document.getElementById('feed-categories');
       var stories = document.getElementById('stories-bar');
+      if (!container || !stories) return;
+
+      var index = buildArtistIndex(apiArtists || []);
+      var storyCards = [];
+      var seenStories = {};
+      var feedCategories = categories && categories.length ? categories : STATIC_FEED_CATEGORIES;
+
+      container.innerHTML = feedCategories.map(function(category) {
+        var cards = mergeCategoryArtists(category.id, category.artists || [], index);
+        cards.slice(0, 8).forEach(function(card) {
+          var storyKey = card.artist_id || normalizeName(card.name);
+          if (seenStories[storyKey]) return;
+          seenStories[storyKey] = true;
+          storyCards.push(card);
+        });
+        return renderCategorySection(category, cards);
+      }).join('');
+
+      if (!storyCards.length && SHOWCASE.length) {
+        storyCards = SHOWCASE.slice(0, 16).map(function(item) {
+          return showcaseToCard(item, findArtistMatch(item.name, index));
+        });
+      }
+
+      storyCards.sort(function(a, b) {
+        return cardMasteryHours(b) - cardMasteryHours(a);
+      });
+
+      stories.innerHTML = storyCards.slice(0, 16).map(renderStory).filter(Boolean).join('');
+      if (!stories.innerHTML) {
+        stories.innerHTML = '<a class="story-item" href="#feed"><div class="story-ring" style="display:flex;align-items:center;justify-content:center;background:var(--g-surface)"><i class="ti ti-search" style="color:var(--g-accent);font-size:24px"></i></div><span class="story-name">Explore</span></a>';
+      }
+    }
+
+    async function loadTalentFeed() {
+      if (SHOWCASE.length) {
+        paintTalentFeed(STATIC_FEED_CATEGORIES, []);
+      }
+
       var categories = [];
       var apiArtists = [];
 
@@ -639,44 +688,7 @@
         } catch (_) {}
       }
 
-      var index = buildArtistIndex(apiArtists);
-      var storyCards = [];
-      var seenStories = {};
-
-      if (categories.length) {
-        container.innerHTML = categories.map(function(category) {
-          var cards = mergeCategoryArtists(category.id, category.artists, index);
-          cards.filter(function(card) { return card.bookable; }).slice(0, 4).forEach(function(card) {
-            var storyKey = card.artist_id || normalizeName(card.name);
-            if (seenStories[storyKey]) return;
-            seenStories[storyKey] = true;
-            storyCards.push(card);
-          });
-          return renderCategorySection(category, cards);
-        }).join('');
-      } else {
-        var fallbackCards = mergeCategoryArtists('most-popular', apiArtists, index);
-        container.innerHTML = renderCategorySection({
-          id: 'most-popular',
-          title: 'Explore talent',
-          subtitle: 'Book artists on Gearsh',
-          icon: 'ti ti-flame'
-        }, fallbackCards);
-        storyCards = fallbackCards.filter(function(card) { return card.bookable; }).slice(0, 16);
-      }
-
-      if (!storyCards.length) {
-        storyCards = apiArtists.map(apiArtistToCard).slice(0, 16);
-      }
-
-      storyCards.sort(function(a, b) {
-        return cardMasteryHours(b) - cardMasteryHours(a);
-      });
-
-      stories.innerHTML = storyCards.slice(0, 16).map(renderStory).filter(Boolean).join('');
-      if (!stories.innerHTML) {
-        stories.innerHTML = '<a class="story-item" href="#feed"><div class="story-ring" style="display:flex;align-items:center;justify-content:center;background:var(--g-surface)"><i class="ti ti-search" style="color:var(--g-accent);font-size:24px"></i></div><span class="story-name">Explore</span></a>';
-      }
+      paintTalentFeed(categories.length ? categories : STATIC_FEED_CATEGORIES, apiArtists);
     }
 
     var obs = new IntersectionObserver(function(entries) {

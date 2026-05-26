@@ -1,7 +1,7 @@
 // GET /api/artists/feed — categorized artist rows for the homepage
 
 import { parseSkills, buildProfileUrl } from '../auth-utils.js';
-import { seedShowcaseArtists, SA_SHOWCASE_ARTISTS } from '../sa-showcase-artists.js';
+import { seedShowcaseArtistsBatch, SA_SHOWCASE_ARTISTS } from '../sa-showcase-artists.js';
 
 const showcaseByUsername = new Map(
   SA_SHOWCASE_ARTISTS.map(function(artist) {
@@ -243,14 +243,9 @@ function buildCategories(artists) {
 export async function onRequestGet(context) {
   try {
     try {
-      const demoCount = await context.env.DB.prepare(
-        `SELECT COUNT(*) AS count FROM users WHERE is_demo = 1`
-      ).first();
-      if (!demoCount || Number(demoCount.count) < 100) {
-        await seedShowcaseArtists(context.env.DB);
-      }
+      await seedShowcaseArtistsBatch(context.env.DB, 15);
     } catch (seedErr) {
-      console.error('Showcase artist seed skipped:', seedErr);
+      console.error('Showcase artist batch seed skipped:', seedErr);
     }
 
     const query = `

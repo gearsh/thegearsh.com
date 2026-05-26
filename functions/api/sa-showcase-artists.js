@@ -2,6 +2,15 @@ import { hashPassword, buildProfileUrl } from './auth-utils.js';
 import { SA_SHOWCASE_ARTISTS } from './sa-showcase-data.js';
 import { ensureDemoColumns } from './demo-artists.js';
 
+let cachedDemoPasswordHash = null;
+
+async function getDemoPasswordHash() {
+  if (!cachedDemoPasswordHash) {
+    cachedDemoPasswordHash = await hashPassword('gearsh_unclaimed_demo_v1');
+  }
+  return cachedDemoPasswordHash;
+}
+
 function isPlaceholderEmail(email) {
   return String(email || '').toLowerCase().startsWith('unclaimed+');
 }
@@ -18,13 +27,14 @@ function claimTokenFor(username) {
   return `CLM-${code}-${crypto.randomUUID().slice(0, 6).toUpperCase()}`;
 }
 
-export async function seedShowcaseArtist(db, artist) {
+export async function seedShowcaseArtist(db, artist, passwordHash) {
   await ensureDemoColumns(db);
 
   const userId = slugToId('user_demo', artist.username);
   const artistId = slugToId('artist_demo', artist.username);
   const placeholderEmail = `unclaimed+${artist.username}@thegearsh.com`;
   const skillsJson = JSON.stringify(artist.skills || [artist.category]);
+  const demoPasswordHash = passwordHash || await getDemoPasswordHash();
 
   const existing = await db.prepare(`
     SELECT id, email, claim_token, username
@@ -43,7 +53,6 @@ export async function seedShowcaseArtist(db, artist) {
 
   const now = new Date().toISOString();
   const claimToken = existing?.claim_token || claimTokenFor(artist.username);
-  const passwordHash = await hashPassword(`demo_unclaimed_${userId}`);
   const resolvedUserId = existing?.id || userId;
 
   if (existing) {
@@ -56,7 +65,7 @@ export async function seedShowcaseArtist(db, artist) {
       WHERE id = ?
     `).bind(
       placeholderEmail,
-      passwordHash,
+      demoPasswordHash,
       artist.name,
       '—',
       artist.name,
@@ -79,7 +88,7 @@ export async function seedShowcaseArtist(db, artist) {
     `).bind(
       userId,
       placeholderEmail,
-      passwordHash,
+      demoPasswordHash,
       artist.name,
       artist.name,
       artist.username,
@@ -145,14 +154,27 @@ export async function seedShowcaseArtist(db, artist) {
   };
 }
 
-export async function seedShowcaseArtists(db) {
-  const results = { created: 0, updated: 0, claimed: 0, failed: 0 };
+export async function seedShowcaseArtistsBatch(db, limit = 20) {
+  await ensureDemoColumns(db);
+  const demoPasswordHash = await getDemoPasswordHash();
+  const results = { seeded: 0, skipped: 0, claimed: 0, failed: 0 };
 
   for (const artist of SA_SHOWCASE_ARTISTS) {
+    if (results.seeded >= limit) break;
+
     try {
-      const result = await seedShowcaseArtist(db, artist);
-      if (result.reason === 'claimed') results.claimed += 1;
-      else if (result.seeded) results.created += 1;
+      const existing = await db.prepare(`
+        SELECT id, email FROM users WHERE LOWER(username) = LOWER(?) LIMIT 1
+      `).bind(artist.username).first();
+
+      if (existing) {
+        if (!isPlaceholderEmail(existing.email)) results.claimed += 1;
+        else results.skipped += 1;
+        continue;
+      }
+
+      const result = await seedShowcaseArtist(db, artist, demoPasswordHash);
+      if (result.seeded) results.seeded += 1;
     } catch (err) {
       console.error(`Showcase seed failed for ${artist.username}:`, err);
       results.failed += 1;
@@ -160,6 +182,11 @@ export async function seedShowcaseArtists(db) {
   }
 
   return results;
+}
+
+/** @deprecated Prefer seedShowcaseArtistsBatch to avoid worker timeouts */
+export async function seedShowcaseArtists(db) {
+  return seedShowcaseArtistsBatch(db, SA_SHOWCASE_ARTISTS.length);
 }
 
 export { SA_SHOWCASE_ARTISTS };
