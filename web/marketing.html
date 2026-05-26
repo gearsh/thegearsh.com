@@ -305,26 +305,15 @@
 
   <!-- CATEGORIES -->
   <div class="cats-section reveal">
-    <div class="cats-scroll" id="category-nav">
-      <a class="cat-pill" href="#cat-mastery-legends"><i class="ti ti-crown"></i> Legends</a>
-      <a class="cat-pill" href="#cat-most-booked"><i class="ti ti-calendar-check"></i> Most booked</a>
-      <a class="cat-pill" href="#cat-top-rated"><i class="ti ti-star"></i> Top rated</a>
-      <a class="cat-pill" href="#cat-most-popular"><i class="ti ti-flame"></i> Popular</a>
-      <a class="cat-pill" href="#cat-new"><i class="ti ti-sparkles"></i> New</a>
-      <a class="cat-pill" href="#cat-local"><i class="ti ti-map-pin"></i> Local</a>
-      <a class="cat-pill" href="#cat-international"><i class="ti ti-world"></i> International</a>
-      <a class="cat-pill" href="#cat-trending"><i class="ti ti-trending-up"></i> Trending</a>
-      <a class="cat-pill" href="#cat-verified"><i class="ti ti-rosette-discount-check"></i> Verified</a>
-      <a class="cat-pill" href="#cat-rising"><i class="ti ti-rocket"></i> Rising</a>
-    </div>
+    <div class="cats-scroll" id="category-nav"></div>
   </div>
 
   <!-- FEED CATEGORIES -->
   <section class="feed-section reveal" id="feed">
     <div class="feed-header">
       <div>
-        <h2 class="feed-title">Explore by <em>category</em></h2>
-        <p class="feed-subtitle">Discover artists by what matters most — new talent, local favourites, global stars, and more.</p>
+        <h2 class="feed-title">Explore by <em>genre</em></h2>
+        <p class="feed-subtitle">Amapiano, hip hop, house, gospel, and more — find the sound you need for your event.</p>
       </div>
       <a href="join-gig.html" class="feed-link">List your gig <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
     </div>
@@ -509,17 +498,21 @@
       };
     }
 
-    function showcaseCategories(item) {
-      var genre = String(item.genre || '').toLowerCase();
-      var cats = ['mastery-legends', 'most-popular', 'top-rated'];
-      if (cardMasteryHours(item) >= 10000) cats.unshift('mastery-legends');
-      if (item.badge === 'Newcomer' || item.badge === 'Listed') cats.push('new', 'rising');
-      if (item.badge === 'Rising') cats.push('rising', 'trending', 'most-popular');
-      if (item.badge === 'Featured' || item.badge === 'Legend' || item.badge === 'Expert') {
-        cats.push('most-popular', 'trending', 'top-rated', 'mastery-legends');
+    function artistGenreSlugFromRecord(artist) {
+      if (artist && artist.genreSlug) return artist.genreSlug;
+      if (typeof resolveArtistGenreSlug === 'function') {
+        return resolveArtistGenreSlug(artist.category, artist.genre);
       }
-      if (genre.indexOf('international') !== -1 || genre.indexOf('global') !== -1) cats.push('international');
-      if (/joburg|durban|pretoria|cape town|thohoyandou|louis trichardt| · sa|south africa/.test(genre)) cats.push('local');
+      return 'other';
+    }
+
+    function showcaseCategories(item) {
+      var cats = [];
+      var slug = item.genreSlug || artistGenreSlugFromRecord(item);
+      cats.push('genre-' + slug);
+      if (cardMasteryHours(item) >= 5000 || item.badge === 'Legend' || item.badge === 'Expert') {
+        cats.push('mastery-legends');
+      }
       return cats;
     }
 
@@ -543,7 +536,19 @@
     }
 
     function mergeCategoryArtists(categoryId, apiArtists, index) {
-      var cards = (apiArtists || []).map(apiArtistToCard);
+      var filteredApi = apiArtists || [];
+      if (categoryId.indexOf('genre-') === 0) {
+        var genreKey = categoryId.slice(6);
+        filteredApi = filteredApi.filter(function(artist) {
+          return artistGenreSlugFromRecord(artist) === genreKey;
+        });
+      } else if (categoryId === 'mastery-legends') {
+        filteredApi = filteredApi.filter(function(artist) {
+          return Number(artist.mastery_hours || 0) >= 5000;
+        });
+      }
+
+      var cards = filteredApi.map(apiArtistToCard);
       var usedIds = {};
       var usedNames = {};
       cards.forEach(function(card) {
@@ -616,14 +621,27 @@
         '<span class="story-name">' + item.name + '</span></a>';
     }
 
-    var STATIC_FEED_CATEGORIES = [
-      { id: 'mastery-legends', title: 'Mastery legends', subtitle: 'Top artists — 10,000 hours of craft and countless stages', icon: 'ti ti-crown' },
-      { id: 'most-booked', title: 'Most booked', subtitle: 'Artists clients keep coming back to', icon: 'ti ti-calendar-check' },
-      { id: 'top-rated', title: 'Top rated', subtitle: 'Five-star favourites from clients', icon: 'ti ti-star' },
-      { id: 'most-popular', title: 'Most popular', subtitle: 'Highest demand across the platform', icon: 'ti ti-flame' },
-      { id: 'local', title: 'Local', subtitle: 'Book talent near you in South Africa', icon: 'ti ti-map-pin' },
-      { id: 'trending', title: 'Trending now', subtitle: 'Hot picks getting attention right now', icon: 'ti ti-trending-up' }
-    ];
+    var STATIC_FEED_CATEGORIES = typeof GENRE_FEED_CATEGORIES !== 'undefined'
+      ? GENRE_FEED_CATEGORIES
+      : [{ id: 'mastery-legends', title: 'Mastery legends', subtitle: 'Top artists on Gearsh', icon: 'ti ti-crown' }];
+
+    function buildCategoryNav(categories) {
+      var nav = document.getElementById('category-nav');
+      if (!nav) return;
+      var items = categories && categories.length ? categories : STATIC_FEED_CATEGORIES;
+      nav.innerHTML = items.map(function(cat) {
+        return '<a class="cat-pill" href="#cat-' + cat.id + '"><i class="' + cat.icon + '"></i> ' + cat.title + '</a>';
+      }).join('');
+    }
+
+    function visibleFeedCategories(categories) {
+      var source = categories && categories.length ? categories : STATIC_FEED_CATEGORIES;
+      return source.filter(function(category) {
+        if (category.id === 'mastery-legends') return true;
+        var cards = mergeCategoryArtists(category.id, [], buildArtistIndex([]));
+        return cards.length > 0 || (category.artists && category.artists.length);
+      });
+    }
 
     function paintTalentFeed(categories, apiArtists) {
       var container = document.getElementById('feed-categories');
@@ -633,7 +651,8 @@
       var index = buildArtistIndex(apiArtists || []);
       var storyCards = [];
       var seenStories = {};
-      var feedCategories = categories && categories.length ? categories : STATIC_FEED_CATEGORIES;
+      var feedCategories = visibleFeedCategories(categories && categories.length ? categories : STATIC_FEED_CATEGORIES);
+      buildCategoryNav(feedCategories);
 
       container.innerHTML = feedCategories.map(function(category) {
         var cards = mergeCategoryArtists(category.id, category.artists || [], index);
@@ -696,6 +715,7 @@
     }, { threshold: 0.08 });
     document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
 
+    buildCategoryNav(STATIC_FEED_CATEGORIES);
     loadTalentFeed();
 
     (async function updateNavForSession() {

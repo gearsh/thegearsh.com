@@ -2,6 +2,7 @@
 
 import { parseSkills, buildProfileUrl } from '../auth-utils.js';
 import { seedShowcaseArtistsBatch, SA_SHOWCASE_ARTISTS } from '../sa-showcase-artists.js';
+import { GENRE_FEED_CATEGORIES, resolveArtistGenreSlug } from '../sa-showcase-data.js';
 
 const showcaseByUsername = new Map(
   SA_SHOWCASE_ARTISTS.map(function(artist) {
@@ -88,156 +89,37 @@ function takeUnique(artists, limit) {
   return uniqueById(artists).slice(0, limit);
 }
 
+function artistGenreSlug(artist) {
+  if (artist.genreSlug) return artist.genreSlug;
+  return resolveArtistGenreSlug(artist.category, artist.genre);
+}
+
 function buildCategories(artists) {
   const all = artists.map(mapArtist);
 
-  const masteryLegends = takeUnique(
-    [...all].sort(compareByMastery),
-    12
-  );
+  return GENRE_FEED_CATEGORIES.map(function(section) {
+    if (section.id === 'mastery-legends') {
+      return {
+        ...section,
+        artists: takeUnique([...all].sort(compareByMastery), 16),
+      };
+    }
 
-  const newest = takeUnique(
-    [...all].sort(function(a, b) {
-      return new Date(b.profile_created_at || b.user_created_at || 0)
-        - new Date(a.profile_created_at || a.user_created_at || 0);
-    }).filter(function(artist) {
-      return daysSince(artist.profile_created_at || artist.user_created_at) <= 90;
-    }).concat(
-      [...all].sort(function(a, b) {
-        return new Date(b.profile_created_at || b.user_created_at || 0)
-          - new Date(a.profile_created_at || a.user_created_at || 0);
-      })
-    ),
-    12
-  );
+    if (section.id.indexOf('genre-') === 0) {
+      const slug = section.id.slice(6);
+      const filtered = all.filter(function(artist) {
+        return artistGenreSlug(artist) === slug;
+      });
+      return {
+        ...section,
+        artists: takeUnique(filtered.sort(compareByMastery), 16),
+      };
+    }
 
-  const mostBooked = takeUnique(
-    [...all].sort(function(a, b) {
-      const byMastery = compareByMastery(a, b);
-      if (byMastery !== 0) return byMastery;
-      return b.total_bookings - a.total_bookings || b.review_count - a.review_count;
-    }),
-    12
-  );
-
-  const mostPopular = takeUnique(
-    [...all].sort(compareByMastery),
-    12
-  );
-
-  const local = takeUnique(
-    all.filter(isLocal).sort(compareByMastery),
-    12
-  );
-
-  const international = takeUnique(
-    all.filter(isInternational).sort(compareByMastery),
-    12
-  );
-
-  const trending = takeUnique(
-    all.filter(function(artist) { return artist.is_trending; })
-      .concat([...all].sort(compareByMastery)),
-    12
-  );
-
-  const topRated = takeUnique(
-    [...all]
-      .filter(function(artist) { return artist.rating >= 4 && artist.review_count > 0; })
-      .sort(compareByMastery)
-      .concat([...all].sort(compareByMastery)),
-    12
-  );
-
-  const verified = takeUnique(
-    all.filter(function(artist) { return artist.is_verified; })
-      .sort(compareByMastery)
-      .concat(all),
-    12
-  );
-
-  const rising = takeUnique(
-    all.filter(function(artist) {
-      return artist.total_bookings > 0 && artist.total_bookings <= 5;
-    }).sort(function(a, b) {
-      return new Date(b.profile_created_at || b.user_created_at || 0)
-        - new Date(a.profile_created_at || a.user_created_at || 0);
-    }).concat(newest),
-    12
-  );
-
-  return [
-    {
-      id: 'mastery-legends',
-      title: 'Mastery legends',
-      subtitle: 'Top artists — 10,000 hours of craft and countless stages',
-      icon: 'ti ti-crown',
-      artists: masteryLegends,
-    },
-    {
-      id: 'most-booked',
-      title: 'Most booked',
-      subtitle: 'Artists clients keep coming back to',
-      icon: 'ti ti-calendar-check',
-      artists: mostBooked,
-    },
-    {
-      id: 'top-rated',
-      title: 'Top rated',
-      subtitle: 'Five-star favourites from clients',
-      icon: 'ti ti-star',
-      artists: topRated,
-    },
-    {
-      id: 'most-popular',
-      title: 'Most popular',
-      subtitle: 'Highest demand across the platform',
-      icon: 'ti ti-flame',
-      artists: mostPopular,
-    },
-    {
-      id: 'new',
-      title: 'New artists',
-      subtitle: 'Fresh talent that just joined Gearsh',
-      icon: 'ti ti-sparkles',
-      artists: newest,
-    },
-    {
-      id: 'local',
-      title: 'Local',
-      subtitle: 'Book talent near you in South Africa',
-      icon: 'ti ti-map-pin',
-      artists: local,
-    },
-    {
-      id: 'international',
-      title: 'International',
-      subtitle: 'Global artists ready to perform worldwide',
-      icon: 'ti ti-world',
-      artists: international,
-    },
-    {
-      id: 'trending',
-      title: 'Trending now',
-      subtitle: 'Hot picks getting attention right now',
-      icon: 'ti ti-trending-up',
-      artists: trending,
-    },
-    {
-      id: 'verified',
-      title: 'Verified pros',
-      subtitle: 'Trusted, verified profiles you can book with confidence',
-      icon: 'ti ti-rosette-discount-check',
-      artists: verified,
-    },
-    {
-      id: 'rising',
-      title: 'Rising stars',
-      subtitle: 'Newcomers landing their first bookings',
-      icon: 'ti ti-rocket',
-      artists: rising,
-    },
-  ];
+    return { ...section, artists: [] };
+  }).filter(function(section) {
+    return section.artists && section.artists.length > 0;
+  });
 }
 
 export async function onRequestGet(context) {

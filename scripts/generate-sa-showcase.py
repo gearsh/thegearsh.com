@@ -111,6 +111,60 @@ ARTISTS = [
 
 assert len(ARTISTS) == 100, f"Expected 100 artists, got {len(ARTISTS)}"
 
+GENRE_SECTIONS = [
+    ("amapiano", "Amapiano", "Log drums, soulful keys, and SA's biggest sound", "ti ti-piano"),
+    ("hip-hop", "Hip Hop", "Bars, flow, and culture from Pretoria to Durban", "ti ti-microphone"),
+    ("house", "House & Afro House", "From township clubs to global dance floors", "ti ti-vinyl"),
+    ("afropop", "Afropop & R&B", "Melody, soul, and African pop excellence", "ti ti-heart"),
+    ("gospel", "Gospel", "Praise, worship, and inspiration", "ti ti-pray"),
+    ("maskandi", "Maskandi & Traditional", "Roots, culture, and storytelling", "ti ti-feather"),
+    ("gqom", "Gqom & Dance", "Hard beats built for the dancefloor", "ti ti-bolt"),
+    ("other", "More genres", "Rock, comedy, fashion, and beyond", "ti ti-stars"),
+]
+
+CATEGORY_TO_GENRE = {
+    "Amapiano": "amapiano",
+    "Amapiano DJ": "amapiano",
+    "Hip Hop": "hip-hop",
+    "Rap-Rave": "hip-hop",
+    "DJ": "house",
+    "House": "house",
+    "Afro House": "house",
+    "Afropop": "afropop",
+    "R&B": "afropop",
+    "Pop": "afropop",
+    "Acapella": "afropop",
+    "Gospel": "gospel",
+    "Maskandi": "maskandi",
+    "Bolobedu": "maskandi",
+    "Gqom": "gqom",
+    "Dance": "gqom",
+    "Rock": "other",
+    "Electronic": "other",
+    "Comedy": "other",
+    "Fashion": "other",
+    "Folk": "other",
+}
+
+
+def resolve_genre_slug(category, genre_label):
+    label = str(genre_label or "").lower()
+    if "amapiano" in label:
+        return "amapiano"
+    if "hip hop" in label or "rap" in label:
+        return "hip-hop"
+    if "house" in label or "afro house" in label or label.startswith("dj"):
+        return "house"
+    if "gospel" in label:
+        return "gospel"
+    if "maskandi" in label or "bolobedu" in label:
+        return "maskandi"
+    if "gqom" in label or "dance" in label:
+        return "gqom"
+    if any(token in label for token in ("afropop", "r&b", "soul", "acapella", "pop")):
+        return "afropop"
+    return CATEGORY_TO_GENRE.get(category, "other")
+
 
 def badge_for(hours):
     if hours >= 10000:
@@ -149,6 +203,7 @@ lines = [
 
 for name, username, image_file, category, genre, location, hours in ARTISTS:
     badge, badge_class, large = badge_for(hours)
+    genre_slug = resolve_genre_slug(category, genre)
     image = f"assets/images/artists/{image_file}" if image_file != FALLBACK else FALLBACK
     if not image_file.startswith("assets/"):
         image = f"assets/images/artists/{image_file}"
@@ -169,6 +224,7 @@ for name, username, image_file, category, genre, location, hours in ARTISTS:
     lines.append(f"    image: '{image}',")
     lines.append(f"    category: '{js_string(category)}',")
     lines.append(f"    genre: '{js_string(genre)}',")
+    lines.append(f"    genreSlug: '{genre_slug}',")
     lines.append(f"    location: '{js_string(location)}',")
     lines.append("    country: 'South Africa',")
     lines.append(f"    masteryHours: {hours},")
@@ -184,12 +240,46 @@ for name, username, image_file, category, genre, location, hours in ARTISTS:
 
 lines.append("];")
 lines.append("")
+lines.append("export const GENRE_FEED_CATEGORIES = [")
+lines.append("  {")
+lines.append("    id: 'mastery-legends',")
+lines.append("    title: 'Mastery legends',")
+lines.append("    subtitle: 'Top artists — 10,000 hours of craft and countless stages',")
+lines.append("    icon: 'ti ti-crown',")
+lines.append("  },")
+for slug, title, subtitle, icon in GENRE_SECTIONS:
+    lines.append("  {")
+    lines.append(f"    id: 'genre-{slug}',")
+    lines.append(f"    title: '{js_string(title)}',")
+    lines.append(f"    subtitle: '{js_string(subtitle)}',")
+    lines.append(f"    icon: '{icon}',")
+    lines.append("  },")
+lines.append("];")
+lines.append("")
+lines.append("export function resolveArtistGenreSlug(category, genreLabel) {")
+lines.append("  const label = String(genreLabel || '').toLowerCase();")
+lines.append("  if (label.includes('amapiano')) return 'amapiano';")
+lines.append("  if (label.includes('hip hop') || label.includes('rap')) return 'hip-hop';")
+lines.append("  if (label.includes('house') || label.includes('afro house') || label.startsWith('dj')) return 'house';")
+lines.append("  if (label.includes('gospel')) return 'gospel';")
+lines.append("  if (label.includes('maskandi') || label.includes('bolobedu')) return 'maskandi';")
+lines.append("  if (label.includes('gqom') || label.includes('dance')) return 'gqom';")
+lines.append("  if (['afropop', 'r&b', 'soul', 'acapella', 'pop'].some(function(token) { return label.includes(token); })) return 'afropop';")
+lines.append("  const map = {")
+for cat, slug in sorted(CATEGORY_TO_GENRE.items()):
+    lines.append(f"    '{js_string(cat)}': '{slug}',")
+lines.append("  };")
+lines.append("  return map[String(category || '')] || 'other';")
+lines.append("}")
+lines.append("")
 lines.append("export function toMarketingShowcase(artist) {")
 lines.append("  return {")
 lines.append("    name: artist.name,")
 lines.append("    username: artist.username,")
 lines.append("    image: artist.image,")
 lines.append("    genre: artist.genre,")
+lines.append("    category: artist.category,")
+lines.append("    genreSlug: artist.genreSlug,")
 lines.append("    badge: artist.badge,")
 lines.append("    badgeClass: artist.badgeClass,")
 lines.append("    masteryHours: artist.masteryHours,")
@@ -204,6 +294,8 @@ out_web = Path("web/sa-showcase-data.js")
 
 api_content = "\n".join(lines)
 web_content = api_content.replace("export const SA_SHOWCASE_ARTISTS", "const SA_SHOWCASE_ARTISTS")
+web_content = web_content.replace("export const GENRE_FEED_CATEGORIES", "var GENRE_FEED_CATEGORIES")
+web_content = web_content.replace("export function resolveArtistGenreSlug", "function resolveArtistGenreSlug")
 web_content = web_content.replace("export function toMarketingShowcase", "function toMarketingShowcase")
 web_content = web_content.replace("export const SHOWCASE", "var SHOWCASE")
 web_content = "// Auto-generated — 100 SA artists for Gearsh homepage\n" + web_content
