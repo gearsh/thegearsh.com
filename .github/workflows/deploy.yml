@@ -42,6 +42,13 @@ jobs:
           cp assets/images/command-header.png build/web/assets/images/command-header.png 2>/dev/null || true
           cp -r web/icons build/web/icons 2>/dev/null || true
           cp web/gearsh-brand.css build/web/gearsh-brand.css 2>/dev/null || true
+          cp web/discovery.css build/web/discovery.css 2>/dev/null || true
+          cp web/artist-feed.js build/web/artist-feed.js 2>/dev/null || true
+          cp web/gearsh-ui.js build/web/gearsh-ui.js 2>/dev/null || true
+          cp web/search.html build/web/search.html 2>/dev/null || true
+          cp web/search-page.js build/web/search-page.js 2>/dev/null || true
+          cp web/artists.html build/web/artists.html 2>/dev/null || true
+          cp web/artists-page.js build/web/artists-page.js 2>/dev/null || true
           cp web/marketing.html build/web/index.html
           cp web/join-gig.html build/web/join-gig.html
           cp web/artist-onboarding.html build/web/artist-onboarding.html

@@ -1,8 +1,32 @@
 // POST /api/search - Search artists with filters
+// GET  /api/search?q=...&genre=...&sort=...
+
+export async function onRequestGet(context) {
+  const url = new URL(context.request.url);
+  const body = {
+    query: url.searchParams.get('q') || '',
+    categories: url.searchParams.get('category') ? [url.searchParams.get('category')] : [],
+    minRating: parseFloat(url.searchParams.get('minRating') || '0'),
+    verified: url.searchParams.get('verified') === 'true',
+    sortBy: url.searchParams.get('sort') || 'relevance',
+    limit: parseInt(url.searchParams.get('limit') || '50', 10),
+    offset: parseInt(url.searchParams.get('offset') || '0', 10),
+  };
+  return runSearch(context, body);
+}
 
 export async function onRequestPost(context) {
   try {
     const body = await context.request.json();
+    return runSearch(context, body);
+  } catch (err) {
+    console.error("Error searching artists:", err);
+    return searchError();
+  }
+}
+
+async function runSearch(context, body) {
+  try {
     const {
       query = '',
       categories = [],
@@ -20,6 +44,7 @@ export async function onRequestPost(context) {
         ap.id as artist_id,
         u.id as user_id,
         u.display_name as name,
+        u.username,
         u.profile_picture_url as image,
         u.bio,
         u.location,
@@ -161,24 +186,28 @@ export async function onRequestPost(context) {
     });
   } catch (err) {
     console.error("Error searching artists:", err);
-    return new Response(JSON.stringify({
-      success: false,
-      error: "Search failed"
-    }), {
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-      },
-      status: 500,
-    });
+    return searchError();
   }
+}
+
+function searchError() {
+  return new Response(JSON.stringify({
+    success: false,
+    error: "Search failed"
+  }), {
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    },
+    status: 500,
+  });
 }
 
 export async function onRequestOptions() {
   return new Response(null, {
     headers: {
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, Authorization",
     },
   });

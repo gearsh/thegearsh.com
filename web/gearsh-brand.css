@@ -86,10 +86,28 @@ body {
 .g-nav-menu-btn {
   display: none; background: none; border: none;
   color: var(--g-white); font-size: 22px; cursor: pointer;
-  padding: 4px; line-height: 1;
+  padding: 10px; line-height: 1;
+  min-width: 44px; min-height: 44px;
+  align-items: center; justify-content: center;
+  border-radius: 10px;
+  transition: background 0.2s;
 }
+.g-nav-menu-btn:hover { background: rgba(255,255,255,0.06); }
+.g-nav-mobile-search {
+  display: none;
+  color: var(--g-white);
+  font-size: 20px;
+  padding: 10px;
+  min-width: 44px; min-height: 44px;
+  align-items: center; justify-content: center;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: color 0.2s, background 0.2s;
+}
+.g-nav-mobile-search:hover { color: var(--g-accent); background: rgba(255,255,255,0.06); }
 @media (max-width: 768px) {
   .g-nav-mobile-login { display: block; }
+  .g-nav-mobile-search { display: inline-flex; }
   .g-nav-links { display: none; }
   .g-nav-menu-btn { display: block; }
   .g-nav-links.open {

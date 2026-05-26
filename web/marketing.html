@@ -12,34 +12,12 @@
   <link rel="icon" type="image/png" href="icons/Icon-192.png">
   <link rel="apple-touch-icon" href="icons/Icon-512.png">
   <link rel="stylesheet" href="gearsh-brand.css">
+  <link rel="stylesheet" href="discovery.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="prefetch" href="artist-feed.js">
+  <link rel="prefetch" href="sa-showcase-data.js">
   <style>
-    /* ── HERO ── */
-    .hero {
-      min-height: 100vh; min-height: 100svh;
-      display: flex; flex-direction: column;
-      justify-content: flex-end;
-      position: relative; overflow: hidden;
-      padding: 0 0 48px;
-    }
-    .hero-mosaic {
-      position: absolute; inset: 0;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      gap: 3px; opacity: 0.35;
-    }
-    .hero-mosaic img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .hero-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top,
-        rgba(10,10,10,1) 0%, rgba(10,10,10,0.92) 25%,
-        rgba(10,10,10,0.5) 55%, rgba(10,10,10,0.3) 100%);
-    }
-    .hero-content {
-      position: relative; z-index: 2;
-      padding: 0 24px; max-width: 1200px; margin: 0 auto; width: 100%;
-    }
+    /* Page-specific styles (hero + feed base → discovery.css) */
     .hero-badge {
       display: inline-flex; align-items: center; gap: 7px;
       background: rgba(0,191,255,0.12); border: 0.5px solid rgba(0,191,255,0.2);
@@ -63,18 +41,17 @@
       max-width: 440px; line-height: 1.55; margin-bottom: 28px;
     }
     .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-    /* ── STATS ── */
-    .stats-row {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 1px; background: var(--g-border);
-      border-radius: 14px; overflow: hidden;
-      margin-top: 56px;
+    .hero-search-entry {
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 16px; max-width: 360px;
+      background: rgba(255,255,255,0.06);
+      border: 0.5px solid var(--g-border-light);
+      border-radius: 12px; padding: 12px 16px;
+      text-decoration: none; color: var(--g-text-dim);
+      font-size: 14px; transition: border-color 0.2s, background 0.2s;
     }
-    .stat-item { background: var(--g-surface); padding: 24px 16px; text-align: center; }
-    .stat-value { font-size: 22px; font-weight: 700; color: var(--g-white); letter-spacing: -0.02em; }
-    .stat-value.accent { color: var(--g-accent); }
-    .stat-label { font-size: 12px; color: var(--g-text-dim); margin-top: 4px; }
-    @media (max-width: 520px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+    .hero-search-entry i { color: var(--g-accent); font-size: 18px; }
+    .hero-search-entry:hover { border-color: rgba(0,191,255,0.35); background: rgba(255,255,255,0.08); color: var(--g-text-muted); }
     /* ── STORIES ── */
     .stories-section { padding: 40px 20px 0; max-width: 1200px; margin: 0 auto; }
     .stories-bar {
@@ -120,61 +97,6 @@
     .fb-rise { background: rgba(139,92,246,0.25); color: #C4B5FD; }
     .fb-feat { background: rgba(251,191,36,0.25); color: #FDE68A; }
     .fb-deal { background: rgba(52,211,153,0.25); color: #6EE7B7; }
-    /* ── FEED GRID ── */
-    .feed-section { padding: 32px 20px 0; max-width: 1200px; margin: 0 auto; }
-    .feed-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
-    .feed-title { font-family: var(--g-serif); font-size: 24px; color: var(--g-white); font-weight: 400; letter-spacing: -0.02em; }
-    .feed-title em { font-style: italic; color: var(--g-accent); }
-    .feed-subtitle { font-size: 13px; color: var(--g-text-dim); margin-top: 4px; line-height: 1.45; }
-    .feed-link { font-size: 13px; color: var(--g-accent); text-decoration: none; font-weight: 500; white-space: nowrap; }
-    .feed-categories { display: flex; flex-direction: column; gap: 36px; }
-    .feed-category { scroll-margin-top: 80px; }
-    .feed-row {
-      display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;
-      -ms-overflow-style: none; scrollbar-width: none;
-    }
-    .feed-row::-webkit-scrollbar { display: none; }
-    .feed-card {
-      position: relative; flex: 0 0 168px; width: 168px;
-      border-radius: 14px; overflow: hidden; background: var(--g-surface);
-      border: 0.5px solid var(--g-border); text-decoration: none; color: inherit;
-      transition: transform 0.2s, border-color 0.2s;
-    }
-    .feed-card:hover { transform: translateY(-2px); border-color: rgba(0,191,255,0.25); }
-    .feed-card-media { position: relative; aspect-ratio: 1; overflow: hidden; }
-    .feed-card-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
-    .feed-card:hover .feed-card-media img { transform: scale(1.05); }
-    .feed-card-body { padding: 12px; }
-    .feed-card-name { font-size: 13px; font-weight: 700; color: var(--g-white); line-height: 1.3; }
-    .feed-card-genre { font-size: 11px; color: var(--g-text-dim); margin-top: 4px; line-height: 1.4; }
-    .feed-card-price { font-size: 12px; font-weight: 600; color: var(--g-accent); margin-top: 6px; }
-    .feed-card-badge {
-      position: absolute; top: 8px; left: 8px;
-      font-size: 10px; padding: 3px 8px; border-radius: 6px;
-      font-weight: 600; backdrop-filter: blur(8px); z-index: 2;
-    }
-    .feed-card-action {
-      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-      background: rgba(0,0,0,0.45); opacity: 0; transition: opacity 0.25s;
-      font-size: 12px; font-weight: 700; color: var(--g-black);
-      pointer-events: none;
-    }
-    .feed-card-action span {
-      background: var(--g-accent); padding: 8px 14px; border-radius: 999px;
-    }
-    .feed-card.is-bookable:hover .feed-card-action { opacity: 1; }
-    @media (hover: none) {
-      .feed-card.is-bookable .feed-card-action { opacity: 1; }
-    }
-    .feed-card.is-static { cursor: default; pointer-events: none; }
-    .feed-card.is-static:hover { transform: none; border-color: var(--g-border); }
-    .feed-empty {
-      font-size: 13px; color: var(--g-text-dim); padding: 18px 0 4px;
-    }
-    @media (max-width: 600px) {
-      .feed-card { flex-basis: 140px; width: 140px; }
-      .feed-title { font-size: 21px; }
-    }
     /* ── TESTIMONIALS ── */
     .testimonials-section { padding: 48px 20px 0; max-width: 1200px; margin: 0 auto; }
     .testimonial-feed {
@@ -249,14 +171,17 @@
       </a>
       <div class="g-nav-right">
         <a href="/auth.html" class="g-nav-mobile-login">Login</a>
-        <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu">
+        <a href="search.html" class="g-nav-mobile-search" aria-label="Search artists"><i class="ti ti-search"></i></a>
+        <button class="g-nav-menu-btn" type="button" aria-label="Open menu" aria-expanded="false">
           <i class="ti ti-menu-2"></i>
         </button>
       </div>
       <ul class="g-nav-links">
         <li class="g-nav-menu-auth"><a href="/auth.html">Login</a></li>
         <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
-        <li><a href="#feed">Explore</a></li>
+        <li><a href="search.html">Search</a></li>
+        <li><a href="artists.html">All artists</a></li>
+        <li><a href="#feed">Explore artists</a></li>
         <li><a href="#how">How it works</a></li>
         <li><a href="#why">Why Gearsh</a></li>
       </ul>
@@ -266,31 +191,35 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-mosaic">
-      <img src="assets/images/artists/coffee.png" alt="" loading="eager">
-      <img src="assets/images/artists/shimza.jpg" alt="" loading="eager">
-      <img src="assets/images/artists/seether.png" alt="" loading="eager">
-      <img src="assets/images/artists/kabza.png" alt="" loading="eager">
-      <img src="assets/images/artists/maphorisa.png" alt="" loading="eager">
-      <img src="assets/images/artists/cassper.png" alt="" loading="eager">
-      <img src="assets/images/artists/tyla.jpg" alt="" loading="eager">
-      <img src="assets/images/artists/nastyc.png" alt="" loading="eager">
-      <img src="assets/images/artists/waffles.png" alt="" loading="eager">
-      <img src="assets/images/artists/a-reece.png" alt="" loading="lazy">
-      <img src="assets/images/artists/kelvin-momo.png" alt="" loading="lazy">
-      <img src="assets/images/artists/empress-ngqama.jpg" alt="" loading="lazy">
-      <img src="assets/images/artists/ZJ90.jpg" alt="" loading="lazy">
+      <img src="assets/images/artists/coffee.png" alt="" loading="eager" fetchpriority="high" decoding="async">
+      <img src="assets/images/artists/shimza.jpg" alt="" loading="eager" fetchpriority="high" decoding="async">
+      <img src="assets/images/artists/seether.png" alt="" loading="eager" decoding="async">
+      <img src="assets/images/artists/kabza.png" alt="" loading="eager" decoding="async">
+      <img src="assets/images/artists/maphorisa.png" alt="" loading="lazy" decoding="async">
+      <img src="assets/images/artists/cassper.png" alt="" loading="lazy" decoding="async">
+      <img src="assets/images/artists/tyla.jpg" alt="" loading="lazy" decoding="async">
+      <img src="assets/images/artists/nastyc.png" alt="" loading="lazy" decoding="async">
+      <img src="assets/images/artists/waffles.png" alt="" loading="lazy" decoding="async">
+      <img src="assets/images/artists/a-reece.png" alt="" loading="lazy" decoding="async">
+      <img src="assets/images/artists/kelvin-momo.png" alt="" loading="lazy" decoding="async">
+      <img src="assets/images/artists/empress-ngqama.jpg" alt="" loading="lazy" decoding="async">
+      <img src="assets/images/artists/ZJ90.jpg" alt="" loading="lazy" decoding="async">
     </div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
       <div class="hero-badge"><span class="pulse"></span> Now live — artist booking platform</div>
       <h1 class="hero-title">Get <em>booked.</em><br>Get <em>paid.</em><br>Go <em>global.</em></h1>
-      <p class="hero-sub">The platform where talented artists get discovered, booked, and paid — without the middleman.</p>
+      <p class="hero-sub">The platform where artists get discovered, booked, and paid — without the middleman.</p>
       <div class="hero-actions">
         <a href="join-gig.html" class="btn-main">List your gig free <i class="ti ti-arrow-right" style="font-size:18px"></i></a>
         <a href="/auth.html" class="btn-ghost">Sign in</a>
       </div>
+      <a href="search.html" class="hero-search-entry" aria-label="Search artists">
+        <i class="ti ti-search"></i>
+        <span>Search artists, genres, cities…</span>
+      </a>
       <div class="stats-row">
-        <div class="stat-item"><div class="stat-value accent">Free</div><div class="stat-label">To list your profile</div></div>
+        <div class="stat-item"><div class="stat-value accent">Free</div><div class="stat-label">To list your gig</div></div>
         <div class="stat-item"><div class="stat-value">Global</div><div class="stat-label">Client reach</div></div>
         <div class="stat-item"><div class="stat-value">10,000</div><div class="stat-label">Hours to mastery</div></div>
         <div class="stat-item"><div class="stat-value">Secure</div><div class="stat-label">Payments guaranteed</div></div>
@@ -315,7 +244,10 @@
         <h2 class="feed-title">Explore by <em>genre</em></h2>
         <p class="feed-subtitle">Amapiano, hip hop, house, gospel, and more — find the sound you need for your event.</p>
       </div>
-      <a href="join-gig.html" class="feed-link">List your gig <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+        <a href="artists.html" class="feed-link">View all artists <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
+        <a href="join-gig.html" class="feed-link">List your gig <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
+      </div>
     </div>
     <div class="feed-categories" id="feed-categories"></div>
   </section>
@@ -334,9 +266,9 @@
   <section class="how-section reveal" id="how">
     <div class="section-label">How it works</div>
     <h2 class="section-title">From profile to payment <em>in minutes.</em></h2>
-    <p class="section-sub">No agency fees. No middleman. Just you, your talent, and paying clients.</p>
+    <p class="section-sub">No agency fees. No middleman. Just you, your gigs, and paying clients.</p>
     <div class="how-visual">
-      <div class="how-card" data-num="01"><div class="how-icon"><i class="ti ti-user-plus"></i></div><h3>Create your profile</h3><p>Showcase your talent, set your rates, go live in minutes. Free to join — no credit card.</p></div>
+      <div class="how-card" data-num="01"><div class="how-icon"><i class="ti ti-user-plus"></i></div><h3>Create your artist profile</h3><p>Showcase your gigs, set your rates, go live in minutes. Free to join — no credit card.</p></div>
       <div class="how-card" data-num="02"><div class="how-icon"><i class="ti ti-bell"></i></div><h3>Receive bookings</h3><p>Clients find you and send requests. Review, negotiate, accept — on your terms.</p></div>
       <div class="how-card" data-num="03"><div class="how-icon"><i class="ti ti-coin"></i></div><h3>Deliver and get paid</h3><p>Show up, do your thing, get paid securely. Gearsh handles contracts and payments.</p></div>
     </div>
@@ -370,6 +302,21 @@
     </div>
   </section>
 
+  <!-- CLAIM PROFILE -->
+  <section class="claim-section reveal" id="claim">
+    <div class="claim-card">
+      <div class="claim-content">
+        <span class="section-label">For listed artists</span>
+        <h2>Already on <em>The Gearsh?</em></h2>
+        <p>Claim your official profile. Manage bookings, portfolio, and your presence — all in one place.</p>
+        <div class="claim-actions">
+          <a href="artists.html" class="btn-ghost">Find your profile</a>
+          <a href="claim-profile.html" class="btn-main">Claim your profile <i class="ti ti-arrow-right" style="font-size:16px"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- CTA -->
   <section class="cta-section">
     <div class="cta-box reveal">
@@ -380,8 +327,8 @@
       <div class="cta-overlay"></div>
       <div class="cta-content">
         <div class="section-label">Ready?</div>
-        <h2>Your next booking is <em>one profile away.</em></h2>
-        <p>Join Gearsh free. List your gig, set your rates, and start getting booked.</p>
+        <h2>Your next gig is <em>one profile away.</em></h2>
+        <p>Join Gearsh free. List your gig, set your rates, and get booked as an artist.</p>
         <a href="join-gig.html" class="btn-main">List your gig free <i class="ti ti-arrow-right" style="font-size:18px"></i></a>
         <div class="cta-fine">Free to join · No credit card required · Go live in minutes</div>
       </div>
@@ -405,345 +352,12 @@
   </footer>
 
   <script src="sa-showcase-data.js"></script>
+  <script src="artist-feed.js"></script>
+  <script src="gearsh-ui.js"></script>
   <script>
-    var API_BASE = '/api';
-    if (typeof SHOWCASE === 'undefined') {
-      var SHOWCASE = [];
-    }
-
-    function normalizeName(value) {
-      return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-    }
-
-    function bookUrl(artist) {
-      if (!artist || !artist.bookable) return null;
-      if (artist.username) return 'book-gig?artist=' + encodeURIComponent(String(artist.username).toLowerCase());
-      if (artist.profile_url) {
-        var match = String(artist.profile_url).match(/\/book\/([^/?#]+)/i);
-        if (match) return 'book-gig?artist=' + encodeURIComponent(match[1].toLowerCase());
-      }
-      if (artist.artist_id) return 'book-gig?artist=' + encodeURIComponent(artist.artist_id);
-      return null;
-    }
-
-    function cardHref(item) {
-      return bookUrl(item) || '#feed';
-    }
-
-    function formatPrice(amount) {
-      if (!amount) return '';
-      return 'from R' + Number(amount).toLocaleString('en-ZA');
-    }
-
-    function buildArtistIndex(artists) {
-      var index = {};
-      artists.forEach(function(artist) {
-        index[normalizeName(artist.name)] = artist;
-      });
-      return index;
-    }
-
-    function findArtistMatch(name, index) {
-      var key = normalizeName(name);
-      if (index[key]) return index[key];
-      var keys = Object.keys(index);
-      for (var i = 0; i < keys.length; i++) {
-        if (keys[i].indexOf(key) !== -1 || key.indexOf(keys[i]) !== -1) return index[keys[i]];
-      }
-      return null;
-    }
-
-    function findShowcaseImage(name) {
-      var match = SHOWCASE.find(function(item) {
-        return normalizeName(item.name) === normalizeName(name);
-      });
-      return match ? match.image : null;
-    }
-
-    function cardMasteryHours(item) {
-      if (item.mastery_hours != null) return Number(item.mastery_hours) || 0;
-      if (item.masteryHours != null) return Number(item.masteryHours) || 0;
-      return 0;
-    }
-
-    function masteryBadgeForHours(hours) {
-      if (hours >= 10000) return { label: 'Legend', badgeClass: 'fb-feat' };
-      if (hours >= 5000) return { label: 'Expert', badgeClass: 'fb-feat' };
-      if (hours >= 100) return { label: 'Rising', badgeClass: 'fb-rise' };
-      return null;
-    }
-
-    function apiArtistToCard(artist) {
-      var showcase = SHOWCASE.find(function(item) {
-        return normalizeName(item.name) === normalizeName(artist.name)
-          || (artist.username && item.username && String(item.username).toLowerCase() === String(artist.username).toLowerCase());
-      });
-      var hours = Number(artist.mastery_hours || 0);
-      if (showcase && Number(showcase.masteryHours || 0) > hours) {
-        hours = Number(showcase.masteryHours);
-      }
-      var tier = masteryBadgeForHours(hours);
-      return {
-        artist_id: artist.artist_id,
-        username: artist.username,
-        profile_url: artist.profile_url,
-        name: artist.name,
-        image: artist.image || findShowcaseImage(artist.name) || 'icons/Icon-512.png',
-        genre: [artist.category, artist.location, artist.country].filter(Boolean).join(' · ') || 'Available to book',
-        badge: tier ? tier.label : (artist.is_verified ? 'Verified' : (artist.is_trending ? 'Trending' : 'Book now')),
-        badgeClass: tier ? tier.badgeClass : (artist.is_verified ? 'fb-feat' : (artist.is_trending ? 'fb-rise' : 'fb-deal')),
-        price: artist.min_price ? formatPrice(artist.min_price) : (artist.base_rate ? formatPrice(artist.base_rate) : ''),
-        mastery_hours: hours,
-        bookable: true
-      };
-    }
-
-    function artistGenreSlugFromRecord(artist) {
-      if (artist && artist.genreSlug) return artist.genreSlug;
-      if (typeof resolveArtistGenreSlug === 'function') {
-        return resolveArtistGenreSlug(artist.category, artist.genre);
-      }
-      return 'other';
-    }
-
-    function showcaseCategories(item) {
-      var cats = [];
-      var slug = item.genreSlug || artistGenreSlugFromRecord(item);
-      cats.push('genre-' + slug);
-      if (cardMasteryHours(item) >= 5000 || item.badge === 'Legend' || item.badge === 'Expert') {
-        cats.push('mastery-legends');
-      }
-      return cats;
-    }
-
-    function showcaseToCard(item, match) {
-      var hours = Math.max(cardMasteryHours(item), match ? cardMasteryHours(match) : 0);
-      var tier = masteryBadgeForHours(hours);
-      return {
-        artist_id: match ? match.artist_id : null,
-        username: match ? match.username : null,
-        profile_url: match ? match.profile_url : null,
-        name: item.name,
-        image: item.image,
-        genre: item.genre,
-        badge: match ? (tier ? tier.label : 'Book now') : (tier ? tier.label : item.badge),
-        badgeClass: match ? (tier ? tier.badgeClass : 'fb-deal') : (tier ? tier.badgeClass : item.badgeClass),
-        price: item.price || (match && match.min_price ? formatPrice(match.min_price) : ''),
-        mastery_hours: hours,
-        bookable: !!match,
-        showcase: !match
-      };
-    }
-
-    function mergeCategoryArtists(categoryId, apiArtists, index) {
-      var filteredApi = apiArtists || [];
-      if (categoryId.indexOf('genre-') === 0) {
-        var genreKey = categoryId.slice(6);
-        filteredApi = filteredApi.filter(function(artist) {
-          return artistGenreSlugFromRecord(artist) === genreKey;
-        });
-      } else if (categoryId === 'mastery-legends') {
-        filteredApi = filteredApi.filter(function(artist) {
-          return Number(artist.mastery_hours || 0) >= 5000;
-        });
-      }
-
-      var cards = filteredApi.map(apiArtistToCard);
-      var usedIds = {};
-      var usedNames = {};
-      cards.forEach(function(card) {
-        if (card.artist_id) usedIds[card.artist_id] = true;
-        usedNames[normalizeName(card.name)] = true;
-      });
-
-      SHOWCASE.forEach(function(item) {
-        if (showcaseCategories(item).indexOf(categoryId) === -1) return;
-        var key = normalizeName(item.name);
-        if (usedNames[key]) return;
-        var match = findArtistMatch(item.name, index);
-        if (match && usedIds[match.artist_id]) return;
-        cards.push(showcaseToCard(item, match));
-        usedNames[key] = true;
-        if (match && match.artist_id) usedIds[match.artist_id] = true;
-      });
-
-      cards.sort(function(a, b) {
-        var hoursDiff = cardMasteryHours(b) - cardMasteryHours(a);
-        if (hoursDiff !== 0) return hoursDiff;
-        if (a.bookable === b.bookable) return 0;
-        return a.bookable ? -1 : 1;
-      });
-
-      return cards.slice(0, 16);
-    }
-
-    function renderFeedCard(item) {
-      var classes = 'feed-card' + (item.bookable ? ' is-bookable' : ' is-static');
-      var inner =
-        '<div class="feed-card-media">' +
-          '<img src="' + item.image + '" alt="' + item.name + '" loading="lazy">' +
-          '<span class="feed-card-badge ' + item.badgeClass + '">' + item.badge + '</span>' +
-          (item.bookable ? '<div class="feed-card-action"><span>Book now</span></div>' : '') +
-        '</div>' +
-        '<div class="feed-card-body">' +
-          '<div class="feed-card-name">' + item.name + '</div>' +
-          '<div class="feed-card-genre">' + item.genre + '</div>' +
-          (item.price ? '<div class="feed-card-price">' + item.price + '</div>' : '') +
-        '</div>';
-
-      if (item.bookable) {
-        return '<a class="' + classes + '" href="' + cardHref(item) + '" aria-label="Book ' + item.name + '">' + inner + '</a>';
-      }
-      return '<div class="' + classes + '" aria-label="' + item.name + ' — featured artist">' + inner + '</div>';
-    }
-
-    function renderCategorySection(category, cards) {
-      var cardsHtml = cards.length
-        ? cards.map(renderFeedCard).join('')
-        : '<div class="feed-empty">More artists coming soon. <a href="join-gig.html" style="color:var(--g-accent)">List your gig</a> to appear here.</div>';
-
-      return '<section class="feed-category" id="cat-' + category.id + '">' +
-        '<div class="feed-header">' +
-          '<div>' +
-            '<h3 class="feed-title"><i class="' + category.icon + '" style="font-size:20px;color:var(--g-accent);margin-right:8px;vertical-align:-2px"></i>' + category.title + '</h3>' +
-            '<p class="feed-subtitle">' + category.subtitle + '</p>' +
-          '</div>' +
-        '</div>' +
-        '<div class="feed-row">' + cardsHtml + '</div>' +
-      '</section>';
-    }
-
-    function renderStory(item) {
-      if (!item.image || !item.name) return '';
-      var href = item.bookable ? cardHref(item) : '#cat-mastery-legends';
-      return '<a class="story-item" href="' + href + '">' +
-        '<div class="story-ring"><img src="' + item.image + '" alt="' + item.name + '"></div>' +
-        '<span class="story-name">' + item.name + '</span></a>';
-    }
-
-    var STATIC_FEED_CATEGORIES = typeof GENRE_FEED_CATEGORIES !== 'undefined'
-      ? GENRE_FEED_CATEGORIES
-      : [{ id: 'mastery-legends', title: 'Mastery legends', subtitle: 'Top artists on Gearsh', icon: 'ti ti-crown' }];
-
-    function buildCategoryNav(categories) {
-      var nav = document.getElementById('category-nav');
-      if (!nav) return;
-      var items = categories && categories.length ? categories : STATIC_FEED_CATEGORIES;
-      nav.innerHTML = items.map(function(cat) {
-        return '<a class="cat-pill" href="#cat-' + cat.id + '"><i class="' + cat.icon + '"></i> ' + cat.title + '</a>';
-      }).join('');
-    }
-
-    function visibleFeedCategories(categories) {
-      var source = categories && categories.length ? categories : STATIC_FEED_CATEGORIES;
-      return source.filter(function(category) {
-        if (category.id === 'mastery-legends') return true;
-        var cards = mergeCategoryArtists(category.id, [], buildArtistIndex([]));
-        return cards.length > 0 || (category.artists && category.artists.length);
-      });
-    }
-
-    function paintTalentFeed(categories, apiArtists) {
-      var container = document.getElementById('feed-categories');
-      var stories = document.getElementById('stories-bar');
-      if (!container || !stories) return;
-
-      var index = buildArtistIndex(apiArtists || []);
-      var storyCards = [];
-      var seenStories = {};
-      var feedCategories = visibleFeedCategories(categories && categories.length ? categories : STATIC_FEED_CATEGORIES);
-      buildCategoryNav(feedCategories);
-
-      container.innerHTML = feedCategories.map(function(category) {
-        var cards = mergeCategoryArtists(category.id, category.artists || [], index);
-        cards.slice(0, 8).forEach(function(card) {
-          var storyKey = card.artist_id || normalizeName(card.name);
-          if (seenStories[storyKey]) return;
-          seenStories[storyKey] = true;
-          storyCards.push(card);
-        });
-        return renderCategorySection(category, cards);
-      }).join('');
-
-      if (!storyCards.length && SHOWCASE.length) {
-        storyCards = SHOWCASE.slice(0, 16).map(function(item) {
-          return showcaseToCard(item, findArtistMatch(item.name, index));
-        });
-      }
-
-      storyCards.sort(function(a, b) {
-        return cardMasteryHours(b) - cardMasteryHours(a);
-      });
-
-      stories.innerHTML = storyCards.slice(0, 16).map(renderStory).filter(Boolean).join('');
-      if (!stories.innerHTML) {
-        stories.innerHTML = '<a class="story-item" href="#feed"><div class="story-ring" style="display:flex;align-items:center;justify-content:center;background:var(--g-surface)"><i class="ti ti-search" style="color:var(--g-accent);font-size:24px"></i></div><span class="story-name">Explore</span></a>';
-      }
-    }
-
-    async function loadTalentFeed() {
-      if (SHOWCASE.length) {
-        paintTalentFeed(STATIC_FEED_CATEGORIES, []);
-      }
-
-      var categories = [];
-      var apiArtists = [];
-
-      try {
-        var res = await fetch(API_BASE + '/artists/feed');
-        var data = await res.json();
-        if (res.ok && data.success) categories = (data.data && data.data.categories) || [];
-      } catch (_) {}
-
-      if (categories.length) {
-        categories.forEach(function(category) {
-          (category.artists || []).forEach(function(artist) { apiArtists.push(artist); });
-        });
-      } else {
-        try {
-          var fallback = await fetch(API_BASE + '/artists?limit=100');
-          var fallbackData = await fallback.json();
-          if (fallback.ok && fallbackData.success) apiArtists = fallbackData.data || [];
-        } catch (_) {}
-      }
-
-      paintTalentFeed(categories.length ? categories : STATIC_FEED_CATEGORIES, apiArtists);
-    }
-
-    var obs = new IntersectionObserver(function(entries) {
-      entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.08 });
-    document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
-
-    buildCategoryNav(STATIC_FEED_CATEGORIES);
-    loadTalentFeed();
-
-    (async function updateNavForSession() {
-      var token = localStorage.getItem('gearsh_token');
-      if (!token) return;
-      try {
-        var res = await fetch(API_BASE + '/session', { headers: { Authorization: 'Bearer ' + token } });
-        var data = await res.json();
-        if (!res.ok || !data.success) return;
-        var dashHref = data.data.redirect_path || (
-          data.data.has_artist_dashboard || data.data.user_type === 'artist'
-            ? '/artist-dashboard.html'
-            : (data.data.user_type === 'admin' ? '/gearsh-god.html' : '/')
-        );
-        var label = (data.data.has_artist_dashboard || data.data.user_type === 'artist')
-          ? 'Dashboard'
-          : (data.data.user_type === 'admin' ? 'Command' : 'Home');
-        document.querySelectorAll('.g-nav-mobile-login, .g-nav-menu-auth a[href="/auth.html"]').forEach(function(el) {
-          el.textContent = label;
-          el.href = dashHref;
-        });
-        var heroSignIn = document.querySelector('.hero-actions .btn-ghost');
-        if (heroSignIn && (data.data.has_artist_dashboard || data.data.user_type === 'artist')) {
-          heroSignIn.textContent = 'Go to dashboard';
-          heroSignIn.href = '/artist-dashboard.html';
-        }
-      } catch (_) {}
-    })();
+    GearshFeed.showFeedSkeletons('feed-categories', 6);
+    GearshFeed.buildCategoryNav(GearshFeed.getCategories());
+    GearshFeed.loadArtistFeed();
   </script>
 </body>
 </html>

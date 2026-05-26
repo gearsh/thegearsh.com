@@ -177,7 +177,7 @@ class _FAQPageState extends State<FAQPage> with SingleTickerProviderStateMixin {
           _buildFAQSection('Getting Started', Icons.rocket_launch_rounded, _sky500, [
             _FAQItem(
               question: 'What is Gearsh?',
-              answer: 'Gearsh is a global marketplace connecting clients with creative talent including DJs, photographers, videographers, musicians, and other artists for events and bookings worldwide.',
+              answer: 'Gearsh is a global marketplace connecting clients with artists — DJs, musicians, comedians, designers, and creators — for gigs and bookings worldwide.',
             ),
             _FAQItem(
               question: 'How do I create an account?',
@@ -488,7 +488,7 @@ class _FAQPageState extends State<FAQPage> with SingleTickerProviderStateMixin {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Book Creative Talent Worldwide',
+                  'Book Artists & Gigs Worldwide',
                   style: TextStyle(
                     color: Colors.white.withAlpha(179),
                     fontSize: 16,

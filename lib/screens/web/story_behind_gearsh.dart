@@ -410,7 +410,7 @@ At its heart, Gearsh has always been about connecting people with the resources 
           Container(
             constraints: const BoxConstraints(maxWidth: 600),
             child: Text(
-              'A fusion of "gear" and "share" — the story of how a student\'s DJ dreams became a global platform for creative talent.',
+              'A fusion of "gear" and "share" — the story of how a student\'s DJ dreams became a global platform for artists and gigs.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: isMobile ? 16 : 18,

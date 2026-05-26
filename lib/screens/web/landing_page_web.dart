@@ -178,7 +178,7 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
     final features = [
       {
         'icon': Icons.search_rounded,
-        'title': 'Find Creative Talent',
+        'title': 'Find artists & gigs',
         'description': 'Browse a curated selection of DJs, photographers, and more.',
         'gradient': [_sky500, _cyan500],
       },
@@ -236,7 +236,7 @@ class _WebLandingPageState extends State<WebLandingPage> with TickerProviderStat
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Connect with DJs, photographers, videographers and more. Book instantly for your next event.',
+                  'Connect with DJs, musicians, comedians, and creators. Book gigs instantly for your next event.',
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 18,

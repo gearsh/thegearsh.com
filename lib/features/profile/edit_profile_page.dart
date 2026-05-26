@@ -959,7 +959,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                   Text(
                                     userRoleService.isArtist
                                       ? 'Offer your services to clients'
-                                      : 'Book creative professionals',
+                                      : 'Book artists for your events',
                                     style: TextStyle(
                                       color: Colors.white.withAlpha(153),
                                       fontSize: 13,

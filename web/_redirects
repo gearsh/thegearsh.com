@@ -31,9 +31,11 @@
 /booking/*                /gearsh-app.html 200
 /book/*                   /book-gig?artist=:splat 200
 /artist/*                 /gearsh-app.html 200
-/artists                  /gearsh-app.html 200
+/artists                  /artists.html 200
+/artists.html             /artists.html 200
+/search                   /search.html 200
+/search.html              /search.html 200
 /category/*               /gearsh-app.html 200
-/search                   /gearsh-app.html 200
 /gigs                     /gearsh-app.html 200
 /cart                     /gearsh-app.html 200
 /cart/*                   /gearsh-app.html 200

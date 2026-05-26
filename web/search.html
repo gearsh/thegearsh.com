@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Search artists on Gearsh — find DJs, musicians, comedians, and creators by name, genre, or location.">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Search Artists | Gearsh</title>
+  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+  <link rel="stylesheet" href="gearsh-brand.css">
+  <link rel="stylesheet" href="discovery.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="canonical" href="https://thegearsh.com/search">
+</head>
+<body>
+
+  <nav class="g-nav">
+    <div class="g-nav-inner">
+      <a href="./" class="g-nav-logo"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
+      <div class="g-nav-right">
+        <a href="/auth.html" class="g-nav-mobile-login">Login</a>
+        <button class="g-nav-menu-btn" type="button" aria-label="Open menu" aria-expanded="false"><i class="ti ti-menu-2"></i></button>
+      </div>
+      <ul class="g-nav-links">
+        <li class="g-nav-menu-auth"><a href="/auth.html">Login</a></li>
+        <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
+        <li><a href="search.html" class="active">Search</a></li>
+        <li><a href="artists.html">All artists</a></li>
+        <li><a href="./#how">How it works</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="search-shell">
+    <div class="search-bar-wrap">
+      <div class="search-bar" role="search">
+        <i class="ti ti-search search-icon" aria-hidden="true"></i>
+        <input type="search" id="search-input" placeholder="Search artists, genres, cities…" autocomplete="off" aria-label="Search artists" enterkeyhint="search">
+        <button type="button" class="search-clear" id="search-clear" aria-label="Clear search"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="search-suggestions" id="search-suggestions" role="listbox" aria-label="Suggestions"></div>
+    </div>
+    <div class="search-chips" id="search-chips"></div>
+  </div>
+
+  <div class="g-page">
+    <div class="g-page-hero" style="padding-top:20px">
+      <p id="search-meta" style="font-size:13px;color:var(--g-text-dim);margin:0">Trending artists</p>
+    </div>
+    <div id="search-results"></div>
+  </div>
+
+  <footer class="g-footer">
+    <div class="g-footer-inner">
+      <div class="g-footer-left"><img src="icons/Icon-512.png" alt=""> &copy; 2025 Gearsh (Pty) Ltd.</div>
+      <ul class="g-footer-links">
+        <li><a href="artists.html">All artists</a></li>
+        <li><a href="claim-profile.html">Claim profile</a></li>
+        <li><a href="join-gig.html">List your gig</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="sa-showcase-data.js"></script>
+  <script src="artist-feed.js"></script>
+  <script src="gearsh-ui.js"></script>
+  <script src="search-page.js"></script>
+</body>
+</html>

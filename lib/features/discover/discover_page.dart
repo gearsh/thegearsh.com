@@ -443,7 +443,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
         SliverToBoxAdapter(
           child: _buildCircularArtistSection(
             theme,
-            'Trending Now 🔥',
+            'Rising artists 🔥',
             trendingArtists,
           ),
         ),
@@ -486,7 +486,7 @@ class _DiscoverPageState extends ConsumerState<DiscoverPage> {
                 colors: [Color(0xFF38BDF8), Color(0xFF22D3EE)],
               ).createShader(bounds),
               child: Text(
-                'Discover Talent',
+                'Explore artists',
                 style: theme.textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   letterSpacing: -0.5,

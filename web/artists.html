@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Browse all artists on Gearsh — filter by genre, city, and availability. Book DJs, musicians, and creators for your next event.">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>All Artists | Gearsh</title>
+  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+  <link rel="stylesheet" href="gearsh-brand.css">
+  <link rel="stylesheet" href="discovery.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="canonical" href="https://thegearsh.com/artists">
+  <style>
+    .dir-search-wrap { flex: 1; min-width: 200px; max-width: 320px; }
+    .dir-search {
+      width: 100%; height: 38px;
+      background: var(--g-surface); border: 0.5px solid var(--g-border);
+      border-radius: 10px; padding: 0 14px 0 36px;
+      font-family: var(--g-font); font-size: 14px; color: var(--g-white);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235C5A56' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: 12px center;
+    }
+    .dir-search:focus { outline: none; border-color: rgba(0,191,255,0.4); }
+  </style>
+</head>
+<body>
+
+  <nav class="g-nav">
+    <div class="g-nav-inner">
+      <a href="./" class="g-nav-logo"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
+      <div class="g-nav-right">
+        <a href="/auth.html" class="g-nav-mobile-login">Login</a>
+        <button class="g-nav-menu-btn" type="button" aria-label="Open menu" aria-expanded="false"><i class="ti ti-menu-2"></i></button>
+      </div>
+      <ul class="g-nav-links">
+        <li class="g-nav-menu-auth"><a href="/auth.html">Login</a></li>
+        <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
+        <li><a href="search.html">Search</a></li>
+        <li><a href="artists.html" class="active">All artists</a></li>
+        <li><a href="./#how">How it works</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="g-page">
+    <div class="g-page-hero">
+      <h1>Discover <em>artists</em></h1>
+      <p>Browse South Africa's finest — filter by genre, city, and availability. Book directly, no middleman.</p>
+    </div>
+
+    <div class="filters-bar">
+      <div class="dir-search-wrap">
+        <input type="search" class="dir-search" id="dir-search" placeholder="Search by name…" aria-label="Filter by name">
+      </div>
+      <select class="filter-select" id="filter-genre" data-filter="genre" aria-label="Filter by genre">
+        <option value="all">All genres</option>
+      </select>
+      <select class="filter-select" id="filter-category" data-filter="category" aria-label="Filter by category">
+        <option value="all">All categories</option>
+      </select>
+      <select class="filter-select" id="filter-location" data-filter="location" aria-label="Filter by city">
+        <option value="all">All cities</option>
+      </select>
+      <select class="filter-select" id="filter-sort" data-filter="sort" aria-label="Sort artists">
+        <option value="popular">Most popular</option>
+        <option value="trending">Trending</option>
+        <option value="alpha">Alphabetical</option>
+        <option value="recent">Recently added</option>
+      </select>
+      <label class="filter-pill"><input type="checkbox" data-filter="verified" hidden> Verified</label>
+      <label class="filter-pill"><input type="checkbox" data-filter="bookable" hidden> Available</label>
+      <button type="button" class="filters-mobile-btn" id="filters-mobile-btn"><i class="ti ti-adjustments"></i> Filters</button>
+      <span class="filter-count" id="artist-count">Loading…</span>
+    </div>
+
+    <div class="artist-grid" id="artist-grid"></div>
+
+    <div class="load-more-wrap">
+      <button type="button" class="btn-ghost" id="load-more" style="display:none">Load more artists</button>
+    </div>
+  </div>
+
+  <div class="filter-drawer-overlay" id="filter-drawer-overlay"></div>
+  <div class="filter-drawer" id="filter-drawer">
+    <h3>Filters</h3>
+    <div class="filter-drawer-group">
+      <label class="filter-drawer-label">Genre</label>
+      <select class="filter-select" style="width:100%" data-filter="genre" id="filter-genre-mobile"></select>
+    </div>
+    <div class="filter-drawer-group">
+      <label class="filter-drawer-label">Category</label>
+      <select class="filter-select" style="width:100%" data-filter="category" id="filter-category-mobile"></select>
+    </div>
+    <div class="filter-drawer-group">
+      <label class="filter-drawer-label">City</label>
+      <select class="filter-select" style="width:100%" data-filter="location" id="filter-location-mobile"></select>
+    </div>
+    <div class="filter-drawer-group">
+      <label class="filter-drawer-label">Sort</label>
+      <select class="filter-select" style="width:100%" data-filter="sort">
+        <option value="popular">Most popular</option>
+        <option value="trending">Trending</option>
+        <option value="alpha">Alphabetical</option>
+        <option value="recent">Recently added</option>
+      </select>
+    </div>
+    <div class="filter-drawer-group">
+      <label class="filter-pill" style="width:100%;justify-content:center"><input type="checkbox" data-filter="verified"> Verified only</label>
+    </div>
+    <div class="filter-drawer-group">
+      <label class="filter-pill" style="width:100%;justify-content:center"><input type="checkbox" data-filter="bookable"> Available to book</label>
+    </div>
+    <button type="button" class="btn-main" id="filter-drawer-close" style="width:100%;justify-content:center;margin-top:8px">Apply filters</button>
+  </div>
+
+  <footer class="g-footer">
+    <div class="g-footer-inner">
+      <div class="g-footer-left"><img src="icons/Icon-512.png" alt=""> &copy; 2025 Gearsh (Pty) Ltd.</div>
+      <ul class="g-footer-links">
+        <li><a href="search.html">Search</a></li>
+        <li><a href="claim-profile.html">Claim profile</a></li>
+        <li><a href="join-gig.html">List your gig</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="sa-showcase-data.js"></script>
+  <script src="artist-feed.js"></script>
+  <script src="gearsh-ui.js"></script>
+  <script src="artists-page.js"></script>
+</body>
+</html>

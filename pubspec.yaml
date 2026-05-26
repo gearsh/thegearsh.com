@@ -1,5 +1,5 @@
 name: gearsh_app
-description: "Gearsh - The Global Marketplace to Book DJs, Photographers, Videographers & Creative Talent Worldwide"
+description: "Gearsh - Book artists and gigs. The global marketplace for DJs, musicians, comedians, and creators."
 publish_to: 'none'
 version: 1.0.0+3
 environment:

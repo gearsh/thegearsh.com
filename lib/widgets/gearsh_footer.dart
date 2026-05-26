@@ -41,7 +41,7 @@ class GearshFooter extends StatelessWidget {
                   _footerColumn(
                     title: 'Products',
                     items: [
-                      _FooterLink('Book an Artist'),
+                      _FooterLink('Book a gig'),
                       _FooterLink('Gear Sharing'),
                       _FooterLink('Events'),
                       _FooterLink('Merchandise'),
@@ -61,7 +61,7 @@ class GearshFooter extends StatelessWidget {
                     _footerColumn(
                       title: 'Reserve',
                       items: [
-                        _FooterLink('Book Talent'),
+                        _FooterLink('Book a gig'),
                         _FooterLink('Venues'),
                         _FooterLink('Cities'),
                       ],
@@ -168,7 +168,7 @@ class _FooterLink extends StatelessWidget {
             final routes = {
               'About us': '/about',
               'Visit Help Centre': '/help',
-              'Book an Artist': '/signup',
+              'Book a gig': '/book-gig.html',
               'Privacy': '/privacy',
               'Terms': '/terms',
               'Accessibility': '/accessibility',
@@ -185,7 +185,7 @@ class _FooterLink extends StatelessWidget {
               'Safety': '/safety',
               'Sustainability': '/sustainability',
               'Travel': '/travel',
-              'Book Talent': '/book-talent',
+              'Book a gig': '/book-gig.html',
               'Venues': '/venues',
               'Cities': '/cities',
               'Thohoyandou, Limpopo': '/location',

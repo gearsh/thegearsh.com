@@ -1,5 +1,5 @@
 {
-    "name": "Gearsh - Book Creative Talent",
+    "name": "Gearsh - Book Artists & Gigs",
     "short_name": "Gearsh",
     "start_url": "/",
     "display": "standalone",
@@ -9,7 +9,7 @@
     ],
     "background_color": "#FFFFFF",
     "theme_color": "#0A0A0A",
-    "description": "Connect with DJs, photographers, videographers and more. Book creative talent instantly for your next event.",
+    "description": "Connect with DJs, musicians, comedians, and creators. Book gigs and get artists for your next event.",
     "orientation": "portrait",
     "prefer_related_applications": false,
     "scope": "/",
@@ -24,7 +24,7 @@
         {
             "name": "Search Artists",
             "short_name": "Search",
-            "description": "Find creative talent",
+            "description": "Browse artists and book gigs",
             "url": "/search",
             "icons": [
                 {

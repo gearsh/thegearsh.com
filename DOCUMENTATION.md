@@ -58,7 +58,7 @@ Overview
 
 Gearsh is a **global Flutter mobile application** that helps users discover, follow, and book creative professionals (artists) such as DJs, musicians, photographers, videographers, visual artists, developers, actors, and other creators worldwide. 
 
-**The Story**: Gearsh is a fusion of "gear" and "share" — the name reflects its origin as a gear-sharing platform. Founded in 2016 by a computer science student who aspired to be a DJ but couldn't afford the equipment, Gearsh started as an "Uber for gear" concept. The idea was to let musicians share equipment — owners earn money from idle gear, borrowers access expensive equipment affordably. Today, Gearsh has evolved into the ultimate artist e-booking service, connecting talent with those who want to book them.
+**The Story**: Gearsh is a fusion of "gear" and "share" — the name reflects its origin as a gear-sharing platform. Founded in 2016 by a computer science student who aspired to be a DJ but couldn't afford the equipment, Gearsh started as an "Uber for gear" concept. The idea was to let musicians share equipment — owners earn money from idle gear, borrowers access expensive equipment affordably. Today, Gearsh has evolved into the ultimate artist e-booking service, connecting artists with those who want to book them.
 
 The app provides:
 - **Discovery feed** with categorised browsing and powerful search
@@ -68,7 +68,7 @@ The app provides:
 - **Booking infrastructure** with escrow payments, status tracking, and dispute prevention
 - **Smooth navigation** with custom page transitions
 
-**Core Principle**: Gearsh records facts. It does not take sides in disputes — it provides a neutral infrastructure for booking creative talent.
+**Core Principle**: Gearsh records facts. It does not take sides in disputes — it provides a neutral infrastructure for booking artists and gigs.
 
 This documentation describes the codebase as it stands in this repository, including project structure, key implementation details, how to run the app locally, and developer notes.
 

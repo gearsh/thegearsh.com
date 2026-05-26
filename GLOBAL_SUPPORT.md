@@ -2,7 +2,7 @@
 
 ## Overview
 
-Gearsh is now a **global marketplace** for booking creative talent worldwide. This document outlines the international features and configuration.
+Gearsh is now a **global marketplace** for booking artists and gigs worldwide. This document outlines the international features and configuration.
 
 ---
 

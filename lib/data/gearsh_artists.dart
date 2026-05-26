@@ -279,7 +279,7 @@ const List<GearshArtist> gearshArtists = [
     bookingFee: 20000,
     bookingFeeUSD: 1100.0,
     highlights: [
-      'Rising Amapiano talent',
+      'Rising Amapiano artist',
       'Club & festival DJ',
       'Signature log-drums',
     ],

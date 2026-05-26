@@ -148,7 +148,7 @@ class AboutPage extends StatelessWidget {
                         runSpacing: 24,
                         alignment: WrapAlignment.center,
                         children: [
-                          _featureCard('1. Create Your Profile', 'Upload your bio, photos, videos, and showcase your talent in one digital portfolio.'),
+                          _featureCard('1. Create Your Profile', 'Upload your bio, photos, videos, and showcase your gigs in one artist profile.'),
                           _featureCard('2. Set Your Terms', 'Control your availability, performance rates, and preferences with ease.'),
                           _featureCard('3. Get Booked & Paid', 'Receive booking requests, confirm gigs, perform, and get paid — instantly.'),
                         ],
@@ -216,9 +216,9 @@ class AboutPage extends StatelessWidget {
                         children: [
                           _footerSection('Gearsh', ['Visit Help Center']),
                           _footerSection('Company', ['About us', 'Our offerings', 'Newsroom', 'Investors', 'Blog', 'Careers']),
-                          _footerSection('Products', ['Book an Artist', 'Gear Sharing', 'Events', 'Merchandise', 'Gearsh for Business', 'Gift Cards']),
+                          _footerSection('Products', ['Book a gig', 'Gear Sharing', 'Events', 'Merchandise', 'Gearsh for Business', 'Gift Cards']),
                           _footerSection('Global Citizenship', ['Safety', 'Sustainability', 'Travel']),
-                          _footerSection('Reserve', ['Book Talent', 'Venues', 'Cities']),
+                          _footerSection('Reserve', ['Book a gig', 'Venues', 'Cities']),
                         ],
                       ),
                       Divider(color: Colors.grey[700], height: 32),

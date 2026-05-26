@@ -1,26 +1,26 @@
-# Gearsh - Book Creative Talent
+# Gearsh - Book Artists & Gigs
 
-Book DJs, photographers, videographers, hosts, and creative professionals for your events.
+Book DJs, musicians, comedians, and creators for your events — or list your gig and get booked.
 
 ## App Name (30 chars max)
 Gearsh
 
 ## Short Description (80 chars max)
-Book DJs, photographers & creative talent instantly. Find artists for any event.
+Book artists and gigs instantly. Explore DJs, musicians, and creators for any event.
 
 ## Full Description (4000 chars max)
 
 🎵 **Gearsh - The Ultimate Artist E-Booking Service** 🎵
 
-Discover and book extraordinary creative talent for your events. Whether you're planning a wedding, corporate event, birthday party, or concert - Gearsh connects you with the perfect artists.
+Discover and book artists for your events. Whether you're planning a wedding, corporate event, birthday party, or concert — Gearsh connects you with the perfect performers and creators.
 
-**✨ FIND CREATIVE TALENT**
-• Browse DJs, photographers, videographers, hosts, and producers
+**✨ EXPLORE ARTISTS**
+• Browse DJs, musicians, comedians, hosts, and producers
 • View portfolios, ratings, and reviews
 • Filter by location, price, and availability
-• Discover trending and verified artists
+• Discover rising and verified artists
 
-**📅 BOOK INSTANTLY**
+**📅 BOOK A GIG**
 • Select your date and services
 • Get instant confirmation
 • Secure payment processing
@@ -33,7 +33,7 @@ Discover and book extraordinary creative talent for your events. Whether you're 
 • Get quick responses
 
 **⭐ FOR ARTISTS**
-• Showcase your talent and build your brand
+• List your gig and build your brand
 • Manage bookings and availability
 • Connect with clients directly
 • Grow your creative business
@@ -46,13 +46,12 @@ Discover and book extraordinary creative talent for your events. Whether you're 
 
 **🌍 CATEGORIES**
 • DJs & Musicians
-• Photographers
-• Videographers
-• Event Hosts & MCs
+• Comedians & Hosts
+• Photographers & Videographers
 • Music Producers
 • And more...
 
-Join thousands of clients and artists who trust Gearsh for their event booking needs. Download now and discover the perfect creative talent for your next event!
+Join thousands of clients and artists who trust Gearsh for their event booking needs. Download now and book the perfect artist for your next gig!
 
 ---
 
@@ -61,20 +60,10 @@ Join thousands of clients and artists who trust Gearsh for their event booking n
 📱 Follow us on social media @gearshapp
 
 ## Keywords
-dj booking, photographer booking, event artists, book musicians, hire dj, wedding photographer, event videographer, party dj, event host, music producer, creative talent, artist booking app
+dj booking, book a gig, event artists, book musicians, hire dj, wedding dj, party entertainment, comedian booking, music producer, artist booking app, list your gig
 
 ## Category
 Entertainment
 
 ## Content Rating
 Everyone
-
-## Contact Email
-support@thegearsh.com
-
-## Privacy Policy URL
-https://www.thegearsh.com/privacy
-
-## Website
-https://www.thegearsh.com
-

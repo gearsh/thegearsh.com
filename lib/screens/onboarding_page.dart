@@ -26,7 +26,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   final List<_OnboardingSlide> _slides = const [
     _OnboardingSlide(
-      title: 'Explore the best talent',
+      title: 'Explore top artists',
       subtitle: 'Discover a curated selection of artists, DJs, and performers ready to make your event unforgettable.',
       icon: Icons.explore_outlined,
     ),
