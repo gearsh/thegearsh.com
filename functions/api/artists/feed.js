@@ -1,7 +1,23 @@
 // GET /api/artists/feed — categorized artist rows for the homepage
 
 import { parseSkills, buildProfileUrl } from '../auth-utils.js';
-import { seedRixElton } from '../demo-artists.js';
+import { seedShowcaseArtists, SA_SHOWCASE_ARTISTS } from '../sa-showcase-artists.js';
+
+const showcaseByUsername = new Map(
+  SA_SHOWCASE_ARTISTS.map(function(artist) {
+    return [String(artist.username || '').toLowerCase(), artist];
+  })
+);
+
+function applyShowcaseMastery(artist) {
+  const entry = showcaseByUsername.get(String(artist.username || '').toLowerCase());
+  const listedHours = Number(entry?.masteryHours || 0);
+  const liveHours = Number(artist.mastery_hours || 0);
+  if (listedHours > liveHours) {
+    return { ...artist, mastery_hours: listedHours };
+  }
+  return artist;
+}
 
 const SA_COUNTRIES = new Set([
   'south africa',
@@ -227,12 +243,14 @@ function buildCategories(artists) {
 export async function onRequestGet(context) {
   try {
     try {
-      const rix = await context.env.DB.prepare(
-        `SELECT id FROM users WHERE LOWER(username) = 'rixelton' LIMIT 1`
+      const demoCount = await context.env.DB.prepare(
+        `SELECT COUNT(*) AS count FROM users WHERE is_demo = 1`
       ).first();
-      if (!rix) await seedRixElton(context.env.DB);
+      if (!demoCount || Number(demoCount.count) < 100) {
+        await seedShowcaseArtists(context.env.DB);
+      }
     } catch (seedErr) {
-      console.error('Demo artist seed skipped:', seedErr);
+      console.error('Showcase artist seed skipped:', seedErr);
     }
 
     const query = `
@@ -268,7 +286,8 @@ export async function onRequestGet(context) {
     `;
 
     const result = await context.env.DB.prepare(query).all();
-    const categories = buildCategories(result.results || []);
+    const artists = (result.results || []).map(applyShowcaseMastery);
+    const categories = buildCategories(artists);
 
     return new Response(JSON.stringify({
       success: true,

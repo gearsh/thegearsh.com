@@ -267,6 +267,7 @@
   <section class="hero">
     <div class="hero-mosaic">
       <img src="assets/images/artists/coffee.png" alt="" loading="eager">
+      <img src="assets/images/artists/shimza.jpg" alt="" loading="eager">
       <img src="assets/images/artists/seether.png" alt="" loading="eager">
       <img src="assets/images/artists/kabza.png" alt="" loading="eager">
       <img src="assets/images/artists/maphorisa.png" alt="" loading="eager">
@@ -384,7 +385,7 @@
   <section class="cta-section">
     <div class="cta-box reveal">
       <div class="cta-mosaic">
-        <img src="assets/images/artists/tyla.jpg" alt=""><img src="assets/images/artists/maphorisa.png" alt=""><img src="assets/images/artists/coffee.png" alt=""><img src="assets/images/artists/nastyc.png" alt=""><img src="assets/images/artists/waffles.png" alt=""><img src="assets/images/artists/cassper.png" alt="">
+        <img src="assets/images/artists/coffee.png" alt=""><img src="assets/images/artists/shimza.jpg" alt=""><img src="assets/images/artists/tyla.jpg" alt=""><img src="assets/images/artists/maphorisa.png" alt=""><img src="assets/images/artists/nastyc.png" alt=""><img src="assets/images/artists/waffles.png" alt=""><img src="assets/images/artists/cassper.png" alt="">
         <img src="assets/images/artists/kelvin-momo.png" alt=""><img src="assets/images/artists/a-reece.png" alt=""><img src="assets/images/artists/kabza.png" alt=""><img src="assets/images/artists/emtee.webp" alt=""><img src="assets/images/artists/ZJ90.jpg" alt=""><img src="assets/images/artists/dripmaker.png" alt="">
       </div>
       <div class="cta-overlay"></div>
@@ -414,31 +415,12 @@
     </div>
   </footer>
 
+  <script src="sa-showcase-data.js"></script>
   <script>
     var API_BASE = '/api';
-
-    var SHOWCASE = [
-      { name: 'Black Coffee', image: 'assets/images/artists/coffee.png', genre: 'House · International', badge: 'Legend', badgeClass: 'fb-feat', large: true, masteryHours: 10000 },
-      { name: 'Seether', image: 'assets/images/artists/seether.png', genre: 'Rock · International', badge: 'Legend', badgeClass: 'fb-feat', masteryHours: 10000 },
-      { name: 'Kabza De Small', image: 'assets/images/artists/kabza.png', genre: 'Amapiano · Pretoria', badge: 'Legend', badgeClass: 'fb-feat', large: true, masteryHours: 9800 },
-      { name: 'DJ Maphorisa', image: 'assets/images/artists/maphorisa.png', genre: 'Amapiano · SA', badge: 'Expert', badgeClass: 'fb-feat', masteryHours: 9200 },
-      { name: 'Cassper Nyovest', image: 'assets/images/artists/cassper.png', genre: 'Hip Hop · Joburg', badge: 'Expert', badgeClass: 'fb-feat', masteryHours: 8800 },
-      { name: 'Tyla', image: 'assets/images/artists/tyla.jpg', genre: 'Afropop · Global', badge: 'Expert', badgeClass: 'fb-feat', large: true, masteryHours: 8500 },
-      { name: 'Nasty C', image: 'assets/images/artists/nastyc.png', genre: 'Hip Hop · Durban', badge: 'Expert', badgeClass: 'fb-feat', masteryHours: 7800 },
-      { name: 'Uncle Waffles', image: 'assets/images/artists/waffles.png', genre: 'DJ · Amapiano', badge: 'Expert', badgeClass: 'fb-rise', masteryHours: 6500 },
-      { name: 'A-Reece', image: 'assets/images/artists/a-reece.png', genre: 'Hip Hop · Pretoria', badge: 'Expert', badgeClass: 'fb-feat', masteryHours: 6200 },
-      { name: 'Emtee', image: 'assets/images/artists/emtee.webp', genre: 'Hip Hop · SA', badge: 'Expert', badgeClass: 'fb-feat', masteryHours: 5800 },
-      { name: 'Kelvin Momo', image: 'assets/images/artists/kelvin-momo.png', genre: 'Amapiano', badge: 'Rising', badgeClass: 'fb-rise', masteryHours: 5200 },
-      { name: 'Die Antwoord', image: 'assets/images/artists/antwoord.png', genre: 'Rap-Rave · Cape Town', badge: 'Expert', badgeClass: 'fb-feat', masteryHours: 7200 },
-      { name: 'The Kiffness', image: 'assets/images/artists/kiffness.png', genre: 'Music · Cape Town', badge: 'Featured', badgeClass: 'fb-feat', masteryHours: 4100 },
-      { name: 'William Last KRM', image: 'assets/images/artists/lastkrm.png', genre: 'Comedy · Music', badge: 'Rising', badgeClass: 'fb-rise', masteryHours: 2800 },
-      { name: 'ZJ90', image: 'assets/images/artists/ZJ90.jpg', genre: 'House · Amapiano', badge: 'Rising', badgeClass: 'fb-rise', price: 'from R25,000', masteryHours: 120 },
-      { name: 'Rix Elton', image: 'assets/images/artists/rixelton.jpg', genre: 'Amapiano DJ · Johannesburg', badge: 'Book now', badgeClass: 'fb-deal', price: 'R2,000/hr', masteryHours: 50 },
-      { name: 'Empress Ngqama', image: 'assets/images/artists/empress-ngqama.jpg', genre: 'Afro-Soul · Reggae', badge: 'Newcomer', badgeClass: 'fb-new', price: 'from R22,000', masteryHours: 95 },
-      { name: 'Dripmaker', image: 'assets/images/artists/dripmaker.png', genre: 'Fashion', badge: 'Rising', badgeClass: 'fb-rise', price: 'from R300', masteryHours: 180 },
-      { name: 'Y.D.E', image: 'assets/images/artists/yde.png', genre: 'Hip Hop', badge: '80% off', badgeClass: 'fb-deal', price: 'R2,000', masteryHours: 0 },
-      { name: 'Scotts Maphuma', image: 'assets/images/artists/scotts.png', genre: 'Artist · SA', badge: 'Newcomer', badgeClass: 'fb-new', masteryHours: 40 }
-    ];
+    if (typeof SHOWCASE === 'undefined') {
+      var SHOWCASE = [];
+    }
 
     function normalizeName(value) {
       return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -503,7 +485,14 @@
     }
 
     function apiArtistToCard(artist) {
+      var showcase = SHOWCASE.find(function(item) {
+        return normalizeName(item.name) === normalizeName(artist.name)
+          || (artist.username && item.username && String(item.username).toLowerCase() === String(artist.username).toLowerCase());
+      });
       var hours = Number(artist.mastery_hours || 0);
+      if (showcase && Number(showcase.masteryHours || 0) > hours) {
+        hours = Number(showcase.masteryHours);
+      }
       var tier = masteryBadgeForHours(hours);
       return {
         artist_id: artist.artist_id,
@@ -524,7 +513,7 @@
       var genre = String(item.genre || '').toLowerCase();
       var cats = ['mastery-legends', 'most-popular', 'top-rated'];
       if (cardMasteryHours(item) >= 10000) cats.unshift('mastery-legends');
-      if (item.badge === 'Newcomer') cats.push('new', 'rising');
+      if (item.badge === 'Newcomer' || item.badge === 'Listed') cats.push('new', 'rising');
       if (item.badge === 'Rising') cats.push('rising', 'trending', 'most-popular');
       if (item.badge === 'Featured' || item.badge === 'Legend' || item.badge === 'Expert') {
         cats.push('most-popular', 'trending', 'top-rated', 'mastery-legends');
@@ -535,7 +524,7 @@
     }
 
     function showcaseToCard(item, match) {
-      var hours = match ? cardMasteryHours(match) : cardMasteryHours(item);
+      var hours = Math.max(cardMasteryHours(item), match ? cardMasteryHours(match) : 0);
       var tier = masteryBadgeForHours(hours);
       return {
         artist_id: match ? match.artist_id : null,
