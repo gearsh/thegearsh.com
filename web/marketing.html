@@ -3,19 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Gearsh — the global platform where artists get discovered, booked, and paid. List your gig today.">
-  <meta name="og:title" content="Get Booked. Get Paid. Go Global. | Gearsh">
-  <meta name="og:description" content="Gearsh — the global platform where artists get discovered, booked, and paid.">
-  <meta name="og:image" content="icons/Icon-512.png">
+  <meta name="description" content="Gearsh — the global platform where artists get discovered, booked, and paid. Browse and book South Africa's top artists for your next event.">
+  <link rel="canonical" href="https://thegearsh.com/">
   <meta name="theme-color" content="#0A0A0A">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Gearsh">
+  <meta property="og:title" content="Get Booked. Get Paid. Go Global. | Gearsh">
+  <meta property="og:description" content="Gearsh — the global platform where artists get discovered, booked, and paid.">
+  <meta property="og:url" content="https://thegearsh.com/">
+  <meta property="og:image" content="https://thegearsh.com/icons/og-image.png">
+  <meta property="og:image:alt" content="Gearsh — book South Africa's top artists">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Get Booked. Get Paid. Go Global. | Gearsh">
+  <meta name="twitter:description" content="Gearsh — the global platform where artists get discovered, booked, and paid.">
+  <meta name="twitter:image" content="https://thegearsh.com/icons/og-image.png">
   <title>Get Booked. Get Paid. Go Global. | Gearsh</title>
   <link rel="icon" type="image/png" href="icons/Icon-192.png">
   <link rel="apple-touch-icon" href="icons/Icon-512.png">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="stylesheet" href="gearsh-brand.css">
   <link rel="stylesheet" href="discovery.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <link rel="prefetch" href="artist-feed.js">
   <link rel="prefetch" href="sa-showcase-data.js">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Gearsh",
+    "url": "https://thegearsh.com/",
+    "logo": "https://thegearsh.com/icons/Icon-512.png",
+    "sameAs": [
+      "https://twitter.com/gearsh",
+      "https://instagram.com/gearsh"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Gearsh",
+    "url": "https://thegearsh.com/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://thegearsh.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
   <style>
     /* ── HERO (homepage — kept here so tiles stay 4×3) ── */
     .hero {
@@ -188,11 +225,14 @@
 </head>
 <body>
 
+  <a class="skip-link" href="#main">Skip to main content</a>
+
   <!-- NAV -->
-  <nav class="g-nav">
+  <nav class="g-nav" aria-label="Primary">
     <div class="g-nav-inner">
-      <a href="./" class="g-nav-logo">
-        <img src="icons/Icon-512.png" alt="The Gearsh">
+      <a href="./" class="g-nav-logo" aria-label="Gearsh home">
+        <img src="icons/Icon-512.png" alt="" width="40" height="40">
+        <span class="sr-only" style="position:absolute;left:-9999px">Gearsh</span>
       </a>
       <div class="g-nav-right">
         <a href="/auth.html" class="g-nav-mobile-login">Login</a>
@@ -214,7 +254,8 @@
   </nav>
 
   <!-- HERO -->
-  <section class="hero">
+  <main id="main">
+  <section class="hero" aria-label="Get booked. Get paid. Go global.">
     <div class="hero-mosaic">
       <img src="assets/images/artists/coffee.png" alt="" loading="eager">
       <img src="assets/images/artists/shimza.jpg" alt="" loading="eager">
@@ -355,13 +396,14 @@
       </div>
     </div>
   </section>
+  </main>
 
   <!-- FOOTER -->
   <footer class="g-footer">
     <div class="g-footer-inner">
       <div class="g-footer-left">
-        <img src="icons/Icon-512.png" alt="The Gearsh">
-        &copy; 2025 Gearsh (Pty) Ltd. All rights reserved.
+        <img src="icons/Icon-512.png" alt="Gearsh" width="32" height="32">
+        &copy; 2026 Gearsh (Pty) Ltd. All rights reserved.
       </div>
       <ul class="g-footer-links">
         <li><a href="terms.html">Terms</a></li>
@@ -372,13 +414,16 @@
     </div>
   </footer>
 
-  <script src="sa-showcase-data.js"></script>
-  <script src="artist-feed.js"></script>
-  <script src="gearsh-ui.js"></script>
+  <script defer src="sa-showcase-data.js"></script>
+  <script defer src="artist-feed.js"></script>
+  <script defer src="gearsh-ui.js"></script>
   <script>
-    GearshFeed.showFeedSkeletons('feed-categories', 6);
-    GearshFeed.buildCategoryNav(GearshFeed.getCategories());
-    GearshFeed.loadArtistFeed();
+    window.addEventListener('DOMContentLoaded', function () {
+      if (!window.GearshFeed) return;
+      GearshFeed.showFeedSkeletons('feed-categories', 6);
+      GearshFeed.buildCategoryNav(GearshFeed.getCategories());
+      GearshFeed.loadArtistFeed();
+    });
   </script>
 </body>
 </html>

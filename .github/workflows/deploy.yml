@@ -62,6 +62,9 @@ jobs:
           cp web/terms.html build/web/terms.html
           cp web/privacy.html build/web/privacy.html
           cp web/_redirects build/web/_redirects
+          cp web/_headers build/web/_headers 2>/dev/null || true
+          cp web/robots.txt build/web/robots.txt 2>/dev/null || true
+          cp web/sitemap.xml build/web/sitemap.xml 2>/dev/null || true
           # Cloudflare Pages Functions + D1 config
           mkdir -p build/web/functions/api build/web/functions/book
           cp -r functions/api/* build/web/functions/api/

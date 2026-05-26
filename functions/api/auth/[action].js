@@ -62,8 +62,8 @@ async function handleRegister(context, body) {
     return jsonResponse({ success: false, error: 'Please enter a valid email address' }, 400);
   }
 
-  if (password.length < 6) {
-    return jsonResponse({ success: false, error: 'Password must be at least 6 characters long' }, 400);
+  if (password.length < 8) {
+    return jsonResponse({ success: false, error: 'Password must be at least 8 characters long' }, 400);
   }
 
   try {

@@ -4,17 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="Search artists on Gearsh — find DJs, musicians, comedians, and creators by name, genre, or location.">
+  <link rel="canonical" href="https://thegearsh.com/search">
   <meta name="theme-color" content="#0A0A0A">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Gearsh">
+  <meta property="og:title" content="Search Artists | Gearsh">
+  <meta property="og:description" content="Find DJs, musicians, comedians, and creators by name, genre, or location.">
+  <meta property="og:url" content="https://thegearsh.com/search">
+  <meta property="og:image" content="https://thegearsh.com/icons/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Search Artists | Gearsh">
+  <meta name="twitter:description" content="Find DJs, musicians, comedians, and creators on Gearsh.">
+  <meta name="twitter:image" content="https://thegearsh.com/icons/og-image.png">
   <title>Search Artists | Gearsh</title>
   <link rel="icon" type="image/png" href="icons/Icon-192.png">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="gearsh-brand.css">
   <link rel="stylesheet" href="discovery.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-  <link rel="canonical" href="https://thegearsh.com/search">
 </head>
 <body>
 
-  <nav class="g-nav">
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <nav class="g-nav" aria-label="Primary">
     <div class="g-nav-inner">
       <a href="./" class="g-nav-logo"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
       <div class="g-nav-right">
@@ -43,16 +56,16 @@
     <div class="search-chips" id="search-chips"></div>
   </div>
 
-  <div class="g-page">
+  <main id="main" class="g-page">
     <div class="g-page-hero" style="padding-top:20px">
       <p id="search-meta" style="font-size:13px;color:var(--g-text-dim);margin:0">Trending artists</p>
     </div>
     <div id="search-results"></div>
-  </div>
+  </main>
 
   <footer class="g-footer">
     <div class="g-footer-inner">
-      <div class="g-footer-left"><img src="icons/Icon-512.png" alt=""> &copy; 2025 Gearsh (Pty) Ltd.</div>
+      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="Gearsh" width="24" height="24"> &copy; 2026 Gearsh (Pty) Ltd.</div>
       <ul class="g-footer-links">
         <li><a href="artists.html">All artists</a></li>
         <li><a href="claim-profile.html">Claim profile</a></li>
@@ -61,9 +74,9 @@
     </div>
   </footer>
 
-  <script src="sa-showcase-data.js"></script>
-  <script src="artist-feed.js"></script>
-  <script src="gearsh-ui.js"></script>
-  <script src="search-page.js"></script>
+  <script defer src="sa-showcase-data.js"></script>
+  <script defer src="artist-feed.js"></script>
+  <script defer src="gearsh-ui.js"></script>
+  <script defer src="search-page.js"></script>
 </body>
 </html>

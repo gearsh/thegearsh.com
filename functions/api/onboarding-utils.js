@@ -75,7 +75,9 @@ export async function verifyStoredCode(db, target, channel, code) {
 export async function sendEmailCode(env, email, code, name) {
   const RESEND_API_KEY = env.RESEND_API_KEY;
   if (!RESEND_API_KEY) {
-    console.log(`Email verification code for ${email}: ${code}`);
+    if (env.NODE_ENV !== 'production' && env.ENVIRONMENT !== 'production') {
+      console.warn('Email verification code generated (demo mode, code not logged)');
+    }
     return { sent: false, demo: true };
   }
   try {
@@ -103,7 +105,6 @@ export async function sendWelcomeEmail(env, email, name, profileUrl) {
   const RESEND_API_KEY = env.RESEND_API_KEY;
   const link = profileUrl ? `https://thegearsh.com${profileUrl}` : 'https://thegearsh.com/artist-dashboard.html';
   if (!RESEND_API_KEY) {
-    console.log(`Welcome email for ${email}: ${link}`);
     return { sent: false };
   }
   try {
@@ -227,11 +228,11 @@ export async function sendPhoneCode(context, body) {
   await context.env.DB.prepare(`
     UPDATE users SET phone = ?, updated_at = ? WHERE id = ?
   `).bind(phone, new Date().toISOString(), auth.userId).run();
-  console.log(`Phone verification code for ${phone}: ${code}`);
+  const isProd = context.env.NODE_ENV === 'production' || context.env.ENVIRONMENT === 'production';
   return jsonResponse({
     success: true,
     message: 'Verification code sent',
-    data: { demo_code: code },
+    data: { demo_code: isProd ? undefined : code },
   });
 }
 

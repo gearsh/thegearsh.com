@@ -17,7 +17,6 @@ import { ensureOnboardingTables, sendWelcomeEmail } from './onboarding-utils.js'
 export async function onRequestPost(context) {
   try {
     const body = await context.request.json();
-    console.log("Signup request received:", JSON.stringify(body));
 
     const {
       email,
@@ -76,10 +75,8 @@ export async function onRequestPost(context) {
     try {
       await ensureAuthTables(context.env.DB);
       await ensureOnboardingTables(context.env.DB);
-      console.log("Tables ensured");
     } catch (tableErr) {
       console.error("Table creation error:", tableErr);
-      // Continue anyway - tables might already exist
     }
 
     // Check if email already exists
@@ -96,7 +93,6 @@ export async function onRequestPost(context) {
       }
     } catch (checkErr) {
       console.error("Email check error:", checkErr);
-      // Continue - table might not exist yet
     }
 
     if (user_type === 'artist') {
@@ -122,9 +118,6 @@ export async function onRequestPost(context) {
     const displayName = user_type === 'artist' && stageName ? stageName : `${firstName} ${lastName}`.trim();
     const createdAt = new Date().toISOString();
 
-    console.log("Inserting user:", userId, email.toLowerCase());
-
-    // Insert user with explicit values
     try {
       await context.env.DB.prepare(`
         INSERT INTO users (
@@ -150,13 +143,11 @@ export async function onRequestPost(context) {
         createdAt
       ).run();
 
-      console.log("User inserted successfully");
     } catch (insertErr) {
       console.error("Insert error:", insertErr.message);
       return jsonResponse({
         success: false,
         error: "Failed to create account. Please try again.",
-        debug: insertErr.message
       }, 500);
     }
 
@@ -246,10 +237,8 @@ export async function onRequestPost(context) {
           }
         }
 
-        console.log("Artist profile created");
       } catch (artistErr) {
         console.error("Artist profile error:", artistErr);
-        // Don't fail the signup if artist profile fails
       }
     }
 
@@ -287,7 +276,6 @@ export async function onRequestPost(context) {
     return jsonResponse({
       success: false,
       error: "Registration failed. Please try again.",
-      details: err.message
     }, 500);
   }
 }

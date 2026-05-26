@@ -13,7 +13,6 @@
 /register                 /join-gig.html 200
 /join                     /join-gig.html 200
 /dashboard                /artist-dashboard.html 200
-/app/login                /auth.html 200
 /app/onboarding           /join-gig.html 302
 /app/signup               /join-gig.html 302
 
@@ -48,7 +47,9 @@
 /help                     /gearsh-app.html 200
 /faq                      /gearsh-app.html 200
 /settings                 /gearsh-app.html 200
-/privacy-policy           /gearsh-app.html 200
+/privacy-policy           /privacy.html 200
+/privacy                  /privacy.html 200
+/terms                    /terms.html 200
 
 # Other marketing static pages
 /gearsh-god.html          /gearsh-god.html 200

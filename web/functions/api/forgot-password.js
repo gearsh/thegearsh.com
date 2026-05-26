@@ -64,7 +64,7 @@ export async function onRequestPost(context) {
         console.error('Resend error:', emailErr);
       }
     } else {
-      console.log('Password reset link (no RESEND_API_KEY):', resetUrl);
+      console.warn('Password reset email not sent: RESEND_API_KEY not configured');
     }
 
     return jsonResponse({

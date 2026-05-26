@@ -38,12 +38,15 @@ function enrichFromShowcase(artistData, showcase) {
 
 export async function onRequestGet(context) {
   try {
-    await ensureDemoColumns(context.env.DB);
     const identifier = context.params.id;
     const showcase = findShowcaseArtist(identifier);
     let resolved = await resolveArtistProfile(context.env.DB, identifier);
 
     if (!resolved && showcase) {
+      // Synchronously seed only when the artist is missing from the DB so
+      // first-time visitors get a real profile back. Subsequent visits hit
+      // the existing row directly.
+      await ensureDemoColumns(context.env.DB);
       await seedShowcaseArtist(context.env.DB, showcase);
       resolved = await resolveArtistProfile(context.env.DB, identifier);
     }

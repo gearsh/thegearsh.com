@@ -1,7 +1,18 @@
 User-agent: *
 Allow: /
+Allow: /assets/
+Allow: /icons/
+Disallow: /api/
 Disallow: /functions/
 Disallow: /canvaskit/
-Disallow: /assets/
+Disallow: /gearsh-god
+Disallow: /gearsh-god.html
+Disallow: /claim-profile
+Disallow: /claim-profile.html
+Disallow: /artist-dashboard
+Disallow: /artist-dashboard.html
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /app/
 
 Sitemap: https://thegearsh.com/sitemap.xml

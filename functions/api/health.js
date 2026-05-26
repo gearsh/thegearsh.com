@@ -2,13 +2,12 @@
 
 export async function onRequestGet(context) {
   try {
-    // Try to ping the database
     let dbStatus = 'unknown';
     try {
       await context.env.DB.prepare('SELECT 1').first();
       dbStatus = 'connected';
-    } catch (e) {
-      dbStatus = 'error: ' + e.message;
+    } catch (_) {
+      dbStatus = 'error';
     }
 
     return new Response(JSON.stringify({
@@ -24,11 +23,10 @@ export async function onRequestGet(context) {
       },
       status: 200,
     });
-  } catch (err) {
+  } catch (_) {
     return new Response(JSON.stringify({
       success: false,
       status: 'unhealthy',
-      error: err.message
     }), {
       headers: {
         "Content-Type": "application/json",

@@ -1,13 +1,20 @@
-// POST /api/reviews - Create a new review
+// POST /api/reviews - Create a new review (authenticated, client-only)
 // GET /api/reviews?artist_id=xxx - Get reviews for an artist
+
+import { parseToken, unauthorizedResponse } from './auth-utils.js';
 
 export async function onRequestPost(context) {
   try {
-    const body = await context.request.json();
-    const { booking_id, reviewer_id, artist_id, rating, comment } = body;
+    const reviewerId = await parseToken(
+      context.request.headers.get('Authorization'),
+      context.env,
+    );
+    if (!reviewerId) return unauthorizedResponse('Authentication required');
 
-    // Validate required fields
-    if (!booking_id || !reviewer_id || !artist_id || !rating) {
+    const body = await context.request.json();
+    const { booking_id, artist_id, rating, comment } = body;
+
+    if (!booking_id || !artist_id || !rating) {
       return new Response(JSON.stringify({
         success: false,
         error: "Missing required fields"
@@ -20,11 +27,11 @@ export async function onRequestPost(context) {
       });
     }
 
-    // Validate rating
-    if (rating < 1 || rating > 5) {
+    const numericRating = Number(rating);
+    if (!Number.isFinite(numericRating) || numericRating < 1 || numericRating > 5) {
       return new Response(JSON.stringify({
         success: false,
-        error: "Rating must be between 1 and 5"
+        error: "Rating must be a number between 1 and 5"
       }), {
         headers: {
           "Content-Type": "application/json",
@@ -34,9 +41,8 @@ export async function onRequestPost(context) {
       });
     }
 
-    // Check if booking exists and is completed
     const booking = await context.env.DB.prepare(`
-      SELECT id, status, client_id FROM bookings WHERE id = ?
+      SELECT id, status, client_id, artist_id FROM bookings WHERE id = ?
     `).bind(booking_id).first();
 
     if (!booking) {
@@ -52,7 +58,44 @@ export async function onRequestPost(context) {
       });
     }
 
-    // Check if review already exists
+    if (booking.client_id !== reviewerId) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: "Only the client on this booking can leave a review"
+      }), {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
+        status: 403,
+      });
+    }
+
+    if (String(booking.status).toLowerCase() !== 'completed') {
+      return new Response(JSON.stringify({
+        success: false,
+        error: "You can only review a booking that has been completed"
+      }), {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
+        status: 400,
+      });
+    }
+
+    if (booking.artist_id && booking.artist_id !== artist_id) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: "artist_id does not match the booking"
+      }), {
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
+        status: 400,
+      });
+    }
     const existingReview = await context.env.DB.prepare(`
       SELECT id FROM reviews WHERE booking_id = ?
     `).bind(booking_id).first();
@@ -73,27 +116,28 @@ export async function onRequestPost(context) {
     // Generate review ID
     const reviewId = `rev_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // Insert review
+    const reviewArtistId = booking.artist_id || artist_id;
+    const cleanComment = comment ? String(comment).slice(0, 2000) : null;
+
     await context.env.DB.prepare(`
       INSERT INTO reviews (id, booking_id, reviewer_id, artist_id, rating, comment)
       VALUES (?, ?, ?, ?, ?, ?)
-    `).bind(reviewId, booking_id, reviewer_id, artist_id, rating, comment || null).run();
+    `).bind(reviewId, booking_id, reviewerId, reviewArtistId, numericRating, cleanComment).run();
 
-    // Update artist's average rating
     const ratingStats = await context.env.DB.prepare(`
       SELECT AVG(rating) as avg_rating, COUNT(*) as total_reviews
       FROM reviews
       WHERE artist_id = ? AND is_visible = 1
-    `).bind(artist_id).first();
+    `).bind(reviewArtistId).first();
 
     await context.env.DB.prepare(`
       UPDATE artist_profiles
       SET avg_rating = ?, total_reviews = ?
       WHERE id = ?
     `).bind(
-      ratingStats.avg_rating || rating,
+      ratingStats.avg_rating || numericRating,
       ratingStats.total_reviews || 1,
-      artist_id
+      reviewArtistId
     ).run();
 
     return new Response(JSON.stringify({

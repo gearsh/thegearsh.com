@@ -1,31 +1,49 @@
-// GET /api/users - List all registered users (admin only)
-// GET /api/users/:id - Get a specific user
+// GET /api/users         - List all registered users (founder-only)
+// GET /api/users/:id     - Get a specific user (self or founder)
+
+import {
+  corsHeaders,
+  corsPreflightResponse,
+  jsonResponse,
+  parseToken,
+  isFounderRequest,
+  unauthorizedResponse,
+} from './auth-utils.js';
+
+const ALLOWED_USER_TYPES = new Set(['fan', 'client', 'artist', 'admin']);
 
 export async function onRequestGet(context) {
   try {
     const url = new URL(context.request.url);
-    const userId = url.pathname.split('/').pop();
+    const pathTail = url.pathname.split('/').filter(Boolean).pop();
 
-    // Check for authorization (simplified - implement proper JWT validation in production)
-    const authHeader = context.request.headers.get('Authorization');
-
-    if (userId && userId !== 'users') {
-      // Get specific user
-      return await getUser(context, userId);
-    } else {
-      // List all users
-      return await listUsers(context, url);
+    if (pathTail && pathTail !== 'users') {
+      return await getUser(context, pathTail);
     }
+
+    if (!isFounderRequest(context.request, context.env)) {
+      return unauthorizedResponse('Founder access required');
+    }
+
+    return await listUsers(context, url);
   } catch (err) {
-    console.error("Users API error:", err);
-    return jsonResponse({
-      success: false,
-      error: "Failed to fetch users"
-    }, 500);
+    console.error('Users API error:', err);
+    return jsonResponse({ success: false, error: 'Failed to fetch users' }, 500);
   }
 }
 
 async function getUser(context, userId) {
+  const founder = isFounderRequest(context.request, context.env);
+  if (!founder) {
+    const requesterId = await parseToken(
+      context.request.headers.get('Authorization'),
+      context.env,
+    );
+    if (!requesterId || requesterId !== userId) {
+      return unauthorizedResponse('Not allowed to view this user');
+    }
+  }
+
   const user = await context.env.DB.prepare(`
     SELECT
       id, email, user_type, first_name, last_name, display_name,
@@ -36,18 +54,14 @@ async function getUser(context, userId) {
   `).bind(userId).first();
 
   if (!user) {
-    return jsonResponse({
-      success: false,
-      error: "User not found"
-    }, 404);
+    return jsonResponse({ success: false, error: 'User not found' }, 404);
   }
 
-  // Get artist profile if user is an artist
   let artistProfile = null;
   if (user.user_type === 'artist') {
-    artistProfile = await context.env.DB.prepare(`
-      SELECT * FROM artist_profiles WHERE user_id = ?
-    `).bind(userId).first();
+    artistProfile = await context.env.DB.prepare(
+      `SELECT * FROM artist_profiles WHERE user_id = ?`,
+    ).bind(userId).first();
   }
 
   return jsonResponse({
@@ -55,16 +69,19 @@ async function getUser(context, userId) {
     data: {
       ...user,
       is_verified: Boolean(user.is_verified),
-      artist_profile: artistProfile
-    }
+      artist_profile: artistProfile,
+    },
   });
 }
 
 async function listUsers(context, url) {
-  const limit = parseInt(url.searchParams.get('limit') || '50');
-  const offset = parseInt(url.searchParams.get('offset') || '0');
+  const rawLimit = parseInt(url.searchParams.get('limit') || '50', 10);
+  const rawOffset = parseInt(url.searchParams.get('offset') || '0', 10);
+  const limit = Number.isFinite(rawLimit) ? Math.min(Math.max(rawLimit, 1), 200) : 50;
+  const offset = Number.isFinite(rawOffset) ? Math.max(rawOffset, 0) : 0;
   const userType = url.searchParams.get('user_type');
 
+  const params = [];
   let query = `
     SELECT
       id, email, user_type, first_name, last_name, display_name,
@@ -72,57 +89,36 @@ async function listUsers(context, url) {
     FROM users
     WHERE is_active = 1
   `;
-  const params = [];
+  let countQuery = `SELECT COUNT(*) as total FROM users WHERE is_active = 1`;
 
   if (userType) {
+    if (!ALLOWED_USER_TYPES.has(userType)) {
+      return jsonResponse({ success: false, error: 'Invalid user_type' }, 400);
+    }
     query += ` AND user_type = ?`;
+    countQuery += ` AND user_type = ?`;
     params.push(userType);
   }
 
   query += ` ORDER BY created_at DESC LIMIT ? OFFSET ?`;
-  params.push(limit, offset);
 
-  const result = await context.env.DB.prepare(query).bind(...params).all();
+  const listStmt = context.env.DB.prepare(query).bind(...params, limit, offset);
+  const countStmt = userType
+    ? context.env.DB.prepare(countQuery).bind(userType)
+    : context.env.DB.prepare(countQuery);
 
-  // Get total count
-  let countQuery = `SELECT COUNT(*) as total FROM users WHERE is_active = 1`;
-  if (userType) {
-    countQuery += ` AND user_type = '${userType}'`;
-  }
-  const countResult = await context.env.DB.prepare(countQuery).first();
+  const [result, countResult] = await Promise.all([listStmt.all(), countStmt.first()]);
 
   return jsonResponse({
     success: true,
-    data: result.results.map(user => ({
+    data: (result.results || []).map((user) => ({
       ...user,
-      is_verified: Boolean(user.is_verified)
+      is_verified: Boolean(user.is_verified),
     })),
-    meta: {
-      total: countResult.total,
-      limit,
-      offset
-    }
-  });
-}
-
-// Helper function for JSON responses
-function jsonResponse(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*"
-    },
-    status
+    meta: { total: countResult.total, limit, offset },
   });
 }
 
 export async function onRequestOptions() {
-  return new Response(null, {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
-  });
+  return corsPreflightResponse();
 }
-

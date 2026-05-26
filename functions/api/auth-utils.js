@@ -3,7 +3,8 @@
 export const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-founder-key',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-founder-key, x-api-key',
+  'Vary': 'Origin',
   'Content-Type': 'application/json',
 };
 
@@ -19,6 +20,11 @@ export function jsonResponse(body, status = 200) {
 
 export function corsPreflightResponse() {
   return new Response(null, { headers: corsHeaders });
+}
+
+export function safeErrorResponse(error, status = 500) {
+  const message = typeof error === 'string' ? error : 'Internal server error';
+  return jsonResponse({ success: false, error: message }, status);
 }
 
 function bytesToBase64(bytes) {
@@ -44,7 +50,36 @@ function base64UrlDecode(value) {
 }
 
 function getJwtSecret(env) {
-  return env.JWT_SECRET || env.AUTH_SECRET || 'gearsh-dev-secret-change-in-production';
+  const secret = env?.JWT_SECRET || env?.AUTH_SECRET;
+  if (secret && String(secret).length >= 16) return secret;
+  if ((env?.NODE_ENV || env?.ENVIRONMENT) === 'production') {
+    throw new Error('JWT_SECRET not configured');
+  }
+  return 'gearsh-dev-secret-change-in-production';
+}
+
+function allowLegacyTokens(env) {
+  const value = String(env?.ALLOW_LEGACY_TOKENS || '').toLowerCase();
+  return value === '1' || value === 'true' || value === 'yes';
+}
+
+export function isFounderRequest(request, env) {
+  const provided = request.headers.get('x-founder-key') || '';
+  const expected = env?.FOUNDER_ACCESS_KEY || '';
+  if (!expected) return false;
+  if (provided.length !== expected.length) return false;
+  let diff = 0;
+  for (let i = 0; i < provided.length; i += 1) {
+    diff |= provided.charCodeAt(i) ^ expected.charCodeAt(i);
+  }
+  return diff === 0;
+}
+
+export function requireFounder(context) {
+  if (!isFounderRequest(context.request, context.env)) {
+    return unauthorizedResponse('Founder access required');
+  }
+  return null;
 }
 
 async function importHmacKey(secret) {
@@ -119,7 +154,14 @@ export async function verifyPassword(password, storedHash) {
     return diff === 0;
   }
   const computed = await legacyHashPassword(password);
-  return computed === storedHash;
+  const a = String(computed);
+  const b = String(storedHash);
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i += 1) {
+    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return diff === 0;
 }
 
 export function passwordNeedsRehash(storedHash) {
@@ -153,7 +195,12 @@ async function parseJwtToken(token, env) {
   const parts = String(token || '').split('.');
   if (parts.length !== 3) return null;
   const unsigned = `${parts[0]}.${parts[1]}`;
-  const key = await importHmacKey(getJwtSecret(env));
+  let key;
+  try {
+    key = await importHmacKey(getJwtSecret(env));
+  } catch (_) {
+    return null;
+  }
   const signature = base64UrlDecode(parts[2]);
   const valid = await crypto.subtle.verify(
     'HMAC',
@@ -176,6 +223,7 @@ export async function parseToken(authHeader, env) {
     const jwtUserId = await parseJwtToken(token, env);
     if (jwtUserId) return jwtUserId;
   }
+  if (!allowLegacyTokens(env)) return null;
   return parseLegacyToken(token);
 }
 

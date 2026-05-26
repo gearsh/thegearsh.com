@@ -16,9 +16,9 @@ export async function onRequestPost(context) {
       );
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       return jsonResponse(
-        { success: false, error: 'Password must be at least 6 characters' },
+        { success: false, error: 'Password must be at least 8 characters' },
         400
       );
     }

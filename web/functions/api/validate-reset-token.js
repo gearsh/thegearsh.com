@@ -18,9 +18,8 @@ export async function onRequestPost(context) {
       );
     }
 
-    // Check if token exists and is valid
     const resetRecord = await context.env.DB.prepare(
-      'SELECT * FROM password_resets WHERE email = ? AND token = ?'
+      'SELECT * FROM password_resets WHERE LOWER(email) = LOWER(?) AND token = ?'
     ).bind(email, token).first();
 
     if (!resetRecord) {

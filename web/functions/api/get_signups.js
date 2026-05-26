@@ -1,32 +1,45 @@
-// filepath: c:\Users\admin\StudioProjects\thegearsh.com\web\functions\api\get_signups.js
-// Returns signups from D1 filtered to user_type = 'artist'
+// GET /api/get_signups - founder/admin export of artist signups
+//
+// Requires either x-founder-key (matching FOUNDER_ACCESS_KEY) or
+// x-api-key (matching SIGNUPS_API_KEY). Never serves data without auth.
+
+function constantTimeEquals(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i += 1) {
+    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return diff === 0;
+}
+
 export async function onRequestGet(context) {
   try {
-    // Optional API key protection: if SIGNUPS_API_KEY is set in the environment,
-    // require callers to send the same key in the `x-api-key` request header.
-    const requiredKey = context.env.SIGNUPS_API_KEY;
-    if (requiredKey) {
-      const provided = context.request.headers.get('x-api-key') || '';
-      if (provided !== requiredKey) {
-        return new Response(JSON.stringify({ success: false, error: 'Unauthorized' }), {
-          headers: { 'Content-Type': 'application/json' },
-          status: 401,
-        });
-      }
-    }
-    // Adjust the SQL as needed (select specific columns, add ORDER BY, pagination, etc.)
-    const stmt = context.env.DB.prepare(`
-      SELECT * FROM signups WHERE user_type = ?
-    `);
+    const founderExpected = context.env.FOUNDER_ACCESS_KEY || '';
+    const apiKeyExpected = context.env.SIGNUPS_API_KEY || '';
+    const providedFounder = context.request.headers.get('x-founder-key') || '';
+    const providedApi = context.request.headers.get('x-api-key') || '';
 
-    const { results } = await stmt.bind('artist').all();
+    const okFounder = founderExpected && constantTimeEquals(providedFounder, founderExpected);
+    const okApi = apiKeyExpected && constantTimeEquals(providedApi, apiKeyExpected);
+
+    if (!okFounder && !okApi) {
+      return new Response(JSON.stringify({ success: false, error: 'Unauthorized' }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 401,
+      });
+    }
+
+    const { results } = await context.env.DB.prepare(
+      `SELECT * FROM signups WHERE user_type = ?`
+    ).bind('artist').all();
 
     return new Response(JSON.stringify({ success: true, count: results.length, data: results }), {
       headers: { 'Content-Type': 'application/json' },
       status: 200,
     });
   } catch (err) {
-    console.error('Error querying signups:', err);
+    console.error('Error querying signups');
     return new Response(JSON.stringify({ success: false, error: 'Failed to query signups' }), {
       headers: { 'Content-Type': 'application/json' },
       status: 500,

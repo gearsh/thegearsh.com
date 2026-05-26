@@ -1,30 +1,27 @@
-// The Gearsh App - web/functions/api/update-profile.js
-// Cloudflare Worker to update user profile data
+// POST /api/update-profile - update profile data for the authenticated user
+
+import {
+  parseToken,
+  jsonResponse,
+  corsPreflightResponse,
+  unauthorizedResponse,
+} from './auth-utils.js';
+
+const ALLOWED_USER_TYPES = new Set(['fan', 'client', 'artist']);
 
 export async function onRequestPost(context) {
-  const { request, env } = context;
-
-  // CORS headers
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json',
-  };
-
   try {
-    // Verify authorization
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return new Response(
-        JSON.stringify({ error: 'Authorization required' }),
-        { status: 401, headers: corsHeaders }
-      );
+    const userId = await parseToken(
+      context.request.headers.get('Authorization'),
+      context.env,
+    );
+
+    if (!userId) {
+      return unauthorizedResponse('Authentication required');
     }
 
-    const body = await request.json();
+    const body = await context.request.json();
     const {
-      firebase_uid,
       user_type,
       contact_number,
       country,
@@ -32,29 +29,21 @@ export async function onRequestPost(context) {
       skill_set,
       date_of_birth,
       gender,
-    } = body;
+    } = body || {};
 
-    if (!firebase_uid) {
-      return new Response(
-        JSON.stringify({ error: 'Firebase UID is required' }),
-        { status: 400, headers: corsHeaders }
-      );
+    if (user_type && !ALLOWED_USER_TYPES.has(user_type)) {
+      return jsonResponse({ success: false, error: 'Invalid user_type' }, 400);
     }
 
-    // Check if user exists
-    const existingUser = await env.DB.prepare(
-      'SELECT id FROM users WHERE firebase_uid = ?'
-    ).bind(firebase_uid).first();
+    const existingUser = await context.env.DB.prepare(
+      `SELECT id FROM users WHERE id = ? AND is_active = 1`,
+    ).bind(userId).first();
 
     if (!existingUser) {
-      return new Response(
-        JSON.stringify({ error: 'User not found' }),
-        { status: 404, headers: corsHeaders }
-      );
+      return jsonResponse({ success: false, error: 'User not found' }, 404);
     }
 
-    // Update user profile
-    await env.DB.prepare(`
+    await context.env.DB.prepare(`
       UPDATE users SET
         user_type = COALESCE(?, user_type),
         phone = COALESCE(?, phone),
@@ -64,43 +53,25 @@ export async function onRequestPost(context) {
         date_of_birth = COALESCE(?, date_of_birth),
         gender = COALESCE(?, gender),
         updated_at = datetime('now')
-      WHERE firebase_uid = ?
+      WHERE id = ?
     `).bind(
-      user_type,
-      contact_number,
-      country,
-      location,
-      skill_set,
-      date_of_birth,
-      gender,
-      firebase_uid
+      user_type || null,
+      contact_number || null,
+      country || null,
+      location || null,
+      skill_set || null,
+      date_of_birth || null,
+      gender || null,
+      userId,
     ).run();
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: 'Profile updated successfully',
-      }),
-      { status: 200, headers: corsHeaders }
-    );
-
+    return jsonResponse({ success: true, message: 'Profile updated successfully' });
   } catch (error) {
     console.error('Update profile error:', error);
-    return new Response(
-      JSON.stringify({ error: 'Internal server error', details: error.message }),
-      { status: 500, headers: corsHeaders }
-    );
+    return jsonResponse({ success: false, error: 'Failed to update profile' }, 500);
   }
 }
 
 export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  });
+  return corsPreflightResponse();
 }
-

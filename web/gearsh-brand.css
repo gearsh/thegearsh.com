@@ -18,9 +18,12 @@
   --g-border: rgba(255,255,255,0.06);
   --g-border-light: rgba(255,255,255,0.12);
   --g-text: #E8E6E1;
-  --g-text-muted: #8A8780;
-  --g-text-dim: #5C5A56;
+  /* AA-compliant body-text muted (~5.4:1 on #0A0A0A) */
+  --g-text-muted: #A8A59E;
+  /* For meta/captions only; not used for body copy (~3.5:1) */
+  --g-text-dim: #7A776F;
   --g-white: #FAFAF9;
+  --g-focus: #66D6FF;
   --g-font: 'DM Sans', system-ui, -apple-system, sans-serif;
   --g-serif: 'Instrument Serif', Georgia, serif;
 }
@@ -35,6 +38,42 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+}
+
+/* Accessibility — keyboard focus visibility */
+*:focus { outline: none; }
+*:focus-visible {
+  outline: 2px solid var(--g-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+a.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 8px;
+  z-index: 1000;
+  padding: 8px 14px;
+  background: var(--g-white);
+  color: var(--g-black);
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+}
+a.skip-link:focus,
+a.skip-link:focus-visible {
+  left: 12px;
+  outline: 2px solid var(--g-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ── SHARED NAV ── */

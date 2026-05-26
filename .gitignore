@@ -125,3 +125,6 @@ lib/secrets.dart
 *.apk
 *.aab
 *.ipa
+build/
+/build/
+**/build/web/

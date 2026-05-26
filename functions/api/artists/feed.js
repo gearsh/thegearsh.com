@@ -133,13 +133,30 @@ function buildCategories(artists) {
   });
 }
 
-export async function onRequestGet(context) {
-  try {
+// Throttle seeding to once per hour per worker instance and run it in the
+// background via waitUntil so GET requests never block on DB writes.
+let lastSeedAt = 0;
+const SEED_THROTTLE_MS = 60 * 60 * 1000;
+
+function scheduleShowcaseSeed(context) {
+  const now = Date.now();
+  if (now - lastSeedAt < SEED_THROTTLE_MS) return;
+  lastSeedAt = now;
+  const task = (async () => {
     try {
       await seedShowcaseArtistsBatch(context.env.DB, 15);
     } catch (seedErr) {
       console.error('Showcase artist batch seed skipped:', seedErr);
     }
+  })();
+  if (typeof context.waitUntil === 'function') {
+    context.waitUntil(task);
+  }
+}
+
+export async function onRequestGet(context) {
+  try {
+    scheduleShowcaseSeed(context);
 
     const query = `
       SELECT
