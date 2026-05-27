@@ -6,9 +6,9 @@ import {
   jsonResponse,
   corsPreflightResponse,
   unauthorizedResponse,
-} from '../auth-utils.js';
-import { ensureActivityTables } from '../activity-schema.js';
-import { mapActivityRow } from '../activity-seed.js';
+} from './auth-utils.js';
+import { ensureActivityTables } from './activity-schema.js';
+import { mapActivityRow } from './activity-seed.js';
 
 const VALID_TYPES = new Set([
   'gig', 'collaboration', 'photoshoot', 'studio', 'travel', 'press', 'milestone', 'custom',

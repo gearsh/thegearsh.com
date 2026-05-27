@@ -7,8 +7,8 @@ import {
   jsonResponse,
   corsPreflightResponse,
   unauthorizedResponse,
-} from '../auth-utils.js';
-import { ensureActivityTables } from '../activity-schema.js';
+} from '../../auth-utils.js';
+import { ensureActivityTables } from '../../activity-schema.js';
 
 function newId(prefix) {
   return prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
