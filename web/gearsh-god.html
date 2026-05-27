@@ -166,7 +166,7 @@
     <div class="god-hero-inner">
       <span class="god-hero-badge"><i class="ti ti-shield-lock"></i> Founder access</span>
       <h1>Gearsh Command</h1>
-      <p id="hero-subtitle">Private control panel — platform intelligence, artist approvals, and live bookings.</p>
+      <p id="hero-subtitle">Private control panel for platform intelligence, artist approvals, and live bookings.</p>
       <div class="god-hero-actions hidden" id="hero-actions">
         <button class="god-btn" type="button" onclick="refreshAll()"><i class="ti ti-refresh"></i> Refresh</button>
         <button class="god-btn danger" type="button" onclick="signOut()"><i class="ti ti-logout"></i> Sign out</button>
@@ -242,7 +242,7 @@
 
     <div class="god-panel">
       <h2>Recent signups</h2>
-      <div class="sub">Everyone who joined — artists and clients</div>
+      <div class="sub">Everyone who joined: artists and clients</div>
       <div class="god-table-wrap">
         <table class="god-table">
           <thead>
@@ -256,7 +256,7 @@
     </div>
 
     <div class="god-panel" id="demo-panel">
-      <h2>Demo artist — Rix Elton</h2>
+      <h2>Demo artist: Rix Elton</h2>
       <div class="sub">Bookable demo profile for product testing. Rix can claim it later with a private code.</div>
       <div class="god-toolbar">
         <button class="god-btn primary" type="button" onclick="seedRixElton()"><i class="ti ti-user-plus"></i> Create / refresh Rix Elton</button>
@@ -365,7 +365,7 @@
     }
 
     function formatDate(value) {
-      if (!value) return '—';
+      if (!value) return 'N/A';
       var d = new Date(value);
       return Number.isNaN(d.getTime()) ? value : d.toLocaleString('en-ZA');
     }
@@ -459,8 +459,8 @@
       document.getElementById('app-view').classList.toggle('hidden', !show);
       document.getElementById('hero-actions').classList.toggle('hidden', !show);
       document.getElementById('hero-subtitle').textContent = show
-        ? 'Live platform intelligence — artists, bookings, and revenue.'
-        : 'Private control panel — platform intelligence, artist approvals, and live bookings.';
+        ? 'Live platform intelligence: artists, bookings, and revenue.'
+        : 'Private control panel for platform intelligence, artist approvals, and live bookings.';
     }
 
     function signOut() {
@@ -535,11 +535,11 @@
 
       document.getElementById('signups-body').innerHTML = (data.recent_signups || []).map(function(row) {
         return '<tr>' +
-          '<td><strong>' + (row.display_name || '—') + '</strong></td>' +
+          '<td><strong>' + (row.display_name || 'N/A') + '</strong></td>' +
           '<td>' + row.email + '</td>' +
           '<td>' + row.user_type + '</td>' +
           '<td>' + [row.location, row.country].filter(Boolean).join(', ') + '</td>' +
-          '<td>' + (row.category || '—') + '</td>' +
+          '<td>' + (row.category || 'N/A') + '</td>' +
           '<td>' + formatDate(row.created_at) + '</td>' +
           '<td>' + statusPill(row) + '</td>' +
         '</tr>';
@@ -547,10 +547,10 @@
 
       document.getElementById('bookings-body').innerHTML = (data.recent_bookings || []).map(function(row) {
         return '<tr>' +
-          '<td><strong>' + (row.artist_name || '—') + '</strong></td>' +
+          '<td><strong>' + (row.artist_name || 'N/A') + '</strong></td>' +
           '<td>' + (row.client_name || 'Guest') + '</td>' +
           '<td>' + formatDate(row.event_date || row.created_at) + '</td>' +
-          '<td>' + (row.event_location || '—') + '</td>' +
+          '<td>' + (row.event_location || 'N/A') + '</td>' +
           '<td>' + money(row.total_price) + '</td>' +
           '<td><span class="pill neutral">' + row.status + '</span></td>' +
           '<td><button class="god-btn" type="button" onclick="forceBookingStatus(\'' + row.id + '\', \'confirmed\')">Confirm</button></td>' +
@@ -570,10 +570,10 @@
       var rows = await founderFetch('/founder/verification-queue');
       document.getElementById('verification-body').innerHTML = (rows || []).map(function(row) {
         return '<tr>' +
-          '<td><strong>' + (row.display_name || '—') + '</strong></td>' +
+          '<td><strong>' + (row.display_name || 'N/A') + '</strong></td>' +
           '<td>' + row.email + '</td>' +
-          '<td>' + (row.category || '—') + '</td>' +
-          '<td>' + (row.hourly_rate ? money(row.hourly_rate) : '—') + '</td>' +
+          '<td>' + (row.category || 'N/A') + '</td>' +
+          '<td>' + (row.hourly_rate ? money(row.hourly_rate) : 'N/A') + '</td>' +
           '<td>' + (row.onboarding_status || 'pending') + '</td>' +
           '<td>' + formatDate(row.created_at) + '</td>' +
         '</tr>';
@@ -585,12 +585,12 @@
       var summary = data.escrow_summary || [];
       document.getElementById('escrow-summary').innerHTML = summary.map(function(row) {
         return '<div class="god-list-item"><span>' + row.event_type + '</span><span>' + money(row.total) + '</span></div>';
-      }).join('') || '<div class="god-list-item"><span>No escrow events yet</span><span>—</span></div>';
+      }).join('') || '<div class="god-list-item"><span>No escrow events yet</span><span>N/A</span></div>';
       document.getElementById('payments-body').innerHTML = (data.payments || []).map(function(row) {
         return '<tr>' +
           '<td>' + row.id + '</td>' +
           '<td>' + row.booking_id + '</td>' +
-          '<td>' + (row.client_name || '—') + '</td>' +
+          '<td>' + (row.client_name || 'N/A') + '</td>' +
           '<td>' + money(row.amount) + '</td>' +
           '<td>' + money(row.platform_fee || 0) + '</td>' +
           '<td>' + row.status + '</td>' +
@@ -644,7 +644,7 @@
       var artists = await founderFetch(query);
       document.getElementById('artists-body').innerHTML = (artists || []).map(function(row) {
         var skills = Array.isArray(row.skills) ? row.skills.join(', ') : (row.skills || '');
-        var link = row.profile_url ? ('<a href="' + row.profile_url + '" target="_blank" rel="noopener" style="color:var(--g-accent)">Open</a>') : '—';
+        var link = row.profile_url ? ('<a href="' + row.profile_url + '" target="_blank" rel="noopener" style="color:var(--g-accent)">Open</a>') : 'N/A';
         var actions = '<div class="row-actions">';
         if (!row.is_verified && row.is_active) actions += '<button class="approve" type="button" onclick="updateArtist(\'' + row.artist_id + '\', \'approve\')">Approve</button>';
         if (row.is_active) actions += '<button class="remove" type="button" onclick="updateArtist(\'' + row.artist_id + '\', \'remove\')">Remove</button>';
@@ -654,7 +654,7 @@
         return '<tr>' +
           '<td><strong>' + row.name + '</strong><br><span style="font-size:12px">' + row.email + '</span></td>' +
           '<td>' + [row.location, row.country].filter(Boolean).join(', ') + '</td>' +
-          '<td>' + (row.category || skills || '—') + '</td>' +
+          '<td>' + (row.category || skills || 'N/A') + '</td>' +
           '<td>' + (row.total_bookings || 0) + '</td>' +
           '<td>' + artistPill(row) + '</td>' +
           '<td>' + link + '</td>' +

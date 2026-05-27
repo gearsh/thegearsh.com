@@ -1,4 +1,4 @@
-// 100 South African artists — listed for discovery, claimable later via claim-profile
+﻿// 100 South African artists, listed for discovery, claimable later via claim-profile
 export const SA_SHOWCASE_ARTISTS = [
   {
     name: 'Black Coffee',
@@ -14,7 +14,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badgeClass: 'fb-feat',
     large: true,
     hourlyRate: 5500000,
-    bio: 'Black Coffee — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Black Coffee is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['DJ', 'House', 'Live Performance'],
   },
   {
@@ -31,7 +31,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badgeClass: 'fb-feat',
     large: true,
     hourlyRate: 350000,
-    bio: 'Shimza — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Shimza is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['DJ', 'House', 'Live Performance'],
   },
   {
@@ -47,7 +47,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 300000,
-    bio: 'Kabza De Small — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Kabza De Small is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -63,7 +63,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 75000,
-    bio: 'DJ Maphorisa — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'DJ Maphorisa is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -79,7 +79,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 207000,
-    bio: 'Cassper Nyovest — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Cassper Nyovest is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Hip Hop', 'Rap', 'Live Performance'],
   },
   {
@@ -95,7 +95,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 15000000,
-    bio: 'Tyla — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Tyla is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afropop', 'Live Performance'],
   },
   {
@@ -111,7 +111,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 100000,
-    bio: 'Nasty C — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Nasty C is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Hip Hop', 'Rap', 'Live Performance'],
   },
   {
@@ -127,7 +127,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 35000,
-    bio: 'Yung Swiss — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Yung Swiss is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Hip Hop', 'Rap', 'Live Performance'],
   },
   {
@@ -143,7 +143,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 50000,
-    bio: 'A-Reece — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'A-Reece is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Hip Hop', 'Rap', 'Live Performance'],
   },
   {
@@ -159,7 +159,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 250000,
-    bio: 'Die Antwoord — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Die Antwoord is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Rap-Rave', 'Live Performance'],
   },
   {
@@ -175,7 +175,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 120000,
-    bio: 'Master KG — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Master KG is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afro House', 'Live Performance'],
   },
   {
@@ -191,7 +191,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 85000,
-    bio: 'Uncle Waffles — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Uncle Waffles is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -207,7 +207,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 65000,
-    bio: 'Emtee — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Emtee is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Hip Hop', 'Rap', 'Live Performance'],
   },
   {
@@ -223,7 +223,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 75000,
-    bio: 'K.O — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'K.O is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Hip Hop', 'Rap', 'Live Performance'],
   },
   {
@@ -239,7 +239,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 85000,
-    bio: 'Kwesta — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Kwesta is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Hip Hop', 'Rap', 'Live Performance'],
   },
   {
@@ -255,7 +255,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 75000,
-    bio: 'Nadia Nakai — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Nadia Nakai is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Hip Hop', 'Rap', 'Live Performance'],
   },
   {
@@ -271,7 +271,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 55000,
-    bio: 'Blxckie — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Blxckie is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Hip Hop', 'Rap', 'Live Performance'],
   },
   {
@@ -287,7 +287,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 30000,
-    bio: 'Focalistic — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Focalistic is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -303,7 +303,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 70000,
-    bio: 'Sho Madjozi — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Sho Madjozi is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Gqom', 'Live Performance'],
   },
   {
@@ -319,7 +319,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 75000,
-    bio: 'Kelvin Momo — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Kelvin Momo is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -335,7 +335,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 75000,
-    bio: 'Tyler ICU — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Tyler ICU is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -351,7 +351,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 75000,
-    bio: 'Mr JazziQ — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Mr JazziQ is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -367,7 +367,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'Major League DJz — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Major League DJz is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -383,7 +383,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'Vigro Deep — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Vigro Deep is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -399,7 +399,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'Young Stunna — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Young Stunna is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -415,7 +415,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'Sir Trill — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Sir Trill is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -431,7 +431,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'Felo le Tee — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Felo le Tee is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -447,7 +447,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 80000,
-    bio: 'Makhadzi — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Makhadzi is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afropop', 'Live Performance'],
   },
   {
@@ -463,7 +463,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 75000,
-    bio: 'Sjava — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Sjava is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afropop', 'Live Performance'],
   },
   {
@@ -479,7 +479,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'The Kiffness — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'The Kiffness is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Electronic', 'Live Performance'],
   },
   {
@@ -495,7 +495,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 40000,
-    bio: 'LLOYISO — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'LLOYISO is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['R&B', 'Live Performance'],
   },
   {
@@ -512,7 +512,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badgeClass: 'fb-feat',
     large: true,
     hourlyRate: 350000,
-    bio: 'Seether — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Seether is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Rock', 'Live Performance'],
   },
   {
@@ -528,7 +528,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 50000,
-    bio: 'Prince Kaybee — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Prince Kaybee is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['House', 'Live Performance'],
   },
   {
@@ -544,7 +544,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 70000,
-    bio: 'DJ Zinhle — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'DJ Zinhle is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['DJ', 'House', 'Live Performance'],
   },
   {
@@ -560,7 +560,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 55000,
-    bio: 'Sun-EL Musician — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Sun-EL Musician is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afro House', 'Live Performance'],
   },
   {
@@ -576,7 +576,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'Caiiro — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Caiiro is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afro House', 'Live Performance'],
   },
   {
@@ -592,7 +592,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'Oscar Mbo — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Oscar Mbo is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afro House', 'Live Performance'],
   },
   {
@@ -608,7 +608,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'De Mthuda — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'De Mthuda is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -624,7 +624,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'Busta 929 — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Busta 929 is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -640,7 +640,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'Mellow & Sleazy — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Mellow & Sleazy is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -656,7 +656,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'MaWhoo — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'MaWhoo is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -672,7 +672,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'Aymos — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Aymos is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -688,7 +688,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'Simmy — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Simmy is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -704,7 +704,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'Kamo Mphela — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Kamo Mphela is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Dance', 'Live Performance'],
   },
   {
@@ -720,7 +720,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'Pabi Cooper — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Pabi Cooper is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -736,7 +736,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'Nkosazana Daughter — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Nkosazana Daughter is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -752,7 +752,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'Zee Nxumalo — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Zee Nxumalo is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -768,7 +768,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'Kharishma — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Kharishma is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -784,7 +784,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'Babalwa M — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Babalwa M is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -800,7 +800,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'DJ Stokie — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'DJ Stokie is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -816,7 +816,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 55000,
-    bio: 'Big Zulu — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Big Zulu is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Maskandi', 'Live Performance'],
   },
   {
@@ -832,7 +832,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'Usimamane — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Usimamane is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Maskandi', 'Live Performance'],
   },
   {
@@ -848,7 +848,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 65000,
-    bio: 'Joyous Celebration — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Joyous Celebration is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Gospel', 'Live Performance'],
   },
   {
@@ -864,7 +864,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'Blaq Diamond — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Blaq Diamond is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afropop', 'Live Performance'],
   },
   {
@@ -880,7 +880,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 55000,
-    bio: 'Elaine — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Elaine is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['R&B', 'Live Performance'],
   },
   {
@@ -896,7 +896,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 65000,
-    bio: 'Shekhinah — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Shekhinah is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Pop', 'Live Performance'],
   },
   {
@@ -912,7 +912,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'Nomfundo Moh — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Nomfundo Moh is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afropop', 'Live Performance'],
   },
   {
@@ -928,7 +928,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'Mduduzi Ncube — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Mduduzi Ncube is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Maskandi', 'Live Performance'],
   },
   {
@@ -944,7 +944,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 50000,
-    bio: 'King Monada — Bolobedu house pioneer and Lekompo torch-bearer. From the viral Idibala / Malwedhe (2018) to a Sony Music distribution deal and the 2025 album I Khant Do Dhis Enimo. Claim this profile to manage bookings.',
+    bio: 'King Monada. Bolobedu house pioneer and Lekompo torch-bearer. From the viral Idibala / Malwedhe (2018) to a Sony Music distribution deal and the 2025 album I Khant Do Dhis Enimo. Claim this profile to manage bookings.',
     skills: ['Bolobedu House', 'Lekompo', 'Live Performance'],
   },
   {
@@ -960,7 +960,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'Daliwonga — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Daliwonga is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -976,7 +976,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'Azana — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Azana is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afropop', 'Live Performance'],
   },
   {
@@ -992,7 +992,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'TOSS — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'TOSS is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -1008,7 +1008,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 25000,
-    bio: 'LeeMcKrazy — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'LeeMcKrazy is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -1024,7 +1024,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'TitoM — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'TitoM is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -1040,7 +1040,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Sam Deep — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Sam Deep is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -1056,7 +1056,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Mlindo The Vocalist — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Mlindo The Vocalist is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afropop', 'Live Performance'],
   },
   {
@@ -1072,7 +1072,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Lwah Ndlunkulu — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Lwah Ndlunkulu is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afropop', 'Live Performance'],
   },
   {
@@ -1088,7 +1088,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Sha Sha — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Sha Sha is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -1104,7 +1104,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Mafikizolo — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Mafikizolo is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afropop', 'Live Performance'],
   },
   {
@@ -1120,7 +1120,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'The Soil — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'The Soil is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Acapella', 'Live Performance'],
   },
   {
@@ -1136,7 +1136,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Dlala Thukzin — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Dlala Thukzin is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Gqom', 'Live Performance'],
   },
   {
@@ -1152,7 +1152,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'DBN GOGO — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'DBN GOGO is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -1168,7 +1168,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'DJ Tira — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'DJ Tira is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Gqom', 'Live Performance'],
   },
   {
@@ -1184,7 +1184,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 90000,
-    bio: 'Nomcebo Zikode — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Nomcebo Zikode is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afropop', 'Live Performance'],
   },
   {
@@ -1200,7 +1200,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 75000,
-    bio: 'Kelly Khumalo — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Kelly Khumalo is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afropop', 'Live Performance'],
   },
   {
@@ -1216,7 +1216,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Boohle — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Boohle is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -1232,7 +1232,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 85000,
-    bio: 'Benjamin Dube — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Benjamin Dube is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Gospel', 'Live Performance'],
   },
   {
@@ -1248,7 +1248,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Deborah Lukalu — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Deborah Lukalu is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Gospel', 'Live Performance'],
   },
   {
@@ -1264,7 +1264,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Dumi Mkokstad — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Dumi Mkokstad is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Gospel', 'Live Performance'],
   },
   {
@@ -1280,7 +1280,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Lebo Sekgobela — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Lebo Sekgobela is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Gospel', 'Live Performance'],
   },
   {
@@ -1296,7 +1296,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Q Twins — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Q Twins is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afropop', 'Live Performance'],
   },
   {
@@ -1312,7 +1312,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Mas Musiq — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Mas Musiq is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -1328,7 +1328,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: '2Point1 — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: '2Point1 is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -1344,7 +1344,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'TXC — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'TXC is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['DJ', 'House', 'Live Performance'],
   },
   {
@@ -1360,7 +1360,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Bassie — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Bassie is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -1376,7 +1376,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Megan Woods — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Megan Woods is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Pop', 'Live Performance'],
   },
   {
@@ -1392,7 +1392,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 12000,
-    bio: 'Mthandeni SK — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Mthandeni SK is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Maskandi', 'Live Performance'],
   },
   {
@@ -1408,7 +1408,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 3500,
-    bio: 'ZJ90 — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'ZJ90 is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -1424,7 +1424,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Listed',
     badgeClass: 'fb-new',
     hourlyRate: 2000,
-    bio: 'Rix Elton — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Rix Elton is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
@@ -1440,7 +1440,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Listed',
     badgeClass: 'fb-new',
     hourlyRate: 4500,
-    bio: 'Empress Ngqama — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Empress Ngqama is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afro-Soul', 'Live Performance'],
   },
   {
@@ -1456,7 +1456,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 3500,
-    bio: 'Dripmaker — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Dripmaker is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Fashion', 'Live Performance'],
   },
   {
@@ -1472,7 +1472,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Listed',
     badgeClass: 'fb-new',
     hourlyRate: 3000,
-    bio: 'Y.D.E — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Y.D.E is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Hip Hop', 'Rap', 'Live Performance'],
   },
   {
@@ -1488,11 +1488,11 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Listed',
     badgeClass: 'fb-new',
     hourlyRate: 2500,
-    bio: 'Scotts Maphuma — available to book on Gearsh. Claim this profile to manage bookings and payments.',
+    bio: 'Scotts Maphuma is live on Gearsh. Claim this profile to manage bookings and payments.',
     skills: ['Afropop', 'Live Performance'],
   },
   // ------------------------------------------------------------------------
-  // Limpopo Night — Xigaza & Lekompo (seeded 2026-05-27 for Monday rotation).
+  // Limpopo Night. Xigaza & Lekompo (seeded 2026-05-27 for Monday rotation).
   // Booking fees are approximate launch estimates pending verification.
   // Photos use the generic placeholder until solo portraits are sourced from
   // each artist's official Apple Music / Instagram / press kit.
@@ -1511,7 +1511,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badgeClass: 'fb-feat',
     large: true,
     hourlyRate: 55000,
-    bio: 'Dr Thomas "Shinyori" Chauke — King of Xitsonga Music. 37+ Shimatsatsa volumes, 4M+ copies sold, Order of Ikhamanga (Silver) and an honorary PhD from the University of Venda. Performs with the Shinyori Sisters. Claim this profile to manage bookings.',
+    bio: 'Dr Thomas "Shinyori" Chauke. King of Xitsonga Music. 37+ Shimatsatsa volumes, 4M+ copies sold, Order of Ikhamanga (Silver) and an honorary PhD from the University of Venda. Performs with the Shinyori Sisters. Claim this profile to manage bookings.',
     skills: ['Xitsonga Traditional', 'Live Performance'],
   },
   {
@@ -1528,7 +1528,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badgeClass: 'fb-feat',
     large: true,
     hourlyRate: 60000,
-    bio: 'Penny Penny — Shangaan Disco King. Debut Shaka Bundu (1994) sold 250 000+ copies and went double platinum, then was reissued globally by Awesome Tapes From Africa in 2013. Claim this profile to manage bookings.',
+    bio: 'Penny Penny. Shangaan Disco King. Debut Shaka Bundu (1994) sold 250 000+ copies and went double platinum, then was reissued globally by Awesome Tapes From Africa in 2013. Claim this profile to manage bookings.',
     skills: ['Tsonga Disco', 'Shangaan', 'Live Performance'],
   },
   {
@@ -1545,7 +1545,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badgeClass: 'fb-feat',
     large: true,
     hourlyRate: 50000,
-    bio: 'Dr Joe Shirimani — pioneer producer behind Shaka Bundu, founder of Kimayos (1987) and solo debut Black is Beautiful (1993). Over 30 years shaping Xitsonga disco. Claim this profile to manage bookings.',
+    bio: 'Dr Joe Shirimani. pioneer producer behind Shaka Bundu, founder of Kimayos (1987) and solo debut Black is Beautiful (1993). Over 30 years shaping Xitsonga disco. Claim this profile to manage bookings.',
     skills: ['Tsonga Disco', 'Producer', 'Live Performance'],
   },
   {
@@ -1561,7 +1561,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Expert',
     badgeClass: 'fb-feat',
     hourlyRate: 30000,
-    bio: 'President Benny Mayengani — first Tsonga artist to fill Giyani Stadium (2018). Blends traditional Xitsonga melodies with disco and ragga. Debut Tiba Ben (2011). Claim this profile to manage bookings.',
+    bio: 'President Benny Mayengani. first Tsonga artist to fill Giyani Stadium (2018). Blends traditional Xitsonga melodies with disco and ragga. Debut Tiba Ben (2011). Claim this profile to manage bookings.',
     skills: ['Tsonga Disco', 'Ragga', 'Live Performance'],
   },
   {
@@ -1577,7 +1577,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 55000,
-    bio: 'Ba Bethe Gashoazen — Lekompo super-producer and the first artist from the scene to sign with Sony Music South Africa (2025). Producer behind Kharishma\'s biggest hits, including Chokeselem. Claim this profile to manage bookings.',
+    bio: 'Ba Bethe Gashoazen. Lekompo super-producer and the first artist from the scene to sign with Sony Music South Africa (2025). Producer behind Kharishma\'s biggest hits, including Chokeselem. Claim this profile to manage bookings.',
     skills: ['Lekompo', 'Producer', 'Live Performance'],
   },
   {
@@ -1593,7 +1593,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'Shandesh — crowned Queen of Lekompo by Sowetan (Oct 2025). Real name Rakgoale Nelly Machete. Collaborated with King Monada on Ke Khumane Photo Tsao (2024). Claim this profile to manage bookings.',
+    bio: 'Shandesh. crowned Queen of Lekompo by Sowetan (Oct 2025). Real name Rakgoale Nelly Machete. Collaborated with King Monada on Ke Khumane Photo Tsao (2024). Claim this profile to manage bookings.',
     skills: ['Lekompo', 'Vocalist', 'Live Performance'],
   },
   {
@@ -1609,7 +1609,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 45000,
-    bio: 'DJ Janisto — Polokwane Lekompo producer. Featured on Master Chuza\'s Nke Lebadhe (Feb 2025). Claim this profile to manage bookings.',
+    bio: 'DJ Janisto. Polokwane Lekompo producer. Featured on Master Chuza\'s Nke Lebadhe (Feb 2025). Claim this profile to manage bookings.',
     skills: ['Lekompo', 'DJ', 'Producer'],
   },
   {
@@ -1625,7 +1625,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 40000,
-    bio: 'Naqua SA — Lekompo producer (real name Naqua Nakedi Mawasha). Works with Shebeshxt, Skomota, DJ Maphorisa and Buddy Sax. Hits include Lekunye and Mavuso a Tao Tao. Claim this profile to manage bookings.',
+    bio: 'Naqua SA. Lekompo producer (real name Naqua Nakedi Mawasha). Works with Shebeshxt, Skomota, DJ Maphorisa and Buddy Sax. Hits include Lekunye and Mavuso a Tao Tao. Claim this profile to manage bookings.',
     skills: ['Lekompo', 'DJ', 'Producer'],
   },
   {
@@ -1641,7 +1641,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 35000,
-    bio: 'Master Chuza — Limpopo Lekompo artist. Modhifo Wa Gona (2021) with Mr Six21 DJ Dance, Nke Lebadhe (2025) with DJ Janisto. Claim this profile to manage bookings.',
+    bio: 'Master Chuza. Limpopo Lekompo artist. Modhifo Wa Gona (2021) with Mr Six21 DJ Dance, Nke Lebadhe (2025) with DJ Janisto. Claim this profile to manage bookings.',
     skills: ['Lekompo', 'Live Performance'],
   },
   {
@@ -1657,7 +1657,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 32000,
-    bio: 'Mr Six21 DJ Dance — Limpopo Lekompo producer. Collaborations with Makhadzi, Master Chuza, and Mkoma Saan. Claim this profile to manage bookings.',
+    bio: 'Mr Six21 DJ Dance. Limpopo Lekompo producer. Collaborations with Makhadzi, Master Chuza, and Mkoma Saan. Claim this profile to manage bookings.',
     skills: ['Lekompo', 'DJ', 'Producer'],
   },
   {
@@ -1673,7 +1673,7 @@ export const SA_SHOWCASE_ARTISTS = [
     badge: 'Rising',
     badgeClass: 'fb-rise',
     hourlyRate: 30000,
-    bio: 'Janesh — rising Lekompo vocalist (real name Jane Malemela). Half of duo Motion Roots. Breakout hit Bao Jelasa (2023) on the Dikoloto album. 250k+ monthly Spotify listeners. Claim this profile to manage bookings.',
+    bio: 'Janesh. rising Lekompo vocalist (real name Jane Malemela). Half of duo Motion Roots. Breakout hit Bao Jelasa (2023) on the Dikoloto album. 250k+ monthly Spotify listeners. Claim this profile to manage bookings.',
     skills: ['Lekompo', 'Vocalist', 'Live Performance'],
   },
   {
@@ -1693,7 +1693,7 @@ export const SA_SHOWCASE_ARTISTS = [
     // surfaces until the artist's legal situation clears. Flip back to
     // 'active' (or remove the field) once confirmed available.
     status: 'unavailable',
-    bio: 'Shebeshxt — Limpopo Lekompo rapper (real name Lehlogonolo Katlego Chauke). Hits include Ke Di Shxt Malume and Rato Laka. Currently unavailable for bookings.',
+    bio: 'Shebeshxt. Limpopo Lekompo rapper (real name Lehlogonolo Katlego Chauke). Hits include Ke Di Shxt Malume and Rato Laka. Currently unavailable for bookings.',
     skills: ['Lekompo', 'Rap', 'Live Performance'],
   },
 ];
@@ -1706,7 +1706,7 @@ export const GENRE_FEATURED_ORDER = {
   'xigaza-lekompo': ['king-monada'],
 };
 
-/** Generic placeholder paths — artists using these sink in feed ordering. */
+/** Generic placeholder paths. artists using these sink in feed ordering. */
 const PLACEHOLDER_IMAGE_MARKERS = [
   '/artists.png',
   'artists/artists.png',
@@ -1759,7 +1759,7 @@ export const GENRE_FEED_CATEGORIES = [
   {
     id: 'mastery-legends',
     title: 'Mastery legends',
-    subtitle: 'Top artists — 10,000 hours of craft and countless stages',
+    subtitle: 'Top artists. 10,000 hours of craft and countless stages',
     icon: 'ti ti-crown',
   },
   {
@@ -1795,7 +1795,7 @@ export const GENRE_FEED_CATEGORIES = [
   {
     id: 'genre-xigaza-lekompo',
     title: 'Xigaza & Lekompo',
-    subtitle: 'Limpopo street sound — Polokwane, Sekhukhune, Giyani',
+    subtitle: 'Limpopo street sound. Polokwane, Sekhukhune, Giyani',
     icon: 'ti ti-flame',
   },
   {

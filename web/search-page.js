@@ -35,7 +35,7 @@
         '<div class="state-panel">' +
           '<i class="ti ti-search-off"></i>' +
           '<h3>No artists found</h3>' +
-          '<p>Try a different name, genre, or location — or browse all artists.</p>' +
+          '<p>Try a different name, genre, or location. Or browse all artists.</p>' +
           '<a href="/artists" class="btn-main" style="margin-top:20px;display:inline-flex">View all artists</a>' +
         '</div>';
       if (metaEl) metaEl.textContent = label || '0 results';
@@ -225,7 +225,7 @@
 
     if (metaEl) {
       metaEl.innerHTML = 'Tonight: <strong style="color:var(--g-white)">' +
-        GearshFeed.escapeHtml(tonight.title) + '</strong> — ' +
+        GearshFeed.escapeHtml(tonight.title) + '</strong>. ' +
         GearshFeed.escapeHtml(tonight.tagline);
     }
     renderResults(promoted, promoted.length + ' artist' + (promoted.length === 1 ? '' : 's'));

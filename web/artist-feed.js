@@ -367,9 +367,9 @@
       '</div>';
 
     if (href && item.bookable) {
-      return '<a class="' + classes + '" href="' + href + '" aria-label="' + escapeHtml(actionLabel + ' — ' + item.name) + '">' + inner + '</a>';
+      return '<a class="' + classes + '" href="' + href + '" aria-label="' + escapeHtml(actionLabel + ': ' + item.name) + '">' + inner + '</a>';
     }
-    return '<div class="' + classes + '" aria-label="' + escapeHtml(item.name) + ' — featured artist">' + inner + '</div>';
+    return '<div class="' + classes + '" aria-label="' + escapeHtml(item.name) + ', featured artist">' + inner + '</div>';
   }
 
   function renderFeedSkeleton(count) {

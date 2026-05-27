@@ -58,6 +58,7 @@
 # reads ?spotlight=tonight and pre-fills the genre filter from
 # day-genre-schedule.js so the same URL works every night of the week.
 /tonight                  /search?spotlight=tonight 302
+/following                /following-feed 302
 
 # Other marketing static pages
 /gearsh-god.html          /gearsh-god.html 200

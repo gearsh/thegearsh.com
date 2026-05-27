@@ -12,13 +12,13 @@ function masteryTier(hours) {
   if (hours >= 10000) {
     return { id: 'legend', label: 'Legend', range: '10,000+ hrs', icon: 'crown' };
   }
-  if (hours >= 5000) {
-    return { id: 'expert', label: 'Expert', range: '5,000 – 9,999 hrs', icon: 'star' };
+    if (hours >= 5000) {
+    return { id: 'expert', label: 'Expert', range: '5,000 to 9,999 hrs', icon: 'star' };
   }
   if (hours >= 100) {
-    return { id: 'rising', label: 'Rising', range: '100 – 4,999 hrs', icon: 'rocket' };
+    return { id: 'rising', label: 'Rising', range: '100 to 4,999 hrs', icon: 'rocket' };
   }
-  return { id: 'newcomer', label: 'Newcomer', range: '0 – 99 hrs', icon: 'seedling' };
+  return { id: 'newcomer', label: 'Newcomer', range: '0 to 99 hrs', icon: 'seedling' };
 }
 
 function parsePortfolioUrls(value) {
@@ -48,7 +48,7 @@ function buildChecklist(user, artistProfile, services) {
     {
       id: 'portfolio',
       title: 'Upload portfolio',
-      description: 'Show clients your best work — photos, videos, and past gigs.',
+      description: 'Show clients your best work. Photos, videos, and past gigs.',
       action: 'Add photos',
       completed: portfolio.length > 0,
     },
@@ -147,7 +147,7 @@ export async function onRequestGet(context) {
       return {
         id: booking.id,
         type: 'booking',
-        title: booking.client_name + ' — ' + (booking.service_name || booking.event_type || 'Booking request'),
+        title: booking.client_name + ': ' + (booking.service_name || booking.event_type || 'Booking request'),
         subtitle: booking.event_date +
           (booking.event_time ? ' · ' + booking.event_time : '') +
           (booking.event_location ? ' · ' + booking.event_location : ''),

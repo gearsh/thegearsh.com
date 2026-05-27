@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Book an artist on Gearsh — secure direct booking with no middleman, transparent pricing, and verified profiles.">
+  <meta name="description" content="Book an artist on Gearsh. Secure direct booking with no middleman, transparent pricing, and verified profiles.">
   <link rel="canonical" href="https://thegearsh.com/book-gig.html">
   <meta name="theme-color" content="#0A0A0A">
   <meta property="og:type" content="website">
@@ -20,6 +20,7 @@
   <link rel="icon" type="image/png" href="icons/Icon-192.png">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="gearsh-brand.css">
+  <link rel="stylesheet" href="activity-feed.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <style>
     .book-page { padding: 80px 20px 60px; max-width: 960px; margin: 0 auto; }
@@ -175,8 +176,8 @@
         <div class="book-badge" id="book-badge"><i class="ti ti-seedling"></i> Available to book</div>
         <h1 class="book-title">Book <em id="artist-name">…</em></h1>
         <div class="book-meta">
-          <span id="artist-location"><i class="ti ti-map-pin"></i> —</span>
-          <span id="artist-category"><i class="ti ti-tag"></i> —</span>
+          <span id="artist-location"><i class="ti ti-map-pin"></i> …</span>
+          <span id="artist-category"><i class="ti ti-tag"></i> …</span>
         </div>
         <div class="skill-tags" id="skill-tags"></div>
         <p class="book-bio" id="artist-bio" style="display:none"></p>
@@ -188,6 +189,12 @@
       </div>
     </div>
 
+    <div class="act-profile-tabs" role="tablist">
+      <button type="button" class="act-profile-tab is-active" data-book-tab="booking">Book</button>
+      <button type="button" class="act-profile-tab" data-book-tab="activity">Activity</button>
+    </div>
+
+    <div id="panel-booking">
     <div class="book-portfolio card" id="portfolio-section" style="display:none">
       <h2 id="portfolio-title">Portfolio</h2>
       <div class="portfolio-grid" id="portfolio-grid"></div>
@@ -215,6 +222,11 @@
           </a>
         </form>
       </div>
+    </div>
+    </div>
+
+    <div id="panel-activity" class="act-feed-shell" hidden>
+      <div id="artist-activity-feed"></div>
     </div>
   </div>
 
@@ -349,7 +361,7 @@
         data.services.forEach(function(service) {
           var opt = document.createElement('option');
           opt.value = service.id;
-          opt.textContent = service.name + ' — ' + formatMoney(service.price);
+          opt.textContent = service.name + ' · ' + formatMoney(service.price);
           serviceSelect.appendChild(opt);
         });
       }
@@ -364,7 +376,32 @@
       document.title = 'Book ' + (data.name || 'Gig') + ' | Gearsh';
       document.getElementById('loading').style.display = 'none';
       document.getElementById('content').style.display = 'block';
+
+      if (artistSlug) {
+        (function bootFeed(slug, username) {
+          if (!window.GearshActivityFeed) {
+            setTimeout(function() { bootFeed(slug, username); }, 40);
+            return;
+          }
+          window.__bookActivityFeed = new GearshActivityFeed({
+            container: '#artist-activity-feed',
+            mode: 'artist',
+            artistId: username || slug,
+          });
+        })(artistSlug, data.username);
+      }
     }
+
+    document.querySelectorAll('[data-book-tab]').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        var id = tab.getAttribute('data-book-tab');
+        document.querySelectorAll('[data-book-tab]').forEach(function(t) {
+          t.classList.toggle('is-active', t === tab);
+        });
+        document.getElementById('panel-booking').hidden = id !== 'booking';
+        document.getElementById('panel-activity').hidden = id !== 'activity';
+      });
+    });
 
     async function loadProfile() {
       if (!artistSlug) return showError();
@@ -418,5 +455,6 @@
 
     loadProfile();
   </script>
+  <script defer src="/activity-feed.js"></script>
 </body>
 </html>

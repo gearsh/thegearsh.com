@@ -65,7 +65,7 @@
     var image = resolveImage(post.featuredImage);
     var description = post.excerpt || post.title;
 
-    document.title = post.title + ' | G-Log — Gearsh';
+    document.title = post.title + ' | G-Log | Gearsh';
     setMeta('name', 'description', description);
     setMeta('property', 'og:type', 'article');
     setMeta('property', 'og:site_name', 'Gearsh G-Log');
@@ -201,7 +201,7 @@
 
   function setupShare(post) {
     var url = encodeURIComponent('https://thegearsh.com/glog/' + post.slug);
-    var text = encodeURIComponent(post.title + ' — G-Log on Gearsh');
+    var text = encodeURIComponent(post.title + ' on G-Log | Gearsh');
     var wrap = document.getElementById('glog-share');
     if (!wrap) return;
 
@@ -274,7 +274,7 @@
   }
 
   function renderError() {
-    document.title = 'Story not found | G-Log — Gearsh';
+    document.title = 'Story not found | G-Log | Gearsh';
     var shell = document.getElementById('glog-article-app');
     if (shell) {
       shell.innerHTML = '<div class="glog-empty"><i class="ti ti-news-off"></i><h2>Story not found</h2><p>This G-Log article may have moved or hasn\'t been published yet.</p><a href="/glog" class="btn-main" style="margin-top:18px;display:inline-flex">Back to G-Log</a></div>';

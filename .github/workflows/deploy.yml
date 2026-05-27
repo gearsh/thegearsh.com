@@ -60,6 +60,10 @@ jobs:
           cp web/claim-profile.html build/web/claim-profile.html
           cp web/sa-showcase-data.js build/web/sa-showcase-data.js
           cp web/day-genre-schedule.js build/web/day-genre-schedule.js 2>/dev/null || true
+          cp web/following-feed.html build/web/following-feed.html 2>/dev/null || true
+          cp web/activity-feed.css build/web/activity-feed.css 2>/dev/null || true
+          cp web/activity-feed.js build/web/activity-feed.js 2>/dev/null || true
+          cp web/activity-create.js build/web/activity-create.js 2>/dev/null || true
           cp web/glog.html build/web/glog.html 2>/dev/null || true
           cp web/glog-post.html build/web/glog-post.html 2>/dev/null || true
           cp web/glog-data.js build/web/glog-data.js 2>/dev/null || true
@@ -86,7 +90,7 @@ jobs:
         run: |
           VERSION=$(git rev-parse --short HEAD)
           echo "Asset version: $VERSION"
-          ASSETS="day-genre-schedule sa-showcase-data artist-feed gearsh-ui search-page artists-page glog-data glog-page glog-post gearsh-brand discovery glog"
+          ASSETS="day-genre-schedule sa-showcase-data artist-feed gearsh-ui search-page artists-page glog-data glog-page glog-post activity-feed activity-create gearsh-brand discovery glog"
           for html in build/web/*.html; do
             [ -f "$html" ] || continue
             for asset in $ASSETS; do

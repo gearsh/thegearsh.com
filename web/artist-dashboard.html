@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Your Gearsh artist dashboard — manage bookings, profile, and earnings.">
+  <meta name="description" content="Your Gearsh artist dashboard. Manage bookings, profile, and earnings.">
   <meta name="theme-color" content="#0A0A0A">
   <title>Artist Dashboard | Gearsh</title>
   <link rel="icon" type="image/png" href="icons/Icon-192.png">
   <link rel="apple-touch-icon" href="icons/Icon-512.png">
   <link rel="stylesheet" href="gearsh-brand.css">
+  <link rel="stylesheet" href="activity-feed.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <style>
     .dash-page { padding-top: 56px; min-height: 100vh; }
@@ -275,10 +276,10 @@
           <div class="dash-avatar" id="hero-initials">…</div>
         </div>
         <div class="stats-row" id="stats-row">
-          <div class="stat-item"><div class="stat-value accent" id="stat-bookings">—</div><div class="stat-label">Bookings</div></div>
-          <div class="stat-item"><div class="stat-value" id="stat-earnings">—</div><div class="stat-label">Earnings</div></div>
-          <div class="stat-item"><div class="stat-value" id="stat-views">—</div><div class="stat-label">Profile views</div></div>
-          <div class="stat-item"><div class="stat-value accent" id="stat-hours">—</div><div class="stat-label">Mastery hours</div></div>
+          <div class="stat-item"><div class="stat-value accent" id="stat-bookings">…</div><div class="stat-label">Bookings</div></div>
+          <div class="stat-item"><div class="stat-value" id="stat-earnings">…</div><div class="stat-label">Earnings</div></div>
+          <div class="stat-item"><div class="stat-value" id="stat-views">…</div><div class="stat-label">Profile views</div></div>
+          <div class="stat-item"><div class="stat-value accent" id="stat-hours">…</div><div class="stat-label">Mastery hours</div></div>
         </div>
       </div>
     </section>
@@ -289,6 +290,7 @@
       <div id="dash-content" style="display:none">
       <div class="dash-tabs" role="tablist">
         <button class="dash-tab active" type="button" data-tab="overview">Overview</button>
+        <button class="dash-tab" type="button" data-tab="activity">Activity</button>
         <button class="dash-tab" type="button" data-tab="bookings">Bookings</button>
         <button class="dash-tab" type="button" data-tab="calendar">Calendar</button>
         <button class="dash-tab" type="button" data-tab="services">Services</button>
@@ -298,7 +300,7 @@
         <div class="card" id="share-card" style="display:none;margin-bottom:20px">
           <div class="section-label">Share your gig</div>
           <h2 class="card-title">Your global <em>booking link</em></h2>
-          <p class="card-sub">Send this link to clients anywhere — they can view your services, book you, and Gearsh handles payment.</p>
+          <p class="card-sub">Send this link to clients anywhere. They can view your services, book you, and Gearsh handles payment.</p>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <input type="text" id="dash-share-link" readonly style="flex:1;min-width:220px;height:44px;background:var(--g-black);border:0.5px solid var(--g-border);border-radius:10px;padding:0 14px;color:var(--g-text);font-size:13px">
             <button type="button" class="btn-main" onclick="copyDashboardLink()" style="height:44px">Copy link</button>
@@ -321,7 +323,7 @@
             <div class="mastery-tier-icon"><i class="ti ti-seedling" id="mastery-icon"></i></div>
             <div class="mastery-meta">
               <div class="mastery-name" id="mastery-name">Newcomer</div>
-              <div class="mastery-hrs" id="mastery-range">0 – 99 mastery hours</div>
+              <div class="mastery-hrs" id="mastery-range">0 to 99 mastery hours</div>
               <p class="mastery-desc" id="mastery-desc">Loading mastery details…</p>
             </div>
             <a href="./#how" class="btn-ghost">How mastery works</a>
@@ -336,8 +338,22 @@
           <div class="card">
             <div class="section-label">Your craft</div>
             <h2 class="card-title" style="font-size:18px;margin-bottom:12px">Skills</h2>
-            <p class="card-sub" id="skills-list" style="margin-bottom:0">—</p>
-            <p class="card-sub" id="location-line" style="margin-top:12px;margin-bottom:0">—</p>
+            <p class="card-sub" id="skills-list" style="margin-bottom:0">…</p>
+            <p class="card-sub" id="location-line" style="margin-top:12px;margin-bottom:0">…</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dash-panel" id="panel-activity">
+        <div class="grid-2" style="grid-template-columns:1fr;gap:20px">
+          <div class="card" id="activity-create-root"></div>
+          <div class="card">
+            <div class="section-label">Live preview</div>
+            <h2 class="card-title" style="font-size:18px;margin-bottom:12px">Your public <em>feed</em></h2>
+            <p class="card-sub" style="margin-bottom:16px">This is what fans and bookers see on your profile Activity tab.</p>
+            <div class="act-feed-shell" style="padding:0">
+              <div id="dash-activity-preview"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -355,7 +371,7 @@
         <div class="card">
           <div class="section-label">Calendar</div>
           <div class="calendar-head">
-            <h3 id="calendar-month">—</h3>
+            <h3 id="calendar-month">…</h3>
             <span style="font-size:12px;color:var(--g-text-muted)"><i class="ti ti-circle-filled" style="font-size:8px;color:var(--g-accent)"></i> Has booking</span>
           </div>
           <div id="calendar-root"></div>
@@ -417,7 +433,7 @@
     function initials(name) {
       if (!name) return 'A';
       var parts = name.trim().split(/\s+/);
-      if (parts.length >= 2 && parts[1] !== '—') return (parts[0][0] + parts[1][0]).toUpperCase();
+      if (parts.length >= 2 && parts[1] !== '…') return (parts[0][0] + parts[1][0]).toUpperCase();
       return parts[0][0].toUpperCase();
     }
 
@@ -636,8 +652,39 @@
       renderBookings(data);
       renderServices(data);
       renderCalendar(data);
+      initActivityTools(data);
       document.getElementById('dash-loading').style.display = 'none';
       document.getElementById('dash-content').style.display = 'block';
+    }
+
+    var dashActivityFeed = null;
+    var dashActivityCreate = null;
+
+    function initActivityTools(data) {
+      var token = localStorage.getItem('gearsh_token');
+      var username = data.user && data.user.username;
+
+      function boot() {
+        if (!window.GearshActivityCreate || !window.GearshActivityFeed) {
+          setTimeout(boot, 40);
+          return;
+        }
+        if (!username) return;
+        dashActivityCreate = new GearshActivityCreate({
+          container: '#activity-create-root',
+          token: token,
+          onSuccess: function() {
+            if (dashActivityFeed) dashActivityFeed.load(true);
+          },
+        });
+        dashActivityFeed = new GearshActivityFeed({
+          container: '#dash-activity-preview',
+          mode: 'artist',
+          artistId: username,
+          token: token,
+        });
+      }
+      boot();
     }
 
     async function loadDashboard() {
@@ -670,5 +717,7 @@
 
     loadDashboard();
   </script>
+  <script defer src="activity-feed.js"></script>
+  <script defer src="activity-create.js"></script>
 </body>
 </html>

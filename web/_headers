@@ -56,6 +56,12 @@
 /glog-post.js
   Cache-Control: public, max-age=300, must-revalidate
 
+/activity-feed.js
+  Cache-Control: public, max-age=300, must-revalidate
+
+/activity-create.js
+  Cache-Control: public, max-age=300, must-revalidate
+
 /*.css
   Cache-Control: public, max-age=86400, must-revalidate
 

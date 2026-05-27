@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Your following feed on Gearsh. Latest gigs, drops, and milestones from artists you follow.">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Following Feed | Gearsh</title>
+  <link rel="icon" type="image/png" href="/icons/Icon-192.png">
+  <link rel="stylesheet" href="/gearsh-brand.css">
+  <link rel="stylesheet" href="/discovery.css">
+  <link rel="stylesheet" href="/activity-feed.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <nav class="g-nav" aria-label="Primary">
+    <div class="g-nav-inner">
+      <a href="/" class="g-nav-logo" aria-label="Gearsh home">
+        <img src="/icons/Icon-512.png" alt="" width="40" height="40">
+      </a>
+      <div class="g-nav-right">
+        <a href="/search" class="g-nav-mobile-search" aria-label="Search"><i class="ti ti-search"></i></a>
+        <button class="g-nav-menu-btn" type="button" aria-label="Open menu" aria-expanded="false"><i class="ti ti-menu-2"></i></button>
+      </div>
+      <ul class="g-nav-links">
+        <li><a href="/search">Search</a></li>
+        <li><a href="/artists">All artists</a></li>
+        <li><a href="/glog">G-Log</a></li>
+        <li><a href="/following-feed" class="active">Following</a></li>
+        <li><a href="/artist-dashboard.html">Dashboard</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main id="main" class="g-page" style="padding-top:88px">
+    <div class="g-page-hero" style="padding-bottom:12px">
+      <h1>Your <em>following</em> feed</h1>
+      <p>Latest activity from artists you follow. Gigs, collabs, studio nights, and milestones in one place.</p>
+    </div>
+    <div class="act-feed-shell">
+      <div id="following-feed"></div>
+    </div>
+  </main>
+
+  <footer class="g-footer">
+    <div class="g-footer-inner">
+      <div class="g-footer-left"><img src="/icons/Icon-512.png" alt="Gearsh" width="24" height="24"> &copy; 2026 Gearsh (Pty) Ltd.</div>
+      <ul class="g-footer-links">
+        <li><a href="/artists">All artists</a></li>
+        <li><a href="/glog">G-Log</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script defer src="/gearsh-ui.js"></script>
+  <script defer src="/activity-feed.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var token = localStorage.getItem('gearsh_token');
+      if (!token) {
+        window.location.replace('/auth.html?redirect=' + encodeURIComponent('/following-feed'));
+        return;
+      }
+      new GearshActivityFeed({
+        container: '#following-feed',
+        mode: 'following',
+        token: token,
+      });
+    });
+  </script>
+</body>
+</html>

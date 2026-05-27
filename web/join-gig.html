@@ -252,14 +252,14 @@
           <div class="progress-step" id="ps2"></div>
           <div class="progress-step" id="ps3"></div>
         </div>
-        <div class="progress-label" id="step-label">Step 1 of 3 — Your details</div>
+        <div class="progress-label" id="step-label">Step 1 of 3 · Your details</div>
       </div>
 
       <!-- STEP 1 -->
       <div class="step-panel visible" id="step1">
         <div class="step-hero">
           <h1>Join as an <em>artist</em></h1>
-          <p>Your business name, email, and phone — DJs, tech, car wash, photography, and more.</p>
+          <p>Your business name, email, and phone. DJs, tech, car wash, photography, and more.</p>
         </div>
         <div class="step-form">
           <div class="field-group"><label class="field-label">Business / stage name</label><input type="text" id="stage-name" class="field-input" placeholder="e.g. Nhlanhla, Sparkle Wash, DJ ZJ90" required></div>
@@ -354,7 +354,7 @@
         <div class="success-area">
           <div class="success-icon"><i class="ti ti-check" style="font-size:28px; color:var(--g-accent);"></i></div>
           <h2>You're in</h2>
-          <p>Your gig is live on Gearsh. Share your personal booking link with clients anywhere in the world — Gearsh handles bookings and gets you paid.</p>
+          <p>Your gig is live on Gearsh. Share your personal booking link with clients anywhere in the world. Gearsh handles bookings and gets you paid.</p>
           <div class="share-box" id="share-box" style="display:none;margin:20px 0;padding:14px;background:var(--g-black);border:0.5px solid var(--g-border);border-radius:12px;text-align:left">
             <div style="font-size:11px;color:var(--g-text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Your global booking link</div>
             <div style="display:flex;gap:8px;align-items:center">
@@ -542,7 +542,7 @@
       document.querySelectorAll('.step-panel').forEach(function(p) { p.classList.remove('visible'); });
       var t = document.getElementById('step' + n);
       if (t) t.classList.add('visible');
-      var labels = { 1:'Step 1 of 3 — Stage name & contact', 2:'Step 2 of 3 — Your craft', 3:'Step 3 of 3 — Security', 4:'' };
+      var labels = { 1:'Step 1 of 3 · Stage name & contact', 2:'Step 2 of 3 · Your craft', 3:'Step 3 of 3 · Security', 4:'' };
       document.getElementById('step-label').textContent = labels[n] || '';
       ['ps1','ps2','ps3'].forEach(function(id, i) {
         var el = document.getElementById(id);
