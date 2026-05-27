@@ -30,10 +30,9 @@
 /booking/*                /gearsh-app.html 200
 /book/*                   /book-gig?artist=:splat 200
 /artist/*                 /gearsh-app.html 200
-/artists                  /artists.html 200
-/artists.html             /artists.html 200
-/search                   /search.html 200
-/search.html              /search.html 200
+# /artists and /search served via Cloudflare Pretty URLs from artists.html /
+# search.html. Do NOT add explicit rewrite rules — they will trigger the same
+# 308 loop documented at the top of this file.
 /category/*               /gearsh-app.html 200
 /gigs                     /gearsh-app.html 200
 /cart                     /gearsh-app.html 200

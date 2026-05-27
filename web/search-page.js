@@ -36,7 +36,7 @@
           '<i class="ti ti-search-off"></i>' +
           '<h3>No artists found</h3>' +
           '<p>Try a different name, genre, or location — or browse all artists.</p>' +
-          '<a href="artists.html" class="btn-main" style="margin-top:20px;display:inline-flex">View all artists</a>' +
+          '<a href="/artists" class="btn-main" style="margin-top:20px;display:inline-flex">View all artists</a>' +
         '</div>';
       if (metaEl) metaEl.textContent = label || '0 results';
       return;
