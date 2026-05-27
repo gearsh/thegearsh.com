@@ -15,6 +15,8 @@ import {
 function enrichFromShowcase(artistData, showcase) {
   const fee = getBookingFee(showcase);
   const image = resolveShowcaseImage(showcase);
+  const status = String(showcase.status || 'active').toLowerCase();
+  const isAvailable = status !== 'unavailable';
 
   if (!artistData.image) artistData.image = image;
   if (!artistData.bio && showcase.bio) artistData.bio = showcase.bio;
@@ -25,14 +27,24 @@ function enrichFromShowcase(artistData, showcase) {
     : buildShowcasePortfolio(showcase);
   artistData.portfolio_urls = portfolio;
 
-  if (!artistData.services?.length) {
-    artistData.services = buildShowcaseServices(showcase, fee);
+  if (isAvailable) {
+    if (!artistData.services?.length) {
+      artistData.services = buildShowcaseServices(showcase, fee);
+    }
+  } else {
+    artistData.services = [];
   }
 
   artistData.hourly_rate = fee;
   artistData.base_rate = fee;
   artistData.booking_fee = fee;
   artistData.mastery_hours = Number(showcase.masteryHours || artistData.mastery_hours || 0);
+  artistData.status = status;
+  artistData.is_bookable = isAvailable;
+  artistData.availability_status = isAvailable ? (artistData.availability_status || 'available') : 'unavailable';
+  if (!isAvailable) {
+    artistData.unavailable_reason = 'Currently unavailable for bookings.';
+  }
   return artistData;
 }
 
@@ -42,10 +54,13 @@ export async function onRequestGet(context) {
     const showcase = findShowcaseArtist(identifier);
     let resolved = await resolveArtistProfile(context.env.DB, identifier);
 
-    if (!resolved && showcase) {
+    const showcaseStatus = String(showcase?.status || 'active').toLowerCase();
+    if (!resolved && showcase && showcaseStatus !== 'unavailable') {
       // Synchronously seed only when the artist is missing from the DB so
       // first-time visitors get a real profile back. Subsequent visits hit
-      // the existing row directly.
+      // the existing row directly. Skip seeding for unavailable artists so
+      // their profile can be flipped back to available with a single edit
+      // to sa-showcase-data.js without leaving a stale DB row behind.
       await ensureDemoColumns(context.env.DB);
       await seedShowcaseArtist(context.env.DB, showcase);
       resolved = await resolveArtistProfile(context.env.DB, identifier);

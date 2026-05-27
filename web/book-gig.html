@@ -83,6 +83,16 @@
       font-size: 12px; color: var(--g-text-muted); background: var(--g-black);
       border: 0.5px solid var(--g-border); padding: 6px 12px; border-radius: 20px;
     }
+    .book-badge--unavailable {
+      color: #f59e0b; background: rgba(245,158,11,0.10);
+    }
+    .unavailable-notice {
+      display: none;
+      margin-top: 10px; padding: 14px 16px; border-radius: 12px;
+      background: rgba(245,158,11,0.08); border: 0.5px solid rgba(245,158,11,0.25);
+      color: var(--g-text); font-size: 13px; line-height: 1.5;
+    }
+    .unavailable-notice strong { color: #f59e0b; display: block; margin-bottom: 4px; }
     .wa-btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       width: 100%; margin-top: 10px; padding: 13px 18px; border-radius: 10px;
@@ -170,6 +180,10 @@
         </div>
         <div class="skill-tags" id="skill-tags"></div>
         <p class="book-bio" id="artist-bio" style="display:none"></p>
+        <div class="unavailable-notice" id="unavailable-notice">
+          <strong>Currently unavailable for bookings</strong>
+          <span id="unavailable-reason">This artist isn't taking bookings on Gearsh right now. Check back later.</span>
+        </div>
         <p class="fee-note" id="fee-note" style="display:none">Fees based on published booking rates and may vary by event type, travel, and production.</p>
       </div>
     </div>
@@ -263,8 +277,18 @@
       photo.alt = data.name || 'Artist photo';
 
       var badge = document.getElementById('book-badge');
+      var status = String(data.status || data.availability_status || 'active').toLowerCase();
+      var isAvailable = status !== 'unavailable';
       var fee = data.booking_fee || data.hourly_rate;
-      if (fee) {
+      if (!isAvailable) {
+        badge.className = 'book-badge book-badge--unavailable';
+        badge.innerHTML = '<i class="ti ti-circle-x"></i> Currently unavailable';
+        var notice = document.getElementById('unavailable-notice');
+        notice.style.display = 'block';
+        if (data.unavailable_reason) {
+          document.getElementById('unavailable-reason').textContent = data.unavailable_reason;
+        }
+      } else if (fee) {
         badge.innerHTML = '<i class="ti ti-currency-rand"></i> From ' + formatMoney(fee) + ' per show';
         document.getElementById('fee-note').style.display = 'block';
       } else if (data.is_verified) {
@@ -302,7 +326,17 @@
 
       var servicesEl = document.getElementById('services-list');
       var serviceSelect = document.getElementById('service-id');
-      if (!data.services || !data.services.length) {
+      if (!isAvailable) {
+        servicesEl.innerHTML = '<p style="color:var(--g-text-muted);font-size:13px">Booking is paused for this artist.</p>';
+        var form = document.getElementById('booking-form');
+        if (form) {
+          Array.prototype.forEach.call(form.querySelectorAll('input, textarea, select, button'), function(el) {
+            el.disabled = true;
+          });
+          var submitBtn = document.getElementById('submit-btn');
+          if (submitBtn) submitBtn.textContent = 'Booking unavailable';
+        }
+      } else if (!data.services || !data.services.length) {
         servicesEl.innerHTML = '<p style="color:var(--g-text-muted);font-size:13px">Contact the provider for pricing.</p>';
       } else {
         servicesEl.innerHTML = data.services.map(function(service) {

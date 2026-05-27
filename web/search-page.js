@@ -180,6 +180,50 @@
     renderResults(cards.slice(0, 12));
   }
 
+  function renderTonightSpotlight() {
+    var tonight = (window.GearshSchedule && typeof GearshSchedule.today === 'function')
+      ? GearshSchedule.today() : null;
+    if (!tonight) {
+      renderTrending();
+      return;
+    }
+    var slug = tonight.slug;
+    var secondaryLoc = String(tonight.secondaryLocation || '').toLowerCase();
+    var cards = [];
+    var seen = {};
+
+    function consider(card) {
+      var key = GearshFeed.normalizeName(card.name);
+      if (seen[key]) return;
+      cards.push(card);
+      seen[key] = true;
+    }
+
+    GearshFeed.getShowcase().forEach(function (item) {
+      var itemSlug = item.genreSlug || (typeof resolveArtistGenreSlug === 'function'
+        ? resolveArtistGenreSlug(item.category, item.genre)
+        : 'other');
+      if (itemSlug === slug) {
+        consider(GearshFeed.showcaseToCard(item, null));
+      } else if (secondaryLoc
+        && String(item.location || '').toLowerCase().indexOf(secondaryLoc) !== -1) {
+        consider(GearshFeed.showcaseToCard(item, null));
+      }
+    });
+
+    cards.sort(function (a, b) {
+      if (a.bookable !== b.bookable) return a.bookable ? -1 : 1;
+      return GearshFeed.cardMasteryHours(b) - GearshFeed.cardMasteryHours(a);
+    });
+
+    if (metaEl) {
+      metaEl.innerHTML = 'Tonight: <strong style="color:var(--g-white)">' +
+        GearshFeed.escapeHtml(tonight.title) + '</strong> — ' +
+        GearshFeed.escapeHtml(tonight.tagline);
+    }
+    renderResults(cards, cards.length + ' artist' + (cards.length === 1 ? '' : 's'));
+  }
+
   function initChips() {
     if (!chipsEl) return;
     var chips = ['Amapiano', 'Hip Hop', 'House', 'DJ', 'Gospel', 'Johannesburg', 'Durban'];
@@ -196,9 +240,12 @@
 
   initChips();
   var initial = getQueryParam();
+  var spotlight = new URLSearchParams(window.location.search).get('spotlight');
   if (initial) {
     input.value = initial;
     runSearch(initial, true);
+  } else if (spotlight === 'tonight') {
+    renderTonightSpotlight();
   } else {
     renderTrending();
   }

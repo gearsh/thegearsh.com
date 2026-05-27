@@ -221,6 +221,93 @@
     .cta-content h2 em { font-style: italic; color: var(--g-accent); }
     .cta-content p { font-size: 15px; color: var(--g-text-muted); max-width: 420px; margin: 0 auto 28px; line-height: 1.55; }
     .cta-fine { font-size: 12px; color: var(--g-text-dim); margin-top: 16px; }
+
+    /* Tonight strip — weekday-aware banner above the hero */
+    .tonight-strip {
+      display: none; align-items: center; justify-content: center; gap: 12px;
+      padding: 12px 20px; background: linear-gradient(90deg, rgba(0,191,255,0.10), rgba(0,191,255,0.04));
+      border-bottom: 0.5px solid rgba(0,191,255,0.20);
+      font-size: 13px; color: var(--g-text); line-height: 1.4; text-align: center;
+    }
+    .tonight-strip.is-visible { display: flex; }
+    .tonight-strip i { color: var(--g-accent); font-size: 16px; }
+    .tonight-strip strong { color: var(--g-white); font-weight: 600; }
+    .tonight-strip a {
+      color: var(--g-accent); font-weight: 600; text-decoration: none;
+      white-space: nowrap;
+    }
+    .tonight-strip a:hover { text-decoration: underline; }
+    .tonight-dismiss {
+      background: none; border: none; color: var(--g-text-muted); cursor: pointer;
+      padding: 4px 8px; font-size: 16px; line-height: 1;
+    }
+    .tonight-dismiss:hover { color: var(--g-white); }
+    @media (max-width: 600px) {
+      .tonight-strip { padding: 10px 14px; font-size: 12px; gap: 8px; flex-wrap: wrap; }
+    }
+
+    /* Headliners rail — Artists of the Day above the genre feed */
+    .headliners-section {
+      padding: 32px 20px 8px; max-width: 1280px; margin: 0 auto;
+    }
+    .headliners-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 16px; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .headliners-title {
+      font-family: var(--g-serif); font-weight: 400;
+      font-size: clamp(22px, 4vw, 28px); color: var(--g-white);
+      letter-spacing: -0.02em; line-height: 1.2;
+    }
+    .headliners-title em { font-style: italic; color: var(--g-accent); }
+    .headliners-subtitle { font-size: 13px; color: var(--g-text-muted); margin-top: 4px; }
+    .headliners-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    .headliner-card {
+      display: block; background: var(--g-surface);
+      border: 0.5px solid var(--g-border); border-radius: 14px;
+      overflow: hidden; text-decoration: none; color: inherit;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+      position: relative;
+    }
+    .headliner-card:hover {
+      transform: translateY(-2px); border-color: rgba(0,191,255,0.40);
+    }
+    .headliner-photo {
+      width: 100%; aspect-ratio: 1; object-fit: cover; display: block;
+      background: var(--g-black);
+    }
+    .headliner-body { padding: 12px 14px 14px; }
+    .headliner-name {
+      font-size: 14px; font-weight: 700; color: var(--g-white);
+      letter-spacing: -0.01em; line-height: 1.2;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .headliner-meta {
+      font-size: 11px; color: var(--g-text-muted); margin-top: 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .headliner-fee {
+      font-size: 12px; color: var(--g-accent); font-weight: 700; margin-top: 6px;
+    }
+    .headliner-badge {
+      position: absolute; top: 10px; left: 10px;
+      background: var(--g-accent); color: var(--g-black);
+      font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 20px;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .headliner-badge--unavailable {
+      background: rgba(245,158,11,0.95); color: var(--g-black);
+    }
+    .rail-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: var(--g-accent); color: var(--g-black);
+      font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px;
+      letter-spacing: 0.04em; text-transform: uppercase; margin-left: 8px;
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body>
@@ -252,6 +339,17 @@
       </ul>
     </div>
   </nav>
+
+  <!-- TONIGHT STRIP — weekday-aware genre banner -->
+  <div class="tonight-strip" id="tonight-strip" role="region" aria-label="Tonight's featured genre" hidden>
+    <i class="ti ti-flame" id="tonight-icon" aria-hidden="true"></i>
+    <span>
+      <strong>Tonight is <span id="tonight-title">…</span>.</strong>
+      <span id="tonight-tagline" style="color:var(--g-text-muted)"></span>
+    </span>
+    <a href="/tonight" id="tonight-cta">Browse tonight's artists <i class="ti ti-arrow-right" style="font-size:14px;vertical-align:-2px"></i></a>
+    <button class="tonight-dismiss" id="tonight-dismiss" type="button" aria-label="Dismiss tonight's banner">&times;</button>
+  </div>
 
   <!-- HERO -->
   <main id="main">
@@ -298,6 +396,17 @@
   <div class="cats-section reveal">
     <div class="cats-scroll" id="category-nav"></div>
   </div>
+
+  <!-- HEADLINERS — Artists of the Day, populated by artist-feed.js -->
+  <section class="headliners-section reveal" id="headliners-section" hidden>
+    <div class="headliners-header">
+      <div>
+        <h2 class="headliners-title"><em id="headliners-title-text">Artists of the day</em></h2>
+        <p class="headliners-subtitle" id="headliners-subtitle">Sorted by bookings and craft hours.</p>
+      </div>
+    </div>
+    <div class="headliners-grid" id="headliners-grid"></div>
+  </section>
 
   <!-- FEED CATEGORIES -->
   <section class="feed-section reveal" id="feed">
@@ -414,15 +523,49 @@
     </div>
   </footer>
 
+  <script defer src="day-genre-schedule.js"></script>
   <script defer src="sa-showcase-data.js"></script>
   <script defer src="artist-feed.js"></script>
   <script defer src="gearsh-ui.js"></script>
   <script>
     window.addEventListener('DOMContentLoaded', function () {
+      // Tonight strip — weekday-aware banner above the hero
+      (function renderTonightStrip() {
+        if (!window.GearshSchedule) return;
+        var tonight = window.GearshSchedule.today();
+        if (!tonight) return;
+
+        // Per-day dismissal: cookie key encodes the weekday so banner reappears
+        // the next day even if dismissed today.
+        var dismissKey = 'gearsh_tonight_dismissed_' + tonight.slug + '_' + tonight.weekday;
+        if (document.cookie.indexOf(dismissKey + '=1') !== -1) return;
+
+        var strip = document.getElementById('tonight-strip');
+        if (!strip) return;
+        document.getElementById('tonight-title').textContent = tonight.title;
+        document.getElementById('tonight-tagline').textContent = ' ' + tonight.tagline;
+        var iconEl = document.getElementById('tonight-icon');
+        if (iconEl && tonight.icon) iconEl.className = tonight.icon;
+        strip.hidden = false;
+        strip.classList.add('is-visible');
+
+        document.getElementById('tonight-dismiss').addEventListener('click', function () {
+          // Persist for 26h so the banner returns reliably the next day even
+          // with timezone wobble.
+          var expires = new Date(Date.now() + 26 * 60 * 60 * 1000).toUTCString();
+          document.cookie = dismissKey + '=1; expires=' + expires + '; path=/; SameSite=Lax';
+          strip.hidden = true;
+          strip.classList.remove('is-visible');
+        });
+      }());
+
       if (!window.GearshFeed) return;
       GearshFeed.showFeedSkeletons('feed-categories', 6);
       GearshFeed.buildCategoryNav(GearshFeed.getCategories());
       GearshFeed.loadArtistFeed();
+      if (typeof GearshFeed.renderHeadlinersRail === 'function') {
+        GearshFeed.renderHeadlinersRail();
+      }
     });
   </script>
 </body>

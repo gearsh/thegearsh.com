@@ -59,6 +59,7 @@ jobs:
           cp web/book-gig.html build/web/book-gig.html
           cp web/claim-profile.html build/web/claim-profile.html
           cp web/sa-showcase-data.js build/web/sa-showcase-data.js
+          cp web/day-genre-schedule.js build/web/day-genre-schedule.js 2>/dev/null || true
           cp web/terms.html build/web/terms.html
           cp web/privacy.html build/web/privacy.html
           cp web/_redirects build/web/_redirects

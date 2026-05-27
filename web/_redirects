@@ -53,6 +53,11 @@
 # /login (see comment at the top of this file).
 /privacy-policy           /privacy 301
 
+# Tonight — shareable shortlink to today's featured genre. search-page.js
+# reads ?spotlight=tonight and pre-fills the genre filter from
+# day-genre-schedule.js so the same URL works every night of the week.
+/tonight                  /search?spotlight=tonight 302
+
 # Other marketing static pages
 /gearsh-god.html          /gearsh-god.html 200
 /book-gig.html            /book-gig.html 200

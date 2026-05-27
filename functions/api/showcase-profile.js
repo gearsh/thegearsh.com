@@ -43,6 +43,19 @@ export const VERIFIED_BOOKING_RATES = {
   'dripmaker': 3500,
   'yde': 3000,
   'scotts-maphuma': 2500,
+  // Limpopo Night seeds (approximate launch estimates pending verification).
+  'thomas-chauke': 55000,
+  'penny-penny': 60000,
+  'joe-shirimani': 50000,
+  'benny-mayengani': 30000,
+  'ba-bethe-gashoazen': 55000,
+  'shandesh': 45000,
+  'dj-janisto': 45000,
+  'naqua-sa': 40000,
+  'master-chuza': 35000,
+  'mr-six21-dj-dance': 32000,
+  'janesh': 30000,
+  'shebeshxt': 50000,
 };
 
 /** Solo portrait overrides — prefer headshots over crowd / duo shots. */
@@ -208,6 +221,8 @@ export function buildShowcaseArtistResponse(artist) {
   const image = resolveShowcaseImage(artist);
   const userId = `user_demo_${String(artist.username).replace(/[^a-z0-9]+/gi, '_')}`;
   const artistId = `artist_demo_${String(artist.username).replace(/[^a-z0-9]+/gi, '_')}`;
+  const status = String(artist.status || 'active').toLowerCase();
+  const isAvailable = status !== 'unavailable';
 
   return {
     artist_id: artistId,
@@ -229,12 +244,15 @@ export function buildShowcaseArtistResponse(artist) {
     is_verified: true,
     is_trending: Number(artist.masteryHours || 0) >= 5000,
     is_demo: true,
-    is_claimable: true,
-    availability_status: 'available',
+    is_claimable: isAvailable,
+    is_bookable: isAvailable,
+    status: status,
+    availability_status: isAvailable ? 'available' : 'unavailable',
+    unavailable_reason: isAvailable ? null : 'Currently unavailable for bookings.',
     skills: Array.isArray(artist.skills) ? artist.skills : [artist.category],
     portfolio_urls: buildShowcasePortfolio(artist),
     social_links: {},
-    services: buildShowcaseServices(artist, fee),
+    services: isAvailable ? buildShowcaseServices(artist, fee) : [],
     reviews: [],
     profile_url: buildProfileUrl(artist.username),
     claim_url: `/claim-profile.html?artist=${encodeURIComponent(String(artist.username).toLowerCase())}`,
