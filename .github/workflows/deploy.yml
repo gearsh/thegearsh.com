@@ -80,11 +80,15 @@ jobs:
         run: |
           VERSION=$(git rev-parse --short HEAD)
           echo "Asset version: $VERSION"
+          ASSETS="day-genre-schedule sa-showcase-data artist-feed gearsh-ui search-page artists-page gearsh-brand discovery"
           for html in build/web/*.html; do
-            # Append ?v=<sha> so Cloudflare edge cache cannot serve stale bundles
-            # after a deploy (/*.js is cached for 24h at the CDN).
-            sed -i -E "s|(src=\"[^\"]+\.(js|css))(\?[^\"]*)?\"|\1?v=${VERSION}\"|g" "$html"
-            sed -i -E "s|(href=\"[^\"]+\.(js|css))(\?[^\"]*)?\"|\1?v=${VERSION}\"|g" "$html"
+            [ -f "$html" ] || continue
+            for asset in $ASSETS; do
+              sed -i "s/${asset}\\.js\"/${asset}.js?v=${VERSION}\"/g" "$html"
+              sed -i "s/${asset}\\.css\"/${asset}.css?v=${VERSION}\"/g" "$html"
+              sed -i "s/${asset}\\.js?v=[^\"]*\"/${asset}.js?v=${VERSION}\"/g" "$html"
+              sed -i "s/${asset}\\.css?v=[^\"]*\"/${asset}.css?v=${VERSION}\"/g" "$html"
+            done
           done
       - name: Verify deployment bundle
         run: |
@@ -103,6 +107,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy build/web --project-name=thegearsh-com
       - name: Purge Cloudflare CDN cache
+        continue-on-error: true
         run: |
           set -euo pipefail
           ZONE_ID=$(curl -fsSL \
@@ -117,5 +122,5 @@ jobs:
             "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/purge_cache" \
             -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
             -H "Content-Type: application/json" \
-            --data '{"files":["https://www.thegearsh.com/sa-showcase-data.js","https://www.thegearsh.com/artist-feed.js","https://www.thegearsh.com/day-genre-schedule.js","https://www.thegearsh.com/search-page.js","https://www.thegearsh.com/"]}'
-          echo "CDN cache purged for key assets."
+            --data '{"purge_everything":true}'
+          echo "CDN cache purged."
