@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Read the latest on G-Log — Gearsh's official South African music blog.">
+  <link rel="canonical" href="https://thegearsh.com/glog">
+  <meta name="theme-color" content="#0A0A0A">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Gearsh G-Log">
+  <meta property="og:title" content="G-Log | Gearsh">
+  <meta property="og:description" content="South African music news and artist stories from Gearsh.">
+  <meta property="og:url" content="https://thegearsh.com/glog">
+  <meta property="og:image" content="https://thegearsh.com/icons/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="G-Log | Gearsh">
+  <meta name="twitter:description" content="South African music news and artist stories.">
+  <meta name="twitter:image" content="https://thegearsh.com/icons/og-image.png">
+  <title>G-Log | Gearsh</title>
+  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="gearsh-brand.css">
+  <link rel="stylesheet" href="discovery.css">
+  <link rel="stylesheet" href="glog.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <nav class="g-nav" aria-label="Primary">
+    <div class="g-nav-inner">
+      <a href="./" class="g-nav-logo" aria-label="Gearsh home">
+        <img src="icons/Icon-512.png" alt="" width="40" height="40">
+      </a>
+      <div class="g-nav-right">
+        <a href="/auth.html" class="g-nav-mobile-login">Login</a>
+        <a href="/search" class="g-nav-mobile-search" aria-label="Search artists"><i class="ti ti-search"></i></a>
+        <button class="g-nav-menu-btn" type="button" aria-label="Open menu" aria-expanded="false"><i class="ti ti-menu-2"></i></button>
+      </div>
+      <ul class="g-nav-links">
+        <li class="g-nav-menu-auth"><a href="/auth.html">Login</a></li>
+        <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
+        <li><a href="/search">Search</a></li>
+        <li><a href="/artists">All artists</a></li>
+        <li><a href="/glog" class="active">G-Log</a></li>
+        <li><a href="./#how">How it works</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="glog-article-shell" id="glog-article-app">
+    <article id="main">
+      <header class="glog-article-hero">
+        <a href="/glog" class="glog-back"><i class="ti ti-arrow-left"></i> Back to G-Log</a>
+        <div class="glog-tags" id="glog-article-tags"></div>
+        <h1 class="glog-article-title" id="glog-article-title">Loading…</h1>
+        <div class="glog-meta-row" id="glog-article-meta"></div>
+      </header>
+
+      <div class="glog-article-cover">
+        <img id="glog-article-cover-img" src="icons/Icon-512.png" alt="">
+      </div>
+
+      <div class="glog-article-body">
+        <div class="glog-prose" id="glog-article-content">
+          <p style="color:var(--g-text-muted)">Loading story…</p>
+        </div>
+      </div>
+
+      <div class="glog-share" id="glog-share" aria-label="Share this article">
+        <span class="glog-share-label">Share</span>
+        <button type="button" class="glog-share-btn" data-share="x"><i class="ti ti-brand-x"></i> X</button>
+        <button type="button" class="glog-share-btn" data-share="whatsapp"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
+        <button type="button" class="glog-share-btn" data-share="facebook"><i class="ti ti-brand-facebook"></i> Facebook</button>
+        <button type="button" class="glog-share-btn" data-share="instagram"><i class="ti ti-brand-instagram"></i> Instagram</button>
+        <button type="button" class="glog-share-btn" data-share="copy"><i class="ti ti-link"></i> Copy link</button>
+      </div>
+
+      <section class="glog-cta" aria-label="List your gig on Gearsh">
+        <h2>Ready to take your career to the next level?</h2>
+        <p>List your gig on Gearsh for free — get discovered, booked, and paid without the middleman.</p>
+        <a href="join-gig.html" class="btn-main">List your gig free <i class="ti ti-arrow-right"></i></a>
+      </section>
+    </article>
+
+    <section class="glog-related" aria-label="Related stories">
+      <h2 class="glog-related-title">More from <em>G-Log</em></h2>
+      <div class="glog-grid" id="glog-related-grid"></div>
+    </section>
+  </div>
+
+  <footer class="g-footer">
+    <div class="g-footer-inner">
+      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="Gearsh" width="24" height="24"> &copy; 2026 Gearsh (Pty) Ltd.</div>
+      <ul class="g-footer-links">
+        <li><a href="/glog">G-Log</a></li>
+        <li><a href="/artists">All artists</a></li>
+        <li><a href="join-gig.html">List your gig</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script defer src="glog-data.js"></script>
+  <script defer src="gearsh-ui.js"></script>
+  <script defer src="glog-post.js"></script>
+</body>
+</html>

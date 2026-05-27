@@ -6,7 +6,7 @@
   'use strict';
 
   var API_BASE = '/api';
-  var CACHE_KEY = 'gearsh_feed_cache_v4';
+  var CACHE_KEY = 'gearsh_feed_cache_v5';
   var CACHE_TTL = 5 * 60 * 1000;
 
   // Tonight helper — reads from day-genre-schedule.js when present.
@@ -20,6 +20,57 @@
   function cardStatus(item) {
     var status = String(item.status || item.availability_status || '').toLowerCase();
     return status === 'unavailable' ? 'unavailable' : 'active';
+  }
+
+  function isPlaceholderImage(path) {
+    var value = String(path || '').toLowerCase();
+    if (!value) return true;
+    return value.indexOf('/artists.png') !== -1
+      || value.indexOf('artists/artists.png') !== -1
+      || value.indexOf('icon-512') !== -1
+      || value.indexOf('/icons/icon') !== -1;
+  }
+
+  function resolveCardImage(source, showcase) {
+    var record = showcase || findShowcaseRecord(source);
+    var image = (source && source.image) || (record && record.image) || 'icons/Icon-512.png';
+    return image;
+  }
+
+  function cardHasSoloPortrait(card) {
+    if (!card) return false;
+    if (card.has_solo_portrait === true) return true;
+    if (card.has_solo_portrait === false) return false;
+    if (typeof artistHasSoloPortrait === 'function') return artistHasSoloPortrait(card);
+    return !isPlaceholderImage(card.image);
+  }
+
+  function compareFeedCards(a, b, genreSlug) {
+    if (a.bookable !== b.bookable) return a.bookable ? -1 : 1;
+    if (genreSlug && typeof compareArtistsForGenre === 'function') {
+      return compareArtistsForGenre(genreSlug, a, b);
+    }
+    var soloDiff = (cardHasSoloPortrait(b) ? 1 : 0) - (cardHasSoloPortrait(a) ? 1 : 0);
+    if (soloDiff !== 0) return soloDiff;
+    var bookingsDiff = Number(b.total_bookings || 0) - Number(a.total_bookings || 0);
+    if (bookingsDiff !== 0) return bookingsDiff;
+    var hoursDiff = cardMasteryHours(b) - cardMasteryHours(a);
+    if (hoursDiff !== 0) return hoursDiff;
+    return Number(b.is_verified || 0) - Number(a.is_verified || 0);
+  }
+
+  // Prefer real headshots in hero slots; only backfill with placeholders when
+  // there aren't enough portrait artists to fill the rail.
+  function pickPromotedCards(cards, limit, genreSlug, minPortraits) {
+    limit = limit || 5;
+    minPortraits = minPortraits == null ? 3 : minPortraits;
+    var sorted = cards.slice().sort(function (a, b) {
+      return compareFeedCards(a, b, genreSlug);
+    });
+    var portraits = sorted.filter(cardHasSoloPortrait);
+    if (portraits.length >= limit) return portraits.slice(0, limit);
+    if (portraits.length >= minPortraits) return portraits;
+    return sorted.slice(0, limit);
   }
   var PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><rect fill="#181818" width="1" height="1"/></svg>'
@@ -165,12 +216,14 @@
     var tier = masteryBadgeForHours(hours);
     var status = cardStatus(artist);
     var unavailable = status === 'unavailable';
+    var image = resolveCardImage(artist, showcase);
+    var hasPortrait = cardHasSoloPortrait({ image: image, username: artist.username });
     return {
       artist_id: artist.artist_id,
       username: artist.username,
       profile_url: artist.profile_url,
       name: artist.name,
-      image: artist.image || (showcase && showcase.image) || 'icons/Icon-512.png',
+      image: image,
       genre: [artist.category, artist.location].filter(Boolean).join(' · ') || 'Available to book',
       category: artist.category || '',
       location: artist.location || '',
@@ -181,6 +234,7 @@
       mastery_hours: hours,
       total_bookings: Number(artist.total_bookings || 0),
       bookable: !unavailable,
+      has_solo_portrait: hasPortrait,
       status: status,
       is_verified: !!artist.is_verified,
       is_trending: !!artist.is_trending
@@ -194,12 +248,14 @@
       ? 'unavailable'
       : cardStatus(match || {});
     var unavailable = status === 'unavailable';
+    var image = resolveCardImage(match || item, item);
+    var hasPortrait = cardHasSoloPortrait({ image: image, username: (match && match.username) || item.username });
     return {
       artist_id: match ? match.artist_id : null,
       username: match ? match.username : (item.username || null),
       profile_url: match ? match.profile_url : null,
       name: item.name,
-      image: item.image,
+      image: image,
       genre: item.genre || item.category || '',
       category: item.category || '',
       location: item.location || '',
@@ -214,6 +270,7 @@
       mastery_hours: hours,
       total_bookings: match ? Number(match.total_bookings || 0) : 0,
       bookable: !unavailable && !!(match || item.username),
+      has_solo_portrait: hasPortrait,
       status: status,
       is_verified: match ? !!match.is_verified : false,
       is_trending: match ? !!match.is_trending : false
@@ -254,13 +311,8 @@
     });
 
     cards.sort(function (a, b) {
-      if (categoryId.indexOf('genre-') === 0 && typeof compareArtistsForGenre === 'function') {
-        return compareArtistsForGenre(categoryId.slice(6), a, b);
-      }
-      var hoursDiff = cardMasteryHours(b) - cardMasteryHours(a);
-      if (hoursDiff !== 0) return hoursDiff;
-      if (a.bookable === b.bookable) return 0;
-      return a.bookable ? -1 : 1;
+      var genreKey = categoryId.indexOf('genre-') === 0 ? categoryId.slice(6) : null;
+      return compareFeedCards(a, b, genreKey);
     });
 
     return cards.slice(0, limit);
@@ -280,7 +332,7 @@
     });
 
     return cards.sort(function (a, b) {
-      return cardMasteryHours(b) - cardMasteryHours(a);
+      return compareFeedCards(a, b, null);
     });
   }
 
@@ -462,8 +514,7 @@
     });
 
     cards.sort(function (a, b) {
-      if (a.bookable !== b.bookable) return a.bookable ? -1 : 1;
-      return cardMasteryHours(b) - cardMasteryHours(a);
+      return compareFeedCards(a, b, null);
     });
 
     if (!cards.length) return null;
@@ -544,8 +595,9 @@
           return showcaseToCard(item, findArtistMatch(item.name, index));
         });
       }
-      storyCards.sort(function (a, b) { return cardMasteryHours(b) - cardMasteryHours(a); });
-      stories.innerHTML = storyCards.slice(0, 16).map(renderStory).filter(Boolean).join('');
+      storyCards.sort(function (a, b) { return compareFeedCards(a, b, tonight ? tonight.slug : null); });
+      var storyPool = pickPromotedCards(storyCards, 16, tonight ? tonight.slug : null, 6);
+      stories.innerHTML = storyPool.map(renderStory).filter(Boolean).join('');
       if (!stories.innerHTML) {
         stories.innerHTML = '<a class="story-item" href="/search"><div class="story-ring" style="display:flex;align-items:center;justify-content:center;background:var(--g-surface)"><i class="ti ti-search" style="color:var(--g-accent);font-size:24px"></i></div><span class="story-name">Search</span></a>';
       }
@@ -602,9 +654,12 @@
     var badge = card.status === 'unavailable'
       ? '<span class="headliner-badge headliner-badge--unavailable">Unavailable</span>'
       : '<span class="headliner-badge">Tonight</span>';
+    var img = lazyImgTag(card.image, card.name)
+      .replace('class="lazy-img"', 'class="lazy-img headliner-photo"')
+      .replace('width="168" height="168"', 'width="320" height="400"');
     return '<a class="headliner-card" href="' + escapeHtml(href) + '" aria-label="' + escapeHtml(card.name) + '">' +
       badge +
-      lazyImgTag(card.image, card.name).replace('class="lazy-img"', 'class="lazy-img headliner-photo"').replace('width="168" height="168"', 'width="200" height="200"') +
+      '<div class="headliner-photo-wrap">' + img + '</div>' +
       '<div class="headliner-body">' +
         '<div class="headliner-name">' + escapeHtml(card.name) + '</div>' +
         '<div class="headliner-meta">' + escapeHtml(card.genre || card.location || '') + '</div>' +
@@ -655,18 +710,7 @@
       });
     }
 
-    cards.sort(function (a, b) {
-      // Available artists rank above unavailable so the headline never opens
-      // on a non-bookable card.
-      if (a.bookable !== b.bookable) return a.bookable ? -1 : 1;
-      var bookingsDiff = Number(b.total_bookings || 0) - Number(a.total_bookings || 0);
-      if (bookingsDiff !== 0) return bookingsDiff;
-      var hoursDiff = cardMasteryHours(b) - cardMasteryHours(a);
-      if (hoursDiff !== 0) return hoursDiff;
-      return Number(b.is_verified || 0) - Number(a.is_verified || 0);
-    });
-
-    return cards.slice(0, 5);
+    return pickPromotedCards(cards, 5, tonight.slug, 3);
   }
 
   function renderHeadlinersRail() {
@@ -730,16 +774,14 @@
       case 'trending':
         list.sort(function (a, b) {
           if (a.is_trending !== b.is_trending) return a.is_trending ? -1 : 1;
-          return cardMasteryHours(b) - cardMasteryHours(a);
+          return compareFeedCards(a, b, genreSlug && genreSlug !== 'all' ? genreSlug : null);
         });
         break;
       case 'popular':
       default:
-        if (genreSlug && genreSlug !== 'all' && typeof compareArtistsForGenre === 'function') {
-          list.sort(function (a, b) { return compareArtistsForGenre(genreSlug, a, b); });
-        } else {
-          list.sort(function (a, b) { return cardMasteryHours(b) - cardMasteryHours(a); });
-        }
+        list.sort(function (a, b) {
+          return compareFeedCards(a, b, genreSlug && genreSlug !== 'all' ? genreSlug : null);
+        });
     }
     return list;
   }
@@ -783,6 +825,9 @@
     cardMasteryHours: cardMasteryHours,
     getTonight: getTonight,
     buildHeadlinerCards: buildHeadlinerCards,
-    renderHeadlinersRail: renderHeadlinersRail
+    renderHeadlinersRail: renderHeadlinersRail,
+    cardHasSoloPortrait: cardHasSoloPortrait,
+    compareFeedCards: compareFeedCards,
+    pickPromotedCards: pickPromotedCards
   };
 })(typeof window !== 'undefined' ? window : this);

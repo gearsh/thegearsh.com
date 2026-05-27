@@ -107,6 +107,10 @@
       merged.push(card);
     });
 
+    merged.sort(function (a, b) {
+      return GearshFeed.compareFeedCards(a, b, null);
+    });
+
     renderResults(merged, merged.length + ' result' + (merged.length === 1 ? '' : 's') + ' for “' + q + '”');
     suggestions.classList.remove('is-open');
   }
@@ -176,8 +180,10 @@
     var cards = GearshFeed.getShowcase().slice(0, 12).map(function (item) {
       return GearshFeed.showcaseToCard(item, null);
     });
-    cards.sort(function (a, b) { return GearshFeed.cardMasteryHours(b) - GearshFeed.cardMasteryHours(a); });
-    renderResults(cards.slice(0, 12));
+    cards.sort(function (a, b) {
+      return GearshFeed.compareFeedCards(a, b, null);
+    });
+    renderResults(GearshFeed.pickPromotedCards(cards, 12, null, 4));
   }
 
   function renderTonightSpotlight() {
@@ -212,18 +218,18 @@
     });
 
     cards.sort(function (a, b) {
-      if (a.bookable !== b.bookable) return a.bookable ? -1 : 1;
-      return GearshFeed.cardMasteryHours(b) - GearshFeed.cardMasteryHours(a);
+      return GearshFeed.compareFeedCards(a, b, slug);
     });
+
+    var promoted = GearshFeed.pickPromotedCards(cards, 24, slug, 6);
 
     if (metaEl) {
       metaEl.innerHTML = 'Tonight: <strong style="color:var(--g-white)">' +
         GearshFeed.escapeHtml(tonight.title) + '</strong> — ' +
         GearshFeed.escapeHtml(tonight.tagline);
     }
-    renderResults(cards, cards.length + ' artist' + (cards.length === 1 ? '' : 's'));
+    renderResults(promoted, promoted.length + ' artist' + (promoted.length === 1 ? '' : 's'));
   }
-
   function initChips() {
     if (!chipsEl) return;
     var chips = ['Amapiano', 'Hip Hop', 'House', 'DJ', 'Gospel', 'Johannesburg', 'Durban'];

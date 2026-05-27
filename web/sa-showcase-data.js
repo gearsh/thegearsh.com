@@ -1705,6 +1705,30 @@ var GENRE_FEATURED_ORDER = {
   'xigaza-lekompo': ['king-monada'],
 };
 
+/** Generic placeholder paths — artists using these sink in feed ordering. */
+var PLACEHOLDER_IMAGE_MARKERS = [
+  '/artists.png',
+  'artists/artists.png',
+  'icon-512',
+  '/icons/icon',
+];
+
+function isPlaceholderImage(path) {
+  var value = String(path || '').toLowerCase();
+  if (!value) return true;
+  for (var i = 0; i < PLACEHOLDER_IMAGE_MARKERS.length; i++) {
+    if (value.indexOf(PLACEHOLDER_IMAGE_MARKERS[i]) !== -1) return true;
+  }
+  return false;
+}
+
+function artistHasSoloPortrait(artist) {
+  if (!artist) return false;
+  if (artist.has_solo_portrait === true) return true;
+  if (artist.has_solo_portrait === false) return false;
+  return !isPlaceholderImage(artist.image);
+}
+
 function compareArtistsForGenre(genreSlug, a, b) {
   var order = GENRE_FEATURED_ORDER[genreSlug] || [];
   var usernameA = String(a.username || '').toLowerCase();
@@ -1715,6 +1739,10 @@ function compareArtistsForGenre(genreSlug, a, b) {
   var featuredB = rankB >= 0 ? rankB : order.length;
 
   if (featuredA !== featuredB) return featuredA - featuredB;
+
+  var soloA = artistHasSoloPortrait(a) ? 1 : 0;
+  var soloB = artistHasSoloPortrait(b) ? 1 : 0;
+  if (soloB !== soloA) return soloB - soloA;
 
   var hoursA = Number(a.mastery_hours != null ? a.mastery_hours : a.masteryHours || 0);
   var hoursB = Number(b.mastery_hours != null ? b.mastery_hours : b.masteryHours || 0);

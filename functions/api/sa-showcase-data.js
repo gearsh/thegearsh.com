@@ -1706,6 +1706,29 @@ export const GENRE_FEATURED_ORDER = {
   'xigaza-lekompo': ['king-monada'],
 };
 
+/** Generic placeholder paths — artists using these sink in feed ordering. */
+const PLACEHOLDER_IMAGE_MARKERS = [
+  '/artists.png',
+  'artists/artists.png',
+  'icon-512',
+  '/icons/icon',
+];
+
+export function isPlaceholderImage(path) {
+  const value = String(path || '').toLowerCase();
+  if (!value) return true;
+  return PLACEHOLDER_IMAGE_MARKERS.some(function(marker) {
+    return value.includes(marker);
+  });
+}
+
+export function artistHasSoloPortrait(artist) {
+  if (!artist) return false;
+  if (artist.has_solo_portrait === true) return true;
+  if (artist.has_solo_portrait === false) return false;
+  return !isPlaceholderImage(artist.image);
+}
+
 export function compareArtistsForGenre(genreSlug, a, b) {
   const order = GENRE_FEATURED_ORDER[genreSlug] || [];
   const usernameA = String(a.username || '').toLowerCase();
@@ -1717,9 +1740,15 @@ export function compareArtistsForGenre(genreSlug, a, b) {
 
   if (featuredA !== featuredB) return featuredA - featuredB;
 
+  const soloA = artistHasSoloPortrait(a) ? 1 : 0;
+  const soloB = artistHasSoloPortrait(b) ? 1 : 0;
+  if (soloB !== soloA) return soloB - soloA;
+
   const hoursA = Number(a.mastery_hours ?? a.masteryHours ?? 0);
   const hoursB = Number(b.mastery_hours ?? b.masteryHours ?? 0);
   if (hoursB !== hoursA) return hoursB - hoursA;
+
+  if (a.bookable !== b.bookable) return a.bookable ? -1 : 1;
 
   return Number(b.rating || 0) - Number(a.rating || 0)
     || Number(b.review_count || 0) - Number(a.review_count || 0)

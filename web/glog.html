@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="G-Log — the Gearsh blog. South African music news, artist spotlights, amapiano, hip hop, Afro house, gospel, and global breakthrough stories.">
+  <link rel="canonical" href="https://thegearsh.com/glog">
+  <meta name="theme-color" content="#0A0A0A">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Gearsh G-Log">
+  <meta property="og:title" content="G-Log — South African Music News &amp; Artist Stories | Gearsh">
+  <meta property="og:description" content="Timely SA music news, artist spotlights, and industry insights from Gearsh.">
+  <meta property="og:url" content="https://thegearsh.com/glog">
+  <meta property="og:image" content="https://thegearsh.com/icons/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="G-Log | Gearsh">
+  <meta name="twitter:description" content="South African music news, spotlights, and booking insights.">
+  <meta name="twitter:image" content="https://thegearsh.com/icons/og-image.png">
+  <title>G-Log — SA Music News &amp; Stories | Gearsh</title>
+  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="gearsh-brand.css">
+  <link rel="stylesheet" href="discovery.css">
+  <link rel="stylesheet" href="glog.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "G-Log",
+    "description": "The official Gearsh blog covering South African music news, artist spotlights, and industry insights.",
+    "url": "https://thegearsh.com/glog",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Gearsh",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://thegearsh.com/icons/Icon-512.png"
+      }
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <nav class="g-nav" aria-label="Primary">
+    <div class="g-nav-inner">
+      <a href="./" class="g-nav-logo" aria-label="Gearsh home">
+        <img src="icons/Icon-512.png" alt="" width="40" height="40">
+      </a>
+      <div class="g-nav-right">
+        <a href="/auth.html" class="g-nav-mobile-login">Login</a>
+        <a href="/search" class="g-nav-mobile-search" aria-label="Search artists"><i class="ti ti-search"></i></a>
+        <button class="g-nav-menu-btn" type="button" aria-label="Open menu" aria-expanded="false"><i class="ti ti-menu-2"></i></button>
+      </div>
+      <ul class="g-nav-links">
+        <li class="g-nav-menu-auth"><a href="/auth.html">Login</a></li>
+        <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
+        <li><a href="/search">Search</a></li>
+        <li><a href="/artists">All artists</a></li>
+        <li><a href="/glog" class="active">G-Log</a></li>
+        <li><a href="./#how">How it works</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="glog-shell">
+    <header class="glog-hero">
+      <div class="glog-hero-badge"><i class="ti ti-news"></i> G-Log</div>
+      <h1 class="glog-title">The <em>Gearsh</em> blog</h1>
+      <p class="glog-subtitle">Timely South African music news, artist spotlights, breaking stories, and booking insights — from amapiano and hip hop to gospel and global breakthroughs.</p>
+    </header>
+
+    <div class="glog-toolbar">
+      <div class="glog-search" role="search">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input type="search" id="glog-search" placeholder="Search G-Log stories, artists, genres…" aria-label="Search blog posts" autocomplete="off">
+      </div>
+      <div class="glog-filters" id="glog-filters" aria-label="Filter by category"></div>
+    </div>
+
+    <main id="main" class="glog-main">
+      <p id="glog-count" style="font-size:12px;color:var(--g-text-dim);margin-bottom:16px"></p>
+      <div id="glog-featured"></div>
+      <div class="glog-grid" id="glog-grid"></div>
+      <div class="glog-empty" id="glog-empty" hidden>
+        <i class="ti ti-search-off"></i>
+        <h2 style="font-family:var(--g-serif);color:var(--g-white);margin-bottom:8px">No stories found</h2>
+        <p>Try a different search or category filter.</p>
+      </div>
+      <div class="glog-load-more-wrap">
+        <button type="button" class="btn-ghost" id="glog-load-more" hidden>Load more stories</button>
+      </div>
+    </main>
+  </div>
+
+  <footer class="g-footer">
+    <div class="g-footer-inner">
+      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="Gearsh" width="24" height="24"> &copy; 2026 Gearsh (Pty) Ltd.</div>
+      <ul class="g-footer-links">
+        <li><a href="/glog">G-Log</a></li>
+        <li><a href="/artists">All artists</a></li>
+        <li><a href="join-gig.html">List your gig</a></li>
+        <li><a href="/terms">Terms</a></li>
+        <li><a href="/privacy">Privacy</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script defer src="glog-data.js"></script>
+  <script defer src="gearsh-ui.js"></script>
+  <script defer src="glog-page.js"></script>
+</body>
+</html>

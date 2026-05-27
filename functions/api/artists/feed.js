@@ -2,7 +2,7 @@
 
 import { parseSkills, buildProfileUrl } from '../auth-utils.js';
 import { seedShowcaseArtistsBatch, SA_SHOWCASE_ARTISTS } from '../sa-showcase-artists.js';
-import { GENRE_FEED_CATEGORIES, resolveArtistGenreSlug, compareArtistsForGenre } from '../sa-showcase-data.js';
+import { GENRE_FEED_CATEGORIES, resolveArtistGenreSlug, compareArtistsForGenre, artistHasSoloPortrait } from '../sa-showcase-data.js';
 import { getBookingFee } from '../showcase-profile.js';
 
 const showcaseByUsername = new Map(
@@ -70,6 +70,16 @@ function mapArtist(artist) {
 }
 
 function compareByMastery(a, b) {
+  const portraitA = artistHasSoloPortrait({
+    username: a.username,
+    image: a.image || showcaseByUsername.get(String(a.username || '').toLowerCase())?.image,
+  });
+  const portraitB = artistHasSoloPortrait({
+    username: b.username,
+    image: b.image || showcaseByUsername.get(String(b.username || '').toLowerCase())?.image,
+  });
+  if (portraitA !== portraitB) return portraitB - portraitA;
+
   const hoursA = Number(a.mastery_hours || 0);
   const hoursB = Number(b.mastery_hours || 0);
   if (hoursB !== hoursA) return hoursB - hoursA;

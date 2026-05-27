@@ -262,7 +262,7 @@
     .headliners-title em { font-style: italic; color: var(--g-accent); }
     .headliners-subtitle { font-size: 13px; color: var(--g-text-muted); margin-top: 4px; }
     .headliners-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 14px;
     }
     .headliner-card {
@@ -275,9 +275,22 @@
     .headliner-card:hover {
       transform: translateY(-2px); border-color: rgba(0,191,255,0.40);
     }
+    .headliner-photo-wrap {
+      position: relative; aspect-ratio: 4 / 5; overflow: hidden;
+      background: linear-gradient(165deg, #1a1a1a 0%, #0a0a0a 100%);
+    }
+    .headliner-photo-wrap::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(to top, rgba(10,10,10,0.72) 0%, rgba(10,10,10,0.08) 42%, transparent 68%);
+    }
     .headliner-photo {
-      width: 100%; aspect-ratio: 1; object-fit: cover; display: block;
-      background: var(--g-black);
+      width: 100%; height: 100%; object-fit: cover; object-position: center 14%;
+      display: block; transform: scale(1.02);
+      transition: transform 0.35s ease;
+    }
+    .headliner-card:hover .headliner-photo {
+      transform: scale(1.06);
+      transition: transform 0.35s ease;
     }
     .headliner-body { padding: 12px 14px 14px; }
     .headliner-name {
@@ -293,13 +306,31 @@
       font-size: 12px; color: var(--g-accent); font-weight: 700; margin-top: 6px;
     }
     .headliner-badge {
-      position: absolute; top: 10px; left: 10px;
+      position: absolute; top: 10px; left: 10px; z-index: 2;
       background: var(--g-accent); color: var(--g-black);
       font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 20px;
       letter-spacing: 0.04em; text-transform: uppercase;
     }
     .headliner-badge--unavailable {
       background: rgba(245,158,11,0.95); color: var(--g-black);
+    }
+    @media (max-width: 900px) {
+      .headliners-grid {
+        display: flex; overflow-x: auto; gap: 12px;
+        scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+        margin: 0 -20px; padding: 0 20px 10px; scrollbar-width: none;
+      }
+      .headliners-grid::-webkit-scrollbar { display: none; }
+      .headliner-card {
+        flex: 0 0 clamp(148px, 42vw, 176px);
+        scroll-snap-align: start;
+      }
+      .headliner-photo { object-position: center 12%; }
+      .headliner-body { padding: 10px 12px 12px; }
+      .headliner-name { font-size: 13px; }
+    }
+    @media (max-width: 400px) {
+      .headliner-card { flex-basis: 140px; }
     }
     .rail-badge {
       display: inline-flex; align-items: center; gap: 4px;
@@ -333,6 +364,7 @@
         <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
         <li><a href="/search">Search</a></li>
         <li><a href="/artists">All artists</a></li>
+        <li><a href="/glog">G-Log</a></li>
         <li><a href="#feed">Explore artists</a></li>
         <li><a href="#how">How it works</a></li>
         <li><a href="#why">Why Gearsh</a></li>
@@ -515,6 +547,7 @@
         &copy; 2026 Gearsh (Pty) Ltd. All rights reserved.
       </div>
       <ul class="g-footer-links">
+        <li><a href="/glog">G-Log</a></li>
         <li><a href="/terms">Terms</a></li>
         <li><a href="/privacy">Privacy</a></li>
         <li><a href="/auth.html">Sign in</a></li>

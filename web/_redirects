@@ -29,6 +29,7 @@
 /manager                  /gearsh-app.html 200
 /booking/*                /gearsh-app.html 200
 /book/*                   /book-gig?artist=:splat 200
+/glog/*                   /glog-post?slug=:splat 200
 /artist/*                 /gearsh-app.html 200
 # /artists and /search served via Cloudflare Pretty URLs from artists.html /
 # search.html. Do NOT add explicit rewrite rules — they will trigger the same
