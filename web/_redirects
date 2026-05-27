@@ -35,7 +35,8 @@
 # search.html. Do NOT add explicit rewrite rules — they will trigger the same
 # 308 loop documented at the top of this file.
 /category/*               /gearsh-app.html 200
-/gigs                     /gearsh-app.html 200
+/gigs                     /gig-guide.html 200
+/gig-guide                /gig-guide.html 200
 /cart                     /gearsh-app.html 200
 /cart/*                   /gearsh-app.html 200
 /messages                 /gearsh-app.html 200

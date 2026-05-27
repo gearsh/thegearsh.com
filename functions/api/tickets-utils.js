@@ -246,6 +246,53 @@ export function mapTicketTypeRow(row) {
   };
 }
 
+export function mapGuideCard(row, artist, ticketTypes) {
+  const types = ticketTypes || [];
+  const prices = types.map(function (t) { return t.price; }).filter(function (p) { return p >= 0; });
+  const minPrice = prices.length ? Math.min.apply(null, prices) : null;
+  const maxPrice = prices.length ? Math.max.apply(null, prices) : null;
+  const remaining = types.reduce(function (sum, t) { return sum + (t.quantity_remaining || 0); }, 0);
+  const hasVip = types.some(function (t) {
+    return (t.tier_kind === 'vip' || /vip/i.test(t.name)) && t.quantity_remaining > 0;
+  });
+  const soldOut = remaining <= 0 || row.status === 'sold_out';
+  const isFree = minPrice === 0;
+  const generalTier = types.find(function (t) {
+    return t.tier_kind === 'general' || t.tier_kind === 'early_bird';
+  }) || types[0];
+  const vipTier = types.find(function (t) {
+    return t.tier_kind === 'vip' || /vip/i.test(t.name);
+  });
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    venue: row.venue,
+    city: row.city,
+    country: row.country,
+    starts_at: row.starts_at,
+    flyer_url: row.flyer_url || '/icons/og-image.png',
+    category: row.category || 'music',
+    is_featured: Boolean(row.is_featured),
+    status: row.status,
+    currency: row.currency || 'ZAR',
+    artist: artist,
+    price_from: minPrice,
+    price_to: maxPrice,
+    is_free: isFree,
+    has_vip: hasVip,
+    sold_out: soldOut,
+    tickets_remaining: remaining,
+    tickets_sold: types.reduce(function (s, t) { return s + (t.quantity_sold || 0); }, 0),
+    availability_label: soldOut ? 'Sold out' : (remaining <= 30 ? 'Only ' + remaining + ' left' : 'Tickets available'),
+    general_tier_id: generalTier ? generalTier.id : null,
+    vip_tier_id: vipTier && vipTier.quantity_remaining > 0 ? vipTier.id : null,
+    url: '/gig/' + row.slug,
+    buy_url: '/gig/' + row.slug + '#tickets',
+  };
+}
+
 export function mapPublicEvent(row, artist, ticketTypes) {
   return {
     id: row.id,

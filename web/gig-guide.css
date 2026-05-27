@@ -1,0 +1,189 @@
+/* Gig Guide — discovery hub */
+
+.gg-page { padding-top: 56px; min-height: 100vh; background: var(--g-black); }
+
+.gg-hero {
+  position: relative; overflow: hidden;
+  border-bottom: 0.5px solid rgba(0,191,255,0.12);
+}
+.gg-hero-track {
+  display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+  -ms-overflow-style: none; scrollbar-width: none;
+}
+.gg-hero-track::-webkit-scrollbar { display: none; }
+.gg-hero-slide {
+  flex: 0 0 100%; scroll-snap-align: start; position: relative;
+  min-height: 340px; display: flex; align-items: flex-end;
+}
+.gg-hero-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #0d1117, #0a0a0a 50%, #101820);
+}
+.gg-hero-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 0.45; }
+.gg-hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, var(--g-black) 0%, rgba(10,10,10,0.3) 60%, transparent 100%);
+}
+.gg-hero-content {
+  position: relative; z-index: 2; padding: 32px 20px 36px;
+  max-width: 1140px; margin: 0 auto; width: 100%;
+}
+.gg-hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--g-accent); background: rgba(0,191,255,0.12);
+  border: 0.5px solid rgba(0,191,255,0.25); padding: 5px 12px; border-radius: 20px;
+  margin-bottom: 12px;
+}
+.gg-hero-title {
+  font-family: var(--g-serif); font-size: clamp(28px, 6vw, 44px);
+  color: var(--g-white); letter-spacing: -0.03em; line-height: 1.05; max-width: 520px;
+}
+.gg-hero-meta { font-size: 14px; color: var(--g-text-muted); margin-top: 10px; }
+.gg-hero-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.gg-countdown {
+  display: inline-flex; gap: 8px; margin-top: 14px;
+  font-size: 12px; color: var(--g-accent); font-weight: 600;
+}
+
+.gg-sticky {
+  position: sticky; top: 56px; z-index: 40;
+  background: rgba(10,10,10,0.94); backdrop-filter: blur(14px);
+  border-bottom: 0.5px solid var(--g-border);
+  padding: 12px 0;
+}
+.gg-sticky-inner { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
+.gg-search-row {
+  display: flex; gap: 8px; margin-bottom: 10px;
+}
+.gg-search {
+  flex: 1; display: flex; align-items: center; gap: 8px;
+  background: var(--g-surface); border: 0.5px solid var(--g-border);
+  border-radius: 12px; padding: 0 14px; height: 46px;
+}
+.gg-search input {
+  flex: 1; background: none; border: none; color: var(--g-text);
+  font-family: var(--g-font); font-size: 15px; outline: none;
+}
+.gg-search i { color: var(--g-text-dim); }
+.gg-city-select {
+  height: 46px; background: var(--g-surface); border: 0.5px solid var(--g-border);
+  border-radius: 12px; color: var(--g-text); padding: 0 12px; font-size: 13px;
+  font-family: var(--g-font); min-width: 120px;
+}
+.gg-chips {
+  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
+  -ms-overflow-style: none; scrollbar-width: none;
+}
+.gg-chips::-webkit-scrollbar { display: none; }
+.gg-chip {
+  flex-shrink: 0; padding: 8px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  background: var(--g-surface); border: 0.5px solid var(--g-border);
+  color: var(--g-text-muted); font-family: var(--g-font);
+  transition: all 0.15s;
+}
+.gg-chip:hover { color: var(--g-white); border-color: rgba(0,191,255,0.25); }
+.gg-chip.active {
+  background: rgba(0,191,255,0.12); border-color: rgba(0,191,255,0.35);
+  color: var(--g-accent);
+}
+.gg-tabs {
+  display: flex; gap: 4px; margin-top: 10px; overflow-x: auto;
+}
+.gg-tab {
+  flex-shrink: 0; padding: 8px 16px; font-size: 13px; font-weight: 500;
+  color: var(--g-text-muted); background: none; border: none; cursor: pointer;
+  border-bottom: 2px solid transparent; font-family: var(--g-font);
+}
+.gg-tab.active { color: var(--g-accent); border-bottom-color: var(--g-accent); }
+
+.gg-body { max-width: 1140px; margin: 0 auto; padding: 24px 20px 100px; }
+.gg-section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px; gap: 12px;
+}
+.gg-section-title {
+  font-family: var(--g-serif); font-size: 22px; color: var(--g-white);
+}
+.gg-view-toggle { display: flex; gap: 4px; }
+.gg-view-btn {
+  width: 36px; height: 36px; border-radius: 8px; border: 0.5px solid var(--g-border);
+  background: var(--g-surface); color: var(--g-text-muted); cursor: pointer;
+}
+.gg-view-btn.active { color: var(--g-accent); border-color: rgba(0,191,255,0.3); }
+
+.gg-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;
+}
+.gg-grid.list-view { grid-template-columns: 1fr; }
+.gg-grid.list-view .gg-card { display: grid; grid-template-columns: 140px 1fr; }
+.gg-grid.list-view .gg-card-flyer { aspect-ratio: auto; height: 100%; min-height: 140px; }
+
+.gg-card {
+  background: var(--g-surface); border: 0.5px solid var(--g-border);
+  border-radius: 16px; overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.gg-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(0,191,255,0.25);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.35);
+}
+.gg-card-flyer {
+  width: 100%; aspect-ratio: 16/10; object-fit: cover; background: var(--g-black);
+  display: block;
+}
+.gg-card-body { padding: 16px; }
+.gg-card-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.gg-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 6px;
+}
+.gg-badge.avail { background: rgba(74,222,128,0.12); color: #4ade80; }
+.gg-badge.sold { background: rgba(248,113,113,0.12); color: #f87171; }
+.gg-badge.vip { background: rgba(0,191,255,0.12); color: var(--g-accent); }
+.gg-card-artist {
+  font-size: 12px; color: var(--g-text-muted); display: flex; align-items: center; gap: 4px;
+}
+.gg-card-artist .verified { color: var(--g-accent); font-size: 13px; }
+.gg-card-title {
+  font-size: 17px; font-weight: 700; color: var(--g-white); margin: 6px 0;
+  line-height: 1.25;
+}
+.gg-card-meta { font-size: 12px; color: var(--g-text-muted); line-height: 1.5; }
+.gg-card-price {
+  font-size: 16px; font-weight: 700; color: var(--g-accent); margin-top: 10px;
+}
+.gg-card-actions {
+  display: flex; gap: 8px; margin-top: 12px;
+}
+.gg-card-actions .btn-main { flex: 1; padding: 10px 12px; font-size: 13px; justify-content: center; }
+.gg-card-actions .btn-ghost { padding: 10px 12px; font-size: 12px; }
+
+.gg-empty {
+  text-align: center; padding: 60px 20px;
+  background: var(--g-surface); border-radius: 16px; border: 0.5px solid var(--g-border);
+}
+.gg-empty h3 { font-family: var(--g-serif); font-size: 24px; color: var(--g-white); margin-bottom: 8px; }
+.gg-empty p { color: var(--g-text-muted); font-size: 14px; max-width: 360px; margin: 0 auto 20px; }
+
+.gg-skeleton {
+  background: linear-gradient(90deg, var(--g-surface) 0%, var(--g-surface-3) 50%, var(--g-surface) 100%);
+  background-size: 200% 100%; animation: gg-shimmer 1.2s ease-in-out infinite;
+  border-radius: 16px; aspect-ratio: 16/10;
+}
+@keyframes gg-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+.gg-pull-hint {
+  text-align: center; font-size: 12px; color: var(--g-text-dim);
+  padding: 8px; opacity: 0; transition: opacity 0.2s;
+}
+.gg-pull-hint.show { opacity: 1; }
+.gg-sentinel { height: 1px; }
+
+@media (max-width: 640px) {
+  .gg-hero-slide { min-height: 300px; }
+  .gg-grid { grid-template-columns: 1fr; }
+  .gg-grid.list-view .gg-card { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Discover gigs across South Africa. Buy tickets in seconds on Gearsh — the easiest way to find live music, festivals, and tech events.">
+  <link rel="canonical" href="https://thegearsh.com/gigs">
+  <meta name="theme-color" content="#0A0A0A">
+  <meta property="og:title" content="Gig Guide | Find & Buy Tickets | Gearsh">
+  <meta property="og:description" content="Discover gigs and buy tickets in seconds. Music, festivals, tech events across SA.">
+  <meta property="og:url" content="https://thegearsh.com/gigs">
+  <meta property="og:image" content="https://thegearsh.com/icons/og-image.png">
+  <title>Gig Guide | Buy Tickets | Gearsh</title>
+  <link rel="icon" type="image/png" href="/icons/Icon-192.png">
+  <link rel="stylesheet" href="/gearsh-brand.css">
+  <link rel="stylesheet" href="/gig-guide.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <nav class="g-nav">
+    <div class="g-nav-inner">
+      <a href="/" class="g-nav-logo"><img src="/icons/Icon-512.png" alt="Gearsh" width="40" height="40"></a>
+      <ul class="g-nav-links">
+        <li><a href="/gigs" class="active">Gig Guide</a></li>
+        <li><a href="/search">Artists</a></li>
+        <li><a href="/my-tickets">My tickets</a></li>
+        <li><a href="/auth.html">Login</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main id="main" class="gg-page">
+    <section class="gg-hero" id="gg-hero" aria-label="Featured gigs"></section>
+
+    <div class="gg-sticky">
+      <div class="gg-sticky-inner">
+        <div class="gg-search-row">
+          <div class="gg-search" role="search">
+            <i class="ti ti-search"></i>
+            <input type="search" id="gg-search" placeholder="Search artist, city, venue…" autocomplete="off" aria-label="Search gigs">
+          </div>
+          <select class="gg-city-select" id="gg-city" aria-label="Filter by city">
+            <option value="">All cities</option>
+          </select>
+        </div>
+        <div class="gg-chips" id="gg-chips">
+          <button type="button" class="gg-chip active" data-filter="">All</button>
+          <button type="button" class="gg-chip" data-filter="weekend">This weekend</button>
+          <button type="button" class="gg-chip" data-filter="popular">Popular</button>
+          <button type="button" class="gg-chip" data-filter="vip">VIP available</button>
+          <button type="button" class="gg-chip" data-filter="free">Free</button>
+          <button type="button" class="gg-chip" data-filter="following" id="gg-chip-following">Following</button>
+        </div>
+        <div class="gg-tabs" id="gg-tabs" role="tablist">
+          <button type="button" class="gg-tab active" data-category="all">All Gigs</button>
+          <button type="button" class="gg-tab" data-category="music">Music</button>
+          <button type="button" class="gg-tab" data-category="tech">Tech Events</button>
+          <button type="button" class="gg-tab" data-category="cultural">Cultural</button>
+          <button type="button" class="gg-tab" data-category="festival">Festivals</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="gg-pull-hint" id="gg-pull">Pull to refresh</div>
+
+    <div class="gg-body">
+      <section id="gg-following-section" hidden>
+        <div class="gg-section-head"><h2 class="gg-section-title">From artists you follow</h2></div>
+        <div class="gg-grid" id="gg-following-grid"></div>
+      </section>
+
+      <div class="gg-section-head">
+        <h2 class="gg-section-title" id="gg-list-title">Upcoming gigs</h2>
+        <div class="gg-view-toggle">
+          <button type="button" class="gg-view-btn active" data-view="grid" aria-label="Grid view"><i class="ti ti-layout-grid"></i></button>
+          <button type="button" class="gg-view-btn" data-view="list" aria-label="List view"><i class="ti ti-list"></i></button>
+        </div>
+      </div>
+      <div class="gg-grid" id="gg-grid">
+        <div class="gg-skeleton"></div><div class="gg-skeleton"></div><div class="gg-skeleton"></div>
+      </div>
+      <div class="gg-sentinel" id="gg-sentinel"></div>
+    </div>
+  </main>
+
+  <footer class="g-footer">
+    <div class="g-footer-inner">
+      <div class="g-footer-left"><img src="/icons/Icon-512.png" alt=""> &copy; 2025 Gearsh (Pty) Ltd.</div>
+      <ul class="g-footer-links">
+        <li><a href="/gearsh">Book The Gearsh</a></li>
+        <li><a href="/terms">Terms</a></li>
+        <li><a href="/">Home</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/gig-guide.js"></script>
+</body>
+</html>

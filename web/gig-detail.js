@@ -158,6 +158,7 @@
             '<span><i class="ti ti-map-pin"></i> ' + escapeHtml(ev.venue) + ', ' + escapeHtml(ev.city) + '</span>' +
             (ev.artist ? '<span><i class="ti ti-microphone-2"></i> <a href="' + escapeHtml(artistLink) + '" style="color:inherit">' + escapeHtml(ev.artist.name) + '</a></span>' : '') +
           '</div>' +
+          '<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap" id="tkt-quick-actions"></div>' +
           '<div class="tkt-countdown" id="tkt-countdown"></div>' +
         '</div></section>' +
       '<div class="tkt-body"><div class="tkt-grid">' +
@@ -172,12 +173,12 @@
           (ev.refund_policy ? '<div class="tkt-card"><div class="tkt-section-label">Refund policy</div><p style="font-size:14px;color:var(--g-text-muted)">' + escapeHtml(ev.refund_policy) + '</p></div>' : '') +
         '</div>' +
         '<div class="tkt-sticky">' +
-          '<div class="tkt-card">' +
+          '<div class="tkt-card" id="tickets">' +
             '<div class="tkt-section-label">Tickets</div>' +
             (ev.sales_open ? tiersHtml : (
               ev.is_sold_out
                 ? '<p style="color:var(--g-text-muted);font-size:14px;margin-bottom:16px">Sold out. Join the waitlist and we will notify you if tickets open up.</p>' +
-                  '<div class="tkt-field"><label>Email</label><input id="waitlist-email" type="email" placeholder="you@email.com"></div>' +
+                  '<div class="tkt-field" id="waitlist"><label>Email</label><input id="waitlist-email" type="email" placeholder="you@email.com"></div>' +
                   '<button type="button" class="btn-main" id="waitlist-btn" style="width:100%">Join waitlist</button>'
                 : '<p style="color:var(--g-text-muted);font-size:14px">Ticket sales are not open yet.</p>'
             )) +
@@ -202,6 +203,8 @@
     startCountdown(ev.starts_at);
     bindQtyEvents();
     updateSummary();
+    renderQuickActions(ev);
+    applyUrlParams();
 
     var checkoutBtn = document.getElementById('tkt-checkout-btn');
     if (checkoutBtn) checkoutBtn.addEventListener('click', checkout);
@@ -213,6 +216,83 @@
     if (token) {
       var savedName = localStorage.getItem('gearsh_user_name');
       if (savedName && document.getElementById('tkt-name')) document.getElementById('tkt-name').value = savedName;
+    }
+  }
+
+  function renderQuickActions(ev) {
+    var el = document.getElementById('tkt-quick-actions');
+    if (!el) return;
+    var general = (ev.ticket_types || []).find(function (t) {
+      return (t.tier_kind === 'general' || t.tier_kind === 'early_bird') && t.quantity_remaining > 0;
+    }) || (ev.ticket_types || []).find(function (t) { return t.quantity_remaining > 0; });
+    var vip = (ev.ticket_types || []).find(function (t) {
+      return (t.tier_kind === 'vip' || /vip/i.test(t.name)) && t.quantity_remaining > 0;
+    });
+    var html = '<a href="/gigs" class="btn-ghost" style="font-size:12px"><i class="ti ti-arrow-left"></i> Gig Guide</a>';
+    if (ev.sales_open && general) {
+      html += '<button type="button" class="btn-main" data-quick-tier="' + escapeHtml(general.id) + '" style="padding:10px 16px;font-size:13px">Buy ' + escapeHtml(general.name) + '</button>';
+    }
+    if (ev.sales_open && vip) {
+      html += '<button type="button" class="btn-ghost" data-quick-tier="' + escapeHtml(vip.id) + '" style="padding:10px 16px;font-size:13px">Buy VIP</button>';
+    }
+    html += '<button type="button" class="btn-ghost" id="tkt-share" style="padding:10px 12px;font-size:12px"><i class="ti ti-share-3"></i></button>';
+    html += '<button type="button" class="btn-ghost" id="tkt-calendar" style="padding:10px 12px;font-size:12px"><i class="ti ti-calendar-plus"></i></button>';
+    el.innerHTML = html;
+    el.querySelectorAll('[data-quick-tier]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-quick-tier');
+        cart[id] = 1;
+        var span = root.querySelector('[data-qty-val="' + id + '"]');
+        if (span) span.textContent = '1';
+        updateSummary();
+        document.getElementById('tickets').scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+    var shareBtn = document.getElementById('tkt-share');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', function () {
+        var url = window.location.href;
+        if (navigator.share) navigator.share({ title: ev.title, url: url }).catch(function () {});
+        else navigator.clipboard.writeText(url);
+      });
+    }
+    var calBtn = document.getElementById('tkt-calendar');
+    if (calBtn) {
+      calBtn.addEventListener('click', function () {
+        var start = new Date(ev.starts_at);
+        var end = ev.ends_at ? new Date(ev.ends_at) : new Date(start.getTime() + 3 * 3600000);
+        var fmt = function (d) {
+          return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+        };
+        var ics = 'BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:' + fmt(start) + '\nDTEND:' + fmt(end) +
+          '\nSUMMARY:' + ev.title + '\nLOCATION:' + ev.venue + ', ' + ev.city + '\nEND:VEVENT\nEND:VCALENDAR';
+        var blob = new Blob([ics], { type: 'text/calendar' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = ev.slug + '.ics';
+        a.click();
+      });
+    }
+  }
+
+  function applyUrlParams() {
+    var params = new URLSearchParams(window.location.search);
+    var tier = params.get('tier');
+    var qty = Math.max(1, Number(params.get('qty') || 1));
+    if (tier && eventData) {
+      cart[tier] = qty;
+      var span = root.querySelector('[data-qty-val="' + tier + '"]');
+      if (span) span.textContent = qty;
+      updateSummary();
+      setTimeout(function () {
+        document.getElementById('tickets').scrollIntoView({ behavior: 'smooth' });
+      }, 400);
+    }
+    if (window.location.hash === '#tickets' || window.location.hash === '#waitlist') {
+      setTimeout(function () {
+        var el = document.getElementById(window.location.hash.slice(1)) || document.getElementById('tickets');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 500);
     }
   }
 

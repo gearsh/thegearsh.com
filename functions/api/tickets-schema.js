@@ -27,6 +27,8 @@ export async function ensureTicketsTables(db) {
       sales_start_at TEXT,
       sales_end_at TEXT,
       activity_id TEXT,
+      category TEXT DEFAULT 'music',
+      is_featured INTEGER DEFAULT 0,
       created_at TEXT DEFAULT (datetime('now')),
       updated_at TEXT DEFAULT (datetime('now'))
     )
@@ -145,6 +147,9 @@ export async function ensureTicketsTables(db) {
       created_at TEXT DEFAULT (datetime('now'))
     )
   `).run();
+
+  await db.prepare(`ALTER TABLE gig_events ADD COLUMN category TEXT DEFAULT 'music'`).run().catch(function () {});
+  await db.prepare(`ALTER TABLE gig_events ADD COLUMN is_featured INTEGER DEFAULT 0`).run().catch(function () {});
 
   const indexes = [
     'CREATE INDEX IF NOT EXISTS idx_gig_events_artist ON gig_events(artist_id, starts_at)',

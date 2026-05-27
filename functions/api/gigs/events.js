@@ -156,8 +156,8 @@ export async function onRequestPost(context) {
       INSERT INTO gig_events (
         id, artist_id, author_user_id, slug, title, description, venue, city, country,
         starts_at, ends_at, timezone, flyer_url, lineup_json, capacity, currency,
-        visibility, refund_policy, status, sales_start_at, sales_end_at, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        visibility, refund_policy, category, status, sales_start_at, sales_end_at, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       eventId,
       profile.artist_id,
@@ -177,6 +177,7 @@ export async function onRequestPost(context) {
       currency,
       body.visibility === 'followers' ? 'followers' : 'public',
       String(body.refund_policy || '').trim() || null,
+      String(body.category || 'music').toLowerCase(),
       publish ? 'published' : 'draft',
       body.sales_start_at || now,
       body.sales_end_at || null,

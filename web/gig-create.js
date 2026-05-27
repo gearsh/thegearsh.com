@@ -51,7 +51,8 @@
         '</div>' +
         '<div class="field-group" style="margin-top:12px"><label class="field-label">Description</label><textarea class="field-textarea" name="description" rows="4" placeholder="Lineup, vibe, dress code…"></textarea></div>' +
         '<div class="field-group"><label class="field-label">Refund policy</label><textarea class="field-textarea" name="refund_policy" rows="2" placeholder="No refunds within 48 hours of the event."></textarea></div>' +
-        '<div class="field-group"><label class="field-label">Visibility</label><select class="field-select" name="visibility"><option value="public">Public</option><option value="followers">Approved followers only</option></select></div>' +
+          '<div class="field-group"><label class="field-label">Visibility</label><select class="field-select" name="visibility"><option value="public">Public</option><option value="followers">Approved followers only</option></select></div>' +
+          '<div class="field-group"><label class="field-label">Category</label><select class="field-select" name="category"><option value="music">Music</option><option value="tech">Tech Events</option><option value="cultural">Cultural</option><option value="festival">Festival</option></select></div>' +
         '<div style="margin:20px 0 10px"><div class="section-label">Ticket types</div></div>' +
         '<div id="gig-tiers-root"></div>' +
         '<button type="button" class="btn-ghost" id="gig-add-tier" style="margin-bottom:16px"><i class="ti ti-plus"></i> Add ticket type</button>' +
@@ -150,6 +151,7 @@
       sales_end_at: salesEnd || null,
       refund_policy: fd.get('refund_policy') || null,
       visibility: fd.get('visibility') || 'public',
+      category: fd.get('category') || 'music',
       publish: true,
       post_to_feed: !!this.form.querySelector('[name="post_to_feed"]').checked,
       ticket_types: this.collectTiers(),
