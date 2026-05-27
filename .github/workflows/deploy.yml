@@ -76,6 +76,16 @@ jobs:
           done
           cp functions/api/auth-utils.js build/web/functions/api/auth-utils.js
           cp web/wrangler.toml build/web/wrangler.toml 2>/dev/null || true
+      - name: Cache-bust JS/CSS references in HTML
+        run: |
+          VERSION=$(git rev-parse --short HEAD)
+          echo "Asset version: $VERSION"
+          for html in build/web/*.html; do
+            # Append ?v=<sha> so Cloudflare edge cache cannot serve stale bundles
+            # after a deploy (/*.js is cached for 24h at the CDN).
+            sed -i -E "s|(src=\"[^\"]+\.(js|css))(\?[^\"]*)?\"|\1?v=${VERSION}\"|g" "$html"
+            sed -i -E "s|(href=\"[^\"]+\.(js|css))(\?[^\"]*)?\"|\1?v=${VERSION}\"|g" "$html"
+          done
       - name: Verify deployment bundle
         run: |
           test -f build/web/_redirects
@@ -92,3 +102,20 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy build/web --project-name=thegearsh-com
+      - name: Purge Cloudflare CDN cache
+        run: |
+          set -euo pipefail
+          ZONE_ID=$(curl -fsSL \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            "https://api.cloudflare.com/client/v4/zones?name=thegearsh.com" \
+            | jq -r '.result[0].id // empty')
+          if [ -z "$ZONE_ID" ]; then
+            echo "::warning::Could not resolve zone ID for thegearsh.com — skip CDN purge."
+            exit 0
+          fi
+          curl -fsSL -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data '{"files":["https://www.thegearsh.com/sa-showcase-data.js","https://www.thegearsh.com/artist-feed.js","https://www.thegearsh.com/day-genre-schedule.js","https://www.thegearsh.com/search-page.js","https://www.thegearsh.com/"]}'
+          echo "CDN cache purged for key assets."

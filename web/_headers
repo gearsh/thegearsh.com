@@ -30,7 +30,22 @@
   Cache-Control: no-store, max-age=0
 
 /*.js
-  Cache-Control: public, max-age=86400, must-revalidate
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/sa-showcase-data.js
+  Cache-Control: public, max-age=300, must-revalidate
+
+/artist-feed.js
+  Cache-Control: public, max-age=300, must-revalidate
+
+/day-genre-schedule.js
+  Cache-Control: public, max-age=300, must-revalidate
+
+/search-page.js
+  Cache-Control: public, max-age=300, must-revalidate
+
+/artists-page.js
+  Cache-Control: public, max-age=300, must-revalidate
 
 /*.css
   Cache-Control: public, max-age=86400, must-revalidate
