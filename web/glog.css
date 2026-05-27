@@ -324,62 +324,251 @@
 }
 
 /* ── Article page ── */
-.glog-article-shell { padding-top: 72px; }
+.glog-read-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  z-index: 200;
+  background: linear-gradient(90deg, var(--g-accent), #66d9ff);
+  box-shadow: 0 0 12px rgba(0,191,255,0.55);
+  transition: width 0.08s linear;
+}
 
-.glog-article-hero {
-  max-width: 860px;
+.glog-article-shell {
+  padding-top: 0;
+  min-height: 100vh;
+  background: var(--g-black);
+}
+
+.g-nav--over-hero {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: linear-gradient(to bottom, rgba(10,10,10,0.82) 0%, rgba(10,10,10,0.35) 70%, transparent 100%);
+  border-bottom-color: transparent;
+}
+
+.g-nav--over-hero .g-nav-links a,
+.g-nav--over-hero .g-nav-mobile-login,
+.g-nav--over-hero .g-nav-mobile-search,
+.g-nav--over-hero .g-nav-menu-btn {
+  color: rgba(255,255,255,0.92);
+}
+
+.g-nav--over-hero .g-nav-links a:hover,
+.g-nav--over-hero .g-nav-links a.active {
+  color: var(--g-accent);
+}
+
+/* Cinematic masthead */
+.glog-masthead {
+  position: relative;
+  min-height: clamp(420px, 72vh, 640px);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  border-bottom: 0.5px solid var(--g-border);
+}
+
+.glog-masthead-bg {
+  position: absolute;
+  inset: 0;
+  background: #111;
+}
+
+.glog-masthead-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+  display: block;
+  transform: scale(1.04);
+  filter: saturate(1.08) contrast(1.04);
+}
+
+.glog-masthead-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(10,10,10,1) 0%, rgba(10,10,10,0.88) 28%, rgba(10,10,10,0.45) 58%, rgba(10,10,10,0.18) 100%),
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(0,191,255,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.glog-masthead-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 920px;
   margin: 0 auto;
-  padding: 28px 20px 0;
+  padding: 96px 20px 36px;
+}
+
+.glog-masthead-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--g-accent);
+  background: rgba(0,191,255,0.12);
+  border: 0.5px solid rgba(0,191,255,0.28);
+  padding: 6px 12px;
+  border-radius: 999px;
+  margin-bottom: 14px;
 }
 
 .glog-back {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--g-text-muted);
+  color: rgba(255,255,255,0.72);
   text-decoration: none;
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 18px;
+  transition: color 0.15s;
 }
 
 .glog-back:hover { color: var(--g-accent); }
 
 .glog-article-title {
   font-family: var(--g-serif);
-  font-size: clamp(34px, 6vw, 52px);
-  line-height: 1.06;
-  letter-spacing: -0.03em;
+  font-size: clamp(34px, 6.5vw, 58px);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
   color: var(--g-white);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  text-wrap: balance;
 }
 
-.glog-article-cover {
-  max-width: 960px;
-  margin: 24px auto 0;
-  padding: 0 20px;
+.glog-article-lede {
+  font-size: clamp(16px, 2.4vw, 19px);
+  line-height: 1.6;
+  color: rgba(255,255,255,0.78);
+  max-width: 680px;
+  margin-bottom: 18px;
 }
 
-.glog-article-cover img {
-  width: 100%;
-  max-height: 480px;
-  object-fit: cover;
-  object-position: center 20%;
-  border-radius: 18px;
-  border: 0.5px solid var(--g-border);
-  display: block;
+.glog-meta-row--hero {
+  color: rgba(255,255,255,0.62);
+}
+
+.glog-meta-row--hero span {
+  background: rgba(255,255,255,0.06);
+  border: 0.5px solid rgba(255,255,255,0.08);
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.glog-article-main {
+  position: relative;
+  z-index: 1;
+}
+
+.glog-article-layout {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 36px 20px 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 40px;
+  align-items: start;
 }
 
 .glog-article-body {
-  max-width: 720px;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.glog-article-aside {
+  position: sticky;
+  top: 88px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.glog-aside-card {
+  background: var(--g-surface);
+  border: 0.5px solid var(--g-border);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.glog-aside-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--g-text-dim);
+  margin-bottom: 12px;
+}
+
+.glog-aside-card--cta {
+  background: linear-gradient(160deg, rgba(0,191,255,0.14) 0%, rgba(0,191,255,0.04) 100%);
+  border-color: rgba(0,191,255,0.24);
+  text-align: center;
+}
+
+.glog-aside-card--cta strong {
+  display: block;
+  color: var(--g-white);
+  font-size: 15px;
+  margin: 10px 0 6px;
+}
+
+.glog-aside-card--cta p {
+  font-size: 13px;
+  color: var(--g-text-muted);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.glog-aside-logo {
+  border-radius: 10px;
+  display: block;
   margin: 0 auto;
-  padding: 32px 20px 0;
+}
+
+.glog-aside-btn {
+  width: 100%;
+  justify-content: center;
 }
 
 .glog-prose {
-  font-size: 17px;
-  line-height: 1.75;
+  font-size: 18px;
+  line-height: 1.78;
   color: var(--g-text);
+}
+
+.glog-prose .glog-lead,
+.glog-prose .glog-lead + p {
+  font-size: 1.12em;
+  line-height: 1.7;
+  color: var(--g-white);
+}
+
+.glog-prose .glog-lead {
+  margin-bottom: 1.4em;
+}
+
+.glog-prose .glog-lead:first-letter {
+  float: left;
+  font-family: var(--g-serif);
+  font-size: 3.4em;
+  line-height: 0.82;
+  padding-right: 10px;
+  padding-top: 4px;
+  color: var(--g-accent);
 }
 
 .glog-prose h2,
@@ -388,73 +577,164 @@
   font-weight: 400;
   color: var(--g-white);
   letter-spacing: -0.02em;
-  margin: 2.2em 0 0.7em;
-  line-height: 1.2;
+  margin: 2.4em 0 0.75em;
+  line-height: 1.18;
 }
 
-.glog-prose h2 { font-size: clamp(26px, 4vw, 32px); }
-.glog-prose h3 { font-size: clamp(20px, 3vw, 24px); }
+.glog-prose h2 { font-size: clamp(26px, 4vw, 34px); }
+.glog-prose h3 { font-size: clamp(20px, 3vw, 26px); }
 
-.glog-prose p { margin-bottom: 1.2em; }
+.glog-prose p { margin-bottom: 1.25em; }
 
-.glog-prose a {
+.glog-prose strong { color: var(--g-white); font-weight: 650; }
+
+.glog-prose a,
+.glog-inline-link {
   color: var(--g-accent);
   text-decoration: underline;
   text-underline-offset: 3px;
+  text-decoration-color: rgba(0,191,255,0.45);
 }
+
+.glog-prose a:hover { text-decoration-color: var(--g-accent); }
 
 .glog-prose ul,
 .glog-prose ol {
-  margin: 0 0 1.2em 1.2em;
+  margin: 0 0 1.4em 0;
+  padding-left: 0;
+  list-style: none;
 }
 
-.glog-prose li { margin-bottom: 0.45em; }
+.glog-prose li {
+  position: relative;
+  margin-bottom: 0.65em;
+  padding-left: 1.35em;
+}
+
+.glog-prose li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--g-accent);
+  box-shadow: 0 0 10px rgba(0,191,255,0.45);
+}
 
 .glog-prose blockquote {
-  margin: 1.6em 0;
-  padding: 16px 18px;
+  margin: 2em 0;
+  padding: 20px 22px;
   border-left: 3px solid var(--g-accent);
-  background: rgba(0,191,255,0.06);
-  border-radius: 0 12px 12px 0;
+  background: linear-gradient(90deg, rgba(0,191,255,0.1) 0%, rgba(0,191,255,0.02) 100%);
+  border-radius: 0 14px 14px 0;
   color: var(--g-white);
   font-family: var(--g-serif);
-  font-size: 1.15em;
-  line-height: 1.5;
+  font-size: 1.2em;
+  line-height: 1.45;
 }
 
 .glog-prose img {
   width: 100%;
-  border-radius: 14px;
-  margin: 1.6em 0;
+  border-radius: 16px;
+  margin: 1.8em 0;
   border: 0.5px solid var(--g-border);
 }
 
 .glog-prose code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.9em;
+  font-size: 0.88em;
   background: var(--g-surface-3);
-  padding: 2px 6px;
+  padding: 2px 7px;
   border-radius: 6px;
+  color: var(--g-accent);
 }
 
 .glog-prose pre {
   background: var(--g-surface);
   border: 0.5px solid var(--g-border);
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: 14px;
+  padding: 18px;
   overflow-x: auto;
-  margin: 1.4em 0;
+  margin: 1.6em 0;
 }
 
 .glog-prose pre code {
   background: none;
   padding: 0;
+  color: var(--g-text);
+}
+
+/* Numbered step cards */
+.glog-step {
+  margin: 1.6em 0;
+  background: var(--g-surface);
+  border: 0.5px solid var(--g-border);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.glog-step:hover {
+  border-color: rgba(0,191,255,0.32);
+  transform: translateY(-1px);
+}
+
+.glog-step-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border-bottom: 0.5px solid var(--g-border);
+  background: linear-gradient(135deg, rgba(0,191,255,0.08) 0%, transparent 100%);
+}
+
+.glog-step-num {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--g-accent);
+  color: var(--g-black);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.glog-step-title {
+  font-family: var(--g-serif);
+  font-size: clamp(22px, 3.5vw, 28px);
+  line-height: 1.15;
+  color: var(--g-white);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.glog-step-body {
+  padding: 18px 20px 20px;
+}
+
+.glog-step-body p:last-child { margin-bottom: 0; }
+
+.glog-share--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  max-width: none;
+  margin: 0;
+}
+
+.glog-share--stack .glog-share-btn {
+  width: 100%;
+  justify-content: flex-start;
 }
 
 .glog-share {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 28px 20px 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -473,23 +753,130 @@
 .glog-share-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: var(--g-surface);
+  gap: 8px;
+  background: var(--g-surface-2, var(--g-surface));
   border: 0.5px solid var(--g-border);
   color: var(--g-text);
   font-family: var(--g-font);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 9px 12px;
-  border-radius: 999px;
+  padding: 10px 14px;
+  border-radius: 12px;
   cursor: pointer;
   text-decoration: none;
-  transition: border-color 0.15s, color 0.15s;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
 
 .glog-share-btn:hover {
   border-color: rgba(0,191,255,0.35);
   color: var(--g-accent);
+  background: rgba(0,191,255,0.06);
+}
+
+.glog-cta--banner {
+  max-width: 1120px;
+  margin: 48px auto 0;
+  padding: 0 20px;
+  position: relative;
+}
+
+.glog-cta--banner .glog-cta-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 28px 28px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(0,191,255,0.16) 0%, rgba(0,191,255,0.05) 55%, rgba(10,10,10,0.2) 100%);
+  border: 0.5px solid rgba(0,191,255,0.28);
+  overflow: hidden;
+}
+
+.glog-cta-glow {
+  position: absolute;
+  inset: 20px;
+  border-radius: 20px;
+  background: radial-gradient(circle at 20% 50%, rgba(0,191,255,0.18) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.glog-cta-eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--g-accent);
+  margin-bottom: 8px;
+}
+
+.glog-cta--banner h2 {
+  font-family: var(--g-serif);
+  font-weight: 400;
+  font-size: clamp(26px, 4vw, 36px);
+  color: var(--g-white);
+  line-height: 1.12;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.glog-cta--banner p {
+  font-size: 15px;
+  color: var(--g-text-muted);
+  margin-bottom: 0;
+  line-height: 1.55;
+  max-width: 520px;
+}
+
+.glog-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.glog-related {
+  max-width: 1120px;
+  margin: 56px auto 0;
+  padding: 0 20px 72px;
+  border-top: 0.5px solid var(--g-border);
+  padding-top: 40px;
+}
+
+.glog-related-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.glog-related-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--g-accent);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.glog-related-all:hover { opacity: 0.85; }
+
+.glog-related-title {
+  font-family: var(--g-serif);
+  font-size: clamp(24px, 4vw, 32px);
+  color: var(--g-white);
+  margin: 0;
+}
+
+.glog-related-title em { font-style: italic; color: var(--g-accent); }
+
+.glog-loading {
+  color: var(--g-text-muted);
 }
 
 .glog-cta {
@@ -518,30 +905,53 @@
   line-height: 1.55;
 }
 
-.glog-related {
-  max-width: 1200px;
-  margin: 48px auto 0;
-  padding: 0 20px 64px;
-}
-
-.glog-related-title {
-  font-family: var(--g-serif);
-  font-size: clamp(24px, 4vw, 32px);
-  color: var(--g-white);
-  margin-bottom: 18px;
-}
-
-.glog-related-title em { font-style: italic; color: var(--g-accent); }
-
 @media (max-width: 960px) {
   .glog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .glog-featured { grid-template-columns: 1fr; }
   .glog-featured-media { min-height: 240px; }
   .glog-featured-media img { min-height: 240px; }
+
+  .glog-article-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .glog-article-aside {
+    position: static;
+    order: 2;
+  }
+
+  .glog-share--stack {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .glog-share--stack .glog-share-btn {
+    width: auto;
+    flex: 1 1 calc(50% - 4px);
+  }
+
+  .glog-cta--banner .glog-cta-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .glog-cta-actions {
+    width: 100%;
+  }
+
+  .glog-cta-actions .btn-main,
+  .glog-cta-actions .btn-ghost {
+    flex: 1;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 640px) {
   .glog-grid { grid-template-columns: 1fr; }
   .glog-hero { padding-top: 24px; }
-  .glog-prose { font-size: 16px; }
+  .glog-prose { font-size: 17px; }
+  .glog-masthead { min-height: 380px; }
+  .glog-masthead-inner { padding-top: 84px; }
+  .glog-prose .glog-lead:first-letter { font-size: 2.8em; }
 }

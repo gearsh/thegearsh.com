@@ -43,10 +43,10 @@
   }
 
   function resolveImageSrc(path) {
-    if (!path) return 'icons/Icon-512.png';
+    if (!path) return '/icons/Icon-512.png';
     if (/^https?:\/\//i.test(path)) return path;
     if (path.startsWith('/')) return path;
-    return path.replace(/^assets\//, '/assets/');
+    return '/' + path.replace(/^\/?/, '');
   }
 
   function setMeta(attr, key, value) {
@@ -119,6 +119,47 @@
     script.textContent = JSON.stringify(schema);
   }
 
+  function enhanceProse(el) {
+    if (!el) return;
+
+    var firstP = el.querySelector('p');
+    if (firstP) firstP.classList.add('glog-lead');
+
+    var headings = el.querySelectorAll('h2');
+    headings.forEach(function (heading) {
+      var match = heading.textContent.match(/^(\d+)\.\s*(.+)$/);
+      if (!match) return;
+
+      var stepNum = match[1];
+      var stepTitle = match[2];
+      var step = document.createElement('div');
+      step.className = 'glog-step';
+
+      var head = document.createElement('div');
+      head.className = 'glog-step-head';
+      head.innerHTML =
+        '<span class="glog-step-num">' + escapeHtml(stepNum) + '</span>' +
+        '<h2 class="glog-step-title">' + escapeHtml(stepTitle) + '</h2>';
+
+      var body = document.createElement('div');
+      body.className = 'glog-step-body';
+      var node = heading.nextElementSibling;
+      while (node && node.tagName !== 'H2') {
+        var next = node.nextElementSibling;
+        body.appendChild(node);
+        node = next;
+      }
+
+      step.appendChild(head);
+      step.appendChild(body);
+      heading.replaceWith(step);
+    });
+
+    el.querySelectorAll('a[href^="/"]').forEach(function (a) {
+      a.classList.add('glog-inline-link');
+    });
+  }
+
   function renderMarkdown(post) {
     var html = '';
     if (window.marked && typeof window.marked.parse === 'function') {
@@ -130,10 +171,24 @@
     var el = document.getElementById('glog-article-content');
     if (el) {
       el.innerHTML = html;
-      el.querySelectorAll('a[href^="/"]').forEach(function (a) {
-        a.setAttribute('href', a.getAttribute('href'));
-      });
+      enhanceProse(el);
     }
+  }
+
+  function setupReadingProgress() {
+    var bar = document.getElementById('glog-read-progress');
+    if (!bar) return;
+
+    function update() {
+      var doc = document.documentElement;
+      var scrollTop = doc.scrollTop || document.body.scrollTop;
+      var height = doc.scrollHeight - doc.clientHeight;
+      var pct = height > 0 ? Math.min(100, (scrollTop / height) * 100) : 0;
+      bar.style.width = pct + '%';
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    update();
   }
 
   function renderTags(post) {
@@ -231,6 +286,10 @@
     var mins = post.readTimeMinutes || estimateGlogReadTime(post.content);
 
     document.getElementById('glog-article-title').textContent = post.title;
+
+    var lede = document.getElementById('glog-article-lede');
+    if (lede) lede.textContent = post.excerpt || '';
+
     document.getElementById('glog-article-meta').innerHTML =
       '<span><i class="ti ti-user"></i> ' + escapeHtml(post.author || 'Gearsh') + '</span>' +
       '<span><i class="ti ti-calendar"></i> ' + formatDate(post.publishedAt) + '</span>' +
@@ -246,6 +305,11 @@
     renderMarkdown(post);
     setupShare(post);
     renderRelated(post);
+    setupReadingProgress();
+
+    if (window.GearshUI) {
+      GearshUI.initReveal(document.querySelector('.glog-article-main'));
+    }
   }
 
   function boot() {

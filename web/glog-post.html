@@ -17,21 +17,23 @@
   <meta name="twitter:description" content="South African music news and artist stories.">
   <meta name="twitter:image" content="https://thegearsh.com/icons/og-image.png">
   <title>G-Log | Gearsh</title>
-  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="/icons/Icon-192.png">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="gearsh-brand.css">
-  <link rel="stylesheet" href="discovery.css">
-  <link rel="stylesheet" href="glog.css">
+  <link rel="stylesheet" href="/gearsh-brand.css">
+  <link rel="stylesheet" href="/discovery.css">
+  <link rel="stylesheet" href="/glog.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 </head>
 <body>
 
   <a class="skip-link" href="#main">Skip to main content</a>
 
-  <nav class="g-nav" aria-label="Primary">
+  <div class="glog-read-progress" id="glog-read-progress" aria-hidden="true"></div>
+
+  <nav class="g-nav g-nav--over-hero" aria-label="Primary">
     <div class="g-nav-inner">
-      <a href="./" class="g-nav-logo" aria-label="Gearsh home">
-        <img src="icons/Icon-512.png" alt="" width="40" height="40">
+      <a href="/" class="g-nav-logo" aria-label="Gearsh home">
+        <img src="/icons/Icon-512.png" alt="" width="40" height="40">
       </a>
       <div class="g-nav-right">
         <a href="/auth.html" class="g-nav-mobile-login">Login</a>
@@ -40,70 +42,98 @@
       </div>
       <ul class="g-nav-links">
         <li class="g-nav-menu-auth"><a href="/auth.html">Login</a></li>
-        <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
+        <li class="g-nav-menu-auth"><a href="/join-gig.html" class="g-nav-cta">List your gig</a></li>
         <li><a href="/search">Search</a></li>
         <li><a href="/artists">All artists</a></li>
         <li><a href="/glog" class="active">G-Log</a></li>
-        <li><a href="./#how">How it works</a></li>
+        <li><a href="/#how">How it works</a></li>
       </ul>
     </div>
   </nav>
 
   <div class="glog-article-shell" id="glog-article-app">
-    <article id="main">
-      <header class="glog-article-hero">
+    <header class="glog-masthead" id="glog-masthead">
+      <div class="glog-masthead-bg" aria-hidden="true">
+        <img id="glog-article-cover-img" src="/icons/Icon-512.png" alt="">
+      </div>
+      <div class="glog-masthead-scrim" aria-hidden="true"></div>
+      <div class="glog-masthead-inner">
         <a href="/glog" class="glog-back"><i class="ti ti-arrow-left"></i> Back to G-Log</a>
+        <div class="glog-masthead-badge"><i class="ti ti-news"></i> G-Log</div>
         <div class="glog-tags" id="glog-article-tags"></div>
         <h1 class="glog-article-title" id="glog-article-title">Loading…</h1>
-        <div class="glog-meta-row" id="glog-article-meta"></div>
-      </header>
-
-      <div class="glog-article-cover">
-        <img id="glog-article-cover-img" src="icons/Icon-512.png" alt="">
+        <p class="glog-article-lede" id="glog-article-lede"></p>
+        <div class="glog-meta-row glog-meta-row--hero" id="glog-article-meta"></div>
       </div>
+    </header>
 
-      <div class="glog-article-body">
-        <div class="glog-prose" id="glog-article-content">
-          <p style="color:var(--g-text-muted)">Loading story…</p>
+    <article id="main" class="glog-article-main">
+      <div class="glog-article-layout">
+        <div class="glog-article-body">
+          <div class="glog-prose" id="glog-article-content">
+            <p class="glog-loading">Loading story…</p>
+          </div>
         </div>
+
+        <aside class="glog-article-aside" id="glog-article-aside" aria-label="Article actions">
+          <div class="glog-aside-card">
+            <span class="glog-aside-label">Share this story</span>
+            <div class="glog-share glog-share--stack" id="glog-share">
+              <button type="button" class="glog-share-btn" data-share="whatsapp"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
+              <button type="button" class="glog-share-btn" data-share="x"><i class="ti ti-brand-x"></i> Post on X</button>
+              <button type="button" class="glog-share-btn" data-share="facebook"><i class="ti ti-brand-facebook"></i> Facebook</button>
+              <button type="button" class="glog-share-btn" data-share="instagram"><i class="ti ti-brand-instagram"></i> Instagram</button>
+              <button type="button" class="glog-share-btn" data-share="copy"><i class="ti ti-link"></i> Copy link</button>
+            </div>
+          </div>
+          <div class="glog-aside-card glog-aside-card--cta">
+            <img src="/icons/Icon-512.png" alt="" width="36" height="36" class="glog-aside-logo">
+            <strong>Get booked on Gearsh</strong>
+            <p>List your gig free and reach bookers across South Africa.</p>
+            <a href="/join-gig.html" class="btn-main glog-aside-btn">List your gig <i class="ti ti-arrow-right"></i></a>
+          </div>
+        </aside>
       </div>
 
-      <div class="glog-share" id="glog-share" aria-label="Share this article">
-        <span class="glog-share-label">Share</span>
-        <button type="button" class="glog-share-btn" data-share="x"><i class="ti ti-brand-x"></i> X</button>
-        <button type="button" class="glog-share-btn" data-share="whatsapp"><i class="ti ti-brand-whatsapp"></i> WhatsApp</button>
-        <button type="button" class="glog-share-btn" data-share="facebook"><i class="ti ti-brand-facebook"></i> Facebook</button>
-        <button type="button" class="glog-share-btn" data-share="instagram"><i class="ti ti-brand-instagram"></i> Instagram</button>
-        <button type="button" class="glog-share-btn" data-share="copy"><i class="ti ti-link"></i> Copy link</button>
-      </div>
-
-      <section class="glog-cta" aria-label="List your gig on Gearsh">
-        <h2>Ready to take your career to the next level?</h2>
-        <p>List your gig on Gearsh for free — get discovered, booked, and paid without the middleman.</p>
-        <a href="join-gig.html" class="btn-main">List your gig free <i class="ti ti-arrow-right"></i></a>
+      <section class="glog-cta glog-cta--banner" aria-label="List your gig on Gearsh">
+        <div class="glog-cta-glow" aria-hidden="true"></div>
+        <div class="glog-cta-inner">
+          <div class="glog-cta-copy">
+            <span class="glog-cta-eyebrow">For SA artists</span>
+            <h2>Ready to take your career to the next level?</h2>
+            <p>List your gig on Gearsh for free — get discovered, booked, and paid without the middleman.</p>
+          </div>
+          <div class="glog-cta-actions">
+            <a href="/join-gig.html" class="btn-main">List your gig free <i class="ti ti-arrow-right"></i></a>
+            <a href="/artists" class="btn-ghost">Browse artists</a>
+          </div>
+        </div>
       </section>
     </article>
 
     <section class="glog-related" aria-label="Related stories">
-      <h2 class="glog-related-title">More from <em>G-Log</em></h2>
+      <div class="glog-related-head">
+        <h2 class="glog-related-title">More from <em>G-Log</em></h2>
+        <a href="/glog" class="glog-related-all">All stories <i class="ti ti-arrow-right"></i></a>
+      </div>
       <div class="glog-grid" id="glog-related-grid"></div>
     </section>
   </div>
 
   <footer class="g-footer">
     <div class="g-footer-inner">
-      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="Gearsh" width="24" height="24"> &copy; 2026 Gearsh (Pty) Ltd.</div>
+      <div class="g-footer-left"><img src="/icons/Icon-512.png" alt="Gearsh" width="24" height="24"> &copy; 2026 Gearsh (Pty) Ltd.</div>
       <ul class="g-footer-links">
         <li><a href="/glog">G-Log</a></li>
         <li><a href="/artists">All artists</a></li>
-        <li><a href="join-gig.html">List your gig</a></li>
+        <li><a href="/join-gig.html">List your gig</a></li>
       </ul>
     </div>
   </footer>
 
   <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script defer src="glog-data.js"></script>
-  <script defer src="gearsh-ui.js"></script>
-  <script defer src="glog-post.js"></script>
+  <script defer src="/glog-data.js"></script>
+  <script defer src="/gearsh-ui.js"></script>
+  <script defer src="/glog-post.js"></script>
 </body>
 </html>

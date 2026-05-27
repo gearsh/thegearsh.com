@@ -40,10 +40,10 @@
   }
 
   function resolveImage(path) {
-    if (!path) return 'icons/Icon-512.png';
+    if (!path) return '/icons/Icon-512.png';
     if (/^https?:\/\//i.test(path)) return path;
     if (path.startsWith('/')) return path;
-    return path.replace(/^assets\//, '/assets/');
+    return '/' + path.replace(/^\/?/, '');
   }
 
   function postMatches(post) {
