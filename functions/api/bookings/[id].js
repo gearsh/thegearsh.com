@@ -80,9 +80,23 @@ export async function onRequestPatch(context) {
     }
 
     const now = new Date().toISOString();
+
+    const updates = ['status = ?', 'updated_at = ?'];
+    const binds = [status, now];
+
+    if (body.quote_amount !== undefined) {
+      updates.push('quote_amount = ?', 'total_price = ?');
+      binds.push(Number(body.quote_amount), Number(body.quote_amount));
+    }
+    if (body.deposit_amount !== undefined) {
+      updates.push('deposit_amount = ?');
+      binds.push(Number(body.deposit_amount));
+    }
+
+    binds.push(bookingId);
     await context.env.DB.prepare(`
-      UPDATE bookings SET status = ?, updated_at = ? WHERE id = ?
-    `).bind(status, now, bookingId).run();
+      UPDATE bookings SET ${updates.join(', ')} WHERE id = ?
+    `).bind(...binds).run();
 
     if (status === 'completed') {
       await context.env.DB.prepare(`

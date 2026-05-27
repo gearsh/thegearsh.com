@@ -136,14 +136,21 @@ async function handleRegister(context, body) {
 }
 
 async function handleLogin(context, body) {
-  const identifier = (body.identifier || body.email || '').trim();
+  const rawIdentifier = (body.identifier || body.email || '').trim();
   const { password } = body;
 
-  if (!identifier || !password) {
+  if (!rawIdentifier || !password) {
     return jsonResponse({ success: false, error: 'Email/username and password required' }, 400);
   }
 
-  const user = await findUserByIdentifier(context.env.DB, identifier);
+  try {
+    if (rawIdentifier.replace(/^@/, '').toLowerCase() === 'gearsh') {
+      const { ensureGearshLoginReady } = await import('../master-profile-seed.js');
+      await ensureGearshLoginReady(context.env.DB, context.env);
+    }
+  } catch (_) {}
+
+  const user = await findUserByIdentifier(context.env.DB, rawIdentifier);
   if (!user) {
     return jsonResponse({ success: false, error: 'Invalid credentials' }, 401);
   }

@@ -268,8 +268,9 @@ export function categoryFromSkills(skillSet) {
 
 const RESERVED_USERNAMES = new Set([
   'admin', 'api', 'app', 'artist', 'artists', 'book', 'booking', 'bookings',
-  'dashboard', 'discover', 'help', 'home', 'join', 'login', 'logout', 'privacy',
+  'dashboard', 'discover', 'gearsh', 'help', 'home', 'join', 'login', 'logout', 'privacy',
   'profile', 'register', 'search', 'settings', 'signup', 'terms', 'www', 'sign-in',
+  'thegearsh', 'gearsh-god',
 ]);
 
 export function slugifyUsername(input) {
@@ -353,9 +354,19 @@ export async function ensureArtistUsername(db, userId, fallbackName) {
   return username;
 }
 
+/** Strip @handle prefix; distinguish emails from usernames like @gearsh */
+export function normalizeLoginIdentifier(raw) {
+  let value = String(raw || '').trim();
+  if (value.startsWith('@')) {
+    value = value.slice(1).trim();
+  }
+  const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  return { value, isEmail };
+}
+
 export async function findUserByIdentifier(db, identifier) {
-  const value = identifier.trim();
-  const isEmail = value.includes('@');
+  const { value, isEmail } = normalizeLoginIdentifier(identifier);
+  if (!value) return null;
   const activeClause = `(is_active = 1 OR user_type = 'admin')`;
   const fullColumns = `id, email, password_hash, user_type, first_name, last_name,
             display_name, profile_picture_url, is_verified, username, is_active`;
@@ -443,6 +454,10 @@ export async function getArtistProfileSummary(db, userId) {
 
 /** Where static web should send the user after sign-in. */
 export function resolvePostLoginPath(user, hasArtistProfile) {
+  const username = String(user.username || '').toLowerCase();
+  if (username === 'gearsh' && hasArtistProfile) {
+    return '/artist-dashboard.html';
+  }
   if (hasArtistProfile || user.user_type === 'artist') {
     return '/artist-dashboard.html';
   }

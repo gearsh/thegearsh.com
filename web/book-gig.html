@@ -21,6 +21,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="gearsh-brand.css">
   <link rel="stylesheet" href="activity-feed.css">
+  <link rel="stylesheet" href="tickets.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <style>
     .book-page { padding: 80px 20px 60px; max-width: 960px; margin: 0 auto; }
@@ -191,6 +192,7 @@
 
     <div class="act-profile-tabs" role="tablist">
       <button type="button" class="act-profile-tab is-active" data-book-tab="booking">Book</button>
+      <button type="button" class="act-profile-tab" data-book-tab="events">Events</button>
       <button type="button" class="act-profile-tab" data-book-tab="activity">Activity</button>
     </div>
 
@@ -223,6 +225,13 @@
         </form>
       </div>
     </div>
+    </div>
+
+    <div id="panel-events" hidden>
+      <div class="card" style="margin-bottom:20px">
+        <h2 style="font-family:var(--g-serif);font-size:22px;color:var(--g-white);margin-bottom:12px">Upcoming <em style="font-style:italic;color:var(--g-accent)">gigs</em></h2>
+        <div id="artist-events-root"><p style="color:var(--g-text-muted);font-size:14px">Loading events…</p></div>
+      </div>
     </div>
 
     <div id="panel-activity" class="act-feed-shell" hidden>
@@ -390,6 +399,35 @@
           });
         })(artistSlug, data.username);
       }
+      loadArtistEvents(data.artist_id);
+    }
+
+    function loadArtistEvents(artistId) {
+      var root = document.getElementById('artist-events-root');
+      if (!root || !artistId) return;
+      fetch(API_BASE + '/gigs/events?artist_id=' + encodeURIComponent(artistId))
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          if (!d.success) throw new Error(d.error || 'Failed');
+          var events = d.data.events || [];
+          if (!events.length) {
+            root.innerHTML = '<p style="color:var(--g-text-muted);font-size:14px">No ticketed events yet.</p>';
+            return;
+          }
+          root.innerHTML = events.map(function(ev) {
+            var minPrice = (ev.ticket_types || []).reduce(function(min, t) {
+              return min === null || t.price < min ? t.price : min;
+            }, null);
+            return '<div class="service-row">' +
+              '<div><div class="service-name">' + ev.title + '</div>' +
+              '<div class="service-desc">' + ev.city + ' · ' + new Date(ev.starts_at).toLocaleDateString('en-ZA') +
+              (minPrice !== null ? ' · From R' + Number(minPrice).toLocaleString('en-ZA') : '') + '</div></div>' +
+              '<a href="' + ev.url + '" class="btn-main" style="white-space:nowrap"><i class="ti ti-ticket"></i> Buy tickets</a></div>';
+          }).join('');
+        })
+        .catch(function() {
+          root.innerHTML = '<p style="color:var(--g-text-muted);font-size:14px">Could not load events.</p>';
+        });
     }
 
     document.querySelectorAll('[data-book-tab]').forEach(function(tab) {
@@ -399,6 +437,7 @@
           t.classList.toggle('is-active', t === tab);
         });
         document.getElementById('panel-booking').hidden = id !== 'booking';
+        document.getElementById('panel-events').hidden = id !== 'events';
         document.getElementById('panel-activity').hidden = id !== 'activity';
       });
     });

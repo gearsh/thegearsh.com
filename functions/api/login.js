@@ -7,6 +7,7 @@ import {
   hashPassword,
   passwordNeedsRehash,
   findUserByIdentifier,
+  normalizeLoginIdentifier,
   buildProfileUrl,
   ensureArtistUsername,
   ensureAuthTables,
@@ -14,6 +15,7 @@ import {
   resolvePostLoginPath,
 } from './auth-utils.js';
 import { ensureOnboardingTables } from './onboarding-utils.js';
+import { ensureGearshLoginReady } from './master-profile-seed.js';
 
 export async function onRequestPost(context) {
   try {
@@ -25,7 +27,16 @@ export async function onRequestPost(context) {
     await ensureOnboardingTables(context.env.DB);
 
     const body = await context.request.json();
-    const identifier = (body.identifier || body.email || '').trim();
+    const rawIdentifier = (body.identifier || body.email || '').trim();
+    const { value: identifier } = normalizeLoginIdentifier(rawIdentifier);
+
+    try {
+      if (rawIdentifier.replace(/^@/, '').toLowerCase() === 'gearsh') {
+        await ensureGearshLoginReady(context.env.DB, context.env);
+      }
+    } catch (gearErr) {
+      console.error('Gearsh login bootstrap failed:', gearErr);
+    }
     const { password } = body;
 
     if (!identifier || !password) {

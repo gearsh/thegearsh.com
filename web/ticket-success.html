@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Tickets confirmed | Gearsh</title>
+  <link rel="icon" type="image/png" href="/icons/Icon-192.png">
+  <link rel="stylesheet" href="/gearsh-brand.css">
+  <link rel="stylesheet" href="/tickets.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+</head>
+<body>
+  <main class="tkt-page">
+    <div class="tkt-body" style="max-width:640px">
+      <div class="tkt-card" id="success-root">
+        <div class="tkt-badge"><i class="ti ti-circle-check"></i> Payment received</div>
+        <h1 class="tkt-title" style="font-size:32px;margin:12px 0">You're <em style="font-family:var(--g-serif);font-style:italic;color:var(--g-accent)">in</em></h1>
+        <p style="color:var(--g-text-muted);margin-bottom:20px">Loading your tickets…</p>
+      </div>
+    </div>
+  </main>
+  <script>
+  (function () {
+    var orderId = new URLSearchParams(location.search).get('order');
+    var root = document.getElementById('success-root');
+    var token = localStorage.getItem('gearsh_token');
+    var headers = { Accept: 'application/json' };
+    if (token) headers.Authorization = 'Bearer ' + token;
+
+    if (!orderId) {
+      root.innerHTML = '<p>Order not found.</p>';
+      return;
+    }
+
+    function poll(attempt) {
+      fetch('/api/ticket-orders/' + encodeURIComponent(orderId) + '?token=' + encodeURIComponent(orderId.slice(-8)), { headers: headers })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d.success) throw new Error(d.error || 'Failed');
+          var o = d.data.order;
+          if (o.status !== 'paid' && attempt < 12) {
+            setTimeout(function () { poll(attempt + 1); }, 2000);
+            return;
+          }
+          var ticketsHtml = (o.tickets || []).map(function (t) {
+            return '<a href="' + t.url + '" class="btn-main" style="display:inline-flex;margin:4px 4px 0 0">' + t.ticket_code + '</a>';
+          }).join('');
+          root.innerHTML =
+            '<div class="tkt-badge"><i class="ti ti-circle-check"></i> Confirmed</div>' +
+            '<h1 class="tkt-title" style="font-size:32px;margin:12px 0">You\'re in</h1>' +
+            '<p style="color:var(--g-text-muted);margin-bottom:8px"><strong style="color:var(--g-white)">' + o.event.title + '</strong><br>' +
+            o.event.venue + ', ' + o.event.city + '</p>' +
+            '<p style="font-size:14px;color:var(--g-text-muted);margin-bottom:16px">Total paid: R' + Number(o.total).toLocaleString('en-ZA') + '</p>' +
+            (ticketsHtml ? '<div style="margin-bottom:16px">' + ticketsHtml + '</div>' : '<p style="color:var(--g-text-muted)">Tickets generating… refresh in a moment.</p>') +
+            '<a href="/my-tickets" class="btn-ghost">All my tickets</a>';
+        })
+        .catch(function (e) {
+          root.innerHTML = '<p class="tkt-msg error">' + e.message + '</p>';
+        });
+    }
+    poll(0);
+  })();
+  </script>
+</body>
+</html>

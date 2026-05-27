@@ -10,6 +10,7 @@
   <link rel="apple-touch-icon" href="icons/Icon-512.png">
   <link rel="stylesheet" href="gearsh-brand.css">
   <link rel="stylesheet" href="activity-feed.css">
+  <link rel="stylesheet" href="tickets.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <style>
     .dash-page { padding-top: 56px; min-height: 100vh; }
@@ -290,6 +291,8 @@
       <div id="dash-content" style="display:none">
       <div class="dash-tabs" role="tablist">
         <button class="dash-tab active" type="button" data-tab="overview">Overview</button>
+        <button class="dash-tab" type="button" data-tab="gigs">Gigs &amp; tickets</button>
+        <button class="dash-tab" type="button" data-tab="master" id="dash-tab-master" style="display:none">Master profile</button>
         <button class="dash-tab" type="button" data-tab="activity">Activity</button>
         <button class="dash-tab" type="button" data-tab="bookings">Bookings</button>
         <button class="dash-tab" type="button" data-tab="calendar">Calendar</button>
@@ -341,6 +344,16 @@
             <p class="card-sub" id="skills-list" style="margin-bottom:0">…</p>
             <p class="card-sub" id="location-line" style="margin-top:12px;margin-bottom:0">…</p>
           </div>
+        </div>
+      </div>
+
+      <div class="dash-panel" id="panel-master">
+        <div id="master-profile-manage-root"></div>
+      </div>
+
+      <div class="dash-panel" id="panel-gigs">
+        <div class="grid-2" style="grid-template-columns:1fr;gap:20px">
+          <div class="card" id="gig-create-root"></div>
         </div>
       </div>
 
@@ -420,7 +433,8 @@
         t.classList.toggle('active', t.getAttribute('data-tab') === id);
       });
       document.querySelectorAll('.dash-panel').forEach(function(p) {
-        p.classList.toggle('active', p.id === 'panel-' + id);
+        var panelId = p.id.replace('panel-', '');
+        p.classList.toggle('active', panelId === id);
       });
     }
 
@@ -653,12 +667,56 @@
       renderServices(data);
       renderCalendar(data);
       initActivityTools(data);
+      initGigCreate(data);
+      initMasterProfileManage(data);
       document.getElementById('dash-loading').style.display = 'none';
       document.getElementById('dash-content').style.display = 'block';
     }
 
     var dashActivityFeed = null;
     var dashActivityCreate = null;
+    var dashGigCreate = null;
+
+    function initMasterProfileManage(data) {
+      var username = (data.user && data.user.username || '').toLowerCase();
+      var isMaster = username === 'gearsh' || data.user.user_type === 'admin';
+      if (!isMaster) return;
+
+      var tab = document.getElementById('dash-tab-master');
+      if (tab) tab.style.display = '';
+
+      var token = localStorage.getItem('gearsh_token');
+      function boot() {
+        if (!window.GearshMasterProfileManage) {
+          setTimeout(boot, 40);
+          return;
+        }
+        new GearshMasterProfileManage({
+          container: '#master-profile-manage-root',
+          token: token,
+          isMaster: true,
+        });
+      }
+      boot();
+    }
+
+    function initGigCreate(data) {
+      var token = localStorage.getItem('gearsh_token');
+      function boot() {
+        if (!window.GearshGigCreate) {
+          setTimeout(boot, 40);
+          return;
+        }
+        dashGigCreate = new GearshGigCreate({
+          container: '#gig-create-root',
+          token: token,
+          onCreated: function() {
+            if (dashActivityFeed) dashActivityFeed.load(true);
+          },
+        });
+      }
+      boot();
+    }
 
     function initActivityTools(data) {
       var token = localStorage.getItem('gearsh_token');
@@ -719,5 +777,7 @@
   </script>
   <script defer src="activity-feed.js"></script>
   <script defer src="activity-create.js"></script>
+  <script defer src="gig-create.js"></script>
+  <script defer src="master-profile-manage.js"></script>
 </body>
 </html>

@@ -20,15 +20,18 @@ export async function onRequestPost(context) {
       venue,
       service_id,
       notes,
+      project_brief,
+      preferred_dates,
+      preferred_time,
     } = body;
 
     const artistIdentifier = artist_id || artist_username;
-    const venueName = String(event_location || venue || '').trim();
+    const venueName = String(event_location || venue || '').trim() || 'Remote / Online';
 
-    if (!artistIdentifier || !client_name || !client_phone || !event_date || !venueName) {
+    if (!artistIdentifier || !client_name || !client_phone || !event_date) {
       return jsonResponse({
         success: false,
-        error: 'Please fill in your name, phone, date, venue, and select a provider.',
+        error: 'Please fill in your name, phone, date, and select a provider.',
       }, 400);
     }
 
@@ -86,10 +89,20 @@ export async function onRequestPost(context) {
     }
 
     const bookingId = `book_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const brief = String(project_brief || notes || '').trim() || null;
+    const prefDates = preferred_dates
+      ? (Array.isArray(preferred_dates) ? JSON.stringify(preferred_dates) : String(preferred_dates))
+      : null;
+    const combinedNotes = [
+      brief,
+      preferred_time ? 'Preferred time: ' + preferred_time : null,
+    ].filter(Boolean).join('\n\n') || null;
+
     await context.env.DB.prepare(`
       INSERT INTO bookings (
-        id, client_id, artist_id, service_id, event_date, event_location, total_price, notes, status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'), datetime('now'))
+        id, client_id, artist_id, service_id, event_date, event_location, event_time,
+        total_price, notes, project_brief, preferred_dates, status, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'), datetime('now'))
     `).bind(
       bookingId,
       client.id,
@@ -97,8 +110,11 @@ export async function onRequestPost(context) {
       service_id || null,
       event_date,
       venueName,
+      preferred_time || null,
       totalPrice,
-      notes || null
+      combinedNotes,
+      brief,
+      prefDates
     ).run();
 
     return jsonResponse({

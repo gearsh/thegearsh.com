@@ -59,6 +59,13 @@
 # day-genre-schedule.js so the same URL works every night of the week.
 /tonight                  /search?spotlight=tonight 302
 /following                /following-feed 302
+/gearsh                   /gearsh.html 200
+/@gearsh                  /gearsh.html 200
+/book/gearsh              /gearsh 302
+/gig/*                    /gig-detail?slug=:splat 200
+/ticket/*                 /ticket-view?code=:splat 200
+/my-tickets               /my-tickets.html 200
+/ticket-success           /ticket-success.html 200
 
 # Other marketing static pages
 /gearsh-god.html          /gearsh-god.html 200

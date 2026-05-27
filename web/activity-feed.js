@@ -266,6 +266,14 @@
     var locationLine = [item.venue, item.location].filter(Boolean).join(' · ');
     var bookHref = artist.profile_url || (artist.username ? '/book/' + artist.username : '#');
     var showArtistLine = this.mode === 'following';
+    var meta = item.metadata || {};
+    var ticketUrl = meta.ticket_url || (meta.event_slug ? '/gig/' + meta.event_slug : null);
+    var isTicketGig = item.activity_type === 'gig' && (meta.has_tickets || ticketUrl);
+    var primaryCta = isTicketGig && ticketUrl
+      ? '<a href="' + escapeHtml(ticketUrl) + '" class="act-action-btn act-action-primary act-action-tickets">' +
+          '<i class="ti ti-ticket"></i> Buy tickets</a>'
+      : '<a href="' + escapeHtml(bookHref) + '" class="act-action-btn act-action-primary">' +
+          '<i class="ti ti-calendar-event"></i> View availability</a>';
 
     return '<article class="act-card" id="act-' + escapeHtml(item.id) + '" data-id="' + escapeHtml(item.id) + '">' +
       '<div class="act-card-head">' +
@@ -292,8 +300,7 @@
           '</button>' +
           '<button type="button" class="act-action-btn" data-share="' + escapeHtml(item.id) + '" data-title="' + escapeHtml(item.title) + '">' +
             '<i class="ti ti-share-3"></i> Share</button>' +
-          '<a href="' + escapeHtml(bookHref) + '" class="act-action-btn act-action-primary">' +
-            '<i class="ti ti-calendar-event"></i> View availability</a>' +
+          primaryCta +
         '</div></div></article>';
   };
 

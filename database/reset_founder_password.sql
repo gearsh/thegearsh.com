@@ -11,4 +11,4 @@ SET
 WHERE LOWER(email) = LOWER('thegearsh@gmail.com');
 
 -- If zero rows updated, create a founder account first via join-gig.html,
--- then run this SQL again.
+-- then run this SQL again. Note that this will also reset the user's role to client. You can then change the role to artist if needed. TGEARSH
