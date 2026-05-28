@@ -70,6 +70,14 @@ jobs:
           cp web/glog-page.js build/web/glog-page.js 2>/dev/null || true
           cp web/glog-post.js build/web/glog-post.js 2>/dev/null || true
           cp web/glog.css build/web/glog.css 2>/dev/null || true
+          cp web/gearsh.html build/web/gearsh.html 2>/dev/null || true
+          cp web/master-profile.css build/web/master-profile.css 2>/dev/null || true
+          cp web/master-profile.js build/web/master-profile.js 2>/dev/null || true
+          cp web/gig-guide.html build/web/gig-guide.html 2>/dev/null || true
+          cp web/gig-guide.css build/web/gig-guide.css 2>/dev/null || true
+          cp web/gig-guide.js build/web/gig-guide.js 2>/dev/null || true
+          cp web/gig-detail.html build/web/gig-detail.html 2>/dev/null || true
+          cp web/tickets.css build/web/tickets.css 2>/dev/null || true
           cp web/terms.html build/web/terms.html
           cp web/privacy.html build/web/privacy.html
           cp web/_redirects build/web/_redirects
@@ -77,9 +85,11 @@ jobs:
           cp web/robots.txt build/web/robots.txt 2>/dev/null || true
           cp web/sitemap.xml build/web/sitemap.xml 2>/dev/null || true
           # Cloudflare Pages Functions + D1 config
-          mkdir -p build/web/functions/api build/web/functions/book
+          mkdir -p build/web/functions/api build/web/functions/book build/web/functions/act
+          cp functions/_og-utils.js build/web/functions/_og-utils.js
           cp -r functions/api/* build/web/functions/api/
           cp -r functions/book/* build/web/functions/book/ 2>/dev/null || true
+          cp -r functions/act/* build/web/functions/act/ 2>/dev/null || true
           for f in web/functions/api/*.js; do
             case "$(basename "$f")" in signup.js|login.js|auth-utils.js) continue ;; esac
             cp "$f" build/web/functions/api/

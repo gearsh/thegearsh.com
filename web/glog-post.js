@@ -36,7 +36,7 @@
   }
 
   function resolveImage(path) {
-    if (!path) return 'https://thegearsh.com/icons/og-image.png';
+    if (!path) return 'https://thegearsh.com/icons/og-banner.png';
     if (/^https?:\/\//i.test(path)) return path;
     var rel = path.startsWith('/') ? path : '/' + path.replace(/^\/?/, '');
     return 'https://thegearsh.com' + rel.replace(/^\/assets\//, '/assets/');

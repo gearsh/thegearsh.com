@@ -11,11 +11,11 @@
   <meta property="og:title" content="Book an Artist | Gearsh">
   <meta property="og:description" content="Secure direct booking with no middleman, transparent pricing, and verified profiles.">
   <meta property="og:url" content="https://thegearsh.com/book-gig.html">
-  <meta property="og:image" content="https://thegearsh.com/icons/og-image.png">
+  <meta property="og:image" content="https://thegearsh.com/icons/og-banner.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Book an Artist | Gearsh">
   <meta name="twitter:description" content="Secure direct booking with verified South African artists.">
-  <meta name="twitter:image" content="https://thegearsh.com/icons/og-image.png">
+  <meta name="twitter:image" content="https://thegearsh.com/icons/og-banner.png">
   <title>Book on Gearsh</title>
   <link rel="icon" type="image/png" href="icons/Icon-192.png">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -284,8 +284,41 @@
       document.getElementById('error').style.display = 'block';
     }
 
+    function updateShareMeta(data) {
+      function setMeta(attr, key, value) {
+        if (!value) return;
+        var el = document.querySelector('meta[' + attr + '="' + key + '"]');
+        if (!el) {
+          el = document.createElement('meta');
+          el.setAttribute(attr, key);
+          document.head.appendChild(el);
+        }
+        el.setAttribute('content', value);
+      }
+
+      var imageUrl = resolveImageUrl(data.image);
+      if (imageUrl.indexOf('http') !== 0) {
+        imageUrl = window.location.origin + (imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl);
+      }
+      var title = 'Book ' + (data.name || 'Artist') + ' | Gearsh';
+      var description = (data.bio || ('Book ' + (data.name || 'this artist') + ' on Gearsh.')).slice(0, 200);
+      var pageUrl = data.username
+        ? (window.location.origin + '/book/' + encodeURIComponent(String(data.username).toLowerCase()))
+        : window.location.href.split('#')[0];
+
+      document.title = title;
+      setMeta('property', 'og:title', title);
+      setMeta('property', 'og:description', description);
+      setMeta('property', 'og:url', pageUrl);
+      setMeta('property', 'og:image', imageUrl);
+      setMeta('name', 'twitter:title', title);
+      setMeta('name', 'twitter:description', description);
+      setMeta('name', 'twitter:image', imageUrl);
+    }
+
     function renderProfile(data) {
       artistData = data;
+      updateShareMeta(data);
       document.getElementById('artist-name').textContent = data.name || 'this provider';
       document.getElementById('artist-location').innerHTML =
         '<i class="ti ti-map-pin"></i> ' + [data.location, data.country].filter(Boolean).join(', ') || 'Location on request';

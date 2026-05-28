@@ -321,7 +321,7 @@
       btn.dataset.bound = '1';
       btn.addEventListener('click', function () {
         var title = btn.getAttribute('data-title') || 'Gearsh activity';
-        var url = window.location.href.split('#')[0] + '#act-' + btn.getAttribute('data-share');
+        var url = new URL('/act/' + encodeURIComponent(btn.getAttribute('data-share')), window.location.origin).toString();
         if (navigator.share) {
           navigator.share({ title: title, url: url }).catch(function () {});
         } else {
