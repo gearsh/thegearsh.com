@@ -161,10 +161,206 @@ function isDjCategory(category) {
   return value.includes('dj') || value.includes('amapiano') || value.includes('house');
 }
 
+function isCreativeArtsCategory(category) {
+  const value = String(category || '').toLowerCase();
+  return ['fashion', 'photography', 'makeup', 'tattoo', 'hair', 'videography', 'styling', 'visual']
+    .some(function(token) { return value.includes(token); });
+}
+
+function buildCreativeServices(artist, price) {
+  const category = String(artist.category || '').toLowerCase();
+  const username = artist.username;
+
+  if (category.includes('fashion') || category.includes('styling')) {
+    return [
+      {
+        id: `svc_showcase_${username}_1`,
+        name: 'Personal styling session',
+        description: 'One-on-one styling consult for events, shoots, or wardrobe refreshes.',
+        price: Math.round(price * 0.4),
+        duration_hours: 2,
+      },
+      {
+        id: `svc_showcase_${username}_2`,
+        name: 'Red carpet / event styling',
+        description: 'Full look curation for premieres, launches, and awards shows.',
+        price: Math.round(price * 0.7),
+        duration_hours: 4,
+      },
+      {
+        id: `svc_showcase_${username}_3`,
+        name: 'Custom wardrobe build',
+        description: 'End-to-end wardrobe direction — fittings, sourcing, and final delivery.',
+        price,
+        duration_hours: 8,
+      },
+    ];
+  }
+
+  if (category.includes('photograph')) {
+    return [
+      {
+        id: `svc_showcase_${username}_1`,
+        name: 'Portrait / headshot session',
+        description: 'Studio or location portraits for artists, brands, and campaigns.',
+        price: Math.round(price * 0.45),
+        duration_hours: 2,
+      },
+      {
+        id: `svc_showcase_${username}_2`,
+        name: 'Event photography (half day)',
+        description: 'Live event coverage for launches, gigs, and corporate functions.',
+        price: Math.round(price * 0.75),
+        duration_hours: 4,
+      },
+      {
+        id: `svc_showcase_${username}_3`,
+        name: 'Full-day campaign shoot',
+        description: 'Complete creative direction, shooting, and handoff of selects.',
+        price,
+        duration_hours: 8,
+      },
+    ];
+  }
+
+  if (category.includes('makeup')) {
+    return [
+      {
+        id: `svc_showcase_${username}_1`,
+        name: 'Event glam',
+        description: 'Makeup for red carpets, parties, and on-camera appearances.',
+        price: Math.round(price * 0.45),
+        duration_hours: 1.5,
+      },
+      {
+        id: `svc_showcase_${username}_2`,
+        name: 'Bridal / special occasion',
+        description: 'Trial, day-of glam, and touch-ups for weddings and milestones.',
+        price: Math.round(price * 0.75),
+        duration_hours: 3,
+      },
+      {
+        id: `svc_showcase_${username}_3`,
+        name: 'Music video / on-set glam',
+        description: 'Full-day on-set makeup for shoots, performances, and content days.',
+        price,
+        duration_hours: 8,
+      },
+    ];
+  }
+
+  if (category.includes('tattoo')) {
+    return [
+      {
+        id: `svc_showcase_${username}_1`,
+        name: 'Custom design consult',
+        description: 'Concept sketch and placement planning for your next piece.',
+        price: Math.round(price * 0.35),
+        duration_hours: 1,
+      },
+      {
+        id: `svc_showcase_${username}_2`,
+        name: 'Tattoo session (2 hours)',
+        description: 'Standard session for medium-sized custom work.',
+        price: Math.round(price * 0.65),
+        duration_hours: 2,
+      },
+      {
+        id: `svc_showcase_${username}_3`,
+        name: 'Full-day tattoo booking',
+        description: 'Extended session for larger pieces — quote includes design time.',
+        price,
+        duration_hours: 6,
+      },
+    ];
+  }
+
+  if (category.includes('hair')) {
+    return [
+      {
+        id: `svc_showcase_${username}_1`,
+        name: 'Event hair styling',
+        description: 'Red carpet, party, and performance-ready hair.',
+        price: Math.round(price * 0.45),
+        duration_hours: 1.5,
+      },
+      {
+        id: `svc_showcase_${username}_2`,
+        name: 'Bridal hair',
+        description: 'Trial, styling, and day-of support for weddings.',
+        price: Math.round(price * 0.75),
+        duration_hours: 3,
+      },
+      {
+        id: `svc_showcase_${username}_3`,
+        name: 'Wig install / full glam',
+        description: 'Custom install, styling, and finishing for shoots or events.',
+        price,
+        duration_hours: 4,
+      },
+    ];
+  }
+
+  if (category.includes('video')) {
+    return [
+      {
+        id: `svc_showcase_${username}_1`,
+        name: 'Social content shoot',
+        description: 'Short-form reels and campaign clips for artists and brands.',
+        price: Math.round(price * 0.4),
+        duration_hours: 2,
+      },
+      {
+        id: `svc_showcase_${username}_2`,
+        name: 'Event highlight reel',
+        description: 'Same-day or next-day edit for launches, gigs, and festivals.',
+        price: Math.round(price * 0.7),
+        duration_hours: 4,
+      },
+      {
+        id: `svc_showcase_${username}_3`,
+        name: 'Music video day rate',
+        description: 'Full production day — directing, shooting, and handoff of rushes.',
+        price,
+        duration_hours: 10,
+      },
+    ];
+  }
+
+  return [
+    {
+      id: `svc_showcase_${username}_1`,
+      name: 'Creative consult',
+      description: 'Discovery session for your event, shoot, or campaign.',
+      price: Math.round(price * 0.4),
+      duration_hours: 1,
+    },
+    {
+      id: `svc_showcase_${username}_2`,
+      name: 'Half-day booking',
+      description: 'On-site creative support for events and productions.',
+      price: Math.round(price * 0.7),
+      duration_hours: 4,
+    },
+    {
+      id: `svc_showcase_${username}_3`,
+      name: 'Full-day booking',
+      description: 'Complete creative coverage — travel quoted separately.',
+      price,
+      duration_hours: 8,
+    },
+  ];
+}
+
 export function buildShowcaseServices(artist, fee) {
   const price = Number(fee || getBookingFee(artist));
   const category = artist.category || 'Live Performance';
   const dj = isDjCategory(category);
+  const creative = isCreativeArtsCategory(category);
+
+  if (creative) {
+    return buildCreativeServices(artist, price);
+  }
 
   if (dj) {
     return [
