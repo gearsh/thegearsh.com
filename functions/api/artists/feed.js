@@ -3,7 +3,7 @@
 import { parseSkills, buildProfileUrl } from '../auth-utils.js';
 import { seedShowcaseArtistsBatch, SA_SHOWCASE_ARTISTS } from '../sa-showcase-artists.js';
 import { GENRE_FEED_CATEGORIES, resolveArtistGenreSlug, compareArtistsForGenre, artistHasSoloPortrait } from '../sa-showcase-data.js';
-import { getBookingFee } from '../showcase-profile.js';
+import { getBookingFee, getShowcaseMinPrice } from '../showcase-profile.js';
 
 const showcaseByUsername = new Map(
   SA_SHOWCASE_ARTISTS.map(function(artist) {
@@ -18,6 +18,8 @@ function applyShowcaseMetadata(artist) {
   const listedHours = Number(entry.masteryHours || 0);
   const liveHours = Number(artist.mastery_hours || 0);
   const bookingFee = getBookingFee(entry);
+  const listingPrice = getShowcaseMinPrice(entry, bookingFee);
+  const dbMinPrice = Number(artist.min_price || 0);
 
   return {
     ...artist,
@@ -25,7 +27,7 @@ function applyShowcaseMetadata(artist) {
     mastery_hours: listedHours > liveHours ? listedHours : artist.mastery_hours,
     booking_fee: bookingFee,
     base_rate: bookingFee,
-    min_price: bookingFee,
+    min_price: dbMinPrice > 0 ? Math.min(dbMinPrice, listingPrice) : listingPrice,
   };
 }
 

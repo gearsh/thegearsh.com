@@ -114,6 +114,7 @@ export const SOLO_PORTRAIT_IMAGES = {
   'yde': 'assets/images/artists/yde.png',
   'scotts-maphuma': 'assets/images/artists/scotts.png',
   'zj90': 'assets/images/artists/ZJ90.jpg',
+  'oxii-moron': 'assets/images/artists/oxii-moron.jpg',
 };
 
 const showcaseByUsername = new Map(
@@ -146,6 +147,13 @@ export function getBookingFee(artist) {
   if (hours >= 3000) return 45000;
   if (hours >= 1000) return 25000;
   return 12000;
+}
+
+/** Lowest showcase service tier — used for homepage/listing cards. */
+export function getShowcaseMinPrice(artist, fee) {
+  const price = Number(fee || getBookingFee(artist));
+  const mult = isDjCategory(artist.category) ? 0.35 : 0.45;
+  return Math.round(price * mult);
 }
 
 function isDjCategory(category) {

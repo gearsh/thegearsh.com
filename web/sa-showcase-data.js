@@ -1699,7 +1699,7 @@ const SA_SHOWCASE_ARTISTS = [
   {
     name: 'Oxii Moron',
     username: 'oxii-moron',
-    image: 'assets/images/artists/artists.png',
+    image: 'assets/images/artists/oxii-moron.jpg',
     category: 'R&B',
     genre: 'R&B · Centurion',
     genreSlug: 'afropop',

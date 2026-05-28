@@ -104,9 +104,44 @@
     return 'claim-profile.html?artist=' + encodeURIComponent(String(item.username).toLowerCase());
   }
 
+  function isDjCategory(category) {
+    var value = String(category || '').toLowerCase();
+    return value.indexOf('dj') !== -1 || value.indexOf('amapiano') !== -1 || value.indexOf('house') !== -1;
+  }
+
+  function showcaseBaseFee(showcase) {
+    if (showcase.hourlyRate != null && Number(showcase.hourlyRate) > 0) {
+      return Number(showcase.hourlyRate);
+    }
+    var hours = Number(showcase.masteryHours || 0);
+    if (hours >= 10000) return 500000;
+    if (hours >= 7500) return 150000;
+    if (hours >= 5000) return 75000;
+    if (hours >= 3000) return 45000;
+    if (hours >= 1000) return 25000;
+    return 12000;
+  }
+
+  function minPriceFromFee(fee, category) {
+    var price = Number(fee || 0);
+    if (!price) return 0;
+    var mult = isDjCategory(category) ? 0.35 : 0.45;
+    return Math.round(price * mult);
+  }
+
+  function showcaseMinPrice(showcase) {
+    return minPriceFromFee(showcaseBaseFee(showcase), showcase.category);
+  }
+
   function formatPrice(amount) {
     if (!amount) return '';
-    return 'from R' + Number(amount).toLocaleString('en-ZA');
+    var value = Number(amount);
+    if (!value) return '';
+    if (value >= 1000000) {
+      var millions = (value / 1000000).toFixed(2).replace(/\.?0+$/, '');
+      return 'from R' + millions.replace('.', ',') + 'M';
+    }
+    return 'from R' + value.toLocaleString('en-ZA');
   }
 
   function cardMasteryHours(item) {
@@ -173,13 +208,13 @@
 
   function resolveListingPrice(source) {
     var showcase = findShowcaseRecord(source);
-    if (showcase && showcase.hourlyRate != null && Number(showcase.hourlyRate) > 0) {
-      return formatPrice(showcase.hourlyRate);
+    if (showcase) {
+      return formatPrice(showcaseMinPrice(showcase));
     }
-    if (source.booking_fee) return formatPrice(source.booking_fee);
-    if (source.hourly_rate) return formatPrice(source.hourly_rate);
-    if (source.base_rate) return formatPrice(source.base_rate);
     if (source.min_price) return formatPrice(source.min_price);
+    if (source.booking_fee) return formatPrice(minPriceFromFee(source.booking_fee, source.category));
+    if (source.hourly_rate) return formatPrice(minPriceFromFee(source.hourly_rate, source.category));
+    if (source.base_rate) return formatPrice(minPriceFromFee(source.base_rate, source.category));
     return '';
   }
 
