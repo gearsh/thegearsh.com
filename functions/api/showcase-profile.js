@@ -163,7 +163,8 @@ function isDjCategory(category) {
 
 function isCreativeArtsCategory(category) {
   const value = String(category || '').toLowerCase();
-  return ['fashion', 'photography', 'makeup', 'tattoo', 'hair', 'videography', 'styling', 'visual']
+  return ['fashion', 'photography', 'makeup', 'tattoo', 'hair', 'videography', 'styling', 'visual',
+    'music video', 'video production', 'music producer', 'post-production', 'film director', 'editing']
     .some(function(token) { return value.includes(token); });
 }
 
@@ -297,6 +298,58 @@ function buildCreativeServices(artist, price) {
         description: 'Custom install, styling, and finishing for shoots or events.',
         price,
         duration_hours: 4,
+      },
+    ];
+  }
+
+  if (category.includes('music video') || category.includes('video production')) {
+    return [
+      {
+        id: `svc_showcase_${username}_1`,
+        name: 'Treatment & pre-production',
+        description: 'Creative concept, shot list, and production planning for your visual.',
+        price: Math.round(price * 0.25),
+        duration_hours: 4,
+      },
+      {
+        id: `svc_showcase_${username}_2`,
+        name: 'Single-day music video shoot',
+        description: 'On-set direction, camera, and production for one performance or narrative video.',
+        price: Math.round(price * 0.65),
+        duration_hours: 10,
+      },
+      {
+        id: `svc_showcase_${username}_3`,
+        name: 'Full music video package',
+        description: 'End-to-end production — shoot, edit, grade, and final delivery.',
+        price,
+        duration_hours: 16,
+      },
+    ];
+  }
+
+  if (category.includes('music producer') || category === 'producer') {
+    return [
+      {
+        id: `svc_showcase_${username}_1`,
+        name: 'Custom beat / topline session',
+        description: 'Original production session tailored to your sound and reference.',
+        price: Math.round(price * 0.35),
+        duration_hours: 3,
+      },
+      {
+        id: `svc_showcase_${username}_2`,
+        name: 'Production day (half day)',
+        description: 'In-studio beat making, arrangement, and rough mix for one record.',
+        price: Math.round(price * 0.65),
+        duration_hours: 5,
+      },
+      {
+        id: `svc_showcase_${username}_3`,
+        name: 'Full production package',
+        description: 'Complete production, vocal production, and mix-ready export.',
+        price,
+        duration_hours: 8,
       },
     ];
   }
