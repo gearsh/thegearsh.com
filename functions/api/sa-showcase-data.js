@@ -1696,6 +1696,22 @@ export const SA_SHOWCASE_ARTISTS = [
     bio: 'Shebeshxt. Limpopo Lekompo rapper (real name Lehlogonolo Katlego Chauke). Hits include Ke Di Shxt Malume and Rato Laka. Currently unavailable for bookings.',
     skills: ['Lekompo', 'Rap', 'Live Performance'],
   },
+  {
+    name: 'Oxii Moron',
+    username: 'oxii-moron',
+    image: 'assets/images/artists/artists.png',
+    category: 'R&B',
+    genre: 'R&B · Centurion',
+    genreSlug: 'afropop',
+    location: 'Centurion',
+    country: 'South Africa',
+    masteryHours: 3600,
+    badge: 'Rising',
+    badgeClass: 'fb-rise',
+    hourlyRate: 45000,
+    bio: 'Oxii Moron (Mogwadi Onthatile Lelake). Centurion-born singer, songwriter, producer and sound engineer blending R&B, soul and alternative hip-hop. Breakout singles include Animosity and Lord Knows I Tried; EPs Post-Love Clarity and The Decompress (Solace Edition). Signed to Evolving Music Group. Claim this profile to manage bookings.',
+    skills: ['R&B', 'Songwriting', 'Production', 'Live Performance'],
+  },
 ];
 
 export const GENRE_FEATURED_ORDER = {
