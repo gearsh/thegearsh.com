@@ -439,7 +439,7 @@
         <div class="card">
           <div class="section-label">Services</div>
           <h2 class="card-title">Services &amp; <em>pricing</em></h2>
-          <p class="card-sub">Set what you offer and how much you charge. Newcomers get an 80% intro discount applied automatically.</p>
+          <p class="card-sub">Set what you offer and how much you charge. Edit any package if the price from signup is wrong.</p>
           <div id="artist-services-manage-root"></div>
         </div>
       </div>
@@ -856,6 +856,8 @@
           localStorage.setItem('gearsh_user_id', data.data.user.id);
         }
         renderDashboard(data.data);
+        var tabParam = new URLSearchParams(window.location.search).get('tab');
+        if (tabParam) switchTab(tabParam);
       } catch (err) {
         showError(err.message || 'Something went wrong loading your dashboard.');
       }

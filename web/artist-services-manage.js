@@ -32,7 +32,10 @@
 
   ArtistServicesManage.prototype.init = function () {
     var self = this;
+    this.services = [];
+    this.editingId = null;
     this.root.innerHTML =
+      '<p class="card-sub" style="margin:0 0 16px">Wrong price from signup or a seeded profile? Edit any package below — clients see these rates when booking.</p>' +
       '<div id="asv-list"></div>' +
       '<hr style="border:none;border-top:0.5px solid var(--g-border);margin:24px 0">' +
       '<h3 style="font-size:15px;color:var(--g-white);margin-bottom:12px">Add a service</h3>' +
@@ -82,20 +85,27 @@
           list.innerHTML = '<p class="card-sub">No services yet. Add your first package below so clients can book you.</p>';
           return;
         }
-        list.innerHTML = '<div class="list-stack">' + svcs.map(function (s) {
-          return '<div class="list-row">' +
-            '<div class="list-row-main">' +
-              '<div class="list-row-title">' + escapeHtml(s.name) + '</div>' +
-              '<div class="list-row-sub">' + escapeHtml(s.description || 'No description') +
-                (s.duration_hours ? ' · ' + s.duration_hours + ' hrs' : '') +
-                (s.delivery_days ? ' · ' + s.delivery_days + ' days' : '') +
-              '</div></div>' +
-            '<div style="display:flex;align-items:center;gap:12px">' +
-              '<div class="service-price">R' + Number(s.price).toLocaleString('en-ZA') + '</div>' +
-              '<button type="button" class="btn-ghost" data-remove="' + escapeHtml(s.id) + '" style="font-size:12px">Remove</button>' +
-            '</div></div>';
-        }).join('') + '</div>';
+        self.services = svcs;
+        list.innerHTML = svcs.map(function (s) {
+          return self.renderServiceItem(s);
+        }).join('');
 
+        list.querySelectorAll('[data-edit]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            self.openEdit(btn.getAttribute('data-edit'));
+          });
+        });
+        list.querySelectorAll('[data-cancel]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            self.closeEdit();
+          });
+        });
+        list.querySelectorAll('.asv-edit-form').forEach(function (form) {
+          form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            self.saveService(form.getAttribute('data-edit-form'));
+          });
+        });
         list.querySelectorAll('[data-remove]').forEach(function (btn) {
           btn.addEventListener('click', function () {
             if (!confirm('Remove this service?')) return;
@@ -104,6 +114,7 @@
               headers: self.authHeaders(),
             })
               .then(function () {
+                self.closeEdit();
                 self.loadServices();
                 if (self.onChange) self.onChange();
               });
@@ -112,6 +123,89 @@
       })
       .catch(function (err) {
         list.innerHTML = '<p class="card-sub">' + escapeHtml(err.message) + '</p>';
+      });
+  };
+
+  ArtistServicesManage.prototype.renderServiceItem = function (s) {
+    var open = this.editingId === s.id;
+    return '<div class="asv-item" style="margin-bottom:10px">' +
+      '<div class="list-row"' + (open ? ' style="display:none"' : '') + ' data-view="' + escapeHtml(s.id) + '">' +
+        '<div class="list-row-main">' +
+          '<div class="list-row-title">' + escapeHtml(s.name) + '</div>' +
+          '<div class="list-row-sub">' + escapeHtml(s.description || 'No description') +
+            (s.duration_hours ? ' · ' + s.duration_hours + ' hrs' : '') +
+            (s.delivery_days ? ' · ' + s.delivery_days + ' days' : '') +
+          '</div></div>' +
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+          '<div class="service-price">R' + Number(s.price).toLocaleString('en-ZA') + '</div>' +
+          '<button type="button" class="btn-ghost" data-edit="' + escapeHtml(s.id) + '" style="font-size:12px">Edit</button>' +
+          '<button type="button" class="btn-ghost" data-remove="' + escapeHtml(s.id) + '" style="font-size:12px">Remove</button>' +
+        '</div></div>' +
+      '<form class="asv-edit-form card" data-edit-form="' + escapeHtml(s.id) + '" style="' +
+        (open ? 'padding:16px;margin:0' : 'display:none') + '">' +
+        '<div class="section-label">Edit service</div>' +
+        '<div class="aps-grid">' +
+          '<div class="field-group"><label class="field-label">Name</label>' +
+            '<input class="field-input asv-name" value="' + escapeHtml(s.name) + '" required></div>' +
+          '<div class="field-group"><label class="field-label">Price (ZAR)</label>' +
+            '<input class="field-input asv-price" type="number" min="1" step="1" value="' + Number(s.price) + '" required></div>' +
+          '<div class="field-group"><label class="field-label">Duration (hours)</label>' +
+            '<input class="field-input asv-duration" type="number" min="0.5" step="0.5" value="' + (s.duration_hours || '') + '"></div>' +
+          '<div class="field-group"><label class="field-label">Delivery days</label>' +
+            '<input class="field-input asv-days" type="number" min="1" value="' + (s.delivery_days || '') + '"></div>' +
+        '</div>' +
+        '<div class="field-group"><label class="field-label">Description</label>' +
+          '<textarea class="field-textarea asv-desc" rows="2">' + escapeHtml(s.description || '') + '</textarea></div>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">' +
+          '<button type="submit" class="btn-main" style="height:40px">Save changes</button>' +
+          '<button type="button" class="btn-ghost" data-cancel="' + escapeHtml(s.id) + '" style="height:40px">Cancel</button>' +
+        '</div></form></div>';
+  };
+
+  ArtistServicesManage.prototype.openEdit = function (serviceId) {
+    this.editingId = serviceId;
+    this.loadServices();
+  };
+
+  ArtistServicesManage.prototype.closeEdit = function () {
+    this.editingId = null;
+    this.loadServices();
+  };
+
+  ArtistServicesManage.prototype.saveService = function (serviceId) {
+    var self = this;
+    var form = document.querySelector('[data-edit-form="' + serviceId + '"]');
+    if (!form) return;
+
+    var price = Number(form.querySelector('.asv-price').value);
+    if (!price || price < 1) {
+      this.setMsg('Enter a valid price (R1 or more).', false);
+      return;
+    }
+
+    this.setMsg('Saving…', true);
+    fetch(API + '/services', {
+      method: 'PATCH',
+      headers: this.authHeaders(),
+      body: JSON.stringify({
+        id: serviceId,
+        name: form.querySelector('.asv-name').value.trim(),
+        price: price,
+        duration_hours: Number(form.querySelector('.asv-duration').value || 0) || null,
+        delivery_days: Number(form.querySelector('.asv-days').value || 0) || null,
+        description: form.querySelector('.asv-desc').value.trim(),
+      }),
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.success) throw new Error(d.error || 'Failed to update');
+        self.closeEdit();
+        self.setMsg('Pricing updated.', true);
+        self.loadServices();
+        if (self.onChange) self.onChange();
+      })
+      .catch(function (err) {
+        self.setMsg(err.message, false);
       });
   };
 

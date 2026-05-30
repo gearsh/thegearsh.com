@@ -78,6 +78,9 @@
                 '<option value="Music">Music</option><option value="DJ">DJ</option>' +
                 '<option value="Visual Arts">Visual Arts</option><option value="Services">Services</option>' +
                 '<option value="Other">Other</option></select></div>' +
+            '<div class="field-group"><label class="field-label">Starting price (ZAR)</label>' +
+              '<input class="field-input" name="hourly_rate" id="aps-hourly-rate" type="number" min="0" step="1" placeholder="e.g. 3500">' +
+              '<p style="font-size:12px;color:var(--g-text-muted);margin:6px 0 0;line-height:1.45">Set during signup — update here if it is wrong. For multiple packages, use the <strong style="color:var(--g-text)">Services</strong> tab.</p></div>' +
           '</div>' +
           '<div class="field-group"><label class="field-label">Bio *</label>' +
             '<textarea class="field-textarea" name="bio" id="aps-bio" rows="4" required placeholder="Tell clients about your style, experience, and what makes you unique."></textarea></div>' +
@@ -172,6 +175,9 @@
     set('aps-country', data.country || 'South Africa');
     set('aps-bio', data.bio);
     set('aps-category', data.category || 'Services');
+    if (data.hourly_rate != null || data.base_rate != null) {
+      set('aps-hourly-rate', data.hourly_rate != null ? data.hourly_rate : data.base_rate);
+    }
     if (data.skills && data.skills.length) {
       set('aps-skills', data.skills.join(', '));
     }
@@ -229,21 +235,24 @@
     this.setMsg('aps-profile-msg', 'Saving…');
     var skills = String(document.getElementById('aps-skills').value || '')
       .split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+    var hourlyRaw = document.getElementById('aps-hourly-rate').value.trim();
+    var payload = {
+      stage_name: document.getElementById('aps-stage-name').value.trim(),
+      username: document.getElementById('aps-username').value.trim() || undefined,
+      phone: document.getElementById('aps-phone').value.trim(),
+      location: document.getElementById('aps-location').value.trim(),
+      country: document.getElementById('aps-country').value.trim(),
+      category: document.getElementById('aps-category').value,
+      bio: document.getElementById('aps-bio').value.trim(),
+      skills: skills,
+      portfolio: this.portfolio,
+    };
+    if (hourlyRaw !== '') payload.hourly_rate = Number(hourlyRaw);
 
     fetch(API + '/onboarding/save', {
       method: 'POST',
       headers: this.authHeaders(true),
-      body: JSON.stringify({
-        stage_name: document.getElementById('aps-stage-name').value.trim(),
-        username: document.getElementById('aps-username').value.trim() || undefined,
-        phone: document.getElementById('aps-phone').value.trim(),
-        location: document.getElementById('aps-location').value.trim(),
-        country: document.getElementById('aps-country').value.trim(),
-        category: document.getElementById('aps-category').value,
-        bio: document.getElementById('aps-bio').value.trim(),
-        skills: skills,
-        portfolio: this.portfolio,
-      }),
+      body: JSON.stringify(payload),
     })
       .then(function (r) { return r.json(); })
       .then(function (d) {
