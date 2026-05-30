@@ -1,8 +1,8 @@
 // GET /api/founder/reliability/:userId — ops-only reliability view
 
-import { corsPreflightResponse, jsonResponse } from '../auth-utils.js';
-import { requireFounder } from '../founder-auth.js';
-import { getReliabilityIndex } from '../reliability-utils.js';
+import { corsPreflightResponse, jsonResponse } from '../../auth-utils.js';
+import { requireFounder } from '../../founder-auth.js';
+import { getReliabilityIndex } from '../../reliability-utils.js';
 
 export async function onRequestGet(context) {
   try {
