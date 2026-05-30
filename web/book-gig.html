@@ -170,6 +170,7 @@
       <strong id="claim-banner-title">Are you this artist?</strong>
       <p id="claim-banner-copy">This is a Gearsh demo profile created with the artist's permission. Claim it with your private code to manage bookings and update your details.</p>
       <a id="claim-banner-link" href="#"><i class="ti ti-key"></i> Claim this profile</a>
+      <a id="claim-removal-link" href="#" style="margin-left:16px;color:var(--g-text-muted);font-weight:500"><i class="ti ti-user-off"></i> Request removal</a>
     </div>
     <div class="book-profile">
       <img id="artist-photo" class="book-profile-photo" src="icons/Icon-512.png" alt="">
@@ -370,6 +371,7 @@
         var banner = document.getElementById('claim-banner');
         document.getElementById('claim-banner-title').textContent = 'Are you ' + (data.name || 'this artist') + '?';
         document.getElementById('claim-banner-link').href = data.claim_url;
+        document.getElementById('claim-removal-link').href = data.claim_url + (data.claim_url.indexOf('?') >= 0 ? '&' : '?') + 'mode=removal';
         banner.style.display = 'block';
       }
 

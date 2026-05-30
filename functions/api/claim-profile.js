@@ -7,6 +7,11 @@ import {
   ensureAuthTables,
 } from './auth-utils.js';
 import { ensureDemoColumns } from './demo-artists.js';
+import {
+  ensureRemovalRequestsTable,
+  getPendingRemovalRequest,
+  isUsernameRemoved,
+} from './claim-profile-utils.js';
 
 export async function onRequestGet(context) {
   try {
@@ -18,6 +23,7 @@ export async function onRequestGet(context) {
 
     await ensureAuthTables(context.env.DB);
     await ensureDemoColumns(context.env.DB);
+    await ensureRemovalRequestsTable(context.env.DB);
 
     const user = await context.env.DB.prepare(`
       SELECT u.id, u.display_name, u.username, u.claim_token, u.email, u.is_demo
@@ -33,12 +39,23 @@ export async function onRequestGet(context) {
       }, 404);
     }
 
+    if (await isUsernameRemoved(context.env.DB, username)) {
+      return jsonResponse({
+        success: false,
+        error: 'This profile has been removed from Gearsh.',
+      }, 410);
+    }
+
+    const pendingRemoval = await getPendingRemovalRequest(context.env.DB, user.id);
+
     return jsonResponse({
       success: true,
       data: {
         username: user.username,
         display_name: user.display_name,
         claimable: true,
+        removal_pending: Boolean(pendingRemoval),
+        removal_submitted_at: pendingRemoval?.created_at || null,
       },
     });
   } catch (err) {

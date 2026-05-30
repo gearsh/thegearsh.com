@@ -2,6 +2,7 @@
 
 import { parseSkills, resolveArtistProfile } from '../auth-utils.js';
 import { ensureDemoColumns } from '../demo-artists.js';
+import { ensureRemovalRequestsTable, isUsernameRemoved } from '../claim-profile-utils.js';
 import { seedShowcaseArtist } from '../sa-showcase-artists.js';
 import {
   findShowcaseArtist,
@@ -51,6 +52,20 @@ function enrichFromShowcase(artistData, showcase) {
 export async function onRequestGet(context) {
   try {
     const identifier = context.params.id;
+    await ensureRemovalRequestsTable(context.env.DB);
+    if (await isUsernameRemoved(context.env.DB, identifier)) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'This profile has been removed from Gearsh.',
+      }), {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+        status: 410,
+      });
+    }
+
     const showcase = findShowcaseArtist(identifier);
     let resolved = await resolveArtistProfile(context.env.DB, identifier);
 

@@ -27,21 +27,44 @@
       background: rgba(0,191,255,0.08); border: 0.5px solid rgba(0,191,255,0.18);
       font-size: 13px; color: var(--g-text-muted); line-height: 1.5;
     }
+    .claim-note.pending {
+      background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.2);
+    }
     .field-group { margin-top: 14px; }
     .field-label { display: block; font-size: 12px; color: var(--g-text-muted); margin-bottom: 5px; }
-    .field-input {
-      width: 100%; height: 48px; background: var(--g-black); border: 0.5px solid var(--g-border);
+    .field-input, .field-textarea {
+      width: 100%; box-sizing: border-box;
+      background: var(--g-black); border: 0.5px solid var(--g-border);
       border-radius: 10px; padding: 0 16px; font-family: var(--g-font); font-size: 15px; color: var(--g-text);
     }
-    .field-input:focus { outline: none; border-color: rgba(0,191,255,0.45); }
+    .field-input { height: 48px; }
+    .field-textarea { padding: 12px 16px; min-height: 88px; resize: vertical; }
+    .field-input:focus, .field-textarea:focus { outline: none; border-color: rgba(0,191,255,0.45); }
     .auth-error { font-size: 13px; color: #f87171; margin-top: 12px; display: none; }
     .auth-success { font-size: 13px; color: #34d399; margin-top: 12px; display: none; }
     .btn-submit {
       width: 100%; height: 52px; margin-top: 16px; background: var(--g-accent); color: var(--g-black);
       border: none; border-radius: 10px; font-family: var(--g-font); font-size: 15px; font-weight: 700; cursor: pointer;
     }
+    .btn-submit.secondary {
+      background: transparent; color: var(--g-text-muted); border: 0.5px solid var(--g-border);
+      font-weight: 600;
+    }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
     .auth-footer { text-align: center; font-size: 13px; color: var(--g-text-muted); margin-top: 18px; }
     .auth-footer a { color: var(--g-accent); text-decoration: none; font-weight: 600; }
+    .mode-toggle {
+      margin-top: 20px; padding-top: 18px; border-top: 0.5px solid var(--g-border);
+      text-align: center; font-size: 13px; color: var(--g-text-muted);
+    }
+    .mode-toggle button {
+      background: none; border: none; color: var(--g-accent); font-weight: 600;
+      cursor: pointer; font-family: var(--g-font); font-size: 13px; padding: 0;
+    }
+    .panel-hidden { display: none; }
+    .removal-note {
+      font-size: 13px; color: var(--g-text-muted); line-height: 1.55; margin-top: 4px;
+    }
   </style>
 </head>
 <body>
@@ -54,31 +77,62 @@
 
   <div class="auth-page">
     <div class="auth-card">
-      <h1>Claim your <em id="artist-title">artist profile</em></h1>
+      <h1 id="page-title">Claim your <em id="artist-title">artist profile</em></h1>
       <p id="claim-intro">Enter the private claim code you received from Gearsh, then set your email and password to take over this demo profile.</p>
       <div class="claim-note" id="claim-note" style="display:none"></div>
 
-      <form id="claim-form">
-        <div class="field-group">
-          <label class="field-label" for="claim-code">Private claim code</label>
-          <input class="field-input" id="claim-code" required placeholder="RIX-XXXXXXXX" autocomplete="off">
+      <div id="claim-panel">
+        <form id="claim-form">
+          <div class="field-group">
+            <label class="field-label" for="claim-code">Private claim code</label>
+            <input class="field-input" id="claim-code" required placeholder="RIX-XXXXXXXX" autocomplete="off">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="email">Your email</label>
+            <input class="field-input" id="email" type="email" required placeholder="you@email.com" autocomplete="email">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="phone">Phone (optional)</label>
+            <input class="field-input" id="phone" type="tel" placeholder="+27 00 000 0000">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="password">Choose a password</label>
+            <input class="field-input" id="password" type="password" required minlength="8" placeholder="At least 8 characters" autocomplete="new-password">
+          </div>
+          <div class="auth-error" id="claim-error"></div>
+          <div class="auth-success" id="claim-success"></div>
+          <button class="btn-submit" type="submit" id="claim-btn">Claim profile</button>
+        </form>
+
+        <div class="mode-toggle" id="claim-toggle">
+          Not you, or don't want to be listed? <button type="button" id="show-removal-btn">Request removal from Gearsh</button>
         </div>
-        <div class="field-group">
-          <label class="field-label" for="email">Your email</label>
-          <input class="field-input" id="email" type="email" required placeholder="you@email.com" autocomplete="email">
+      </div>
+
+      <div id="removal-panel" class="panel-hidden">
+        <p class="removal-note">If this profile was created without your permission, submit a removal request using the private code from your Gearsh message. We'll take your listing down after review.</p>
+        <form id="removal-form">
+          <div class="field-group">
+            <label class="field-label" for="removal-code">Private claim code</label>
+            <input class="field-input" id="removal-code" required placeholder="RIX-XXXXXXXX" autocomplete="off">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="removal-email">Your contact email</label>
+            <input class="field-input" id="removal-email" type="email" required placeholder="you@email.com" autocomplete="email">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="removal-reason">Reason (optional)</label>
+            <textarea class="field-textarea" id="removal-reason" placeholder="I'm not this artist / I don't want to be listed on Gearsh"></textarea>
+          </div>
+          <div class="auth-error" id="removal-error"></div>
+          <div class="auth-success" id="removal-success"></div>
+          <button class="btn-submit secondary" type="submit" id="removal-btn">Request removal</button>
+        </form>
+
+        <div class="mode-toggle">
+          Changed your mind? <button type="button" id="show-claim-btn">Claim this profile instead</button>
         </div>
-        <div class="field-group">
-          <label class="field-label" for="phone">Phone (optional)</label>
-          <input class="field-input" id="phone" type="tel" placeholder="+27 00 000 0000">
-        </div>
-        <div class="field-group">
-          <label class="field-label" for="password">Choose a password</label>
-          <input class="field-input" id="password" type="password" required minlength="8" placeholder="At least 8 characters" autocomplete="new-password">
-        </div>
-        <div class="auth-error" id="claim-error"></div>
-        <div class="auth-success" id="claim-success"></div>
-        <button class="btn-submit" type="submit" id="claim-btn">Claim profile</button>
-      </form>
+      </div>
 
       <div class="auth-footer">
         Already claimed? <a href="/auth.html">Sign in</a>
@@ -89,20 +143,53 @@
   <script>
     var API_BASE = '/api';
     var artistSlug = new URLSearchParams(window.location.search).get('artist') || 'rixelton';
+    var claimInfo = null;
+
+    function showPanel(mode) {
+      document.getElementById('claim-panel').classList.toggle('panel-hidden', mode !== 'claim');
+      document.getElementById('removal-panel').classList.toggle('panel-hidden', mode !== 'removal');
+      if (mode === 'removal') {
+        document.getElementById('page-title').innerHTML = 'Request <em>removal</em>';
+      } else if (claimInfo) {
+        document.getElementById('page-title').innerHTML = 'Claim your <em id="artist-title">' + claimInfo.display_name + ' profile</em>';
+      }
+    }
+
+    document.getElementById('show-removal-btn').addEventListener('click', function() {
+      var code = document.getElementById('claim-code').value.trim();
+      if (code) document.getElementById('removal-code').value = code;
+      showPanel('removal');
+    });
+
+    document.getElementById('show-claim-btn').addEventListener('click', function() {
+      showPanel('claim');
+    });
 
     async function loadClaimInfo() {
       try {
         var res = await fetch(API_BASE + '/claim-profile?artist=' + encodeURIComponent(artistSlug));
         var data = await res.json();
         if (!res.ok || !data.success) throw new Error(data.error || 'Profile not available');
+        claimInfo = data.data;
         document.getElementById('artist-title').textContent = data.data.display_name + ' profile';
-        document.getElementById('claim-note').style.display = 'block';
-        document.getElementById('claim-note').innerHTML =
+        var note = document.getElementById('claim-note');
+        note.style.display = 'block';
+        if (data.data.removal_pending) {
+          note.className = 'claim-note pending';
+          note.innerHTML = 'A removal request for <strong style="color:var(--g-white)">' + data.data.display_name +
+            '</strong> is already under review. We will email you once it is processed.';
+          document.getElementById('claim-form').style.display = 'none';
+          document.getElementById('claim-toggle').style.display = 'none';
+          return;
+        }
+        note.className = 'claim-note';
+        note.innerHTML =
           'You are claiming <strong style="color:var(--g-white)">' + data.data.display_name + '</strong> (' +
           data.data.username + '). Your bookings, link, and dashboard will stay exactly as they are on Gearsh.';
       } catch (err) {
         document.getElementById('claim-intro').textContent = err.message || 'This profile cannot be claimed.';
         document.getElementById('claim-form').style.display = 'none';
+        document.getElementById('claim-toggle').style.display = 'none';
       }
     }
 
@@ -150,7 +237,50 @@
       }
     });
 
-    loadClaimInfo();
+    document.getElementById('removal-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var errEl = document.getElementById('removal-error');
+      var okEl = document.getElementById('removal-success');
+      var btn = document.getElementById('removal-btn');
+      errEl.style.display = 'none';
+      okEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+
+      try {
+        var res = await fetch(API_BASE + '/claim-profile/request-removal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: artistSlug,
+            claim_code: document.getElementById('removal-code').value.trim(),
+            email: document.getElementById('removal-email').value.trim(),
+            reason: document.getElementById('removal-reason').value.trim()
+          })
+        });
+        var data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || 'Request failed');
+
+        okEl.textContent = data.message;
+        okEl.style.display = 'block';
+        document.getElementById('removal-form').style.display = 'none';
+        document.getElementById('claim-note').style.display = 'block';
+        document.getElementById('claim-note').className = 'claim-note pending';
+        document.getElementById('claim-note').innerHTML = 'Your removal request has been submitted. We typically process these within 24–48 hours.';
+      } catch (err) {
+        errEl.textContent = err.message || 'Something went wrong.';
+        errEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Request removal';
+      }
+    });
+
+    loadClaimInfo().then(function() {
+      if (new URLSearchParams(window.location.search).get('mode') === 'removal') {
+        showPanel('removal');
+      }
+    });
   </script>
 </body>
 </html>

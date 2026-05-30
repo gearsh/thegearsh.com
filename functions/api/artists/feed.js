@@ -4,6 +4,7 @@ import { parseSkills, buildProfileUrl } from '../auth-utils.js';
 import { seedShowcaseArtistsBatch, SA_SHOWCASE_ARTISTS } from '../sa-showcase-artists.js';
 import { GENRE_FEED_CATEGORIES, resolveArtistGenreSlug, compareArtistsForGenre, artistHasSoloPortrait } from '../sa-showcase-data.js';
 import { getBookingFee, getShowcaseMinPrice } from '../showcase-profile.js';
+import { ensureRemovalRequestsTable, getRemovedUsernames } from '../claim-profile-utils.js';
 
 const showcaseByUsername = new Map(
   SA_SHOWCASE_ARTISTS.map(function(artist) {
@@ -203,7 +204,13 @@ export async function onRequestGet(context) {
     `;
 
     const result = await context.env.DB.prepare(query).all();
-    const artists = (result.results || []).map(applyShowcaseMetadata);
+    await ensureRemovalRequestsTable(context.env.DB);
+    const removed = await getRemovedUsernames(context.env.DB);
+    const artists = (result.results || [])
+      .filter(function (artist) {
+        return !removed.has(String(artist.username || '').toLowerCase());
+      })
+      .map(applyShowcaseMetadata);
     const categories = buildCategories(artists);
 
     return new Response(JSON.stringify({

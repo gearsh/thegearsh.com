@@ -256,10 +256,11 @@
     </div>
 
     <div class="god-panel" id="demo-panel">
-      <h2>Demo artist: Rix Elton</h2>
-      <div class="sub">Bookable demo profile for product testing. Rix can claim it later with a private code.</div>
+      <h2>Claimable listings</h2>
+      <div class="sub">Seed a bookable profile, then send the artist their booking link, claim page, and private code. They can claim the profile or request removal.</div>
       <div class="god-toolbar">
-        <button class="god-btn primary" type="button" onclick="seedRixElton()"><i class="ti ti-user-plus"></i> Create / refresh Rix Elton</button>
+        <button class="god-btn primary" type="button" onclick="seedClaimableArtist('rixelton')"><i class="ti ti-user-plus"></i> Rix Elton</button>
+        <button class="god-btn primary" type="button" onclick="seedClaimableArtist('artwork-sounds')"><i class="ti ti-users"></i> Artwork Sounds</button>
       </div>
       <div id="demo-result" class="god-success" style="display:none;margin-bottom:0"></div>
     </div>
@@ -312,6 +313,19 @@
             <tr><th>Artist</th><th>Email</th><th>Category</th><th>Rate</th><th>Status</th><th>Joined</th></tr>
           </thead>
           <tbody id="verification-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="god-panel">
+      <h2>Removal requests</h2>
+      <div class="sub">Artists who asked to be taken off Gearsh instead of claiming</div>
+      <div class="god-table-wrap">
+        <table class="god-table">
+          <thead>
+            <tr><th>Artist</th><th>Contact email</th><th>Reason</th><th>Requested</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="removal-body"></tbody>
         </table>
       </div>
     </div>
@@ -597,6 +611,32 @@
       }).join('') || '<tr><td colspan="6">No pending verifications</td></tr>';
     }
 
+    async function reviewRemovalRequest(requestId, action) {
+      var notes = action === 'dismiss' ? 'Dismissed in Gearsh Command' : 'Approved — listing removed';
+      await founderFetch('/founder/removal-requests', {
+        method: 'PATCH',
+        body: JSON.stringify({ request_id: requestId, action: action, notes: notes })
+      });
+      await loadRemovalRequests();
+      await loadArtists();
+    }
+
+    async function loadRemovalRequests() {
+      var rows = await founderFetch('/founder/removal-requests?status=pending');
+      document.getElementById('removal-body').innerHTML = (rows || []).map(function(row) {
+        return '<tr>' +
+          '<td><strong>' + (row.display_name || row.username || 'N/A') + '</strong><br><span style="font-size:12px">@' + row.username + '</span></td>' +
+          '<td>' + row.requester_email + '</td>' +
+          '<td>' + (row.reason || '—') + '</td>' +
+          '<td>' + formatDate(row.created_at) + '</td>' +
+          '<td>' +
+            '<button class="god-btn primary" type="button" onclick="reviewRemovalRequest(\'' + row.id + '\', \'approve\')">Remove listing</button> ' +
+            '<button class="god-btn" type="button" onclick="reviewRemovalRequest(\'' + row.id + '\', \'dismiss\')">Dismiss</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('') || '<tr><td colspan="5">No pending removal requests</td></tr>';
+    }
+
     async function loadPayments() {
       var data = await founderFetch('/founder/payments');
       var summary = data.escrow_summary || [];
@@ -680,28 +720,32 @@
       }).join('') || '<tr><td colspan="7">No artists found</td></tr>';
     }
 
-    async function seedRixElton() {
+    async function seedClaimableArtist(username) {
       var resultEl = document.getElementById('demo-result');
       resultEl.style.display = 'none';
       try {
         var data = await founderFetch('/founder/seed-demo-artist', {
           method: 'POST',
-          body: JSON.stringify({ artist: 'rixelton' })
+          body: JSON.stringify({ artist: username })
         });
         var info = data || {};
+        var slug = info.username || username;
         var lines = [];
-        lines.push('Booking page: https://thegearsh.com/book-gig?artist=' + encodeURIComponent(info.username || 'rixelton'));
-        lines.push('Share link: https://thegearsh.com/book/' + encodeURIComponent(info.username || 'rixelton'));
+        lines.push('<strong style="color:#fff">' + (info.display_name || slug) + '</strong> is ready on Gearsh.');
+        lines.push('Booking page: https://thegearsh.com/book-gig?artist=' + encodeURIComponent(slug));
+        lines.push('Share link: https://thegearsh.com/book/' + encodeURIComponent(slug));
         if (info.claim_url) lines.push('Claim page: https://thegearsh.com' + info.claim_url);
-        if (info.claim_code) lines.push('Private claim code for Rix: <strong style="color:#fff">' + info.claim_code + '</strong>');
-        if (info.hourly_rate) lines.push('Rate: R' + Number(info.hourly_rate).toLocaleString('en-ZA') + '/hour');
+        if (info.removal_url) lines.push('Request removal: https://thegearsh.com' + info.removal_url);
+        if (info.claim_code) lines.push('Private claim code: <strong style="color:#fff">' + info.claim_code + '</strong>');
+        if (info.hourly_rate) lines.push('Listed from: R' + Number(info.hourly_rate).toLocaleString('en-ZA'));
+        lines.push('<br><span style="font-size:12px;color:#94A3B8">Outreach copy: “We listed you on Gearsh so clients can book you. Use your private code to claim your profile, or request removal if you prefer not to be listed.”</span>');
         resultEl.className = 'god-success';
-        resultEl.innerHTML = lines.join('<br>') || 'Demo profile ready.';
+        resultEl.innerHTML = lines.join('<br>');
         resultEl.style.display = 'block';
         await refreshAll();
       } catch (err) {
         resultEl.className = 'god-error';
-        resultEl.textContent = err.message || 'Failed to seed demo artist';
+        resultEl.textContent = err.message || 'Failed to seed claimable artist';
         resultEl.style.display = 'block';
       }
     }
@@ -763,7 +807,7 @@
     }
 
     async function refreshAll() {
-      await Promise.all([loadStats(), loadArtists(), loadVerificationQueue(), loadPayments(), loadDisputes(), loadContentAdmin()]);
+      await Promise.all([loadStats(), loadArtists(), loadVerificationQueue(), loadRemovalRequests(), loadPayments(), loadDisputes(), loadContentAdmin()]);
     }
 
     document.getElementById('artist-search').addEventListener('keydown', function(e) {
