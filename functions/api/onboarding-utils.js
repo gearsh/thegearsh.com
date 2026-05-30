@@ -257,6 +257,7 @@ export async function saveProfile(context, body) {
     stage_name,
     username,
     bio,
+    phone,
     location,
     country,
     category,
@@ -295,6 +296,7 @@ export async function saveProfile(context, body) {
       first_name = COALESCE(?, first_name),
       username = COALESCE(?, username),
       bio = COALESCE(?, bio),
+      phone = COALESCE(?, phone),
       location = COALESCE(?, location),
       country = COALESCE(?, country),
       profile_picture_url = COALESCE(?, profile_picture_url),
@@ -305,6 +307,7 @@ export async function saveProfile(context, body) {
     stage_name ? displayName : null,
     chosenUsername !== user.username ? chosenUsername : null,
     bio !== undefined ? (bio || null) : null,
+    phone !== undefined ? (phone || null) : null,
     location !== undefined ? (location || null) : null,
     country !== undefined ? (country || null) : null,
     profile_photo || null,
@@ -391,7 +394,7 @@ export async function getPreview(context) {
     SELECT
       u.display_name AS name, u.username, u.bio, u.location, u.country,
       u.profile_picture_url AS image, u.phone, u.email_verified, u.phone_verified,
-      u.onboarding_status,
+      u.onboarding_status, u.is_verified,
       ap.category, ap.skills, ap.hourly_rate, ap.base_rate,
       ap.portfolio_urls, ap.social_links, ap.availability_json
     FROM users u
@@ -410,6 +413,7 @@ export async function getPreview(context) {
       availability: row.availability_json ? JSON.parse(row.availability_json) : {},
       email_verified: Boolean(row.email_verified),
       phone_verified: Boolean(row.phone_verified),
+      is_verified: Boolean(row.is_verified),
     },
   });
 }
@@ -417,19 +421,59 @@ export async function getPreview(context) {
 export async function submitForReview(context) {
   const auth = await requireUser(context);
   if (auth.error) return auth.error;
+
   const user = await context.env.DB.prepare(`
-    SELECT u.id, u.email, u.display_name, u.username, u.email_verified, u.phone_verified
+    SELECT
+      u.id, u.email, u.display_name, u.username, u.bio, u.phone, u.location,
+      u.profile_picture_url, u.email_verified, u.phone_verified, u.is_verified,
+      u.onboarding_status
     FROM users u WHERE u.id = ?
   `).bind(auth.userId).first();
   if (!user) return jsonResponse({ success: false, error: 'User not found' }, 404);
-  if (!user.email_verified) {
-    return jsonResponse({ success: false, error: 'Please verify your email first' }, 400);
+
+  if (user.is_verified) {
+    return jsonResponse({ success: true, message: 'You are already verified', data: { onboarding_status: 'approved' } });
   }
-  if (!user.phone_verified) {
-    return jsonResponse({ success: false, error: 'Please verify your phone number first' }, 400);
+  if (user.onboarding_status === 'pending') {
+    return jsonResponse({ success: true, message: 'Your profile is already under review', data: { onboarding_status: 'pending' } });
+  }
+  if (!user.email_verified) {
+    return jsonResponse({ success: false, error: 'Please verify your email first', code: 'EMAIL_VERIFY' }, 400);
   }
   if (!user.display_name || user.display_name === 'New Artist') {
-    return jsonResponse({ success: false, error: 'Please complete your profile first' }, 400);
+    return jsonResponse({ success: false, error: 'Please add your stage name', code: 'PROFILE' }, 400);
+  }
+  if (!user.bio || !user.phone || !user.location || !user.profile_picture_url) {
+    return jsonResponse({
+      success: false,
+      error: 'Complete your bio, photo, phone, and location before submitting',
+      code: 'PROFILE',
+    }, 400);
+  }
+
+  const artistProfile = await context.env.DB.prepare(`
+    SELECT id, portfolio_urls FROM artist_profiles WHERE user_id = ?
+  `).bind(auth.userId).first();
+  if (!artistProfile) {
+    return jsonResponse({ success: false, error: 'Artist profile not found' }, 404);
+  }
+
+  let portfolio = [];
+  try {
+    portfolio = JSON.parse(artistProfile.portfolio_urls || '[]');
+    if (!Array.isArray(portfolio)) portfolio = [];
+  } catch (_) {
+    portfolio = [];
+  }
+  if (!portfolio.length) {
+    return jsonResponse({ success: false, error: 'Upload at least one portfolio photo', code: 'PORTFOLIO' }, 400);
+  }
+
+  const serviceRow = await context.env.DB.prepare(`
+    SELECT id FROM services WHERE artist_id = ? AND is_active = 1 LIMIT 1
+  `).bind(artistProfile.id).first();
+  if (!serviceRow) {
+    return jsonResponse({ success: false, error: 'Add at least one service with pricing', code: 'SERVICES' }, 400);
   }
 
   const now = new Date().toISOString();
@@ -443,7 +487,7 @@ export async function submitForReview(context) {
 
   return jsonResponse({
     success: true,
-    message: 'Profile submitted for review. Welcome email sent.',
+    message: 'Profile submitted for review. We will notify you when you are verified.',
     data: {
       onboarding_status: 'pending',
       profile_url: profileUrl,

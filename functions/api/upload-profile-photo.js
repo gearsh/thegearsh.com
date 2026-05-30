@@ -10,6 +10,29 @@ import {
 const MAX_BASE64_BYTES = 4 * 1024 * 1024;
 const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
+function parsePortfolioUrls(value) {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (_) {
+    return String(value).split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+  }
+}
+
+async function appendPortfolioUrl(db, userId, photoUrl) {
+  const profile = await db.prepare(`
+    SELECT id, portfolio_urls FROM artist_profiles WHERE user_id = ?
+  `).bind(userId).first();
+  if (!profile) return;
+  const urls = parsePortfolioUrls(profile.portfolio_urls);
+  urls.push(photoUrl);
+  await db.prepare(`
+    UPDATE artist_profiles SET portfolio_urls = ?, updated_at = datetime('now')
+    WHERE user_id = ?
+  `).bind(JSON.stringify(urls), userId).run();
+}
+
 export async function onRequestPost(context) {
   try {
     const userId = await parseToken(
@@ -57,7 +80,9 @@ export async function onRequestPost(context) {
       });
       const photoUrl = `https://images.thegearsh.com/profiles/${filename}`;
 
-      if (type !== 'portfolio') {
+      if (type === 'portfolio') {
+        await appendPortfolioUrl(context.env.DB, userId, photoUrl);
+      } else {
         await context.env.DB.prepare(`
           UPDATE users SET profile_picture_url = ?, updated_at = datetime('now')
           WHERE id = ?
@@ -71,7 +96,9 @@ export async function onRequestPost(context) {
     }
 
     const dataUrl = `data:${mime};base64,${image_data}`;
-    if (type !== 'portfolio') {
+    if (type === 'portfolio') {
+      await appendPortfolioUrl(context.env.DB, userId, dataUrl);
+    } else {
       await context.env.DB.prepare(`
         UPDATE users SET profile_picture_url = ?, updated_at = datetime('now')
         WHERE id = ?

@@ -36,6 +36,7 @@ function buildChecklist(user, artistProfile, services) {
   const profileComplete = Boolean(
     user.bio && user.phone && user.profile_picture_url && user.location
   );
+  const verificationPending = user.onboarding_status === 'pending' && !user.is_verified;
 
   return [
     {
@@ -62,9 +63,12 @@ function buildChecklist(user, artistProfile, services) {
     {
       id: 'verified',
       title: 'Get verified',
-      description: 'Verified artists get 3× more bookings. Start verification when you\'re ready.',
-      action: 'Verify',
+      description: verificationPending
+        ? 'Your profile is under review. We typically approve within 24–48 hours.'
+        : 'Verified artists get 3× more bookings. Submit when your profile, portfolio, and services are ready.',
+      action: user.is_verified ? 'Verified' : (verificationPending ? 'Under review' : 'Submit'),
       completed: Boolean(user.is_verified),
+      pending: verificationPending,
     },
   ];
 }
@@ -77,7 +81,8 @@ export async function onRequestGet(context) {
     const user = await context.env.DB.prepare(`
       SELECT
         id, email, user_type, first_name, last_name, display_name, username,
-        profile_picture_url, phone, location, country, bio, is_verified, created_at
+        profile_picture_url, phone, location, country, bio, is_verified,
+        email_verified, phone_verified, onboarding_status, created_at
       FROM users
       WHERE id = ? AND is_active = 1
     `).bind(userId).first();
@@ -163,6 +168,9 @@ export async function onRequestGet(context) {
           ...user,
           username,
           is_verified: Boolean(user.is_verified),
+          email_verified: Boolean(user.email_verified),
+          phone_verified: Boolean(user.phone_verified),
+          onboarding_status: user.onboarding_status || 'draft',
         },
         artist_profile: {
           ...artistProfile,
