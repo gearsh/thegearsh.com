@@ -1,51 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
-import 'package:gearsh_app/services/dashboard_service.dart';
+import 'package:gearsh_app/core/queries/linked_queries.dart';
+import 'package:gearsh_app/providers/user_role_provider.dart';
 
-class ArtistDashboardPage extends StatefulWidget {
+class ArtistDashboardPage extends ConsumerStatefulWidget {
   const ArtistDashboardPage({super.key});
 
   @override
-  State<ArtistDashboardPage> createState() => _ArtistDashboardPageState();
+  ConsumerState<ArtistDashboardPage> createState() => _ArtistDashboardPageState();
 }
 
-class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
+class _ArtistDashboardPageState extends ConsumerState<ArtistDashboardPage> {
   String _activeTab = 'overview';
-  final DashboardService _dashboardService = DashboardService();
-  Map<String, dynamic>? _dashboardData;
-  bool _loadingDashboard = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadDashboard();
-  }
-
-  Future<void> _loadDashboard() async {
-    final data = await _dashboardService.fetchDashboard();
-    if (!mounted) return;
-    setState(() {
-      _dashboardData = data;
-      _loadingDashboard = false;
-    });
-  }
-
-  int get _bookingsCount {
-    final stats = _dashboardData?['stats'] as Map<String, dynamic>?;
-    return (stats?['bookings'] as num?)?.toInt() ?? 0;
-  }
-
-  String get _earningsLabel {
-    final stats = _dashboardData?['stats'] as Map<String, dynamic>?;
-    final earnings = (stats?['earnings'] as num?)?.toDouble() ?? 0;
-    return 'R${earnings.toStringAsFixed(0)}';
-  }
-
-  int get _viewsCount {
-    final stats = _dashboardData?['stats'] as Map<String, dynamic>?;
-    return (stats?['profile_views'] as num?)?.toInt() ?? 0;
-  }
 
   static const Color _bg      = Color(0xFF020617);
   static const Color _surface = Color(0xFF111827);
@@ -68,11 +35,60 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final role = ref.watch(userRoleProvider);
+    final dashboardAsync = ref.watch(artistDashboardLinkedQueryProvider);
     final padding = MediaQuery.of(context).padding;
     final w = MediaQuery.of(context).size.width;
     final isWide = w >= 900;
     final hPad = isWide ? 80.0 : 20.0;
 
+    return dashboardAsync.when(
+      loading: () => const Scaffold(
+        backgroundColor: _bg,
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, __) => Scaffold(
+        backgroundColor: _bg,
+        body: Center(
+          child: TextButton(
+            onPressed: () => ref.invalidate(artistDashboardLinkedQueryProvider),
+            child: const Text('Retry'),
+          ),
+        ),
+      ),
+      data: (dashboardData) => _buildDashboard(
+        role: role,
+        dashboardData: dashboardData,
+        padding: padding,
+        hPad: hPad,
+        isWide: isWide,
+      ),
+    );
+  }
+
+  int _bookingsCount(Map<String, dynamic>? dashboardData) {
+    final stats = dashboardData?['stats'] as Map<String, dynamic>?;
+    return (stats?['bookings'] as num?)?.toInt() ?? 0;
+  }
+
+  String _earningsLabel(Map<String, dynamic>? dashboardData) {
+    final stats = dashboardData?['stats'] as Map<String, dynamic>?;
+    final earnings = (stats?['earnings'] as num?)?.toDouble() ?? 0;
+    return 'R${earnings.toStringAsFixed(0)}';
+  }
+
+  int _viewsCount(Map<String, dynamic>? dashboardData) {
+    final stats = dashboardData?['stats'] as Map<String, dynamic>?;
+    return (stats?['profile_views'] as num?)?.toInt() ?? 0;
+  }
+
+  Widget _buildDashboard({
+    required UserRoleState role,
+    required Map<String, dynamic>? dashboardData,
+    required EdgeInsets padding,
+    required double hPad,
+    required bool isWide,
+  }) {
     return Scaffold(
       backgroundColor: _bg,
       body: Column(children: [
@@ -86,12 +102,12 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
               Expanded(child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Welcome, ${_firstName()}',
+                  Text('Welcome, ${_firstName(role)}',
                     style: const TextStyle(fontFamily: 'Syne', fontSize: 22,
                       fontWeight: FontWeight.w700, color: Colors.white)),
                   const SizedBox(height: 2),
                   Text(
-                    userRoleService.isLoggedIn
+                    role.isLoggedIn
                         ? 'Your artist dashboard'
                         : 'Set up your artist profile to start getting booked',
                     style: TextStyle(fontSize: 13, color: Colors.white.withAlpha(100))),
@@ -103,7 +119,7 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
                   width: 40, height: 40,
                   decoration: BoxDecoration(color: _surface, shape: BoxShape.circle,
                     border: Border.all(color: _border)),
-                  child: Center(child: Text(_initials(),
+                  child: Center(child: Text(_initials(role),
                     style: const TextStyle(fontFamily: 'Syne', fontSize: 13,
                       fontWeight: FontWeight.w700, color: _skyL))),
                 ),
@@ -135,52 +151,52 @@ class _ArtistDashboardPageState extends State<ArtistDashboardPage> {
           padding: EdgeInsets.fromLTRB(hPad, 24, hPad, 120),
           child: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: isWide ? 800 : double.infinity),
-            child: _buildTabContent()),
+            child: _buildTabContent(role, dashboardData)),
         )),
       ]),
       bottomNavigationBar: _buildBottomNav(padding),
     );
   }
 
-  String _firstName() {
-    final name = userRoleService.userName;
+  String _firstName(UserRoleState role) {
+    final name = role.userName;
     if (name == 'Guest User') { return 'Artist'; }
     return name.split(' ').first;
   }
 
-  String _initials() {
-    final name = userRoleService.userName;
+  String _initials(UserRoleState role) {
+    final name = role.userName;
     if (name == 'Guest User') { return 'A'; }
     final parts = name.split(' ');
     if (parts.length >= 2) { return '${parts[0][0]}${parts[1][0]}'.toUpperCase(); }
     return parts[0][0].toUpperCase();
   }
 
-  Widget _buildTabContent() {
+  Widget _buildTabContent(UserRoleState role, Map<String, dynamic>? dashboardData) {
     switch (_activeTab) {
-      case 'overview': return _buildOverview();
+      case 'overview': return _buildOverview(role, dashboardData);
       case 'bookings': return _buildBookings();
       case 'calendar': return _buildCalendar();
       case 'services': return _buildServices();
-      default: return _buildOverview();
+      default: return _buildOverview(role, dashboardData);
     }
   }
 
-  Widget _buildOverview() => Column(
+  Widget _buildOverview(UserRoleState role, Map<String, dynamic>? dashboardData) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      if (!userRoleService.isLoggedIn) ...[
+      if (!role.isLoggedIn) ...[
         _buildSignupPrompt(),
         const SizedBox(height: 20),
       ],
       _buildSetupChecklist(),
       const SizedBox(height: 28),
       Row(children: [
-        Expanded(child: _statCard(Icons.calendar_today_rounded, 'Bookings', '$_bookingsCount')),
+        Expanded(child: _statCard(Icons.calendar_today_rounded, 'Bookings', '${_bookingsCount(dashboardData)}')),
         const SizedBox(width: 12),
-        Expanded(child: _statCard(Icons.attach_money_rounded, 'Earnings', _earningsLabel)),
+        Expanded(child: _statCard(Icons.attach_money_rounded, 'Earnings', _earningsLabel(dashboardData))),
         const SizedBox(width: 12),
-        Expanded(child: _statCard(Icons.visibility_outlined, 'Views', '$_viewsCount')),
+        Expanded(child: _statCard(Icons.visibility_outlined, 'Views', '${_viewsCount(dashboardData)}')),
       ]),
       const SizedBox(height: 28),
       const Text('Recent Activity', style: TextStyle(fontFamily: 'Syne',

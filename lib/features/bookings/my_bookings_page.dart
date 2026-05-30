@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gearsh_app/core/queries/linked_queries.dart';
 import 'package:gearsh_app/services/booking_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
 class MyBookingsPage extends ConsumerStatefulWidget {
   const MyBookingsPage({super.key});
@@ -28,10 +27,6 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> with SingleTick
   static const Color _red500 = Color(0xFFEF4444);
   static const Color _purple500 = Color(0xFF8B5CF6);
 
-  List<Map<String, dynamic>> _upcomingBookings = [];
-  List<Map<String, dynamic>> _pastBookings = [];
-  bool _loading = true;
-
   Map<String, dynamic> _bookingToMap(Booking booking) {
     return {
       'id': booking.id,
@@ -46,59 +41,14 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> with SingleTick
     };
   }
 
-  Future<void> _loadBookings() async {
-    setState(() => _loading = true);
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final userData = prefs.getString('gearsh_user_data');
-      String? userId;
-      if (userData != null) {
-        userId = (jsonDecode(userData) as Map)['user_id'] as String?;
-      }
-      userId ??= prefs.getString('gearsh_user_id');
-      if (userId == null) {
-        setState(() {
-          _upcomingBookings = [];
-          _pastBookings = [];
-          _loading = false;
-        });
-        return;
-      }
-
-      final service = BookingService();
-      final bookings = await service.getBookings(userId: userId);
-      final now = DateTime.now();
-      final upcoming = <Map<String, dynamic>>[];
-      final past = <Map<String, dynamic>>[];
-
-      for (final booking in bookings) {
-        final map = _bookingToMap(booking);
-        final eventDate = DateTime.tryParse(booking.eventDate);
-        final isPast = booking.status == 'completed' ||
-            booking.status == 'cancelled' ||
-            (eventDate != null && eventDate.isBefore(now));
-        if (isPast) {
-          past.add(map);
-        } else {
-          upcoming.add(map);
-        }
-      }
-
-      setState(() {
-        _upcomingBookings = upcoming;
-        _pastBookings = past;
-        _loading = false;
-      });
-    } catch (_) {
-      setState(() => _loading = false);
-    }
+  List<Map<String, dynamic>> _bookingMaps(List<Booking> bookings) {
+    return bookings.map(_bookingToMap).toList();
   }
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _loadBookings();
   }
 
   @override
@@ -154,11 +104,31 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> with SingleTick
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return const Scaffold(
+    final bookingsAsync = ref.watch(userBookingsPartitionProvider);
+
+    return bookingsAsync.when(
+      loading: () => const Scaffold(
         body: Center(child: CircularProgressIndicator()),
-      );
-    }
+      ),
+      error: (_, __) => Scaffold(
+        body: Center(
+          child: TextButton(
+            onPressed: () => ref.invalidate(userBookingsPartitionProvider),
+            child: const Text('Retry'),
+          ),
+        ),
+      ),
+      data: (partition) => _buildBookingsScaffold(
+        upcoming: _bookingMaps(partition.upcoming),
+        past: _bookingMaps(partition.past),
+      ),
+    );
+  }
+
+  Widget _buildBookingsScaffold({
+    required List<Map<String, dynamic>> upcoming,
+    required List<Map<String, dynamic>> past,
+  }) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final padding = MediaQuery.of(context).padding;
@@ -260,7 +230,7 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> with SingleTick
                               const Icon(Icons.upcoming_outlined, size: 18),
                               const SizedBox(width: 8),
                               const Text('Upcoming'),
-                              if (_upcomingBookings.isNotEmpty) ...[
+                              if (upcoming.isNotEmpty) ...[
                                 const SizedBox(width: 6),
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -269,7 +239,7 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> with SingleTick
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Text(
-                                    '${_upcomingBookings.length}',
+                                    '${upcoming.length}',
                                     style: const TextStyle(fontSize: 11, color: Colors.white),
                                   ),
                                 ),
@@ -300,9 +270,9 @@ class _MyBookingsPageState extends ConsumerState<MyBookingsPage> with SingleTick
                 controller: _tabController,
                 children: [
                   // Upcoming Bookings Tab
-                  _buildBookingsList(_upcomingBookings, isUpcoming: true),
+                  _buildBookingsList(upcoming, isUpcoming: true),
                   // Past Bookings Tab
-                  _buildBookingsList(_pastBookings, isUpcoming: false),
+                  _buildBookingsList(past, isUpcoming: false),
                 ],
               ),
             ),

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/core/di/service_providers.dart';
+import 'package:gearsh_app/core/queries/linked_queries.dart';
+import 'package:gearsh_app/providers/user_role_provider.dart';
 import 'package:gearsh_app/widgets/auth_prompt.dart';
 import 'package:gearsh_app/data/gearsh_artists.dart';
 import 'package:gearsh_app/services/payfast_service.dart';
-import 'package:gearsh_app/services/booking_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
-class BookingFlowPage extends StatefulWidget {
+class BookingFlowPage extends ConsumerStatefulWidget {
   final String artistId;
   final String? artistName;
   final String? serviceName;
@@ -25,10 +25,10 @@ class BookingFlowPage extends StatefulWidget {
   });
 
   @override
-  State<BookingFlowPage> createState() => _BookingFlowPageState();
+  ConsumerState<BookingFlowPage> createState() => _BookingFlowPageState();
 }
 
-class _BookingFlowPageState extends State<BookingFlowPage>
+class _BookingFlowPageState extends ConsumerState<BookingFlowPage>
     with SingleTickerProviderStateMixin {
   // Current step: 'details' or 'payment'
   String _currentStep = 'details';
@@ -109,7 +109,7 @@ class _BookingFlowPageState extends State<BookingFlowPage>
 
     // Check if guest user trying to book
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (userRoleService.requiresSignUp) {
+      if (ref.read(userRoleProvider).requiresSignUp) {
         showSignUpPrompt(context, featureName: 'book artists');
         context.go('/');
       }
@@ -151,14 +151,8 @@ class _BookingFlowPageState extends State<BookingFlowPage>
   }
 
   Future<void> _processPayFastPayment() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userData = prefs.getString('gearsh_user_data');
-    String? clientId;
-    if (userData != null) {
-      try {
-        clientId = (jsonDecode(userData) as Map)['user_id'] as String?;
-      } catch (_) {}
-    }
+    final session = await ref.read(appSessionProvider.future);
+    final clientId = session?.userId;
     if (clientId == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -169,7 +163,8 @@ class _BookingFlowPageState extends State<BookingFlowPage>
     }
 
     final artistId = widget.artistId;
-    final bookingService = BookingService();
+    final bookingRepository = ref.read(bookingRepositoryProvider);
+    final role = ref.read(userRoleProvider);
     final eventDate = '${_selectedDate.year.toString().padLeft(4, '0')}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}';
     final eventTime = _selectedTime.format(context);
 
@@ -200,7 +195,7 @@ class _BookingFlowPageState extends State<BookingFlowPage>
     );
 
     try {
-      final createResult = await bookingService.createBooking(
+      final createResult = await bookingRepository.createBooking(
         clientId: clientId,
         artistId: artistId,
         serviceId: widget.serviceId ?? _selectedService?['id'] as String?,
@@ -223,6 +218,8 @@ class _BookingFlowPageState extends State<BookingFlowPage>
         return;
       }
 
+      invalidateBookingQueries(ref);
+
       final bookingId = createResult.bookingId!;
       final success = await PayFastService.launchPaymentViaServer(
         bookingId: bookingId,
@@ -233,10 +230,10 @@ class _BookingFlowPageState extends State<BookingFlowPage>
         amount: _total,
         artistName: _artistName,
         serviceName: _serviceName,
-        customerEmail: userRoleService.userEmail,
-        customerFirstName: userRoleService.userName.split(' ').first,
-        customerLastName: userRoleService.userName.split(' ').length > 1
-            ? userRoleService.userName.split(' ').last
+        customerEmail: role.userEmail,
+        customerFirstName: role.userName.split(' ').first,
+        customerLastName: role.userName.split(' ').length > 1
+            ? role.userName.split(' ').last
             : '',
       );
 

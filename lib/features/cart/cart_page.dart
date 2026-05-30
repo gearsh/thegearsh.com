@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gearsh_app/providers/auth_helpers.dart';
 import 'package:gearsh_app/providers/cart_provider.dart';
 import 'package:gearsh_app/widgets/bottom_nav_bar.dart';
 import 'package:gearsh_app/widgets/gearsh_background.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
 
 class CartPage extends ConsumerStatefulWidget {
   const CartPage({super.key});
@@ -950,7 +950,7 @@ class _CartPageState extends ConsumerState<CartPage> {
     final cart = ref.read(cartProvider);
 
     // Check if user is logged in
-    if (userRoleService.isGuest && !userRoleService.isLoggedIn) {
+    if (isGuestUser(ref)) {
       _showSignUpPrompt();
       return;
     }

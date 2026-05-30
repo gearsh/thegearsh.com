@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/models/user_role.dart';
+import 'package:gearsh_app/providers/user_role_provider.dart';
 import 'package:gearsh_app/utils/static_site_navigation.dart';
 
 /// The Gearsh onboarding page.
@@ -231,24 +233,24 @@ class _OnboardingSlide {
   });
 }
 
-class _RoleSelectionSheet extends StatelessWidget {
+class _RoleSelectionSheet extends ConsumerWidget {
   const _RoleSelectionSheet();
 
   static const Color _brandDark = Color(0xFF020617);
   static const Color _brandBlue = Color(0xFF0EA5E9);
 
-  void _selectClient(BuildContext context) {
-    userRoleService.setGuestRole(UserRole.client);
+  void _selectClient(BuildContext context, WidgetRef ref) {
+    ref.read(userRoleProvider.notifier).setGuestRole(UserRole.client);
     context.go('/home');
   }
 
-  void _selectArtist(BuildContext context) {
-    userRoleService.setGuestRole(UserRole.artist);
+  void _selectArtist(BuildContext context, WidgetRef ref) {
+    ref.read(userRoleProvider.notifier).setGuestRole(UserRole.artist);
     context.go('/join');
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       decoration: const BoxDecoration(
         color: _brandDark,
@@ -293,7 +295,7 @@ class _RoleSelectionSheet extends StatelessWidget {
             icon: Icons.search,
             title: 'I want to book artists',
             subtitle: 'Browse and book performers for your events',
-            onTap: () => _selectClient(context),
+            onTap: () => _selectClient(context, ref),
           ),
           const SizedBox(height: 12),
 
@@ -302,7 +304,7 @@ class _RoleSelectionSheet extends StatelessWidget {
             icon: Icons.mic_external_on_outlined,
             title: 'I am an artist',
             subtitle: 'Create a profile and get booked for gigs',
-            onTap: () => _selectArtist(context),
+            onTap: () => _selectArtist(context, ref),
           ),
           const SizedBox(height: 24),
 

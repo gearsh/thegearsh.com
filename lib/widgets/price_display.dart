@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../core/contracts/i_config_repository.dart';
 import '../providers/global_config_providers.dart';
 import '../services/global_config_service.dart';
 
@@ -149,7 +150,7 @@ class ServiceFeeDisplay extends ConsumerWidget {
     );
   }
 
-  Widget _buildRow(String label, double amount, GlobalConfigService config,
+  Widget _buildRow(String label, double amount, IConfigRepository config,
       TextStyle? labelStyle, TextStyle? amountStyle) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

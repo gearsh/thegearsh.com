@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:gearsh_app/models/user_role.dart';
+import 'package:gearsh_app/providers/user_role_provider.dart';
 
-/// Enum representing the user role types
-enum UserRole {
-  client,
-  artist,
-  fan,
-}
+export 'package:gearsh_app/models/user_role.dart' show UserRole;
 
-/// Service for managing the current user's role and authentication state
+/// Legacy singleton kept for router redirects and gradual migration.
+/// Source of truth: [userRoleProvider]. Wired in [main] via [bindUserRoleNotifier].
 class UserRoleService extends ChangeNotifier {
   static final UserRoleService _instance = UserRoleService._internal();
   factory UserRoleService() => _instance;
   UserRoleService._internal();
 
+  UserRoleNotifier? _notifier;
+
   UserRole _currentRole = UserRole.client;
   bool _isLoggedIn = false;
-  bool _isGuest = false; // User selected a role but hasn't signed up
+  bool _isGuest = false;
   String _userName = 'Guest User';
   String _userEmail = 'guest@gearsh.com';
 
   UserRole get currentRole => _currentRole;
   bool get isLoggedIn => _isLoggedIn;
   bool get isGuest => _isGuest;
-  bool get hasSelectedRole => _isGuest || _isLoggedIn; // User has selected a role (guest or logged in)
+  bool get hasSelectedRole => _isGuest || _isLoggedIn;
   bool get requiresSignUp => _isGuest && !_isLoggedIn;
   bool get isClient => _currentRole == UserRole.client;
   bool get isArtist => _currentRole == UserRole.artist;
@@ -30,13 +30,33 @@ class UserRoleService extends ChangeNotifier {
   String get userName => _userName;
   String get userEmail => _userEmail;
 
+  void bindUserRoleNotifier(UserRoleNotifier notifier) {
+    _notifier = notifier;
+  }
+
+  void syncFromState(UserRoleState state) {
+    _currentRole = state.role;
+    _isLoggedIn = state.isLoggedIn;
+    _isGuest = state.isGuest;
+    _userName = state.userName;
+    _userEmail = state.userEmail;
+    notifyListeners();
+  }
+
   void setRole(UserRole role) {
     _currentRole = role;
     notifyListeners();
   }
 
-  /// Set user as guest with selected role (browsing mode)
   void setGuestRole(UserRole role) {
+    if (_notifier != null) {
+      _notifier!.setGuestRole(role);
+      return;
+    }
+    _applyGuestRole(role);
+  }
+
+  void _applyGuestRole(UserRole role) {
     _isGuest = true;
     _isLoggedIn = false;
     _currentRole = role;
@@ -50,6 +70,10 @@ class UserRoleService extends ChangeNotifier {
     String? name,
     String? email,
   }) {
+    if (_notifier != null) {
+      _notifier!.login(role: role, name: name, email: email);
+      return;
+    }
     _isLoggedIn = true;
     _isGuest = false;
     _currentRole = role;
@@ -59,6 +83,14 @@ class UserRoleService extends ChangeNotifier {
   }
 
   void logout() {
+    if (_notifier != null) {
+      _notifier!.logout();
+      return;
+    }
+    _applyLogout();
+  }
+
+  void _applyLogout() {
     _isLoggedIn = false;
     _isGuest = false;
     _currentRole = UserRole.client;
@@ -68,11 +100,22 @@ class UserRoleService extends ChangeNotifier {
   }
 
   void switchRole() {
-    _currentRole = _currentRole == UserRole.client ? UserRole.artist : UserRole.client;
+    if (_notifier != null) {
+      _notifier!.switchRole();
+      return;
+    }
+    _applySwitchRole();
+  }
+
+  void _applySwitchRole() {
+    _currentRole =
+        _currentRole == UserRole.client ? UserRole.artist : UserRole.client;
     notifyListeners();
   }
 }
 
-/// Global instance for easy access
 final userRoleService = UserRoleService();
 
+void bindUserRoleNotifier(UserRoleNotifier notifier) {
+  userRoleService.bindUserRoleNotifier(notifier);
+}

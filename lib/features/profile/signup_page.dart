@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/models/user_role.dart';
+import 'package:gearsh_app/providers/auth_helpers.dart';
 import 'package:gearsh_app/providers/auth_providers.dart';
 
 class SignupPage extends ConsumerStatefulWidget {
@@ -197,7 +198,12 @@ class _SignupPageState extends ConsumerState<SignupPage>
           final authUser = result.user!;
           final role = authUser.isArtist ? UserRole.artist : UserRole.client;
 
-          userRoleService.login(role: role, name: authUser.fullName, email: authUser.email);
+          applyAuthenticatedUserRole(
+            ref,
+            role: role,
+            name: authUser.fullName,
+            email: authUser.email,
+          );
 
           setState(() { _success = true; _isLoading = false; });
 

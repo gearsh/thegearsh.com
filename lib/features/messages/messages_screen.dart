@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gearsh_app/core/di/service_providers.dart';
+import 'package:gearsh_app/core/queries/linked_queries.dart';
 import 'package:gearsh_app/services/messages_service.dart';
 
-class MessagesScreen extends StatefulWidget {
+class MessagesScreen extends ConsumerStatefulWidget {
   final Function(String)? onOpenChat;
   final Function(String)? onViewProfile;
 
@@ -12,16 +15,12 @@ class MessagesScreen extends StatefulWidget {
   });
 
   @override
-  State<MessagesScreen> createState() => _MessagesScreenState();
+  ConsumerState<MessagesScreen> createState() => _MessagesScreenState();
 }
 
-class _MessagesScreenState extends State<MessagesScreen> {
+class _MessagesScreenState extends ConsumerState<MessagesScreen> {
   String? _selectedConversationId;
   final TextEditingController _messageController = TextEditingController();
-  final MessagesService _messagesService = MessagesService();
-  List<MessageConversation> _conversations = [];
-  List<ChatMessage> _chatMessages = [];
-  bool _loading = true;
   bool _sending = false;
 
   // Color constants - Deep Sky Blue theme
@@ -33,50 +32,29 @@ class _MessagesScreenState extends State<MessagesScreen> {
   static const Color _sky400 = Color(0xFF38BDF8);
   static const Color _cyan500 = Color(0xFF06B6D4);
 
-  @override
-  void initState() {
-    super.initState();
-    _loadConversations();
-  }
-
-  Future<void> _loadConversations() async {
-    setState(() => _loading = true);
-    final conversations = await _messagesService.fetchConversations();
-    if (!mounted) return;
-    setState(() {
-      _conversations = conversations;
-      _loading = false;
-    });
-  }
-
-  Future<void> _openConversation(String bookingId) async {
-    setState(() {
-      _selectedConversationId = bookingId;
-      _chatMessages = [];
-    });
-    final messages = await _messagesService.fetchMessages(bookingId);
-    if (!mounted) return;
-    setState(() => _chatMessages = messages);
+  void _openConversation(String bookingId) {
+    setState(() => _selectedConversationId = bookingId);
   }
 
   Future<void> _sendMessage() async {
     final text = _messageController.text.trim();
-    if (text.isEmpty || _selectedConversationId == null || _sending) return;
+    final bookingId = _selectedConversationId;
+    if (text.isEmpty || bookingId == null || _sending) return;
+
     setState(() => _sending = true);
-    final sent = await _messagesService.sendMessage(_selectedConversationId!, text);
+    final repo = ref.read(messagesRepositoryProvider);
+    final sent = await repo.sendMessage(bookingId, text);
     if (sent != null && mounted) {
-      setState(() {
-        _chatMessages = [..._chatMessages, sent];
-        _messageController.clear();
-      });
+      invalidateChatQueries(ref, bookingId);
+      _messageController.clear();
     }
     if (mounted) setState(() => _sending = false);
   }
 
-  MessageConversation? get _activeConversation {
+  MessageConversation? _activeConversation(List<MessageConversation> conversations) {
     if (_selectedConversationId == null) return null;
     try {
-      return _conversations.firstWhere((c) => c.bookingId == _selectedConversationId);
+      return conversations.firstWhere((c) => c.bookingId == _selectedConversationId);
     } catch (_) {
       return null;
     }
@@ -90,16 +68,27 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    if (_activeConversation != null) {
-      return _buildChatView();
-    }
-    return _buildConversationsList();
+    final conversationsAsync = ref.watch(conversationsLinkedQueryProvider);
+
+    return conversationsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (_, __) => Center(
+        child: TextButton(
+          onPressed: () => ref.invalidate(conversationsLinkedQueryProvider),
+          child: const Text('Retry'),
+        ),
+      ),
+      data: (conversations) {
+        final active = _activeConversation(conversations);
+        if (active != null && _selectedConversationId != null) {
+          return _buildChatView(active, _selectedConversationId!);
+        }
+        return _buildConversationsList(conversations);
+      },
+    );
   }
 
-  Widget _buildConversationsList() {
+  Widget _buildConversationsList(List<MessageConversation> conversations) {
     return Column(
       children: [
         // Header
@@ -129,13 +118,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
         Expanded(
           child: ListView.separated(
             padding: EdgeInsets.zero,
-            itemCount: _conversations.length,
+            itemCount: conversations.length,
             separatorBuilder: (context, index) => Container(
               height: 1,
               color: _sky500.withAlpha(25),
             ),
             itemBuilder: (context, index) {
-              final conv = _conversations[index];
+              final conv = conversations[index];
               return _buildConversationItem(conv);
             },
           ),
@@ -256,11 +245,19 @@ class _MessagesScreenState extends State<MessagesScreen> {
     );
   }
 
-  Widget _buildChatView() {
-    final conv = _activeConversation!;
+  Widget _buildChatView(MessageConversation conv, String bookingId) {
+    final messagesAsync = ref.watch(chatMessagesLinkedQueryProvider(bookingId));
     final padding = MediaQuery.of(context).padding;
 
-    return Column(
+    return messagesAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (_, __) => Center(
+        child: TextButton(
+          onPressed: () => ref.invalidate(chatMessagesLinkedQueryProvider(bookingId)),
+          child: const Text('Retry'),
+        ),
+      ),
+      data: (chatMessages) => Column(
       children: [
         // Chat Header
         Container(
@@ -359,9 +356,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            itemCount: _chatMessages.length,
+            itemCount: chatMessages.length,
             itemBuilder: (context, index) {
-              final msg = _chatMessages[index];
+              final msg = chatMessages[index];
               return _buildMessageBubble(msg);
             },
           ),
@@ -454,6 +451,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
           ),
         ),
       ],
+    ),
     );
   }
 

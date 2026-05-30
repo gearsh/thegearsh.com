@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gearsh_app/core/contracts/i_config_repository.dart';
 
 /// Supported regions with their configurations
 class RegionConfig {
@@ -321,7 +322,7 @@ class SupportedRegions {
 }
 
 /// Global configuration service singleton
-class GlobalConfigService extends ChangeNotifier {
+class GlobalConfigService extends ChangeNotifier implements IConfigRepository {
   static final GlobalConfigService _instance = GlobalConfigService._internal();
   factory GlobalConfigService() => _instance;
   GlobalConfigService._internal();

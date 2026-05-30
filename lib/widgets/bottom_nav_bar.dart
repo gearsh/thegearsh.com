@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/providers/user_role_provider.dart';
 import 'package:gearsh_app/utils/static_site_navigation.dart';
 
-class BottomNavBar extends StatelessWidget {
+class BottomNavBar extends ConsumerWidget {
   const BottomNavBar({super.key});
 
   // Gearsh theme colors (matching login page)
@@ -185,12 +186,13 @@ class BottomNavBar extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final String currentLocation = GoRouter.of(context).routerDelegate.currentConfiguration.last.matchedLocation;
-    final bool isLoggedIn = userRoleService.isLoggedIn;
-    final bool isArtist = userRoleService.isArtist;
-    final bool isFan = userRoleService.isFan;
-    final bool isGuest = userRoleService.isGuest && !isLoggedIn;
+    final role = ref.watch(userRoleProvider);
+    final bool isLoggedIn = role.isLoggedIn;
+    final bool isArtist = role.isArtist;
+    final bool isFan = role.isFan;
+    final bool isGuest = role.isGuest && !isLoggedIn;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

@@ -2,44 +2,45 @@
 // Riverpod providers for global configuration state
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gearsh_app/core/contracts/i_config_repository.dart';
+import 'package:gearsh_app/core/di/service_providers.dart';
 import '../services/global_config_service.dart';
 
 /// Provider for the global config service
-/// Using a simple Provider that returns the singleton
-final globalConfigProvider = Provider<GlobalConfigService>((ref) {
-  return globalConfigService;
+final globalConfigProvider = Provider<IConfigRepository>((ref) {
+  return ref.watch(configRepositoryProvider);
 });
 
 /// Provider for current region - watches for changes
 final currentRegionProvider = Provider<RegionConfig>((ref) {
-  return globalConfigService.currentRegion;
+  return ref.watch(globalConfigProvider).currentRegion;
 });
 
 /// Provider to format prices
 final priceFormatterProvider = Provider<String Function(double)>((ref) {
-  return globalConfigService.formatPrice;
+  return ref.watch(globalConfigProvider).formatPrice;
 });
 
 /// Provider for short price format
 final shortPriceFormatterProvider = Provider<String Function(double)>((ref) {
-  return globalConfigService.formatPriceShort;
+  return ref.watch(globalConfigProvider).formatPriceShort;
 });
 
 /// Provider for available payment methods
 final paymentProvidersProvider = Provider<List<String>>((ref) {
-  return globalConfigService.getPaymentProviders();
+  return ref.watch(globalConfigProvider).getPaymentProviders();
 });
 
 /// State notifier for region selection
 class RegionNotifier extends Notifier<RegionConfig> {
   @override
   RegionConfig build() {
-    return globalConfigService.currentRegion;
+    return ref.watch(globalConfigProvider).currentRegion;
   }
 
-  void setRegion(RegionConfig region) {
+  Future<void> setRegion(RegionConfig region) async {
     state = region;
-    globalConfigService.setRegion(region);
+    await ref.read(globalConfigProvider).setRegion(region);
   }
 }
 

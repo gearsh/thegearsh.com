@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/providers/auth_helpers.dart';
+import 'package:gearsh_app/providers/auth_providers.dart';
+import 'package:gearsh_app/providers/user_role_provider.dart';
 import 'package:gearsh_app/widgets/auth_prompt.dart';
 import 'package:gearsh_app/widgets/region_selector.dart';
-import 'package:gearsh_app/providers/auth_providers.dart';
 
 class ProfileSettingsPage extends ConsumerStatefulWidget {
   const ProfileSettingsPage({super.key});
@@ -30,13 +31,13 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
   static const Color _purple500 = Color(0xFF8B5CF6);
 
   // Get user data from Firebase and local service
-  Map<String, dynamic> _getUserData() {
+  Map<String, dynamic> _getUserData(UserRoleState role) {
     final firebaseUser = ref.read(currentFirebaseUserProvider);
 
     String roleName = 'Client';
-    if (userRoleService.isArtist) {
+    if (role.isArtist) {
       roleName = 'Artist';
-    } else if (userRoleService.isFan) {
+    } else if (role.isFan) {
       roleName = 'Fan';
     }
 
@@ -56,11 +57,11 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
 
     // Fallback to local service data
     return {
-      'firstName': userRoleService.userName.split(' ').first,
-      'lastName': userRoleService.userName.split(' ').length > 1
-          ? userRoleService.userName.split(' ').last
+      'firstName': role.userName.split(' ').first,
+      'lastName': role.userName.split(' ').length > 1
+          ? role.userName.split(' ').last
           : '',
-      'email': userRoleService.userEmail,
+      'email': role.userEmail,
       'phone': '',
       'photoUrl': null,
       'role': roleName,
@@ -69,8 +70,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
   }
 
   // Get role-specific settings sections
-  List<Map<String, dynamic>> get _settingsSections {
-    if (userRoleService.isArtist) {
+  List<Map<String, dynamic>> _settingsSectionsFor(UserRoleState role) {
+    if (role.isArtist) {
       return [
         {
           'title': 'Dashboard',
@@ -105,7 +106,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
           ],
         },
       ];
-    } else if (userRoleService.isFan) {
+    } else if (role.isFan) {
       // Fan settings - Focus on following artists and events
       return [
         {
@@ -197,8 +198,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               Navigator.pop(ctx);
               // Sign out from Firebase
               await ref.read(authControllerProvider).signOut();
-              // Sign out from local service
-              userRoleService.logout();
+              ref.read(userRoleProvider.notifier).logout();
               if (context.mounted) {
                 context.go('/onboarding');
               }
@@ -218,7 +218,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
     super.initState();
     // Check if guest user trying to access profile settings
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (userRoleService.requiresSignUp) {
+      if (requiresSignUp(ref)) {
         showSignUpPrompt(context, featureName: 'access your profile');
         context.go('/');
       }
@@ -227,6 +227,9 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final role = ref.watch(userRoleProvider);
+    final userData = _getUserData(role);
+    final settingsSections = _settingsSectionsFor(role);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final padding = MediaQuery.of(context).padding;
@@ -309,7 +312,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Profile Card
-                    _buildProfileCard(context),
+                    _buildProfileCard(context, userData),
                     const SizedBox(height: 24),
 
                     // Region & Currency Selector
@@ -317,11 +320,11 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                     const SizedBox(height: 16),
 
                     // Settings Sections
-                    ..._settingsSections.map((section) => _buildSettingsSection(context, section)),
+                    ...settingsSections.map((section) => _buildSettingsSection(context, section)),
 
                     // Role Switcher
                     const SizedBox(height: 8),
-                    _buildRoleSwitcher(context),
+                    _buildRoleSwitcher(context, role),
 
                     // Logout Button
                     const SizedBox(height: 16),
@@ -341,8 +344,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
     );
   }
 
-  Widget _buildProfileCard(BuildContext context) {
-    final userData = _getUserData();
+  Widget _buildProfileCard(BuildContext context, Map<String, dynamic> userData) {
     final photoUrl = userData['photoUrl'] as String?;
 
     return Container(
@@ -660,17 +662,16 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
     );
   }
 
-  Widget _buildRoleSwitcher(BuildContext context) {
-    final isArtist = userRoleService.isArtist;
+  Widget _buildRoleSwitcher(BuildContext context, UserRoleState role) {
+    final isArtist = role.isArtist;
     final targetRole = isArtist ? 'Client' : 'Artist';
     final targetIcon = isArtist ? Icons.person_outline : Icons.mic_external_on_outlined;
 
     return GestureDetector(
       onTap: () {
-        userRoleService.switchRole();
-        setState(() {});
-        // Navigate to appropriate home screen
-        if (userRoleService.isArtist) {
+        ref.read(userRoleProvider.notifier).switchRole();
+        final updatedRole = ref.read(userRoleProvider);
+        if (updatedRole.isArtist) {
           context.go('/dashboard');
         } else {
           context.go('/');

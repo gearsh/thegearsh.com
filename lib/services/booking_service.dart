@@ -5,8 +5,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:gearsh_app/core/contracts/i_booking_repository.dart';
 
-class BookingService {
+class BookingService implements IBookingRepository {
   static const String _baseUrl = 'https://thegearsh.com/api';
   static const String _tokenKey = 'gearsh_auth_token';
 

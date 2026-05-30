@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:gearsh_app/config/api_config.dart';
+import 'package:gearsh_app/core/contracts/i_dashboard_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class DashboardService {
+class DashboardService implements IDashboardRepository {
   static const _tokenKey = 'gearsh_auth_token';
 
   Future<Map<String, String>> _headers() async {

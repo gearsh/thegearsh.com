@@ -1,4 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gearsh_app/core/contracts/i_booking_repository.dart';
+import 'package:gearsh_app/core/di/service_providers.dart';
+import 'package:gearsh_app/core/queries/linked_queries.dart';
 import 'package:gearsh_app/services/booking_service.dart';
 
 /// Booking state containing all booking-related data
@@ -32,11 +35,11 @@ class BookingState {
 
 /// Booking notifier for managing booking state
 class BookingNotifier extends Notifier<BookingState> {
-  late final BookingService _bookingService;
+  late final IBookingRepository _bookingRepository;
 
   @override
   BookingState build() {
-    _bookingService = BookingService();
+    _bookingRepository = ref.watch(bookingRepositoryProvider);
     return const BookingState();
   }
 
@@ -45,7 +48,7 @@ class BookingNotifier extends Notifier<BookingState> {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      final allBookings = await _bookingService.getBookings(
+      final allBookings = await _bookingRepository.getBookings(
         userId: userId,
         userType: userType,
       );
@@ -94,7 +97,7 @@ class BookingNotifier extends Notifier<BookingState> {
   }) async {
     state = state.copyWith(isLoading: true, error: null);
 
-    final result = await _bookingService.createBooking(
+    final result = await _bookingRepository.createBooking(
       clientId: clientId,
       artistId: artistId,
       serviceId: serviceId,
@@ -111,6 +114,7 @@ class BookingNotifier extends Notifier<BookingState> {
 
     if (result.success) {
       // Reload bookings to include the new one
+      invalidateBookingQueries(ref);
       await loadBookings(clientId);
     } else {
       state = state.copyWith(error: result.error);
@@ -123,7 +127,7 @@ class BookingNotifier extends Notifier<BookingState> {
   Future<bool> cancelBooking(String bookingId, String userId) async {
     state = state.copyWith(isLoading: true, error: null);
 
-    final success = await _bookingService.cancelBooking(bookingId);
+    final success = await _bookingRepository.cancelBooking(bookingId);
 
     if (success) {
       // Update local state
@@ -157,7 +161,7 @@ class BookingNotifier extends Notifier<BookingState> {
 
   /// Confirm a booking (for artists)
   Future<bool> confirmBooking(String bookingId, String userId) async {
-    final success = await _bookingService.confirmBooking(bookingId);
+    final success = await _bookingRepository.confirmBooking(bookingId);
     if (success) {
       await loadBookings(userId, userType: 'artist');
     }
@@ -174,6 +178,3 @@ class BookingNotifier extends Notifier<BookingState> {
 final bookingProvider = NotifierProvider<BookingNotifier, BookingState>(
   BookingNotifier.new,
 );
-
-/// Booking service provider
-final bookingServiceProvider = Provider((ref) => BookingService());

@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gearsh_app/core/di/service_providers.dart';
 import 'package:gearsh_app/config/api_config.dart';
 import 'package:gearsh_app/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+export 'package:gearsh_app/core/di/service_providers.dart' show authApiServiceProvider;
 
 /// Auth state
 class AuthUser {
@@ -48,12 +51,6 @@ class AuthUser {
   String get fullName => displayName ?? '$firstName $lastName';
   bool get isArtist => userType == 'artist';
 }
-
-/// Auth API service provider
-final authApiServiceProvider = Provider((ref) {
-  final apiService = ref.read(apiServiceProvider);
-  return AuthApiService(apiService);
-});
 
 /// Current user notifier
 class CurrentUserNotifier extends Notifier<AuthUser?> {

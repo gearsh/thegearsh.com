@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:gearsh_app/core/queries/linked_queries.dart';
 import 'package:gearsh_app/models/artist.dart';
 import 'package:gearsh_app/providers/artist_provider.dart';
 import 'package:gearsh_app/providers/booking_provider.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/providers/user_role_provider.dart';
 import 'package:gearsh_app/widgets/custom_app_bar.dart';
 
 class BookingPage extends ConsumerStatefulWidget {
@@ -44,10 +45,13 @@ class _BookingPageState extends ConsumerState<BookingPage> {
     setState(() => _isSubmitting = true);
 
     try {
+      final session = await ref.read(appSessionProvider.future);
+      final userId = session?.userId ??
+          (ref.read(userRoleProvider).userEmail.isNotEmpty
+              ? ref.read(userRoleProvider).userEmail
+              : 'guest_user');
+
       final bookingNotifier = ref.read(bookingProvider.notifier);
-      final userId = userRoleService.userEmail.isNotEmpty
-          ? userRoleService.userEmail
-          : 'guest_user';
 
       final result = await bookingNotifier.createBooking(
         clientId: userId,

@@ -3,8 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gearsh_app/config/api_config.dart';
 
-/// Provider for the API service
-final apiServiceProvider = Provider((ref) => ApiService());
+export 'package:gearsh_app/core/di/service_providers.dart' show apiServiceProvider;
 
 /// Base API service for making HTTP requests
 class ApiService {

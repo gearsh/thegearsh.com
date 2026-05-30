@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/providers/user_role_provider.dart';
 import 'package:gearsh_app/utils/static_site_navigation.dart';
 
 /// Color constants matching Gearsh theme
@@ -14,11 +15,11 @@ const Color _cyan400 = Color(0xFF22D3EE);
 /// Shows a sign-up prompt dialog when guest users try to access protected features
 /// Returns true if user is logged in and can proceed, false otherwise
 bool checkAuthAndPrompt(BuildContext context, {String? featureName}) {
-  if (!userRoleService.requiresSignUp) {
-    return true; // User is logged in, allow action
+  final container = ProviderScope.containerOf(context);
+  if (!container.read(userRoleProvider).requiresSignUp) {
+    return true;
   }
 
-  // Show sign-up prompt
   showSignUpPrompt(context, featureName: featureName);
   return false;
 }

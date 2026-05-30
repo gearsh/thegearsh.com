@@ -124,6 +124,7 @@ enum TransitionType {
 final GoRouter router = GoRouter(
   // Both web and mobile start at onboarding
   initialLocation: '/onboarding',
+  refreshListenable: userRoleService,
   errorBuilder: (context, state) => ErrorPage(error: state.error),
   // Redirect based on user state
   redirect: (context, state) {

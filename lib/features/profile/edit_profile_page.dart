@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gearsh_app/core/queries/linked_queries.dart';
+import 'package:gearsh_app/providers/auth_helpers.dart';
 import 'package:gearsh_app/providers/auth_providers.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/providers/user_role_provider.dart';
+import 'package:gearsh_app/services/auth_api_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -64,6 +67,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   void _loadUserData() {
     final firebaseUser = ref.read(currentFirebaseUserProvider);
+    final session = ref.read(appSessionProvider).value;
+    final role = ref.read(userRoleProvider);
 
     if (firebaseUser != null) {
       final displayName = firebaseUser.displayName ?? '';
@@ -73,12 +78,20 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       _lastNameController.text = nameParts.length > 1 ? nameParts.skip(1).join(' ') : '';
       _usernameController.text = firebaseUser.email?.split('@').first ?? '';
       _phoneController.text = firebaseUser.phoneNumber ?? '';
-    } else {
-      final nameParts = userRoleService.userName.split(' ');
-      _firstNameController.text = nameParts.isNotEmpty ? nameParts.first : '';
-      _lastNameController.text = nameParts.length > 1 ? nameParts.skip(1).join(' ') : '';
-      _usernameController.text = userRoleService.userEmail.split('@').first;
+      return;
     }
+
+    if (session != null) {
+      _firstNameController.text = session.firstName;
+      _lastNameController.text = session.lastName;
+      _usernameController.text = session.email.split('@').first;
+      return;
+    }
+
+    final nameParts = role.userName.split(' ');
+    _firstNameController.text = nameParts.isNotEmpty ? nameParts.first : '';
+    _lastNameController.text = nameParts.length > 1 ? nameParts.skip(1).join(' ') : '';
+    _usernameController.text = role.userEmail.split('@').first;
   }
 
   @override
@@ -132,11 +145,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       }
 
       // Update local service
+      final role = ref.read(userRoleProvider);
       final fullName = '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}'.trim();
-      userRoleService.login(
-        role: userRoleService.currentRole,
-        name: fullName.isNotEmpty ? fullName : userRoleService.userName,
-        email: userRoleService.userEmail,
+      ref.read(userRoleProvider.notifier).login(
+        role: role.role,
+        name: fullName.isNotEmpty ? fullName : role.userName,
+        email: role.userEmail,
       );
 
       setState(() {
@@ -486,6 +500,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final role = ref.watch(userRoleProvider);
+    final session = ref.watch(appSessionProvider).value;
     final padding = MediaQuery.of(context).padding;
     final firebaseUser = ref.watch(currentFirebaseUserProvider);
     final photoUrl = firebaseUser?.photoURL;
@@ -851,7 +867,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    firebaseUser?.email ?? userRoleService.userEmail,
+                                    firebaseUser?.email ?? session?.email ?? role.userEmail,
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 15,
@@ -897,7 +913,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       const SizedBox(height: 24),
 
                       // Bio Section (for Artists)
-                      if (userRoleService.isArtist) ...[
+                      if (role.isArtist) ...[
                         _buildSectionTitle('About You'),
                         const SizedBox(height: 16),
                         TextFormField(
@@ -935,7 +951,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                 border: Border.all(color: _sky500.withAlpha(77)),
                               ),
                               child: Icon(
-                                userRoleService.isArtist
+                                role.isArtist
                                   ? Icons.mic_external_on_outlined
                                   : Icons.person_outline,
                                 color: _sky400,
@@ -948,7 +964,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '${userRoleService.isArtist ? "Artist" : "Client"} Account',
+                                    '${role.isArtist ? "Artist" : "Client"} Account',
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
@@ -957,7 +973,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    userRoleService.isArtist
+                                    role.isArtist
                                       ? 'Offer your services to clients'
                                       : 'Book artists for your events',
                                     style: TextStyle(

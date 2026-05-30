@@ -2,19 +2,13 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../repos/auth_repository.dart';
-import '../services/auth_service.dart';
+import 'package:gearsh_app/core/contracts/i_auth_repository.dart';
+import 'package:gearsh_app/core/di/service_providers.dart';
+import 'package:gearsh_app/core/queries/linked_queries.dart';
 import '../services/auth_api_service.dart';
 import '../services/firebase_auth_service.dart';
 
 enum AuthState { unauthenticated, authenticated, loading }
-
-final authServiceProvider = Provider<AuthService>((ref) => AuthService());
-
-// Firebase Auth Service Provider
-final firebaseAuthServiceProvider = Provider<FirebaseAuthService>(
-  (ref) => FirebaseAuthService(),
-);
 
 // Stream of Firebase auth state changes
 final firebaseAuthStateProvider = StreamProvider<User?>((ref) {
@@ -31,9 +25,6 @@ final currentFirebaseUserProvider = Provider<User?>((ref) {
     error: (_, __) => null,
   );
 });
-
-final authRepositoryProvider = Provider<AuthRepository>(
-    (ref) => AuthRepository(ref.read(authServiceProvider)));
 
 class AuthStateNotifier extends Notifier<AuthState> {
   @override
@@ -53,16 +44,18 @@ class AuthStateNotifier extends Notifier<AuthState> {
 final authStateProvider = NotifierProvider<AuthStateNotifier, AuthState>(AuthStateNotifier.new);
 
 class AuthController {
-  final AuthRepository _repository;
+  final IAuthRepository _repository;
   final AuthStateNotifier _authState;
   final FirebaseAuthService _firebaseAuth;
   final AuthApiService _authApi;
+  final void Function() _refreshSession;
 
   AuthController(
     this._repository,
     this._authState,
     this._firebaseAuth,
     this._authApi,
+    this._refreshSession,
   );
 
   // Sign in with email/username + password (Cloudflare D1 API)
@@ -75,6 +68,7 @@ class AuthController {
       }
       if (result.success && result.user != null) {
         _authState.signIn();
+        _refreshSession();
         return EmailAuthResult.success(result.user!);
       }
       _authState.signOut();
@@ -119,6 +113,7 @@ class AuthController {
 
       if (result.success && result.user != null) {
         _authState.signIn();
+        _refreshSession();
         return EmailAuthResult.success(result.user!);
       }
       _authState.signOut();
@@ -136,6 +131,7 @@ class AuthController {
       final result = await _firebaseAuth.signInWithGoogle();
       if (result.success) {
         _authState.signIn();
+        _refreshSession();
       } else if (!result.cancelled) {
         _authState.signOut();
       }
@@ -153,6 +149,7 @@ class AuthController {
       final result = await _firebaseAuth.signInWithApple();
       if (result.success) {
         _authState.signIn();
+        _refreshSession();
       } else if (!result.cancelled) {
         _authState.signOut();
       }
@@ -182,6 +179,7 @@ class AuthController {
     await _firebaseAuth.signOut();
     await _repository.signOut();
     _authState.signOut();
+    _refreshSession();
   }
 }
 
@@ -190,7 +188,13 @@ final authControllerProvider = Provider<AuthController>((ref) {
   final authState = ref.read(authStateProvider.notifier);
   final firebaseAuth = ref.read(firebaseAuthServiceProvider);
   final authApi = ref.read(authApiServiceProvider);
-  return AuthController(repository, authState, firebaseAuth, authApi);
+  return AuthController(
+    repository,
+    authState,
+    firebaseAuth,
+    authApi,
+    () => invalidateSessionQueries(ref),
+  );
 });
 
 /// Result of email/password authentication via backend API

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:gearsh_app/config/api_config.dart';
+import 'package:gearsh_app/core/contracts/i_messages_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MessageConversation {
@@ -55,7 +56,7 @@ class ChatMessage {
   }
 }
 
-class MessagesService {
+class MessagesService implements IMessagesRepository {
   static const _tokenKey = 'gearsh_auth_token';
 
   Future<Map<String, String>> _headers() async {

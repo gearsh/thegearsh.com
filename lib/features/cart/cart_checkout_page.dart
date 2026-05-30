@@ -3,8 +3,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gearsh_app/core/queries/linked_queries.dart';
+import 'package:gearsh_app/providers/auth_helpers.dart';
 import 'package:gearsh_app/providers/cart_provider.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/providers/user_role_provider.dart';
 import 'package:gearsh_app/services/payfast_service.dart';
 import 'package:gearsh_app/widgets/gearsh_background.dart';
 import 'package:gearsh_app/widgets/premium_components.dart';
@@ -563,6 +565,11 @@ class _CartCheckoutPageState extends ConsumerState<CartCheckoutPage>
     HapticFeedback.mediumImpact();
     setState(() => _isProcessing = true);
 
+    final session = await ref.read(appSessionProvider.future);
+    final role = ref.read(userRoleProvider);
+    final email = session?.email ?? role.userEmail;
+    final (firstName, lastName) = customerNameParts(role);
+
     final bookingId = 'GRS-CART-${DateTime.now().millisecondsSinceEpoch}';
     final itemNames = cart.items.map((i) => '${i.artistName}: ${i.serviceName}').join(', ');
 
@@ -572,9 +579,9 @@ class _CartCheckoutPageState extends ConsumerState<CartCheckoutPage>
         amount: cart.total,
         artistName: 'Multiple Artists',
         serviceName: '${cart.itemCount} booking${cart.itemCount > 1 ? 's' : ''}: $itemNames',
-        customerEmail: userRoleService.userEmail,
-        customerFirstName: userRoleService.userName.split(' ').first,
-        customerLastName: userRoleService.userName.split(' ').length > 1 ? userRoleService.userName.split(' ').last : '',
+        customerEmail: email,
+        customerFirstName: firstName,
+        customerLastName: lastName,
       );
 
       if (success) {
