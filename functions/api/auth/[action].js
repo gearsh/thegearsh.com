@@ -110,24 +110,28 @@ async function handleRegister(context, body) {
     }
 
     const token = await generateToken(userId, context.env);
+    const userRow = {
+      id: userId,
+      email: email.toLowerCase(),
+      user_type,
+      first_name,
+      last_name,
+      display_name: displayName,
+      username: chosenUsername,
+      profile_picture_url: null,
+      is_verified: 0,
+    };
+    let artistProfile = null;
+    if (user_type === 'artist') {
+      artistProfile = await context.env.DB.prepare(
+        `SELECT id, category, avg_rating, total_bookings FROM artist_profiles WHERE user_id = ?`
+      ).bind(userId).first();
+    }
 
     return jsonResponse({
       success: true,
       message: 'Account created successfully!',
-      data: formatUserResponse(
-        {
-          id: userId,
-          email: email.toLowerCase(),
-          user_type,
-          first_name,
-          last_name,
-          display_name: displayName,
-          username: chosenUsername,
-          profile_picture_url: null,
-          is_verified: 0,
-        },
-        token
-      ),
+      data: await formatUserResponse(context.env.DB, userRow, token, artistProfile),
     }, 201);
   } catch (dbError) {
     console.error('Database error during registration:', dbError);
@@ -168,17 +172,15 @@ async function handleLogin(context, body) {
   }
 
   let artistProfile = null;
-  if (user.user_type === 'artist') {
-    artistProfile = await context.env.DB.prepare(
-      `SELECT id, category, avg_rating, total_bookings FROM artist_profiles WHERE user_id = ?`
-    ).bind(user.id).first();
-  }
+  artistProfile = await context.env.DB.prepare(
+    `SELECT id, category, avg_rating, total_bookings FROM artist_profiles WHERE user_id = ?`
+  ).bind(user.id).first();
 
   const token = await generateToken(user.id, context.env);
 
   return jsonResponse({
     success: true,
-    data: formatUserResponse(user, token, artistProfile),
+    data: await formatUserResponse(context.env.DB, user, token, artistProfile),
   });
 }
 

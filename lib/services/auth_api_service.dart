@@ -19,6 +19,9 @@ class AuthUser {
   final bool isVerified;
   final String? artistProfileId;
   final String token;
+  final List<String> roles;
+  final String activePerspective;
+  final bool hasArtistDashboard;
 
   AuthUser({
     required this.userId,
@@ -31,9 +34,16 @@ class AuthUser {
     this.isVerified = false,
     this.artistProfileId,
     required this.token,
+    this.roles = const ['client'],
+    this.activePerspective = 'client',
+    this.hasArtistDashboard = false,
   });
 
   factory AuthUser.fromJson(Map<String, dynamic> json) {
+    final rolesRaw = json['roles'];
+    final roles = rolesRaw is List
+        ? rolesRaw.map((e) => e.toString()).toList()
+        : <String>['client'];
     return AuthUser(
       userId: json['user_id'],
       email: json['email'],
@@ -45,11 +55,15 @@ class AuthUser {
       isVerified: json['is_verified'] ?? false,
       artistProfileId: json['artist_profile']?['id'],
       token: json['token'],
+      roles: roles,
+      activePerspective: json['active_perspective'] as String? ?? json['user_type'] as String? ?? 'client',
+      hasArtistDashboard: json['has_artist_dashboard'] == true,
     );
   }
 
   String get fullName => displayName ?? '$firstName $lastName';
-  bool get isArtist => userType == 'artist';
+  bool get isArtist => userType == 'artist' || roles.contains('artist');
+  bool get canActAsArtist => hasArtistDashboard || isArtist;
 }
 
 /// Current user notifier

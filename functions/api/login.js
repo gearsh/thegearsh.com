@@ -12,7 +12,7 @@ import {
   ensureArtistUsername,
   ensureAuthTables,
   getArtistProfileSummary,
-  resolvePostLoginPath,
+  formatUserResponse,
 } from './auth-utils.js';
 import { ensureOnboardingTables } from './onboarding-utils.js';
 import { ensureGearshLoginReady } from './master-profile-seed.js';
@@ -95,28 +95,16 @@ export async function onRequestPost(context) {
       console.error('Artist profile load failed:', artistErr);
     }
 
-    const hasArtistDashboard = Boolean(artistProfile);
     const token = await generateToken(user.id, context.env);
+    const responseData = await formatUserResponse(context.env.DB, user, token, artistProfile);
 
     return jsonResponse({
       success: true,
       message: 'Login successful',
       data: {
-        user_id: user.id,
-        email: user.email,
-        user_type: user.user_type,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        display_name: user.display_name,
-        username: artistUsername,
-        profile_picture_url: user.profile_picture_url,
-        is_verified: Boolean(user.is_verified),
+        ...responseData,
         onboarding_status: onboardingStatus,
-        artist_profile: artistProfile,
         profile_url: profileUrl,
-        has_artist_dashboard: hasArtistDashboard,
-        redirect_path: resolvePostLoginPath(user, hasArtistDashboard),
-        token,
       },
     });
   } catch (err) {

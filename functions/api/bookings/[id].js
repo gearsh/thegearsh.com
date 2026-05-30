@@ -5,6 +5,14 @@ import {
   requireAuth,
 } from '../auth-utils.js';
 import { ensureMarketplaceTables } from '../db-schema.js';
+import { recordReliabilityEvent } from '../reliability-utils.js';
+
+async function getBookingParties(db, booking) {
+  const artist = await db.prepare(
+    `SELECT user_id FROM artist_profiles WHERE id = ?`
+  ).bind(booking.artist_id).first();
+  return { clientId: booking.client_id, artistUserId: artist?.user_id };
+}
 
 const ALLOWED_STATUSES = new Set([
   'pending', 'confirmed', 'cancelled', 'completed', 'disputed',
@@ -109,6 +117,24 @@ export async function onRequestPatch(context) {
         auth.user.id,
         now
       ).run();
+
+      const parties = await getBookingParties(context.env.DB, booking);
+      if (parties.artistUserId) {
+        await recordReliabilityEvent(context.env.DB, {
+          userId: parties.artistUserId,
+          userRole: 'artist',
+          eventType: 'booking_completed',
+          bookingId,
+        });
+      }
+      if (parties.clientId) {
+        await recordReliabilityEvent(context.env.DB, {
+          userId: parties.clientId,
+          userRole: 'client',
+          eventType: 'booking_completed',
+          bookingId,
+        });
+      }
     }
 
     if (status === 'cancelled') {
@@ -122,6 +148,18 @@ export async function onRequestPatch(context) {
         auth.user.id,
         now
       ).run();
+
+      const parties = await getBookingParties(context.env.DB, booking);
+      const cancelledByArtist = parties.artistUserId === auth.user.id;
+      const targetId = cancelledByArtist ? parties.artistUserId : parties.clientId;
+      if (targetId) {
+        await recordReliabilityEvent(context.env.DB, {
+          userId: targetId,
+          userRole: cancelledByArtist ? 'artist' : 'client',
+          eventType: 'booking_cancelled',
+          bookingId,
+        });
+      }
     }
 
     const updated = await context.env.DB.prepare(`

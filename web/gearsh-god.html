@@ -331,6 +331,23 @@
     </div>
 
     <div class="god-panel">
+      <h2>Content Engine</h2>
+      <div class="sub">JSON copy & theme — publish to mobile and web without redeploying</div>
+      <div class="god-toolbar">
+        <span id="content-version" class="god-pill">Version —</span>
+        <button class="god-btn primary" type="button" onclick="loadContentAdmin()"><i class="ti ti-refresh"></i> Reload</button>
+        <button class="god-btn" type="button" onclick="publishContent()"><i class="ti ti-upload"></i> Publish draft</button>
+        <button class="god-btn" type="button" onclick="rollbackContent()"><i class="ti ti-arrow-back-up"></i> Rollback defaults</button>
+      </div>
+      <label for="content-copy-json">Copy JSON (draft)</label>
+      <textarea id="content-copy-json" rows="10" style="width:100%;margin-bottom:12px;font-family:monospace;font-size:12px;background:#0F172A;color:#E2E8F0;border:1px solid #1E293B;border-radius:8px;padding:12px"></textarea>
+      <label for="content-theme-json">Theme JSON (draft)</label>
+      <textarea id="content-theme-json" rows="8" style="width:100%;margin-bottom:12px;font-family:monospace;font-size:12px;background:#0F172A;color:#E2E8F0;border:1px solid #1E293B;border-radius:8px;padding:12px"></textarea>
+      <button class="god-btn primary" type="button" onclick="saveContentDraft()"><i class="ti ti-device-floppy"></i> Save draft</button>
+      <div id="content-result" class="god-success" style="display:none;margin-top:12px"></div>
+    </div>
+
+    <div class="god-panel">
       <h2>Disputes inbox</h2>
       <div class="sub">Open booking disputes</div>
       <div class="god-table-wrap">
@@ -689,8 +706,64 @@
       }
     }
 
+    async function loadContentAdmin() {
+      var data = await founderFetch('/founder/content');
+      document.getElementById('content-version').textContent = 'Live v' + (data.live.version || 1);
+      document.getElementById('content-copy-json').value = JSON.stringify(data.draft.copy || {}, null, 2);
+      document.getElementById('content-theme-json').value = JSON.stringify(data.draft.theme || {}, null, 2);
+    }
+
+    async function saveContentDraft() {
+      var resultEl = document.getElementById('content-result');
+      try {
+        var copy = JSON.parse(document.getElementById('content-copy-json').value || '{}');
+        var theme = JSON.parse(document.getElementById('content-theme-json').value || '{}');
+        await founderFetch('/founder/content/draft', {
+          method: 'PUT',
+          body: JSON.stringify({ copy: copy, theme: theme })
+        });
+        resultEl.className = 'god-success';
+        resultEl.textContent = 'Draft saved.';
+        resultEl.style.display = 'block';
+      } catch (err) {
+        resultEl.className = 'god-error';
+        resultEl.textContent = err.message || 'Invalid JSON or save failed';
+        resultEl.style.display = 'block';
+      }
+    }
+
+    async function publishContent() {
+      var resultEl = document.getElementById('content-result');
+      try {
+        var data = await founderFetch('/founder/content/publish', { method: 'POST', body: '{}' });
+        resultEl.className = 'god-success';
+        resultEl.textContent = 'Published v' + data.version + ' — mobile and web will pick up on next launch.';
+        resultEl.style.display = 'block';
+        await loadContentAdmin();
+      } catch (err) {
+        resultEl.className = 'god-error';
+        resultEl.textContent = err.message || 'Publish failed';
+        resultEl.style.display = 'block';
+      }
+    }
+
+    async function rollbackContent() {
+      var resultEl = document.getElementById('content-result');
+      try {
+        await founderFetch('/founder/content/rollback', { method: 'POST', body: JSON.stringify({ version: 0 }) });
+        resultEl.className = 'god-success';
+        resultEl.textContent = 'Rolled back to default content.';
+        resultEl.style.display = 'block';
+        await loadContentAdmin();
+      } catch (err) {
+        resultEl.className = 'god-error';
+        resultEl.textContent = err.message || 'Rollback failed';
+        resultEl.style.display = 'block';
+      }
+    }
+
     async function refreshAll() {
-      await Promise.all([loadStats(), loadArtists(), loadVerificationQueue(), loadPayments(), loadDisputes()]);
+      await Promise.all([loadStats(), loadArtists(), loadVerificationQueue(), loadPayments(), loadDisputes(), loadContentAdmin()]);
     }
 
     document.getElementById('artist-search').addEventListener('keydown', function(e) {

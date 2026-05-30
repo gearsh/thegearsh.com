@@ -3,11 +3,14 @@ import 'package:fuzzywuzzy/fuzzywuzzy.dart' as fuzzy;
 import 'package:gearsh_app/data/gearsh_artists.dart';
 import 'package:gearsh_app/models/search_models.dart';
 import 'package:gearsh_app/models/artist.dart';
+import 'package:gearsh_app/services/api_service.dart';
 
 final searchServiceProvider = Provider((ref) => SearchService());
 
 class SearchService {
-  SearchService();
+  SearchService({ApiService? api}) : _api = api;
+
+  final ApiService? _api;
 
   // Popular search suggestions - Emerging Artists FIRST (Free to Book!)
   static const List<String> popularSearches = [
@@ -119,16 +122,86 @@ class SearchService {
     return uniqueSuggestions;
   }
 
-  /// Main search function - Google-like search
+  /// Main search function — API-first with local catalog fallback.
   Future<List<GearshSearchResult>> searchArtists({
     required String query,
     required SearchFilters filters,
   }) async {
-    // Return empty for no query and default filters
     if (query.isEmpty && filters.isDefault) {
       return [];
     }
 
+    if (_api != null && (query.isNotEmpty || !filters.isDefault)) {
+      final apiResults = await _searchViaApi(query: query, filters: filters);
+      if (apiResults.isNotEmpty) return apiResults;
+    }
+
+    return _searchLocal(query: query, filters: filters);
+  }
+
+  Future<List<GearshSearchResult>> _searchViaApi({
+    required String query,
+    required SearchFilters filters,
+  }) async {
+    try {
+      final sortBy = switch (filters.sortOption) {
+        SortOption.highestRated => 'rating',
+        SortOption.priceLowToHigh => 'price_low',
+        SortOption.priceHighToLow => 'price_high',
+        SortOption.mostPopular => 'popular',
+        SortOption.relevance => 'relevance',
+      };
+
+      final response = await _api!.post('/search', body: {
+        'query': query,
+        'categories': filters.categories.toList(),
+        'minRating': filters.minRating,
+        'verified': filters.showVerifiedOnly,
+        'minPrice': filters.priceRange.start,
+        'maxPrice': filters.priceRange.end,
+        'sortBy': sortBy,
+        'limit': 50,
+      });
+
+      final rows = response.getData<List<dynamic>>();
+      if (rows == null) return [];
+      return rows.map((row) {
+        final m = row as Map<String, dynamic>;
+        final artist = GearshArtist(
+          id: m['artist_id'] as String? ?? m['user_id'] as String? ?? '',
+          name: m['name'] as String? ?? 'Artist',
+          username: m['username'] as String? ?? '',
+          category: m['category'] as String? ?? m['genre'] as String? ?? 'Services',
+          subcategories: (m['skills'] as List<dynamic>?)?.cast<String>() ?? const [],
+          location: m['location'] as String? ?? '',
+          bio: m['bio'] as String? ?? '',
+          image: m['image'] as String? ?? '',
+          bookingFee: (m['base_rate'] as num?)?.toInt() ?? 0,
+          rating: (m['rating'] as num?)?.toDouble() ?? 0,
+          reviewCount: m['review_count'] as int? ?? 0,
+          hoursBooked: 0,
+          responseTime: '24h',
+          isVerified: m['is_verified'] == true,
+          isAvailable: true,
+          highlights: const [],
+          services: const [],
+        );
+        return GearshSearchResult(
+          artist: artist,
+          score: (m['relevance_score'] as num?)?.toDouble() ?? 0,
+          matchedFields: const {'api'},
+          matchType: MatchType.partial,
+        );
+      }).toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<List<GearshSearchResult>> _searchLocal({
+    required String query,
+    required SearchFilters filters,
+  }) async {
     final lowerCaseQuery = query.toLowerCase().trim();
     final queryWords = lowerCaseQuery.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
 
@@ -137,7 +210,6 @@ class SearchService {
     for (final artist in gearshArtists) {
       final scoreResult = _calculateAdvancedScore(artist, lowerCaseQuery, queryWords);
 
-      // Only include results with meaningful scores
       if (scoreResult.score > 20 || (query.isEmpty && !filters.isDefault)) {
         results.add(GearshSearchResult(
           artist: artist,
@@ -149,13 +221,8 @@ class SearchService {
       }
     }
 
-    // Apply filters
     results = _applyFilters(results, filters);
-
-    // Sort results
-    results = _sortResults(results, filters.sortOption, query.isNotEmpty);
-
-    return results;
+    return _sortResults(results, filters.sortOption, query.isNotEmpty);
   }
 
   /// Advanced scoring algorithm with multiple match types

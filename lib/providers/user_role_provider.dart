@@ -5,6 +5,7 @@ import 'package:gearsh_app/models/user_role.dart';
 /// Immutable user role state for Riverpod-driven UI.
 class UserRoleState {
   final UserRole role;
+  final List<UserRole> availableRoles;
   final bool isLoggedIn;
   final bool isGuest;
   final String userName;
@@ -12,6 +13,7 @@ class UserRoleState {
 
   const UserRoleState({
     this.role = UserRole.client,
+    this.availableRoles = const [UserRole.client],
     this.isLoggedIn = false,
     this.isGuest = false,
     this.userName = 'Guest User',
@@ -23,9 +25,11 @@ class UserRoleState {
   bool get isClient => role == UserRole.client;
   bool get isArtist => role == UserRole.artist;
   bool get isFan => role == UserRole.fan;
+  bool get canSwitchRole => availableRoles.length > 1;
 
   UserRoleState copyWith({
     UserRole? role,
+    List<UserRole>? availableRoles,
     bool? isLoggedIn,
     bool? isGuest,
     String? userName,
@@ -33,6 +37,7 @@ class UserRoleState {
   }) {
     return UserRoleState(
       role: role ?? this.role,
+      availableRoles: availableRoles ?? this.availableRoles,
       isLoggedIn: isLoggedIn ?? this.isLoggedIn,
       isGuest: isGuest ?? this.isGuest,
       userName: userName ?? this.userName,
@@ -69,11 +74,13 @@ class UserRoleNotifier extends Notifier<UserRoleState> {
     required UserRole role,
     String? name,
     String? email,
+    List<UserRole>? availableRoles,
   }) {
     state = state.copyWith(
       isLoggedIn: true,
       isGuest: false,
       role: role,
+      availableRoles: availableRoles ?? state.availableRoles,
       userName: name ?? state.userName,
       userEmail: email ?? state.userEmail,
     );
@@ -86,9 +93,10 @@ class UserRoleNotifier extends Notifier<UserRoleState> {
   }
 
   void switchRole() {
-    state = state.copyWith(
-      role: state.role == UserRole.client ? UserRole.artist : UserRole.client,
-    );
+    if (!state.canSwitchRole) return;
+    final idx = state.availableRoles.indexOf(state.role);
+    final next = state.availableRoles[(idx + 1) % state.availableRoles.length];
+    state = state.copyWith(role: next);
     _notifyRouter();
   }
 }

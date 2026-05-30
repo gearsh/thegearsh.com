@@ -6,6 +6,7 @@ import {
   requireAuth,
 } from './auth-utils.js';
 import { ensureMarketplaceTables } from './db-schema.js';
+import { recordReliabilityEvent } from './reliability-utils.js';
 
 export async function onRequestGet(context) {
   try {
@@ -64,6 +65,25 @@ export async function onRequestPost(context) {
     await context.env.DB.prepare(`
       UPDATE bookings SET status = 'disputed', updated_at = ? WHERE id = ?
     `).bind(now, bookingId).run();
+
+    await recordReliabilityEvent(context.env.DB, {
+      userId: auth.userId,
+      userRole: auth.user.user_type || 'client',
+      eventType: 'booking_disputed',
+      bookingId,
+    });
+
+    const artist = await context.env.DB.prepare(
+      `SELECT user_id FROM artist_profiles WHERE id = ?`
+    ).bind(booking.artist_id).first();
+    if (artist?.user_id && artist.user_id !== auth.userId) {
+      await recordReliabilityEvent(context.env.DB, {
+        userId: artist.user_id,
+        userRole: 'artist',
+        eventType: 'booking_disputed',
+        bookingId,
+      });
+    }
 
     return jsonResponse({ success: true, data: { id: disputeId, status: 'open' } }, 201);
   } catch (err) {

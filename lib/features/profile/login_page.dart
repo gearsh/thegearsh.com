@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/services/user_role_service.dart';
+import 'package:gearsh_app/providers/auth_helpers.dart';
+import 'package:gearsh_app/models/user_role.dart';
 import 'package:gearsh_app/providers/auth_providers.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -62,16 +63,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
       WidgetsBinding.instance.addPostFrameCallback((_) {
         openStaticSignIn();
       });
-      return;
     }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.listen<AuthState>(authStateProvider, (previous, next) {
-        if (next == AuthState.authenticated) {
-          GoRouter.of(context).go('/dashboard');
-        }
-      });
-    });
   }
 
   @override
@@ -97,16 +89,16 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
         if (result.success && result.user != null) {
           final authUser = result.user!;
-          final role = authUser.isArtist ? UserRole.artist : UserRole.client;
-
-          userRoleService.login(
-            role: role,
+          applyAuthenticatedUserRole(
+            ref,
+            role: activeRoleFromAuthUser(authUser),
             name: authUser.fullName,
             email: authUser.email,
+            availableRoles: availableRolesFromAuthUser(authUser),
           );
 
           if (kIsWeb) {
-            if (authUser.isArtist) {
+            if (authUser.canActAsArtist) {
               await openStaticArtistDashboard();
             } else {
               await openStaticPage('/');
@@ -114,7 +106,7 @@ class _LoginPageState extends ConsumerState<LoginPage>
             return;
           }
 
-          if (authUser.isArtist) {
+          if (authUser.canActAsArtist && activeRoleFromAuthUser(authUser) == UserRole.artist) {
             GoRouter.of(context).go('/dashboard');
           } else {
             GoRouter.of(context).go('/home');
@@ -157,14 +149,14 @@ class _LoginPageState extends ConsumerState<LoginPage>
       if (result.success && result.user != null) {
         final user = result.user!;
 
-        // Set user as logged in
-        userRoleService.login(
-          role: UserRole.client, // Default role for social sign-in
+        applyAuthenticatedUserRole(
+          ref,
+          role: UserRole.client,
           name: user.displayName ?? user.email?.split('@').first ?? 'User',
           email: user.email ?? '',
+          availableRoles: const [UserRole.client],
         );
 
-        // Navigate to home
         GoRouter.of(context).go('/');
       } else {
         setState(() {
@@ -201,14 +193,14 @@ class _LoginPageState extends ConsumerState<LoginPage>
       if (result.success && result.user != null) {
         final user = result.user!;
 
-        // Set user as logged in
-        userRoleService.login(
-          role: UserRole.client, // Default role for social sign-in
+        applyAuthenticatedUserRole(
+          ref,
+          role: UserRole.client,
           name: user.displayName ?? user.email?.split('@').first ?? 'User',
           email: user.email ?? '',
+          availableRoles: const [UserRole.client],
         );
 
-        // Navigate to home
         GoRouter.of(context).go('/');
       } else {
         setState(() {
@@ -259,6 +251,12 @@ class _LoginPageState extends ConsumerState<LoginPage>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AuthState>(authStateProvider, (previous, next) {
+      if (next == AuthState.authenticated && mounted && !kIsWeb) {
+        GoRouter.of(context).go('/dashboard');
+      }
+    });
+
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 

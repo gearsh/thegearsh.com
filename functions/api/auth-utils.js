@@ -467,12 +467,34 @@ export function resolvePostLoginPath(user, hasArtistProfile) {
   return '/';
 }
 
-export function formatUserResponse(user, token, artistProfile = null) {
+/** Unified multi-role model: one account may act as client and artist. */
+export async function resolveUserRoles(db, user) {
+  const roles = new Set();
+  if (user.user_type === 'admin') roles.add('admin');
+  roles.add('client');
+  const profile = await getArtistProfileSummary(db, user.id);
+  if (profile || user.user_type === 'artist') roles.add('artist');
+  return Array.from(roles);
+}
+
+export function resolveActivePerspective(user, roles, hasArtistProfile) {
+  const stored = user.active_perspective;
+  if (stored && roles.includes(stored)) return stored;
+  if (hasArtistProfile || user.user_type === 'artist') return 'artist';
+  if (user.user_type === 'admin') return 'admin';
+  return 'client';
+}
+
+export async function formatUserResponse(db, user, token, artistProfile = null) {
   const hasArtistProfile = Boolean(artistProfile && artistProfile.id);
+  const roles = db ? await resolveUserRoles(db, user) : ['client'];
+  const activePerspective = resolveActivePerspective(user, roles, hasArtistProfile);
   return {
     user_id: user.id,
     email: user.email,
     user_type: user.user_type,
+    roles,
+    active_perspective: activePerspective,
     first_name: user.first_name,
     last_name: user.last_name,
     display_name: user.display_name,

@@ -1,45 +1,48 @@
-class Dispute {
-  final String id;
-  final String subject;
-  final String description;
-  String status;
-  final DateTime createdAt;
+import 'package:gearsh_app/core/contracts/i_dispute_repository.dart';
+import 'package:gearsh_app/services/api_service.dart';
 
-  Dispute({required this.id, required this.subject, required this.description, required this.status, required this.createdAt});
-}
+class DisputeService implements IDisputeRepository {
+  final ApiService _api;
 
-class DisputeService {
-  final List<Dispute> _store = [];
+  DisputeService(this._api);
 
-  List<Dispute> getAll() => List.unmodifiable(_store);
-
-  Future<List<Dispute>> getDisputes() async {
-    // Simulate async (in future this may call an API)
-    await Future.delayed(const Duration(milliseconds: 50));
-    return getAll();
+  @override
+  Future<List<DisputeRecord>> listDisputes() async {
+    final response = await _api.get('/disputes');
+    final rows = response.getData<List<dynamic>>();
+    if (rows == null) return [];
+    return rows.map((row) => _mapDispute(row as Map<String, dynamic>)).toList();
   }
 
-  Future<void> createDispute(String subject, String description) async {
-    create(subject, description);
-    await Future.delayed(const Duration(milliseconds: 50));
+  DisputeRecord _mapDispute(Map<String, dynamic> m) {
+    return DisputeRecord(
+      id: m['id'] as String,
+      bookingId: m['booking_id'] as String? ?? '',
+      subject: m['subject'] as String? ?? '',
+      description: m['description'] as String? ?? '',
+      status: m['status'] as String? ?? 'open',
+      severity: m['severity'] as String? ?? 'medium',
+      createdAt: DateTime.tryParse(m['created_at'] as String? ?? '') ?? DateTime.now(),
+      totalPrice: (m['total_price'] as num?)?.toDouble(),
+      eventDate: m['event_date'] as String?,
+    );
   }
 
-  Future<void> closeDispute(String id) async {
-    close(id);
-    await Future.delayed(const Duration(milliseconds: 50));
-  }
-
-  void create(String subject, String description) {
-    final d = Dispute(id: DateTime.now().millisecondsSinceEpoch.toString(), subject: subject, description: description, status: 'open', createdAt: DateTime.now());
-    _store.add(d);
-  }
-
-  void close(String id) {
-    for (var d in _store) {
-      if (d.id == id) d.status = 'closed';
+  @override
+  Future<void> createDispute({
+    required String bookingId,
+    required String subject,
+    required String description,
+    String severity = 'medium',
+  }) async {
+    final response = await _api.post('/disputes', body: {
+      'booking_id': bookingId,
+      'subject': subject,
+      'description': description,
+      'severity': severity,
+    });
+    if (!response.success) {
+      throw Exception(response.error ?? 'Failed to create dispute');
     }
   }
 }
-
-final disputeService = DisputeService();
-
