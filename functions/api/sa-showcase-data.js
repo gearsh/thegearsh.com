@@ -1222,7 +1222,7 @@ export const SA_SHOWCASE_ARTISTS = [
   {
     name: 'Benjamin Dube',
     username: 'benjamin-dube',
-    image: 'assets/images/artists/artists.png',
+    image: 'assets/images/artists/benjamin-dube.jpg',
     category: 'Gospel',
     genre: 'Gospel · Johannesburg',
     genreSlug: 'gospel',

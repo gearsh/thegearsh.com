@@ -104,6 +104,7 @@ export const SOLO_PORTRAIT_IMAGES = {
   'usimamane': 'assets/images/artists/usimamane.png',
   'blaq-diamond': 'assets/images/artists/blaq.png',
   'boohle': 'assets/images/artists/boohle.png',
+  'benjamin-dube': 'assets/images/artists/benjamin-dube.jpg',
   'the-kiffness': 'assets/images/artists/kiffness.png',
   'lloyiso': 'assets/images/artists/lloyiso.png',
   'seether': 'assets/images/artists/seether.png',

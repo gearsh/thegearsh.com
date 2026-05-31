@@ -27,6 +27,50 @@
     });
   }
 
+  function compressImageFile(file, maxDim, quality) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth || img.width;
+        var h = img.naturalHeight || img.height;
+        if (!w || !h) {
+          reject(new Error('Could not read this photo. Try JPG or PNG.'));
+          return;
+        }
+        var scale = Math.min(1, maxDim / Math.max(w, h));
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(w * scale));
+        canvas.height = Math.max(1, Math.round(h * scale));
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(function (blob) {
+          if (!blob) {
+            reject(new Error('Could not process this photo. Try JPG or PNG.'));
+            return;
+          }
+          resolve(blob);
+        }, 'image/jpeg', quality || 0.85);
+      };
+      img.onerror = function () {
+        URL.revokeObjectURL(url);
+        reject(new Error('Could not read this photo. Try JPG or PNG.'));
+      };
+      img.src = url;
+    });
+  }
+
+  function prepareUploadBlob(file) {
+    if (!file || !file.type || file.type.indexOf('image/') !== 0) {
+      return compressImageFile(file, 1600, 0.85);
+    }
+    if (file.size <= 900 * 1024 && file.type !== 'image/heic' && file.type !== 'image/heif') {
+      return Promise.resolve(file);
+    }
+    return compressImageFile(file, 1600, 0.85);
+  }
+
   function ArtistProfileSetup(options) {
     this.root = typeof options.container === 'string'
       ? document.querySelector(options.container)
@@ -90,7 +134,7 @@
             '<div class="aps-photo-row">' +
               '<div class="aps-photo-preview" id="aps-photo-preview">Photo</div>' +
               '<label class="btn-ghost aps-upload-btn"><i class="ti ti-camera"></i> Upload photo' +
-                '<input type="file" id="aps-photo-input" accept="image/jpeg,image/png,image/webp" hidden></label>' +
+                '<input type="file" id="aps-photo-input" accept="image/*" capture="environment" hidden></label>' +
             '</div></div>' +
           '<div id="aps-profile-msg" class="aps-msg"></div>' +
           '<button type="submit" class="btn-main" style="margin-top:8px">Save profile</button>' +
@@ -103,7 +147,7 @@
         '<div class="aps-portfolio-grid" id="aps-portfolio-grid"></div>' +
         '<label class="btn-ghost aps-upload-btn" style="margin-top:12px;display:inline-flex">' +
           '<i class="ti ti-photo-plus"></i> Add photo' +
-          '<input type="file" id="aps-portfolio-input" accept="image/jpeg,image/png,image/webp" multiple hidden></label>' +
+          '<input type="file" id="aps-portfolio-input" accept="image/*" multiple hidden></label>' +
         '<div id="aps-portfolio-msg" class="aps-msg"></div></div>' +
 
       '<div class="card aps-section" id="aps-section-verified" style="padding:20px">' +
@@ -267,22 +311,28 @@
 
   ArtistProfileSetup.prototype.uploadPhoto = function (file) {
     var self = this;
-    if (file.size > 3 * 1024 * 1024) {
-      this.setMsg('aps-profile-msg', 'Photo must be under 3MB', false);
-      return;
-    }
-    this.setMsg('aps-profile-msg', 'Uploading photo…');
-    readFileAsBase64(file).then(function (base64) {
-      return fetch(API + '/upload-profile-photo', {
-        method: 'POST',
-        headers: self.authHeaders(true),
-        body: JSON.stringify({
-          image_data: base64,
-          mime_type: file.type || 'image/jpeg',
-          type: 'profile',
-        }),
-      });
-    })
+    this.setMsg('aps-profile-msg', 'Preparing photo…');
+    prepareUploadBlob(file)
+      .then(function (blob) {
+        if (blob.size > 3 * 1024 * 1024) {
+          return compressImageFile(blob, 1200, 0.75);
+        }
+        return blob;
+      })
+      .then(function (blob) {
+        self.setMsg('aps-profile-msg', 'Uploading photo…');
+        return readFileAsBase64(blob).then(function (base64) {
+          return fetch(API + '/upload-profile-photo', {
+            method: 'POST',
+            headers: self.authHeaders(true),
+            body: JSON.stringify({
+              image_data: base64,
+              mime_type: 'image/jpeg',
+              type: 'profile',
+            }),
+          });
+        });
+      })
       .then(function (r) { return r.json(); })
       .then(function (d) {
         if (!d.success) throw new Error(d.error || 'Upload failed');
@@ -304,18 +354,24 @@
     this.setMsg('aps-portfolio-msg', 'Uploading…');
     var chain = Promise.resolve();
     Array.prototype.forEach.call(files, function (file) {
-      if (file.size > 3 * 1024 * 1024) return;
       chain = chain.then(function () {
-        return readFileAsBase64(file).then(function (base64) {
-          return fetch(API + '/upload-profile-photo', {
-            method: 'POST',
-            headers: self.authHeaders(true),
-            body: JSON.stringify({
-              image_data: base64,
-              mime_type: file.type || 'image/jpeg',
-              type: 'portfolio',
-            }),
-          }).then(function (r) { return r.json(); });
+        return prepareUploadBlob(file).then(function (blob) {
+          if (blob.size > 3 * 1024 * 1024) {
+            return compressImageFile(blob, 1200, 0.75);
+          }
+          return blob;
+        }).then(function (blob) {
+          return readFileAsBase64(blob).then(function (base64) {
+            return fetch(API + '/upload-profile-photo', {
+              method: 'POST',
+              headers: self.authHeaders(true),
+              body: JSON.stringify({
+                image_data: base64,
+                mime_type: 'image/jpeg',
+                type: 'portfolio',
+              }),
+            }).then(function (r) { return r.json(); });
+          });
         }).then(function (d) {
           if (!d.success) throw new Error(d.error || 'Upload failed');
           self.portfolio.push(d.data.photo_url);
