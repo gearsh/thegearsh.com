@@ -226,6 +226,14 @@
         </form>
       </div>
     </div>
+
+    <div class="card" id="collab-cta" style="margin-top:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div>
+        <h2 style="margin-bottom:4px"><i class="ti ti-sparkles" style="color:var(--g-accent)"></i> Are you an artist?</h2>
+        <p class="card-sub" style="color:var(--g-text-muted);font-size:14px;margin:0">Book <em id="collab-cta-name" style="font-style:normal;color:var(--g-white)">this artist</em> for a feature, production, songwriting, visual art, or another collaboration.</p>
+      </div>
+      <a class="btn-main" id="collab-cta-link" href="collaborate.html" style="white-space:nowrap"><i class="ti ti-users-group"></i> Book Collaboration</a>
+    </div>
     </div>
 
     <div id="panel-events" hidden>
@@ -330,6 +338,15 @@
       var imageUrl = resolveImageUrl(data.image);
       photo.src = imageUrl;
       photo.alt = data.name || 'Artist photo';
+
+      var collabName = document.getElementById('collab-cta-name');
+      if (collabName) collabName.textContent = data.name || 'this artist';
+      var collabLink = document.getElementById('collab-cta-link');
+      if (collabLink && data.username) {
+        collabLink.href = 'collaborate.html?artist=' +
+          encodeURIComponent(String(data.username).toLowerCase()) +
+          '&name=' + encodeURIComponent(data.name || '');
+      }
 
       var badge = document.getElementById('book-badge');
       var status = String(data.status || data.availability_status || 'active').toLowerCase();
