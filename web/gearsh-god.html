@@ -148,9 +148,48 @@
     .row-actions button.approve { color: #6ee7b7; border-color: rgba(52,211,153,0.25); }
     .row-actions button.remove { color: #f87171; border-color: rgba(248,113,113,0.25); }
     .hidden { display: none !important; }
+
+    /* Dashboard shell: sticky sidebar nav + switchable views */
+    .god-shell { display: grid; grid-template-columns: 236px minmax(0, 1fr); gap: 24px; align-items: start; }
+    .god-nav {
+      position: sticky; top: 20px; display: flex; flex-direction: column; gap: 4px;
+      background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 16px; padding: 10px;
+    }
+    .god-nav-item {
+      display: flex; align-items: center; gap: 11px; width: 100%; text-align: left;
+      padding: 11px 13px; border-radius: 10px; border: 0.5px solid transparent; background: none;
+      color: var(--g-text-muted); cursor: pointer; font-size: 14px; font-weight: 600;
+      font-family: var(--g-font); transition: background .15s ease, color .15s ease;
+    }
+    .god-nav-item i { font-size: 18px; flex-shrink: 0; }
+    .god-nav-item:hover { background: var(--g-black); color: var(--g-white); }
+    .god-nav-item.active { background: var(--g-black); color: var(--g-white); border-color: var(--g-border); }
+    .god-nav-badge {
+      margin-left: auto; background: var(--g-accent); color: var(--g-black);
+      font-size: 11px; font-weight: 700; min-width: 20px; height: 20px; padding: 0 6px;
+      border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .god-nav-badge.hidden { display: none !important; }
+    .god-view { display: none; }
+    .god-view.active { display: block; animation: godFade .25s ease; }
+    @keyframes godFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .god-view-head { margin-bottom: 18px; }
+    .god-view-head h2 {
+      font-family: var(--g-serif); font-size: 24px; font-weight: 400; color: var(--g-white); letter-spacing: -0.02em;
+    }
+    .god-view-head p { font-size: 13px; color: var(--g-text-dim); margin-top: 4px; }
+
     @media (max-width: 960px) {
       .god-grid { grid-template-columns: repeat(2, 1fr); }
       .god-split { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 860px) {
+      .god-shell { grid-template-columns: 1fr; gap: 16px; }
+      .god-nav {
+        position: sticky; top: 0; z-index: 5; flex-direction: row; overflow-x: auto;
+        gap: 6px; padding: 8px; -webkit-overflow-scrolling: touch;
+      }
+      .god-nav-item { white-space: nowrap; width: auto; }
     }
     @media (max-width: 520px) {
       .god-grid { grid-template-columns: 1fr; }
@@ -225,152 +264,223 @@
       </div>
     </div>
 
-    <div class="god-grid" id="stats-grid"></div>
+    <div class="god-shell">
+      <nav class="god-nav" id="god-nav">
+        <button class="god-nav-item active" type="button" data-view="overview"><i class="ti ti-layout-dashboard"></i><span class="label">Overview</span></button>
+        <button class="god-nav-item" type="button" data-view="artists"><i class="ti ti-users"></i><span class="label">Artists</span><span class="god-nav-badge hidden" id="badge-artists">0</span></button>
+        <button class="god-nav-item" type="button" data-view="bookings"><i class="ti ti-calendar-event"></i><span class="label">Bookings</span></button>
+        <button class="god-nav-item" type="button" data-view="payments"><i class="ti ti-cash"></i><span class="label">Payments</span></button>
+        <button class="god-nav-item" type="button" data-view="outreach"><i class="ti ti-send"></i><span class="label">Outreach</span><span class="god-nav-badge hidden" id="badge-outreach">0</span></button>
+        <button class="god-nav-item" type="button" data-view="disputes"><i class="ti ti-alert-triangle"></i><span class="label">Disputes</span><span class="god-nav-badge hidden" id="badge-disputes">0</span></button>
+        <button class="god-nav-item" type="button" data-view="content"><i class="ti ti-file-text"></i><span class="label">Content</span></button>
+      </nav>
 
-    <div class="god-split">
-      <div class="god-panel">
-        <h2>Artists by country</h2>
-        <div class="sub">Where artists are signing up from</div>
-        <div class="god-list" id="country-list"></div>
-      </div>
-      <div class="god-panel">
-        <h2>Genres & categories</h2>
-        <div class="sub">What kinds of gigs are listed</div>
-        <div class="god-list" id="category-list"></div>
-      </div>
-    </div>
+      <div class="god-content">
+        <!-- OVERVIEW -->
+        <section class="god-view active" data-view="overview">
+          <div class="god-view-head">
+            <h2>Overview</h2>
+            <p>Live platform intelligence — users, revenue, and where your growth is coming from.</p>
+          </div>
 
-    <div class="god-panel">
-      <h2>Recent signups</h2>
-      <div class="sub">Everyone who joined: artists and clients</div>
-      <div class="god-table-wrap">
-        <table class="god-table">
-          <thead>
-            <tr>
-              <th>Name</th><th>Email</th><th>Type</th><th>Location</th><th>Category</th><th>Joined</th><th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="signups-body"></tbody>
-        </table>
-      </div>
-    </div>
+          <div class="god-grid" id="stats-grid"></div>
 
-    <div class="god-panel" id="demo-panel">
-      <h2>Claimable listings</h2>
-      <div class="sub">Seed a bookable profile, then send the artist their booking link, claim page, and private code. They can claim the profile or request removal.</div>
-      <div class="god-toolbar">
-        <button class="god-btn primary" type="button" onclick="seedClaimableArtist('rixelton')"><i class="ti ti-user-plus"></i> Rix Elton</button>
-        <button class="god-btn primary" type="button" onclick="seedClaimableArtist('artwork-sounds')"><i class="ti ti-users"></i> Artwork Sounds</button>
-      </div>
-      <div id="demo-result" class="god-success" style="display:none;margin-bottom:0"></div>
-    </div>
+          <div class="god-split">
+            <div class="god-panel">
+              <h2>Artists by country</h2>
+              <div class="sub">Where artists are signing up from</div>
+              <div class="god-list" id="country-list"></div>
+            </div>
+            <div class="god-panel">
+              <h2>Genres & categories</h2>
+              <div class="sub">What kinds of gigs are listed</div>
+              <div class="god-list" id="category-list"></div>
+            </div>
+          </div>
 
-    <div class="god-panel">
-      <h2>Manage artists</h2>
-      <div class="sub">Search, approve listings, or remove profiles from the marketplace</div>
-      <div class="god-toolbar">
-        <input id="artist-search" type="search" placeholder="Search name, email, username, city, genre…">
-        <select id="artist-status">
-          <option value="all">All artists</option>
-          <option value="pending">Pending approval</option>
-          <option value="verified">Verified</option>
-          <option value="active">Active</option>
-          <option value="inactive">Removed</option>
-        </select>
-        <button class="god-btn primary" type="button" onclick="loadArtists()"><i class="ti ti-search"></i> Search</button>
-      </div>
-      <div class="god-table-wrap">
-        <table class="god-table">
-          <thead>
-            <tr>
-              <th>Artist</th><th>Location</th><th>Genre</th><th>Bookings</th><th>Listing</th><th>Link</th><th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="artists-body"></tbody>
-        </table>
-      </div>
-    </div>
+          <div class="god-panel">
+            <h2>Recent signups</h2>
+            <div class="sub">Everyone who joined: artists and clients</div>
+            <div class="god-table-wrap">
+              <table class="god-table">
+                <thead>
+                  <tr>
+                    <th>Name</th><th>Email</th><th>Type</th><th>Location</th><th>Category</th><th>Joined</th><th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="signups-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
 
-    <div class="god-panel">
-      <h2>Recent booking activity</h2>
-      <div class="sub">Requests flowing through the platform</div>
-      <div class="god-table-wrap">
-        <table class="god-table">
-          <thead>
-            <tr><th>Artist</th><th>Client</th><th>Date</th><th>Venue</th><th>Amount</th><th>Status</th><th>Actions</th></tr>
-          </thead>
-          <tbody id="bookings-body"></tbody>
-        </table>
-      </div>
-    </div>
+        <!-- ARTISTS -->
+        <section class="god-view" data-view="artists">
+          <div class="god-view-head">
+            <h2>Artists</h2>
+            <p>Search, approve, and manage every artist profile on the marketplace.</p>
+          </div>
 
-    <div class="god-panel">
-      <h2>Verification queue</h2>
-      <div class="sub">Artists waiting for approval</div>
-      <div class="god-table-wrap">
-        <table class="god-table">
-          <thead>
-            <tr><th>Artist</th><th>Email</th><th>Category</th><th>Rate</th><th>Status</th><th>Joined</th></tr>
-          </thead>
-          <tbody id="verification-body"></tbody>
-        </table>
-      </div>
-    </div>
+          <div class="god-panel">
+            <h2>Manage artists</h2>
+            <div class="sub">Search, approve listings, or remove profiles from the marketplace</div>
+            <div class="god-toolbar">
+              <input id="artist-search" type="search" placeholder="Search name, email, username, city, genre…">
+              <select id="artist-status">
+                <option value="all">All artists</option>
+                <option value="pending">Pending approval</option>
+                <option value="verified">Verified</option>
+                <option value="active">Active</option>
+                <option value="inactive">Removed</option>
+              </select>
+              <button class="god-btn primary" type="button" onclick="loadArtists()"><i class="ti ti-search"></i> Search</button>
+            </div>
+            <div class="god-table-wrap">
+              <table class="god-table">
+                <thead>
+                  <tr>
+                    <th>Artist</th><th>Location</th><th>Genre</th><th>Bookings</th><th>Listing</th><th>Link</th><th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="artists-body"></tbody>
+              </table>
+            </div>
+          </div>
 
-    <div class="god-panel">
-      <h2>Removal requests</h2>
-      <div class="sub">Artists who asked to be taken off Gearsh instead of claiming</div>
-      <div class="god-table-wrap">
-        <table class="god-table">
-          <thead>
-            <tr><th>Artist</th><th>Contact email</th><th>Reason</th><th>Requested</th><th>Actions</th></tr>
-          </thead>
-          <tbody id="removal-body"></tbody>
-        </table>
-      </div>
-    </div>
+          <div class="god-panel">
+            <h2>Verification queue</h2>
+            <div class="sub">Artists waiting for approval</div>
+            <div class="god-table-wrap">
+              <table class="god-table">
+                <thead>
+                  <tr><th>Artist</th><th>Email</th><th>Category</th><th>Rate</th><th>Status</th><th>Joined</th></tr>
+                </thead>
+                <tbody id="verification-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
 
-    <div class="god-panel">
-      <h2>Payments & escrow</h2>
-      <div class="sub">PayFast transactions and escrow events</div>
-      <div id="escrow-summary" class="god-list" style="margin-bottom:16px"></div>
-      <div class="god-table-wrap">
-        <table class="god-table">
-          <thead>
-            <tr><th>Payment</th><th>Booking</th><th>Client</th><th>Amount</th><th>Fee</th><th>Status</th><th>Date</th></tr>
-          </thead>
-          <tbody id="payments-body"></tbody>
-        </table>
-      </div>
-    </div>
+        <!-- BOOKINGS -->
+        <section class="god-view" data-view="bookings">
+          <div class="god-view-head">
+            <h2>Bookings</h2>
+            <p>Requests flowing through the platform.</p>
+          </div>
 
-    <div class="god-panel">
-      <h2>Content Engine</h2>
-      <div class="sub">JSON copy & theme — publish to mobile and web without redeploying</div>
-      <div class="god-toolbar">
-        <span id="content-version" class="god-pill">Version —</span>
-        <button class="god-btn primary" type="button" onclick="loadContentAdmin()"><i class="ti ti-refresh"></i> Reload</button>
-        <button class="god-btn" type="button" onclick="publishContent()"><i class="ti ti-upload"></i> Publish draft</button>
-        <button class="god-btn" type="button" onclick="rollbackContent()"><i class="ti ti-arrow-back-up"></i> Rollback defaults</button>
-      </div>
-      <label for="content-copy-json">Copy JSON (draft)</label>
-      <textarea id="content-copy-json" rows="10" style="width:100%;margin-bottom:12px;font-family:monospace;font-size:12px;background:#0F172A;color:#E2E8F0;border:1px solid #1E293B;border-radius:8px;padding:12px"></textarea>
-      <label for="content-theme-json">Theme JSON (draft)</label>
-      <textarea id="content-theme-json" rows="8" style="width:100%;margin-bottom:12px;font-family:monospace;font-size:12px;background:#0F172A;color:#E2E8F0;border:1px solid #1E293B;border-radius:8px;padding:12px"></textarea>
-      <button class="god-btn primary" type="button" onclick="saveContentDraft()"><i class="ti ti-device-floppy"></i> Save draft</button>
-      <div id="content-result" class="god-success" style="display:none;margin-top:12px"></div>
-    </div>
+          <div class="god-panel">
+            <h2>Recent booking activity</h2>
+            <div class="sub">Requests flowing through the platform</div>
+            <div class="god-table-wrap">
+              <table class="god-table">
+                <thead>
+                  <tr><th>Artist</th><th>Client</th><th>Date</th><th>Venue</th><th>Amount</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="bookings-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
 
-    <div class="god-panel">
-      <h2>Disputes inbox</h2>
-      <div class="sub">Open booking disputes</div>
-      <div class="god-table-wrap">
-        <table class="god-table">
-          <thead>
-            <tr><th>Subject</th><th>Reporter</th><th>Booking</th><th>Severity</th><th>Status</th><th>Actions</th></tr>
-          </thead>
-          <tbody id="disputes-body"></tbody>
-        </table>
+        <!-- PAYMENTS -->
+        <section class="god-view" data-view="payments">
+          <div class="god-view-head">
+            <h2>Payments</h2>
+            <p>PayFast transactions, platform fees, and escrow events.</p>
+          </div>
+
+          <div class="god-panel">
+            <h2>Payments & escrow</h2>
+            <div class="sub">PayFast transactions and escrow events</div>
+            <div id="escrow-summary" class="god-list" style="margin-bottom:16px"></div>
+            <div class="god-table-wrap">
+              <table class="god-table">
+                <thead>
+                  <tr><th>Payment</th><th>Booking</th><th>Client</th><th>Amount</th><th>Fee</th><th>Status</th><th>Date</th></tr>
+                </thead>
+                <tbody id="payments-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- OUTREACH -->
+        <section class="god-view" data-view="outreach">
+          <div class="god-view-head">
+            <h2>Outreach</h2>
+            <p>Seed claimable profiles, send invites, and handle removal requests.</p>
+          </div>
+
+          <div class="god-panel" id="demo-panel">
+            <h2>Claimable listings</h2>
+            <div class="sub">Seed a bookable profile, then send the artist their booking link, claim page, and private code. They can claim the profile or request removal.</div>
+            <div class="god-toolbar">
+              <button class="god-btn primary" type="button" onclick="seedClaimableArtist('rixelton')"><i class="ti ti-user-plus"></i> Rix Elton</button>
+              <button class="god-btn primary" type="button" onclick="seedClaimableArtist('artwork-sounds')"><i class="ti ti-users"></i> Artwork Sounds</button>
+              <button class="god-btn primary" type="button" onclick="seedClaimableArtist('dj-buhle')"><i class="ti ti-disc"></i> DJ Buhle</button>
+            </div>
+            <div id="demo-result" class="god-success" style="display:none;margin-bottom:0"></div>
+          </div>
+
+          <div class="god-panel">
+            <h2>Removal requests</h2>
+            <div class="sub">Artists who asked to be taken off Gearsh instead of claiming</div>
+            <div class="god-table-wrap">
+              <table class="god-table">
+                <thead>
+                  <tr><th>Artist</th><th>Contact email</th><th>Reason</th><th>Requested</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="removal-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- DISPUTES -->
+        <section class="god-view" data-view="disputes">
+          <div class="god-view-head">
+            <h2>Disputes</h2>
+            <p>Open booking disputes that need a founder decision.</p>
+          </div>
+
+          <div class="god-panel">
+            <h2>Disputes inbox</h2>
+            <div class="sub">Open booking disputes</div>
+            <div class="god-table-wrap">
+              <table class="god-table">
+                <thead>
+                  <tr><th>Subject</th><th>Reporter</th><th>Booking</th><th>Severity</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="disputes-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- CONTENT -->
+        <section class="god-view" data-view="content">
+          <div class="god-view-head">
+            <h2>Content Engine</h2>
+            <p>Publish copy &amp; theme to mobile and web without redeploying.</p>
+          </div>
+
+          <div class="god-panel">
+            <h2>Content Engine</h2>
+            <div class="sub">JSON copy & theme — publish to mobile and web without redeploying</div>
+            <div class="god-toolbar">
+              <span id="content-version" class="god-pill">Version —</span>
+              <button class="god-btn primary" type="button" onclick="loadContentAdmin()"><i class="ti ti-refresh"></i> Reload</button>
+              <button class="god-btn" type="button" onclick="publishContent()"><i class="ti ti-upload"></i> Publish draft</button>
+              <button class="god-btn" type="button" onclick="rollbackContent()"><i class="ti ti-arrow-back-up"></i> Rollback defaults</button>
+            </div>
+            <label for="content-copy-json">Copy JSON (draft)</label>
+            <textarea id="content-copy-json" rows="10" style="width:100%;margin-bottom:12px;font-family:monospace;font-size:12px;background:#0F172A;color:#E2E8F0;border:1px solid #1E293B;border-radius:8px;padding:12px"></textarea>
+            <label for="content-theme-json">Theme JSON (draft)</label>
+            <textarea id="content-theme-json" rows="8" style="width:100%;margin-bottom:12px;font-family:monospace;font-size:12px;background:#0F172A;color:#E2E8F0;border:1px solid #1E293B;border-radius:8px;padding:12px"></textarea>
+            <button class="god-btn primary" type="button" onclick="saveContentDraft()"><i class="ti ti-device-floppy"></i> Save draft</button>
+            <div id="content-result" class="god-success" style="display:none;margin-top:12px"></div>
+          </div>
+        </section>
       </div>
     </div>
   </div>
@@ -499,6 +609,34 @@
       showApp(false);
     }
 
+    function switchView(name) {
+      var items = document.querySelectorAll('.god-nav-item');
+      for (var i = 0; i < items.length; i++) {
+        items[i].classList.toggle('active', items[i].getAttribute('data-view') === name);
+      }
+      var views = document.querySelectorAll('.god-view');
+      for (var j = 0; j < views.length; j++) {
+        views[j].classList.toggle('active', views[j].getAttribute('data-view') === name);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setNavBadge(id, count) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      if (count && count > 0) {
+        el.textContent = count > 99 ? '99+' : count;
+        el.classList.remove('hidden');
+      } else {
+        el.classList.add('hidden');
+      }
+    }
+
+    document.getElementById('god-nav').addEventListener('click', function(e) {
+      var btn = e.target.closest('.god-nav-item');
+      if (btn) switchView(btn.getAttribute('data-view'));
+    });
+
     async function founderFetch(path, options) {
       var res = await fetch(API_BASE + path, Object.assign({ headers: founderHeaders() }, options || {}));
       var data = await res.json();
@@ -609,6 +747,7 @@
           '<td>' + formatDate(row.created_at) + '</td>' +
         '</tr>';
       }).join('') || '<tr><td colspan="6">No pending verifications</td></tr>';
+      setNavBadge('badge-artists', (rows || []).length);
     }
 
     async function reviewRemovalRequest(requestId, action) {
@@ -635,6 +774,7 @@
           '</td>' +
         '</tr>';
       }).join('') || '<tr><td colspan="5">No pending removal requests</td></tr>';
+      setNavBadge('badge-outreach', (rows || []).length);
     }
 
     async function loadPayments() {
@@ -676,6 +816,7 @@
           '<td><button class="god-btn" type="button" onclick="resolveDispute(\'' + row.id + '\', \'resolved\')">Resolve</button></td>' +
         '</tr>';
       }).join('') || '<tr><td colspan="6">No open disputes</td></tr>';
+      setNavBadge('badge-disputes', (rows || []).length);
     }
 
     async function loadStats() {
