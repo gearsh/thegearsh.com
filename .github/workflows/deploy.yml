@@ -70,6 +70,8 @@ jobs:
           cp web/artist-services-manage.js build/web/artist-services-manage.js 2>/dev/null || true
           cp web/collaborate.html build/web/collaborate.html 2>/dev/null || true
           cp web/collaborate.js build/web/collaborate.js 2>/dev/null || true
+          cp web/lessons.html build/web/lessons.html 2>/dev/null || true
+          cp web/lessons.js build/web/lessons.js 2>/dev/null || true
           cp web/glog.html build/web/glog.html 2>/dev/null || true
           cp web/glog-post.html build/web/glog-post.html 2>/dev/null || true
           cp web/glog-data.js build/web/glog-data.js 2>/dev/null || true

@@ -372,6 +372,7 @@
         <li><a href="/artists">All artists</a></li>
         <li><a href="/glog">G-Log</a></li>
         <li><a href="#feed">Explore artists</a></li>
+        <li><a href="/lessons.html">Lessons</a></li>
         <li><a href="/collaborate.html">Collaborate</a></li>
         <li><a href="#how">How it works</a></li>
         <li><a href="#why">Why Gearsh</a></li>
@@ -485,6 +486,37 @@
     .collab-home-card .ch-fee { font-size: 12px; font-weight: 700; color: var(--g-accent); margin-top: 6px; }
     @media (max-width: 768px) { .collab-home-grid { grid-template-columns: repeat(2, 1fr); } }
   </style>
+  <section class="collab-home reveal" id="lessons">
+    <div class="section-label">Why Gearsh exists · Gear, shared</div>
+    <h2 class="section-title">Learn from the artists. <em>On their gear.</em></h2>
+    <p class="section-sub">Book one-on-one lessons and get hands-on with the decks, studios, and cameras you don't own yet — taught by the people who mastered them.</p>
+    <div class="collab-home-grid" id="lessons-home-grid"></div>
+    <div style="text-align:center;margin-top:28px">
+      <a href="/lessons.html" class="btn-main"><i class="ti ti-school"></i> Browse lessons</a>
+    </div>
+  </section>
+  <script>
+    (function () {
+      var grid = document.getElementById('lessons-home-grid');
+      if (!grid) return;
+      fetch('/api/lessons?limit=8').then(function (r) { return r.json(); }).then(function (res) {
+        if (!res || !res.success || !res.data) return;
+        var sec = res.data.sections;
+        var list = (sec && sec.top_tutors && sec.top_tutors.length ? sec.top_tutors : res.data.tutors) || [];
+        list = list.slice(0, 8);
+        grid.innerHTML = list.map(function (t) {
+          var from = t.from_price ? ('from R' + Number(t.from_price).toLocaleString('en-ZA')) : 'Lessons available';
+          var img = t.image || 'assets/images/artists/artists.png';
+          return '<a class="collab-home-card" href="/lessons.html?tutor=' + encodeURIComponent(t.username) + '">' +
+            '<img src="' + img + '" alt="" loading="lazy" onerror="this.src=\'assets/images/artists/artists.png\'">' +
+            '<div class="ch-body"><div class="ch-name">' + (t.name || '') + '</div>' +
+            '<div class="ch-meta">' + (t.discipline_label || '') + '</div>' +
+            '<div class="ch-fee">' + from + '</div></div></a>';
+        }).join('');
+      }).catch(function () {});
+    })();
+  </script>
+
   <section class="collab-home reveal" id="collaborate">
     <div class="section-label">New · Artist-to-artist</div>
     <h2 class="section-title">Find your next <em>collaboration.</em></h2>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lessons · Learn from the artists — Gearsh</title>
+  <meta name="description" content="Book one-on-one lessons from South Africa's artists and learn on the gear they own — DJing, production, vocals, photography and more. The original Gearsh: gear, shared.">
+  <link rel="icon" href="icons/Icon-512.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.7.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="gearsh-brand.css">
+  <style>
+    :root { --g-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--g-black); color: var(--g-text); font-family: var(--g-font); }
+    .skip-link { position: absolute; left: -9999px; }
+    a { color: inherit; }
+
+    .lsn-page { min-height: 100vh; }
+    .lsn-hero {
+      padding: 64px 20px 36px; text-align: center;
+      background: radial-gradient(900px 400px at 50% -10%, rgba(255,255,255,0.06), transparent 70%);
+    }
+    .lsn-hero-inner { max-width: 760px; margin: 0 auto; }
+    .lsn-badge {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600;
+      color: var(--g-accent); border: 0.5px solid var(--g-border); border-radius: 999px; padding: 6px 14px; margin-bottom: 18px;
+    }
+    .lsn-hero h1 { font-size: clamp(30px, 6vw, 52px); line-height: 1.05; margin: 0 0 14px; letter-spacing: -0.02em; }
+    .lsn-hero h1 em { font-style: normal; color: var(--g-accent); }
+    .lsn-hero p { font-size: 16px; color: var(--g-text-muted); line-height: 1.6; margin: 0; }
+
+    .lsn-wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px 80px; }
+    .lsn-toolbar { margin: 10px 0 16px; }
+    .lsn-search {
+      width: 100%; background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 12px;
+      padding: 14px 16px; color: var(--g-text); font-family: var(--g-font); font-size: 15px;
+    }
+    .lsn-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+    .lsn-chip {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 999px;
+      padding: 8px 14px; font-size: 13px; color: var(--g-text-muted); transition: all 0.15s;
+    }
+    .lsn-chip:hover { border-color: var(--g-border-light); color: var(--g-text); }
+    .lsn-chip.active { background: var(--g-accent); color: var(--g-black); border-color: var(--g-accent); font-weight: 600; }
+    .lsn-chip .cnt { opacity: 0.6; font-size: 11px; }
+
+    .lsn-section-title { font-size: 18px; font-weight: 700; margin: 26px 0 14px; }
+
+    .lsn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .lsn-card {
+      background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 18px; overflow: hidden;
+      display: flex; flex-direction: column; transition: transform 0.15s, border-color 0.15s;
+    }
+    .lsn-card:hover { transform: translateY(-3px); border-color: var(--g-border-light); }
+    .lsn-card-top { display: flex; gap: 12px; padding: 14px; align-items: center; }
+    .lsn-card-top img {
+      width: 56px; height: 56px; border-radius: 14px; object-fit: cover; background: var(--g-surface-2); flex-shrink: 0;
+    }
+    .lsn-card-name { font-size: 15px; font-weight: 700; color: var(--g-white); }
+    .lsn-card-meta { font-size: 12px; color: var(--g-text-dim); margin-top: 2px; }
+    .lsn-discipline {
+      display: inline-block; font-size: 11px; font-weight: 600; color: var(--g-accent);
+      background: rgba(255,255,255,0.05); border-radius: 999px; padding: 3px 9px; margin-top: 6px;
+    }
+    .lsn-card-body { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .lsn-gear { font-size: 11.5px; color: var(--g-text-dim); display: flex; align-items: flex-start; gap: 6px; line-height: 1.5; }
+    .lsn-gear i { color: var(--g-accent); margin-top: 1px; }
+    .lsn-offerings { display: flex; flex-direction: column; gap: 7px; }
+    .lsn-offering {
+      display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px;
+      background: var(--g-black); border: 0.5px solid var(--g-border); border-radius: 10px; padding: 8px 10px;
+    }
+    .lsn-offering b { color: var(--g-accent); white-space: nowrap; }
+    .lsn-offering .lvl { color: var(--g-text-dim); font-size: 11px; }
+    .lsn-card-foot { padding: 12px 14px; border-top: 0.5px solid var(--g-border); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .lsn-from { font-size: 12px; color: var(--g-text-muted); }
+    .lsn-from b { color: var(--g-white); font-size: 15px; }
+    .lsn-btn {
+      background: var(--g-accent); color: var(--g-black); border: 0; border-radius: 10px; cursor: pointer;
+      padding: 9px 14px; font-size: 13px; font-weight: 700; font-family: var(--g-font); white-space: nowrap;
+    }
+    .lsn-btn.ghost { background: transparent; color: var(--g-text); border: 0.5px solid var(--g-border); }
+
+    .lsn-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 4px; background: var(--g-surface); border-radius: 14px; margin-bottom: 18px; }
+    .lsn-tab {
+      flex-shrink: 0; cursor: pointer; background: transparent; border: 0; color: var(--g-text-muted);
+      padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; font-family: var(--g-font);
+      display: inline-flex; align-items: center; gap: 7px;
+    }
+    .lsn-tab.active { background: var(--g-black); color: var(--g-white); }
+    .lsn-tab-badge { background: var(--g-accent); color: var(--g-black); border-radius: 999px; font-size: 10px; padding: 1px 6px; }
+    .hidden { display: none !important; }
+
+    .lsn-view { display: none; }
+    .lsn-view.active { display: block; }
+
+    .lsn-row {
+      background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 14px; padding: 14px 16px;
+      margin-bottom: 10px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .lsn-row h4 { margin: 0 0 3px; font-size: 14px; }
+    .lsn-row .sub { font-size: 12px; color: var(--g-text-dim); }
+    .lsn-status { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; text-transform: capitalize; }
+    .lsn-status.pending { background: rgba(255,200,80,0.15); color: #ffd27a; }
+    .lsn-status.accepted, .lsn-status.scheduled { background: rgba(110,231,168,0.15); color: #6ee7a8; }
+    .lsn-status.completed { background: rgba(120,170,255,0.15); color: #8ab4ff; }
+    .lsn-status.declined, .lsn-status.cancelled { background: rgba(255,120,120,0.12); color: #ff8a8a; }
+    .lsn-row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .lsn-mini { cursor: pointer; border: 0.5px solid var(--g-border); background: var(--g-black); color: var(--g-text); border-radius: 8px; padding: 6px 11px; font-size: 12px; font-family: var(--g-font); }
+    .lsn-mini.primary { background: var(--g-accent); color: var(--g-black); border-color: var(--g-accent); font-weight: 700; }
+    .lsn-empty { text-align: center; color: var(--g-text-dim); padding: 50px 20px; font-size: 14px; }
+
+    .lsn-modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
+    }
+    .lsn-modal-backdrop.open { display: flex; }
+    .lsn-modal {
+      background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 20px;
+      width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; padding: 24px;
+    }
+    .lsn-modal-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+    .lsn-modal-head h2 { margin: 0; font-size: 20px; }
+    .lsn-modal-head p { margin: 4px 0 0; font-size: 13px; color: var(--g-text-muted); }
+    .lsn-close { background: transparent; border: 0; color: var(--g-text-muted); font-size: 26px; cursor: pointer; line-height: 1; }
+    .lsn-field { margin-bottom: 14px; }
+    .lsn-field label { display: block; font-size: 12px; color: var(--g-text-muted); margin-bottom: 6px; font-weight: 600; }
+    .lsn-field input, .lsn-field select, .lsn-field textarea {
+      width: 100%; background: var(--g-black); border: 0.5px solid var(--g-border); border-radius: 10px;
+      padding: 11px 13px; color: var(--g-text); font-family: var(--g-font); font-size: 14px;
+    }
+    .lsn-field textarea { min-height: 78px; resize: vertical; }
+    .lsn-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .lsn-guard {
+      display: flex; gap: 8px; font-size: 12px; line-height: 1.5; color: var(--g-text-muted);
+      background: rgba(255,255,255,0.04); border: 0.5px solid var(--g-border); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px;
+    }
+    .lsn-guard i { color: var(--g-accent); flex-shrink: 0; margin-top: 1px; }
+    .lsn-msg { font-size: 13px; margin: 10px 0; min-height: 16px; }
+    .lsn-msg.error { color: #ff8a8a; }
+    .lsn-msg.ok { color: #6ee7a8; }
+    .lsn-est { font-size: 13px; color: var(--g-text-muted); margin-bottom: 8px; }
+    .lsn-est b { color: var(--g-accent); font-size: 16px; }
+    @media (max-width: 560px) { .lsn-field-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <a href="#lsn-main" class="skip-link">Skip to content</a>
+
+  <nav class="g-nav">
+    <div class="g-nav-inner">
+      <a href="./" class="g-nav-logo"><img src="icons/Icon-512.png" alt="The Gearsh" width="40" height="40"> Gearsh</a>
+      <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+      <ul class="g-nav-links">
+        <li><a href="./">Explore</a></li>
+        <li><a href="lessons.html" class="active">Lessons</a></li>
+        <li><a href="collaborate.html">Collaborate</a></li>
+        <li><a href="artist-dashboard.html">Dashboard</a></li>
+        <li class="g-nav-menu-auth"><a href="auth.html" id="nav-auth-link" class="g-nav-cta">Sign in</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="lsn-page" id="lsn-main">
+    <section class="lsn-hero">
+      <div class="lsn-hero-inner">
+        <span class="lsn-badge"><i class="ti ti-school"></i> Gear, shared</span>
+        <h1>Learn from the artists. <em>On their gear.</em></h1>
+        <p>Book one-on-one lessons with South Africa's artists and producers — and get hands-on with the decks, studios, and cameras you don't own yet. This is why Gearsh exists.</p>
+      </div>
+    </section>
+
+    <div class="lsn-wrap">
+      <div class="lsn-tabs" id="lsn-tabs">
+        <button class="lsn-tab active" type="button" data-view="discover"><i class="ti ti-compass"></i> Find a tutor</button>
+        <button class="lsn-tab" type="button" data-view="booked"><i class="ti ti-calendar-event"></i> My lessons <span class="lsn-tab-badge hidden" id="badge-booked">0</span></button>
+        <button class="lsn-tab" type="button" data-view="teaching"><i class="ti ti-chalkboard"></i> Teaching <span class="lsn-tab-badge hidden" id="badge-teaching">0</span></button>
+      </div>
+
+      <!-- DISCOVER -->
+      <section class="lsn-view active" data-view="discover">
+        <div class="lsn-toolbar">
+          <input class="lsn-search" id="lsn-search" type="search" placeholder="Search tutors, disciplines, cities…">
+        </div>
+        <div class="lsn-chips" id="lsn-chips"></div>
+        <div id="lsn-discover-body"></div>
+      </section>
+
+      <!-- BOOKED -->
+      <section class="lsn-view" data-view="booked">
+        <div id="lsn-booked-body"></div>
+      </section>
+
+      <!-- TEACHING -->
+      <section class="lsn-view" data-view="teaching">
+        <div id="lsn-teaching-body"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- BOOK LESSON MODAL -->
+  <div class="lsn-modal-backdrop" id="book-modal">
+    <div class="lsn-modal">
+      <div class="lsn-modal-head">
+        <div>
+          <h2>Book a lesson</h2>
+          <p id="book-tutor">with an artist</p>
+        </div>
+        <button class="lsn-close" type="button" onclick="GearshLessons.closeBook()">&times;</button>
+      </div>
+      <form id="book-form">
+        <div class="lsn-field">
+          <label for="bk-lesson">Lesson *</label>
+          <select id="bk-lesson" required></select>
+        </div>
+        <div class="lsn-est" id="bk-est"></div>
+        <div class="lsn-field-row">
+          <div class="lsn-field">
+            <label for="bk-format">Format</label>
+            <select id="bk-format">
+              <option value="in_person">In person (use their gear)</option>
+              <option value="online">Online</option>
+            </select>
+          </div>
+          <div class="lsn-field">
+            <label for="bk-sessions">Sessions</label>
+            <input id="bk-sessions" type="number" min="1" max="52" value="1">
+          </div>
+        </div>
+        <div class="lsn-field">
+          <label for="bk-times">Preferred times</label>
+          <input id="bk-times" type="text" maxlength="300" placeholder="e.g. Weekday evenings, Saturday mornings">
+        </div>
+        <div class="lsn-field">
+          <label for="bk-message">Message to the tutor</label>
+          <textarea id="bk-message" maxlength="4000" placeholder="What do you want to learn? Your current level, goals, etc."></textarea>
+        </div>
+        <div class="lsn-guard">
+          <i class="ti ti-shield-lock"></i>
+          <span>Keep it on Gearsh. Contact &amp; payment details are hidden until your lesson is booked here — so you're covered by secure payments and support.</span>
+        </div>
+        <div class="lsn-msg" id="book-msg"></div>
+        <button class="lsn-btn" type="submit" id="book-submit" style="width:100%">Request lesson</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="g-footer">
+    <div class="g-footer-inner">
+      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="The Gearsh"> <span>© Gearsh</span></div>
+      <ul class="g-footer-links">
+        <li><a href="/terms">Terms</a></li>
+        <li><a href="/privacy">Privacy</a></li>
+        <li><a href="./">Home</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="lessons.js"></script>
+</body>
+</html>

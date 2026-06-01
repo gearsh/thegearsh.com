@@ -234,6 +234,14 @@
       </div>
       <a class="btn-main" id="collab-cta-link" href="collaborate.html" style="white-space:nowrap"><i class="ti ti-users-group"></i> Book Collaboration</a>
     </div>
+
+    <div class="card" id="lesson-cta" style="margin-top:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div>
+        <h2 style="margin-bottom:4px"><i class="ti ti-school" style="color:var(--g-accent)"></i> Want to learn from them?</h2>
+        <p class="card-sub" style="color:var(--g-text-muted);font-size:14px;margin:0">Book a one-on-one lesson with <em id="lesson-cta-name" style="font-style:normal;color:var(--g-white)">this artist</em> and learn hands-on using their gear.</p>
+      </div>
+      <a class="btn-main" id="lesson-cta-link" href="lessons.html" style="white-space:nowrap"><i class="ti ti-school"></i> Book a Lesson</a>
+    </div>
     </div>
 
     <div id="panel-events" hidden>
@@ -344,6 +352,15 @@
       var collabLink = document.getElementById('collab-cta-link');
       if (collabLink && data.username) {
         collabLink.href = 'collaborate.html?artist=' +
+          encodeURIComponent(String(data.username).toLowerCase()) +
+          '&name=' + encodeURIComponent(data.name || '');
+      }
+
+      var lessonName = document.getElementById('lesson-cta-name');
+      if (lessonName) lessonName.textContent = data.name || 'this artist';
+      var lessonLink = document.getElementById('lesson-cta-link');
+      if (lessonLink && data.username) {
+        lessonLink.href = 'lessons.html?tutor=' +
           encodeURIComponent(String(data.username).toLowerCase()) +
           '&name=' + encodeURIComponent(data.name || '');
       }
