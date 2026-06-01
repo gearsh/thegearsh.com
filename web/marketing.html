@@ -372,6 +372,7 @@
         <li><a href="/artists">All artists</a></li>
         <li><a href="/glog">G-Log</a></li>
         <li><a href="#feed">Explore artists</a></li>
+        <li><a href="/collaborate.html">Collaborate</a></li>
         <li><a href="#how">How it works</a></li>
         <li><a href="#why">Why Gearsh</a></li>
       </ul>
@@ -470,6 +471,50 @@
       <div class="testi-card"><p class="testi-text">"Custom pieces from R300. Gearsh put my designs in front of clients who actually want to buy. No more waiting."</p><div class="testi-author"><img src="assets/images/artists/dripmaker.png" alt="Dripmaker" class="testi-ava"><div><div class="testi-name">Dripmaker</div><div class="testi-role">Fashion · Thohoyandou</div></div></div></div>
     </div>
   </section>
+
+  <!-- COLLABORATE -->
+  <style>
+    .collab-home { padding: 72px 20px 0; max-width: 1200px; margin: 0 auto; }
+    .collab-home-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 28px; }
+    .collab-home-card { background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 16px; overflow: hidden; text-decoration: none; display: block; transition: transform .15s ease, border-color .15s ease; }
+    .collab-home-card:hover { transform: translateY(-3px); border-color: var(--g-border-light); }
+    .collab-home-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: var(--g-surface-2); }
+    .collab-home-card .ch-body { padding: 12px; }
+    .collab-home-card .ch-name { font-size: 14px; font-weight: 700; color: var(--g-white); }
+    .collab-home-card .ch-meta { font-size: 12px; color: var(--g-text-dim); margin-top: 2px; }
+    .collab-home-card .ch-fee { font-size: 12px; font-weight: 700; color: var(--g-accent); margin-top: 6px; }
+    @media (max-width: 768px) { .collab-home-grid { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+  <section class="collab-home reveal" id="collaborate">
+    <div class="section-label">New · Artist-to-artist</div>
+    <h2 class="section-title">Find your next <em>collaboration.</em></h2>
+    <p class="section-sub">Connect directly with creatives, book features, commission work, and build together.</p>
+    <div class="collab-home-grid" id="collab-home-grid"></div>
+    <div style="text-align:center;margin-top:28px">
+      <a href="/collaborate.html" class="btn-main"><i class="ti ti-sparkles"></i> Explore collaborations</a>
+    </div>
+  </section>
+  <script>
+    (function () {
+      var grid = document.getElementById('collab-home-grid');
+      if (!grid) return;
+      fetch('/api/collaborators?limit=8').then(function (r) { return r.json(); }).then(function (res) {
+        if (!res || !res.success || !res.data) return;
+        var sec = res.data.sections;
+        var list = (sec && sec.trending && sec.trending.length ? sec.trending : res.data.artists) || [];
+        list = list.slice(0, 8);
+        grid.innerHTML = list.map(function (a) {
+          var fee = (a.estimated_fee && a.estimated_fee.display) || 'Custom Quote';
+          var img = a.image || 'assets/images/artists/artists.png';
+          return '<a class="collab-home-card" href="/collaborate.html?artist=' + encodeURIComponent(a.username) + '">' +
+            '<img src="' + img + '" alt="" loading="lazy" onerror="this.src=\'assets/images/artists/artists.png\'">' +
+            '<div class="ch-body"><div class="ch-name">' + (a.name || '') + '</div>' +
+            '<div class="ch-meta">' + ((a.genre || a.category) || '') + '</div>' +
+            '<div class="ch-fee">' + fee + '</div></div></a>';
+        }).join('');
+      }).catch(function () {});
+    })();
+  </script>
 
   <!-- HOW IT WORKS -->
   <section class="how-section reveal" id="how">

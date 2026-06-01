@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Book and collaborate with creatives on Gearsh — features, production, songwriting, visual art, photography, video, and more.">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Collaborate | Gearsh</title>
+  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" href="icons/Icon-512.png">
+  <link rel="stylesheet" href="gearsh-brand.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    .collab-page { padding-top: 56px; min-height: 100vh; }
+
+    /* Hero */
+    .collab-hero {
+      position: relative; overflow: hidden;
+      padding: 56px 20px 36px; border-bottom: 0.5px solid var(--g-border);
+      background:
+        radial-gradient(120% 120% at 12% -10%, rgba(0,191,255,0.12) 0%, transparent 50%),
+        linear-gradient(to bottom, rgba(0,191,255,0.04), transparent 60%);
+    }
+    .collab-hero-inner { max-width: 1200px; margin: 0 auto; }
+    .collab-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(0,191,255,0.12); border: 0.5px solid rgba(0,191,255,0.22);
+      color: var(--g-accent); padding: 6px 14px; border-radius: 999px;
+      font-size: 12px; font-weight: 600; margin-bottom: 16px;
+    }
+    .collab-hero h1 {
+      font-family: var(--g-serif); font-weight: 400; letter-spacing: -0.03em;
+      font-size: clamp(34px, 6vw, 56px); line-height: 1.04; color: var(--g-white);
+    }
+    .collab-hero h1 em { font-style: italic; color: var(--g-accent); }
+    .collab-hero p { font-size: 16px; color: var(--g-text-muted); margin-top: 12px; max-width: 560px; line-height: 1.6; }
+
+    /* Tabs */
+    .collab-tabs {
+      position: sticky; top: 56px; z-index: 40;
+      background: rgba(10,10,10,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 0.5px solid var(--g-border);
+    }
+    .collab-tabs-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 20px;
+      display: flex; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    }
+    .collab-tab {
+      flex-shrink: 0; background: none; border: none; cursor: pointer;
+      font-family: var(--g-font); font-size: 14px; font-weight: 600; color: var(--g-text-muted);
+      padding: 16px 14px; border-bottom: 2px solid transparent; transition: color .15s ease;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .collab-tab:hover { color: var(--g-white); }
+    .collab-tab.active { color: var(--g-white); border-bottom-color: var(--g-accent); }
+    .collab-tab-badge {
+      background: var(--g-accent); color: var(--g-black); font-size: 11px; font-weight: 700;
+      min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .collab-tab-badge.hidden { display: none; }
+
+    .collab-wrap { max-width: 1200px; margin: 0 auto; padding: 28px 20px 64px; }
+    .collab-view { display: none; }
+    .collab-view.active { display: block; animation: collabFade .25s ease; }
+    @keyframes collabFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    /* Discover toolbar */
+    .collab-toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+    .collab-search {
+      flex: 1; min-width: 240px; height: 46px;
+      background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 12px;
+      padding: 0 16px; color: var(--g-text); font-family: var(--g-font); font-size: 14px;
+    }
+    .collab-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .collab-chip {
+      background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 999px;
+      padding: 8px 14px; color: var(--g-text-muted); font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: var(--g-font); display: inline-flex; align-items: center; gap: 6px;
+      transition: all .15s ease;
+    }
+    .collab-chip:hover { color: var(--g-white); border-color: var(--g-border-light); }
+    .collab-chip.active { background: var(--g-accent); color: var(--g-black); border-color: transparent; }
+
+    .collab-section-title {
+      font-family: var(--g-serif); font-size: 22px; font-weight: 400; color: var(--g-white);
+      letter-spacing: -0.02em; margin: 28px 0 14px;
+    }
+
+    /* Cards grid */
+    .collab-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px;
+    }
+    .collab-card {
+      background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 16px;
+      overflow: hidden; transition: transform .15s ease, border-color .15s ease;
+      display: flex; flex-direction: column;
+    }
+    .collab-card:hover { transform: translateY(-3px); border-color: var(--g-border-light); }
+    .collab-card-img {
+      width: 100%; aspect-ratio: 1 / 1; object-fit: cover; background: var(--g-surface-2); display: block;
+    }
+    .collab-card-body { padding: 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .collab-card-name { font-size: 15px; font-weight: 700; color: var(--g-white); }
+    .collab-card-meta { font-size: 12px; color: var(--g-text-dim); }
+    .collab-fee-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--g-text-dim); margin-top: 6px; }
+    .collab-fee-value { font-size: 14px; font-weight: 700; color: var(--g-accent); }
+    .collab-card-cta {
+      margin-top: 10px; width: 100%; height: 40px; border-radius: 10px;
+      background: var(--g-accent); color: var(--g-black); border: none; cursor: pointer;
+      font-family: var(--g-font); font-size: 13px; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      transition: opacity .15s ease;
+    }
+    .collab-card-cta:hover { opacity: 0.88; }
+    .collab-avail { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; }
+    .collab-avail.available { color: #6ee7b7; }
+    .collab-avail.limited { color: #fbbf24; }
+    .collab-avail.fully_booked { color: #f87171; }
+    .collab-avail i { font-size: 9px; }
+
+    /* Request list rows */
+    .collab-list { display: flex; flex-direction: column; gap: 12px; }
+    .collab-row {
+      background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 14px;
+      padding: 16px 18px; cursor: pointer; transition: border-color .15s ease;
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .collab-row:hover { border-color: var(--g-border-light); }
+    .collab-row-main { flex: 1; min-width: 200px; }
+    .collab-row-project { font-size: 15px; font-weight: 700; color: var(--g-white); }
+    .collab-row-sub { font-size: 13px; color: var(--g-text-muted); margin-top: 3px; }
+    .collab-row-meta { font-size: 12px; color: var(--g-text-dim); margin-top: 6px; display: flex; gap: 14px; flex-wrap: wrap; }
+
+    .pill {
+      display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700;
+      padding: 5px 10px; border-radius: 999px; text-transform: capitalize; letter-spacing: 0.02em; white-space: nowrap;
+    }
+    .pill-pending { background: rgba(148,163,184,0.14); color: #cbd5e1; }
+    .pill-reviewing { background: rgba(0,191,255,0.14); color: var(--g-accent); }
+    .pill-negotiating { background: rgba(251,191,36,0.14); color: #fbbf24; }
+    .pill-accepted { background: rgba(52,211,153,0.14); color: #6ee7b7; }
+    .pill-in_progress { background: rgba(99,102,241,0.18); color: #a5b4fc; }
+    .pill-completed { background: rgba(52,211,153,0.2); color: #6ee7b7; }
+    .pill-cancelled, .pill-declined { background: rgba(248,113,113,0.14); color: #f87171; }
+
+    .collab-empty {
+      text-align: center; padding: 56px 20px; color: var(--g-text-dim);
+      border: 1px dashed var(--g-border); border-radius: 16px;
+    }
+    .collab-empty i { font-size: 36px; display: block; margin-bottom: 12px; color: var(--g-text-muted); }
+
+    /* Modals */
+    .collab-modal-backdrop {
+      position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      display: none; align-items: flex-start; justify-content: center; padding: 40px 16px; overflow-y: auto;
+    }
+    .collab-modal-backdrop.open { display: flex; }
+    .collab-modal {
+      width: 100%; max-width: 560px; background: var(--g-surface); border: 0.5px solid var(--g-border-light);
+      border-radius: 20px; padding: 26px; animation: collabFade .2s ease; margin: auto;
+    }
+    .collab-modal.wide { max-width: 680px; }
+    .collab-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+    .collab-modal-head h2 { font-family: var(--g-serif); font-size: 24px; font-weight: 400; color: var(--g-white); letter-spacing: -0.02em; }
+    .collab-modal-head p { font-size: 13px; color: var(--g-text-dim); margin-top: 4px; }
+    .collab-close { background: none; border: none; color: var(--g-text-muted); font-size: 24px; cursor: pointer; line-height: 1; }
+    .collab-close:hover { color: var(--g-white); }
+
+    .collab-field { margin-bottom: 14px; }
+    .collab-field label { display: block; font-size: 12px; font-weight: 600; color: var(--g-text-muted); margin-bottom: 6px; }
+    .collab-field input, .collab-field select, .collab-field textarea {
+      width: 100%; background: var(--g-black); border: 0.5px solid var(--g-border); border-radius: 10px;
+      padding: 12px 14px; color: var(--g-text); font-family: var(--g-font); font-size: 14px;
+    }
+    .collab-field textarea { resize: vertical; min-height: 84px; }
+    .collab-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .collab-msg { font-size: 13px; margin: 8px 0; min-height: 18px; }
+    .collab-msg.error { color: #f87171; }
+    .collab-msg.ok { color: #6ee7b7; }
+
+    .collab-types-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+    .collab-type-toggle {
+      display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 10px;
+      background: var(--g-black); border: 0.5px solid var(--g-border); cursor: pointer; font-size: 13px; color: var(--g-text-muted);
+    }
+    .collab-type-toggle.on { border-color: var(--g-accent); color: var(--g-white); background: rgba(0,191,255,0.08); }
+    .collab-type-toggle i { font-size: 16px; }
+
+    /* Detail / thread */
+    .collab-detail-grid { display: grid; gap: 16px; }
+    .collab-detail-meta { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--g-text-muted); }
+    .collab-detail-meta b { color: var(--g-white); font-weight: 600; }
+    .collab-actions-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+    .collab-mini-btn {
+      height: 38px; padding: 0 14px; border-radius: 10px; border: 0.5px solid var(--g-border);
+      background: var(--g-black); color: var(--g-text); font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--g-font);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .collab-mini-btn:hover { border-color: var(--g-border-light); color: var(--g-white); }
+    .collab-mini-btn.primary { background: var(--g-accent); color: var(--g-black); border-color: transparent; }
+    .collab-mini-btn.danger { color: #f87171; border-color: rgba(248,113,113,0.25); }
+    .collab-mini-btn.good { color: #6ee7b7; border-color: rgba(52,211,153,0.25); }
+
+    .collab-thread {
+      background: var(--g-black); border: 0.5px solid var(--g-border); border-radius: 14px;
+      padding: 14px; max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
+    }
+    .collab-bubble { max-width: 80%; padding: 10px 13px; border-radius: 14px; font-size: 14px; line-height: 1.45; }
+    .collab-bubble.them { align-self: flex-start; background: var(--g-surface-2); color: var(--g-text); border-bottom-left-radius: 4px; }
+    .collab-bubble.me { align-self: flex-end; background: var(--g-accent); color: var(--g-black); border-bottom-right-radius: 4px; }
+    .collab-bubble-meta { font-size: 10px; opacity: 0.7; margin-top: 4px; }
+    .collab-composer { display: flex; gap: 8px; margin-top: 12px; }
+    .collab-composer input {
+      flex: 1; background: var(--g-black); border: 0.5px solid var(--g-border); border-radius: 10px;
+      padding: 12px 14px; color: var(--g-text); font-family: var(--g-font); font-size: 14px;
+    }
+
+    .collab-offers { display: flex; flex-direction: column; gap: 8px; }
+    .collab-offer-item {
+      display: flex; justify-content: space-between; gap: 10px; padding: 10px 12px;
+      background: var(--g-black); border: 0.5px solid var(--g-border); border-radius: 10px; font-size: 13px;
+    }
+    .collab-offer-item b { color: var(--g-accent); }
+
+    .collab-stars { display: inline-flex; gap: 4px; }
+    .collab-star { font-size: 26px; color: var(--g-border-light); cursor: pointer; transition: color .12s ease; }
+    .collab-star.on { color: #fbbf24; }
+
+    .collab-gate {
+      text-align: center; padding: 48px 20px; background: var(--g-surface);
+      border: 0.5px solid var(--g-border); border-radius: 16px;
+    }
+    .collab-gate h3 { font-family: var(--g-serif); font-size: 24px; font-weight: 400; color: var(--g-white); margin-bottom: 8px; }
+    .collab-gate p { font-size: 14px; color: var(--g-text-muted); margin-bottom: 18px; }
+
+    @media (max-width: 600px) {
+      .collab-field-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#collab-main" class="skip-link">Skip to content</a>
+
+  <nav class="g-nav">
+    <div class="g-nav-inner">
+      <a href="./" class="g-nav-logo">Gearsh</a>
+      <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
+      <ul class="g-nav-links">
+        <li><a href="./">Explore</a></li>
+        <li><a href="collaborate.html" class="active">Collaborate</a></li>
+        <li><a href="artist-dashboard.html">Dashboard</a></li>
+        <li class="g-nav-menu-auth"><a href="auth.html" id="nav-auth-link" class="g-nav-cta">Sign in</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="collab-page" id="collab-main">
+    <section class="collab-hero">
+      <div class="collab-hero-inner">
+        <span class="collab-badge"><i class="ti ti-sparkles"></i> Artist-to-artist</span>
+        <h1>Find your next <em>collaboration</em>.</h1>
+        <p>Connect directly with creatives, book features, commission work, and build together — the creative economy, powered by Gearsh.</p>
+      </div>
+    </section>
+
+    <div class="collab-tabs">
+      <div class="collab-tabs-inner" id="collab-tabs">
+        <button class="collab-tab active" type="button" data-view="discover"><i class="ti ti-compass"></i> Discover</button>
+        <button class="collab-tab" type="button" data-view="sent"><i class="ti ti-send"></i> Sent</button>
+        <button class="collab-tab" type="button" data-view="received"><i class="ti ti-inbox"></i> Received <span class="collab-tab-badge hidden" id="badge-received">0</span></button>
+        <button class="collab-tab" type="button" data-view="active"><i class="ti ti-progress"></i> Active</button>
+        <button class="collab-tab" type="button" data-view="completed"><i class="ti ti-checks"></i> Completed</button>
+        <button class="collab-tab" type="button" data-view="settings"><i class="ti ti-settings"></i> Collaborate With Me</button>
+      </div>
+    </div>
+
+    <div class="collab-wrap">
+      <!-- DISCOVER -->
+      <section class="collab-view active" data-view="discover">
+        <div class="collab-toolbar">
+          <input class="collab-search" id="collab-search" type="search" placeholder="Search artists, genres, cities…">
+        </div>
+        <div class="collab-chips" id="collab-type-chips"></div>
+        <div id="collab-discover-body"></div>
+      </section>
+
+      <!-- SENT -->
+      <section class="collab-view" data-view="sent">
+        <div id="collab-sent-body"></div>
+      </section>
+
+      <!-- RECEIVED -->
+      <section class="collab-view" data-view="received">
+        <div id="collab-received-body"></div>
+      </section>
+
+      <!-- ACTIVE -->
+      <section class="collab-view" data-view="active">
+        <div id="collab-active-body"></div>
+      </section>
+
+      <!-- COMPLETED -->
+      <section class="collab-view" data-view="completed">
+        <div id="collab-completed-body"></div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="collab-view" data-view="settings">
+        <div id="collab-settings-body"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- BOOK COLLABORATION MODAL -->
+  <div class="collab-modal-backdrop" id="book-modal">
+    <div class="collab-modal">
+      <div class="collab-modal-head">
+        <div>
+          <h2>Book collaboration</h2>
+          <p id="book-modal-recipient">with an artist</p>
+        </div>
+        <button class="collab-close" type="button" onclick="GearshCollab.closeBook()">&times;</button>
+      </div>
+      <form id="book-form">
+        <div class="collab-field">
+          <label for="bk-project">Project name *</label>
+          <input id="bk-project" type="text" maxlength="160" required placeholder="e.g. Summer single feature">
+        </div>
+        <div class="collab-field">
+          <label for="bk-type">Collaboration type *</label>
+          <select id="bk-type" required></select>
+        </div>
+        <div class="collab-field-row">
+          <div class="collab-field">
+            <label for="bk-budget">Budget (ZAR)</label>
+            <input id="bk-budget" type="number" min="0" step="1" placeholder="Optional">
+          </div>
+          <div class="collab-field">
+            <label for="bk-deadline">Deadline</label>
+            <input id="bk-deadline" type="date">
+          </div>
+        </div>
+        <div class="collab-field">
+          <label for="bk-description">Project description</label>
+          <textarea id="bk-description" maxlength="4000" placeholder="Describe the vision, scope, and what you need."></textarea>
+        </div>
+        <div class="collab-field">
+          <label for="bk-deliverables">Deliverables</label>
+          <input id="bk-deliverables" type="text" maxlength="2000" placeholder="e.g. 1 verse + hook, mixed">
+        </div>
+        <div class="collab-field">
+          <label for="bk-refs">Reference links (comma separated)</label>
+          <input id="bk-refs" type="text" placeholder="https://…, https://…">
+        </div>
+        <div class="collab-msg" id="book-msg"></div>
+        <button class="btn-main" type="submit" id="book-submit" style="width:100%">Send collaboration request</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- DETAIL MODAL -->
+  <div class="collab-modal-backdrop" id="detail-modal">
+    <div class="collab-modal wide">
+      <div class="collab-modal-head">
+        <div>
+          <h2 id="detail-title">Collaboration</h2>
+          <p id="detail-sub"></p>
+        </div>
+        <button class="collab-close" type="button" onclick="GearshCollab.closeDetail()">&times;</button>
+      </div>
+      <div class="collab-detail-grid" id="detail-body"></div>
+    </div>
+  </div>
+
+  <footer class="g-footer">
+    <div class="g-footer-inner">
+      <div class="g-footer-left"><span>© Gearsh</span></div>
+      <ul class="g-footer-links">
+        <li><a href="/terms">Terms</a></li>
+        <li><a href="/privacy">Privacy</a></li>
+        <li><a href="./">Home</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="collaborate.js"></script>
+</body>
+</html>
