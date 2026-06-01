@@ -58,6 +58,25 @@
     });
   }
 
+  // Same as api() but resolves the full response envelope (for contact_unlocked, notice, etc.).
+  function apiRaw(path, opts) {
+    opts = opts || {};
+    var headers = opts.headers || {};
+    if (opts.body) headers['Content-Type'] = 'application/json';
+    var token = getToken();
+    if (token) headers.Authorization = 'Bearer ' + token;
+    return fetch(API + path, {
+      method: opts.method || 'GET',
+      headers: headers,
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    }).then(function (r) {
+      return r.json().then(function (d) {
+        if (!r.ok || !d.success) throw new Error(d.error || 'Request failed');
+        return d;
+      });
+    });
+  }
+
   function el(id) { return document.getElementById(id); }
 
   function gate(message) {
@@ -407,18 +426,30 @@
     }).catch(function (err) { alert(err.message); });
   }
 
+  function protectionBanner(unlocked) {
+    if (unlocked) {
+      return '<div class="collab-guard-banner unlocked"><i class="ti ti-lock-open"></i> ' +
+        'Contact sharing is unlocked — this collaboration is booked &amp; protected on Gearsh.</div>';
+    }
+    return '<div class="collab-guard-banner"><i class="ti ti-shield-lock"></i> ' +
+      '<span><b>Keep it on Gearsh.</b> Phone numbers, emails, socials &amp; off-platform payment details are hidden until the collaboration is booked and paid here. Booking on Gearsh covers you with escrow, dispute support, and a verified track record.</span></div>';
+  }
+
   function loadThread(id) {
-    api('/collaborations/' + id + '/messages').then(function (messages) {
+    apiRaw('/collaborations/' + id + '/messages').then(function (res) {
+      var messages = res.data || [];
       var thread = el('detail-thread');
       if (!thread) return;
+      var banner = protectionBanner(res.contact_unlocked);
       if (!messages.length) {
-        thread.innerHTML = '<p style="color:var(--g-text-dim);font-size:13px">No messages yet. Start the conversation.</p>';
+        thread.innerHTML = banner + '<p style="color:var(--g-text-dim);font-size:13px">No messages yet. Start the conversation.</p>';
         return;
       }
-      thread.innerHTML = messages.map(function (m) {
+      thread.innerHTML = banner + messages.map(function (m) {
         return '<div class="collab-bubble ' + (m.sender === 'me' ? 'me' : 'them') + '">' +
           escapeHtml(m.text) +
           (m.attachment_url ? '<br><a href="' + escapeHtml(m.attachment_url) + '" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">attachment</a>' : '') +
+          (m.flagged && m.sender === 'me' ? '<div class="collab-bubble-flag"><i class="ti ti-alert-triangle"></i> Hidden details</div>' : '') +
           '<div class="collab-bubble-meta">' + timeAgo(m.timestamp) + '</div></div>';
       }).join('');
       thread.scrollTop = thread.scrollHeight;
@@ -430,9 +461,26 @@
     var text = (input.value || '').trim();
     if (!text) return;
     input.value = '';
-    api('/collaborations/' + id + '/messages', { method: 'POST', body: { message: text } })
-      .then(function () { loadThread(id); })
+    apiRaw('/collaborations/' + id + '/messages', { method: 'POST', body: { message: text } })
+      .then(function (res) {
+        loadThread(id);
+        if (res.redacted && res.notice) showGuardNotice(res.notice);
+      })
       .catch(function (err) { alert(err.message); });
+  }
+
+  function showGuardNotice(message) {
+    var box = el('collab-guard-toast');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'collab-guard-toast';
+      box.className = 'collab-guard-toast';
+      document.body.appendChild(box);
+    }
+    box.innerHTML = '<i class="ti ti-shield-lock"></i> ' + escapeHtml(message);
+    box.classList.add('show');
+    clearTimeout(box._t);
+    box._t = setTimeout(function () { box.classList.remove('show'); }, 6500);
   }
 
   function submitReview(id, rating) {

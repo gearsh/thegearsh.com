@@ -4,6 +4,13 @@ import {
   jsonResponse,
   requireAuth,
 } from '../../auth-utils.js';
+import { guardMessage, leakageNudge } from '../../message-guard.js';
+
+// A booking's deal is locked-in once it's paid (PayFast notify sets 'confirmed').
+const BOOKING_UNLOCKED_STATUSES = new Set(['confirmed', 'completed', 'in_progress', 'paid']);
+function bookingContactUnlocked(status) {
+  return BOOKING_UNLOCKED_STATUSES.has(String(status || ''));
+}
 
 async function userArtistProfileId(db, userId) {
   const row = await db.prepare(
@@ -14,7 +21,7 @@ async function userArtistProfileId(db, userId) {
 
 async function getBookingParticipants(db, bookingId) {
   return db.prepare(`
-    SELECT b.client_id, ap.user_id AS artist_user_id
+    SELECT b.client_id, b.status, ap.user_id AS artist_user_id
     FROM bookings b
     JOIN artist_profiles ap ON b.artist_id = ap.id
     WHERE b.id = ?
@@ -92,10 +99,15 @@ export async function onRequestPost(context) {
     }
 
     const body = await context.request.json();
-    const content = String(body.content || body.text || '').trim();
-    if (!content) {
+    const rawContent = String(body.content || body.text || '').trim();
+    if (!rawContent) {
       return jsonResponse({ success: false, error: 'Message content is required' }, 400);
     }
+
+    // Anti-leakage: hide contact/payment details until the booking is paid on Gearsh.
+    const unlocked = bookingContactUnlocked(booking.status);
+    const guard = guardMessage(rawContent, unlocked);
+    const content = guard.text;
 
     const receiverId = auth.userId === booking.client_id
       ? booking.artist_user_id
@@ -117,6 +129,9 @@ export async function onRequestPost(context) {
         text: content,
         timestamp: now,
       },
+      redacted: guard.redacted,
+      notice: guard.redacted ? leakageNudge(guard.reasons) : '',
+      contact_unlocked: unlocked,
     }, 201);
   } catch (err) {
     console.error('Messages post error:', err);

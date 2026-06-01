@@ -180,12 +180,43 @@ export async function ensureCollaborationTables(db) {
     )
   `).run();
 
+  // Leakage moderation log — circumvention attempts surfaced to the founder.
+  await db.prepare(`
+    CREATE TABLE IF NOT EXISTS collaboration_flags (
+      id TEXT PRIMARY KEY,
+      collaboration_id TEXT,
+      message_id TEXT,
+      sender_id TEXT,
+      reasons TEXT,
+      excerpt TEXT,
+      resolved INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT (datetime('now'))
+    )
+  `).run();
+
   await db.prepare(`CREATE INDEX IF NOT EXISTS idx_collab_requester ON collaboration_requests(requester_id)`).run();
   await db.prepare(`CREATE INDEX IF NOT EXISTS idx_collab_recipient ON collaboration_requests(recipient_id)`).run();
   await db.prepare(`CREATE INDEX IF NOT EXISTS idx_collab_recipient_username ON collaboration_requests(recipient_username)`).run();
   await db.prepare(`CREATE INDEX IF NOT EXISTS idx_collab_offers_request ON collaboration_offers(request_id)`).run();
   await db.prepare(`CREATE INDEX IF NOT EXISTS idx_collab_messages ON collaboration_messages(collaboration_id)`).run();
   await db.prepare(`CREATE INDEX IF NOT EXISTS idx_collab_reviews ON collaboration_reviews(collaboration_id)`).run();
+  await db.prepare(`CREATE INDEX IF NOT EXISTS idx_collab_flags_unresolved ON collaboration_flags(resolved)`).run();
+
+  // Migration: add moderation columns to collaboration_messages if missing.
+  await addColumnIfMissing(db, 'collaboration_messages', 'flagged', 'INTEGER DEFAULT 0');
+  await addColumnIfMissing(db, 'collaboration_messages', 'flag_reasons', 'TEXT');
+}
+
+// ALTER TABLE ADD COLUMN, ignoring the "duplicate column" error on re-run.
+async function addColumnIfMissing(db, table, column, definition) {
+  try {
+    await db.prepare(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`).run();
+  } catch (err) {
+    const msg = String((err && err.message) || err || '');
+    if (!/duplicate column/i.test(msg)) {
+      console.warn('addColumnIfMissing(' + table + '.' + column + '):', msg);
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------

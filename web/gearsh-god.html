@@ -455,6 +455,20 @@
               </table>
             </div>
           </div>
+
+          <div class="god-panel">
+            <h2>Leakage watch <i class="ti ti-shield-lock"></i></h2>
+            <div class="sub">Messages where someone tried to share contact/payment details or take a deal off-platform. Repeat offenders should be warned, then suspended.</div>
+            <div id="leakage-offenders" style="margin:8px 0"></div>
+            <div class="god-table-wrap">
+              <table class="god-table">
+                <thead>
+                  <tr><th>When</th><th>Sender</th><th>Reasons</th><th>What they wrote</th><th>Action</th></tr>
+                </thead>
+                <tbody id="leakage-body"></tbody>
+              </table>
+            </div>
+          </div>
         </section>
 
         <!-- CONTENT -->
@@ -817,6 +831,59 @@
         '</tr>';
       }).join('') || '<tr><td colspan="6">No open disputes</td></tr>';
       setNavBadge('badge-disputes', (rows || []).length);
+      await loadLeakage();
+    }
+
+    var REASON_LABELS = {
+      phone: 'Phone #', email: 'Email', link: 'Link/URL', handle: 'Social handle',
+      off_platform_phrase: 'Off-platform / payment'
+    };
+
+    async function resolveLeakage(flagId) {
+      await founderFetch('/founder/leakage-flags', {
+        method: 'PATCH',
+        body: JSON.stringify({ id: flagId })
+      });
+      await loadLeakage();
+    }
+    window.resolveLeakage = resolveLeakage;
+
+    async function loadLeakage() {
+      var flags = await founderFetch('/founder/leakage-flags');
+      flags = flags || [];
+
+      var offenders = {};
+      flags.forEach(function(f) {
+        offenders[f.sender_id] = offenders[f.sender_id] || { name: f.sender_name, count: 0 };
+        offenders[f.sender_id].count += 1;
+      });
+      var repeat = Object.keys(offenders).map(function(id) {
+        return { name: offenders[id].name, count: offenders[id].count };
+      }).filter(function(o) { return o.count >= 2; }).sort(function(a, b) { return b.count - a.count; });
+
+      document.getElementById('leakage-offenders').innerHTML = repeat.length
+        ? repeat.map(function(o) {
+            return '<span style="display:inline-block;background:#3a1212;color:#ff8a8a;border:1px solid #5a1d1d;border-radius:999px;padding:4px 10px;font-size:12px;margin:0 6px 6px 0">' +
+              '⚠ ' + escapeHtmlGod(o.name) + ' · ' + o.count + ' attempts</span>';
+          }).join('')
+        : '';
+
+      document.getElementById('leakage-body').innerHTML = flags.map(function(f) {
+        var reasons = (f.reasons || []).map(function(r) { return REASON_LABELS[r] || r; }).join(', ');
+        return '<tr>' +
+          '<td>' + formatDate(f.created_at) + '</td>' +
+          '<td>' + escapeHtmlGod(f.sender_name) + (f.sender_username ? '<br><span style="font-size:12px;color:var(--g-text-dim)">@' + escapeHtmlGod(f.sender_username) + '</span>' : '') + '</td>' +
+          '<td><span style="color:#ff8a8a;font-size:12px">' + escapeHtmlGod(reasons) + '</span></td>' +
+          '<td style="max-width:280px;font-size:12px;color:var(--g-text-muted)">' + escapeHtmlGod(f.excerpt || '') + '</td>' +
+          '<td><button class="god-btn" type="button" onclick="resolveLeakage(\'' + f.id + '\')">Dismiss</button></td>' +
+        '</tr>';
+      }).join('') || '<tr><td colspan="5">No leakage attempts. 🎉</td></tr>';
+    }
+
+    function escapeHtmlGod(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
     }
 
     async function loadStats() {
