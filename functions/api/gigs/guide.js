@@ -43,7 +43,12 @@ export async function onRequestGet(context) {
     await ensureTicketsTables(context.env.DB);
     await ensureActivityTables(context.env.DB);
     await expireStaleOrders(context.env.DB);
-    await seedGuideGigsIfEmpty(context.env.DB);
+    // Seeding is best-effort — never let it break the guide.
+    try {
+      await seedGuideGigsIfEmpty(context.env.DB);
+    } catch (seedErr) {
+      console.error('Gig guide seed skipped:', seedErr);
+    }
 
     const url = new URL(context.request.url);
     const q = String(url.searchParams.get('q') || '').trim().toLowerCase();
