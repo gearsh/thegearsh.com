@@ -1,7 +1,7 @@
 ﻿// 100 South African artists, listed for discovery, claimable later via claim-profile
 
 /** Featured profiles seeded on every feed load (before batch seed). */
-var PRIORITY_SHOWCASE_USERNAMES = ['vanz', 'rixelton'];
+var PRIORITY_SHOWCASE_USERNAMES = ['vanz', 'rixelton', 'sir-lsg'];
 
 const SA_SHOWCASE_ARTISTS = [
   {
@@ -1537,6 +1537,42 @@ const SA_SHOWCASE_ARTISTS = [
     hourlyRate: 45000,
     bio: 'George Lesley & Soultronixx — soulful house duo behind The Gospel According to Artwork Sounds. Traxsource chart-toppers blending deep house, gospel, and amapiano textures. Claim this profile to manage bookings, or request removal if you prefer not to be listed.',
     skills: ['Soulful House', 'Deep House', 'DJ Duo', 'Live Performance', 'Gospel House'],
+  },
+  {
+    name: 'Sir LSG',
+    username: 'sir-lsg',
+    image: 'assets/images/artists/artists.png',
+    category: 'Producer & DJ',
+    genre: 'Soulful House · Afro House · Johannesburg',
+    genreSlug: 'house',
+    location: 'Johannesburg',
+    country: 'South Africa',
+    masteryHours: 7200,
+    badge: 'Expert',
+    badgeClass: 'fb-feat',
+    hourlyRate: 45000,
+    bio: 'Lesego Sefako — award-winning soulful house producer, DJ, and curator behind Bread4Soul Sessions. Known for Moving Circles and global hits including Sax in the City. Claim this profile to manage bookings and payments, or request removal if you prefer not to be listed.',
+    skills: ['Soulful House', 'Production', 'DJ', 'Live Performance', 'Remix'],
+    bookingServices: [
+      {
+        name: 'DJ Set — Club / Event',
+        description: 'Soulful and Afro house set for clubs, festivals, and private events.',
+        price: 45000,
+        duration_hours: 2,
+      },
+      {
+        name: 'Production — Original or Remix',
+        description: 'Custom production or remix in Sir LSG’s soulful house style.',
+        price: 25000,
+        delivery_days: 21,
+      },
+      {
+        name: 'Live Performance — Bread4Soul style',
+        description: 'Live soulful house performance with keys and vocalists (venue-dependent).',
+        price: 85000,
+        duration_hours: 2,
+      },
+    ],
   },
   {
     name: 'DJ Buhle',
