@@ -1,7 +1,7 @@
 /**
  * Gearsh Artists Directory Page
  */
-(function () {
+(function (global) {
   'use strict';
 
   var grid = document.getElementById('artist-grid');
@@ -238,4 +238,4 @@
   }
 
   init();
-})();
+})(typeof window !== 'undefined' ? window : this);

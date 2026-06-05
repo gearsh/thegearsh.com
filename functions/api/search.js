@@ -5,6 +5,7 @@ import {
   artistDistanceKm,
   compareArtistsByDistance,
 } from './location-utils.js';
+import { searchMarketplaceServices } from './marketplace-service-utils.js';
 
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
@@ -208,12 +209,36 @@ async function runSearch(context, body) {
       artists.sort((a, b) => b.relevance_score - a.relevance_score);
     }
 
+    const serviceFilters = {
+      query,
+      category: body.marketplace || body.serviceCategory || categories[0] || 'all',
+      minPrice: minPrice || 0,
+      maxPrice: maxPrice || 0,
+      location: body.location || '',
+      sortBy: sortBy === 'price_low' ? 'price_low' : sortBy === 'price_high' ? 'price_high' : sortBy === 'rating' ? 'rating' : 'relevance',
+      limit: Math.min(limit, 40),
+      offset: 0,
+      userLat: resolvedLat,
+      userLng: resolvedLng,
+      availableOnly: body.availableOnly || false,
+    };
+
+    let services = [];
+    try {
+      const serviceResult = await searchMarketplaceServices(context, serviceFilters);
+      services = serviceResult.services || [];
+    } catch (serviceErr) {
+      console.error('Service search error:', serviceErr);
+    }
+
     return new Response(JSON.stringify({
       success: true,
       data: artists,
+      services,
       meta: {
         query,
         total: artists.length,
+        service_total: services.length,
         limit,
         offset
       }

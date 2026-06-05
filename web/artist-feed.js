@@ -583,7 +583,10 @@
     var local = cards.filter(function (card) {
       return card.distance_km != null && card.distance_km <= 250;
     });
-    if (!local.length) local = cards.filter(function (card) { return card.distance_km != null; }).slice(0, limit);
+    if (!local.length) {
+      local = cards.filter(function (card) { return card.distance_km != null; }).slice(0, limit);
+    }
+    if (!local.length) local = cards.slice(0, limit);
     if (!local.length) return null;
     return {
       category: {

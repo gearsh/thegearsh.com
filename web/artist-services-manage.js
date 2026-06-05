@@ -49,6 +49,8 @@
             '<input class="field-input" name="duration_hours" type="number" min="0.5" step="0.5" placeholder="2"></div>' +
           '<div class="field-group"><label class="field-label">Delivery days</label>' +
             '<input class="field-input" name="delivery_days" type="number" min="1" placeholder="Optional"></div>' +
+          '<div class="field-group"><label class="field-label">Category</label>' +
+            '<select class="field-input" name="marketplace_category" id="asv-category"></select></div>' +
         '</div>' +
         '<div class="field-group"><label class="field-label">Description</label>' +
           '<textarea class="field-textarea" name="description" rows="3" placeholder="What clients get when they book this package."></textarea></div>' +
@@ -61,7 +63,26 @@
       self.addService();
     });
 
+    this.populateCategories();
     this.loadServices();
+  };
+
+  ArtistServicesManage.prototype.populateCategories = function () {
+    var sel = document.getElementById('asv-category');
+    if (!sel) return;
+    var options = [{ id: 'producers', title: 'General production' }];
+    if (global.GearshMarketplace && GearshMarketplace.FEATURED) {
+      options = GearshMarketplace.FEATURED.map(function (c) {
+        return { id: c.id, title: c.title };
+      }).concat([
+        { id: 'producers', title: 'Production' },
+        { id: 'djs', title: 'DJ services' },
+        { id: 'feature-artists', title: 'Feature / collab' },
+      ]);
+    }
+    sel.innerHTML = options.map(function (opt) {
+      return '<option value="' + escapeHtml(opt.id) + '">' + escapeHtml(opt.title) + '</option>';
+    }).join('');
   };
 
   ArtistServicesManage.prototype.setMsg = function (text, ok) {
@@ -194,6 +215,7 @@
         duration_hours: Number(form.querySelector('.asv-duration').value || 0) || null,
         delivery_days: Number(form.querySelector('.asv-days').value || 0) || null,
         description: form.querySelector('.asv-desc').value.trim(),
+        marketplace_category: form.querySelector('.asv-category') ? form.querySelector('.asv-category').value : undefined,
       }),
     })
       .then(function (r) { return r.json(); })
@@ -224,6 +246,7 @@
         duration_hours: Number(fd.get('duration_hours') || 0) || null,
         delivery_days: Number(fd.get('delivery_days') || 0) || null,
         description: fd.get('description'),
+        marketplace_category: fd.get('marketplace_category'),
       }),
     })
       .then(function (r) { return r.json(); })

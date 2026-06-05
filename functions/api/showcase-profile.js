@@ -1,5 +1,6 @@
 import { SA_SHOWCASE_ARTISTS } from './sa-showcase-data.js';
 import { buildProfileUrl } from './auth-utils.js';
+import { inferMarketplaceCategory } from './marketplace-categories.js';
 
 /** Published SA booking fees (Briefly.co.za, celebrity agencies, 2025–2026). */
 export const VERIFIED_BOOKING_RATES = {
@@ -418,12 +419,16 @@ function buildCreativeServices(artist, price) {
 export function buildShowcaseServices(artist, fee) {
   if (Array.isArray(artist.bookingServices) && artist.bookingServices.length) {
     return artist.bookingServices.map(function (service, index) {
+      const category = service.marketplace_category
+        || inferMarketplaceCategory(service.name + ' ' + (service.description || ''));
       return {
         id: service.id || `svc_showcase_${artist.username}_${index + 1}`,
         name: service.name,
         description: service.description || '',
         price: Number(service.price),
         duration_hours: Number(service.duration_hours || 2),
+        marketplace_category: category,
+        price_type: service.price_type || 'fixed',
       };
     });
   }
@@ -547,9 +552,13 @@ export async function seedShowcaseServices(db, artistId, artist, fee) {
   await db.prepare(`DELETE FROM services WHERE artist_id = ?`).bind(artistId).run();
 
   for (const service of buildShowcaseServices(artist, fee)) {
+    const category = service.marketplace_category
+      || inferMarketplaceCategory(service.name + ' ' + (service.description || ''));
     await db.prepare(`
-      INSERT INTO services (id, artist_id, name, description, price, duration_hours, is_active, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, 1, ?)
+      INSERT INTO services (
+        id, artist_id, name, description, price, duration_hours, is_active, created_at,
+        marketplace_category, price_type, search_keywords
+      ) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?)
     `).bind(
       service.id,
       artistId,
@@ -557,7 +566,10 @@ export async function seedShowcaseServices(db, artistId, artist, fee) {
       service.description,
       service.price,
       service.duration_hours,
-      now
+      now,
+      category,
+      service.price_type || 'fixed',
+      [service.name, category, service.description].filter(Boolean).join(' ').toLowerCase()
     ).run();
   }
 }

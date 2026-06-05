@@ -9,6 +9,8 @@ import {
   requireAuth,
 } from './auth-utils.js';
 import { ensureMasterProfileColumns } from './master-profile-schema.js';
+import { ensureMarketplaceColumns, slugifyService } from './marketplace-schema.js';
+import { inferMarketplaceCategory } from './marketplace-categories.js';
 
 function newId(prefix) {
   return prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
@@ -27,6 +29,7 @@ export async function onRequestGet(context) {
     if (auth.error) return auth.error;
 
     await ensureMasterProfileColumns(context.env.DB);
+    await ensureMarketplaceColumns(context.env.DB);
     const artistId = await getArtistProfileId(context.env.DB, auth.userId);
     if (!artistId) {
       return jsonResponse({ success: false, error: 'Artist profile required' }, 403);
@@ -34,7 +37,8 @@ export async function onRequestGet(context) {
 
     const rows = await context.env.DB.prepare(`
       SELECT id, name, description, price, duration_hours, delivery_days,
-             deliverables, is_featured, sort_order, is_active, created_at
+             deliverables, is_featured, sort_order, is_active, created_at,
+             marketplace_category, price_type, slug
       FROM services WHERE artist_id = ?
       ORDER BY is_featured DESC, sort_order ASC, created_at DESC
     `).bind(artistId).all();
@@ -53,6 +57,9 @@ export async function onRequestGet(context) {
         is_featured: Boolean(s.is_featured),
         sort_order: Number(s.sort_order || 0),
         is_active: Boolean(s.is_active),
+        marketplace_category: s.marketplace_category || null,
+        price_type: s.price_type || 'fixed',
+        slug: s.slug || null,
       };
     });
 
@@ -69,6 +76,7 @@ export async function onRequestPost(context) {
     if (auth.error) return auth.error;
 
     await ensureMasterProfileColumns(context.env.DB);
+    await ensureMarketplaceColumns(context.env.DB);
     const artistId = await getArtistProfileId(context.env.DB, auth.userId);
     if (!artistId) {
       return jsonResponse({ success: false, error: 'Artist profile required' }, 403);
@@ -83,12 +91,16 @@ export async function onRequestPost(context) {
 
     const id = newId('svc');
     const now = new Date().toISOString();
+    const category = String(body.marketplace_category || '').trim()
+      || inferMarketplaceCategory(name + ' ' + String(body.description || ''));
+    const slug = slugifyService(name);
 
     await context.env.DB.prepare(`
       INSERT INTO services (
         id, artist_id, name, description, price, duration_hours, delivery_days,
-        deliverables, is_featured, sort_order, is_active, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
+        deliverables, is_featured, sort_order, is_active, created_at,
+        marketplace_category, price_type, slug, search_keywords
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?)
     `).bind(
       id,
       artistId,
@@ -100,7 +112,11 @@ export async function onRequestPost(context) {
       JSON.stringify(Array.isArray(body.deliverables) ? body.deliverables : []),
       body.is_featured ? 1 : 0,
       Number(body.sort_order || 0),
-      now
+      now,
+      category,
+      String(body.price_type || 'fixed'),
+      slug,
+      [name, category, body.description].filter(Boolean).join(' ').toLowerCase()
     ).run();
 
     return jsonResponse({ success: true, data: { id } }, 201);
@@ -116,6 +132,7 @@ export async function onRequestPatch(context) {
     if (auth.error) return auth.error;
 
     await ensureMasterProfileColumns(context.env.DB);
+    await ensureMarketplaceColumns(context.env.DB);
     const artistId = await getArtistProfileId(context.env.DB, auth.userId);
     if (!artistId) {
       return jsonResponse({ success: false, error: 'Artist profile required' }, 403);
@@ -144,7 +161,11 @@ export async function onRequestPatch(context) {
         deliverables = COALESCE(?, deliverables),
         is_featured = COALESCE(?, is_featured),
         sort_order = COALESCE(?, sort_order),
-        is_active = COALESCE(?, is_active)
+        is_active = COALESCE(?, is_active),
+        marketplace_category = COALESCE(?, marketplace_category),
+        price_type = COALESCE(?, price_type),
+        slug = COALESCE(?, slug),
+        search_keywords = COALESCE(?, search_keywords)
       WHERE id = ?
     `).bind(
       body.name || null,
@@ -156,6 +177,12 @@ export async function onRequestPatch(context) {
       body.is_featured !== undefined ? (body.is_featured ? 1 : 0) : null,
       body.sort_order !== undefined ? Number(body.sort_order) : null,
       body.is_active !== undefined ? (body.is_active ? 1 : 0) : null,
+      body.marketplace_category || null,
+      body.price_type || null,
+      body.slug || (body.name ? slugifyService(body.name) : null),
+      body.name || body.description
+        ? [body.name, body.marketplace_category, body.description].filter(Boolean).join(' ').toLowerCase()
+        : null,
       serviceId
     ).run();
 

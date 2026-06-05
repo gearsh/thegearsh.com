@@ -1,13 +1,15 @@
 /**
  * Gearsh Search Page
  */
-(function () {
+(function (global) {
   'use strict';
 
   var input = document.getElementById('search-input');
   var clearBtn = document.getElementById('search-clear');
   var suggestions = document.getElementById('search-suggestions');
   var resultsEl = document.getElementById('search-results');
+  var servicesEl = document.getElementById('search-services');
+  var artistsLabelEl = document.getElementById('search-artists-label');
   var metaEl = document.getElementById('search-meta');
   var chipsEl = document.getElementById('search-chips');
   var trendingEl = document.getElementById('trending-artists');
@@ -43,23 +45,60 @@
     history.replaceState(null, '', url.pathname + url.search);
   }
 
-  function renderResults(cards, label) {
+  function getMarketplaceParam() {
+    return new URLSearchParams(window.location.search).get('marketplace') || '';
+  }
+
+  function renderServices(services) {
+    if (!servicesEl || !global.GearshMarketplaceFeed) return;
+    GearshMarketplaceFeed.renderSearchResults(services, servicesEl);
+    if (artistsLabelEl) artistsLabelEl.hidden = !(services && services.length);
+  }
+
+  async function loadDefaultServices() {
+    if (!servicesEl || !global.GearshMarketplaceFeed) return;
+    servicesEl.innerHTML = '<div class="mp-grid">' + GearshFeed.renderFeedSkeleton(4) + '</div>';
+    try {
+      var marketplace = getMarketplaceParam();
+      var data = await GearshMarketplaceFeed.fetchServices({
+        featured: marketplace ? '' : '1',
+        category: marketplace || '',
+        limit: marketplace ? 12 : 8,
+        q: marketplace ? '' : undefined,
+      });
+      var services = marketplace
+        ? (data.data || [])
+        : ((data.data && data.data.featured) || data.data || []);
+      renderServices(services);
+      if (metaEl && marketplace && global.GearshMarketplace) {
+        var cat = (GearshMarketplace.FEATURED || []).find(function (c) { return c.id === marketplace; });
+        if (cat) metaEl.textContent = cat.title + ' services';
+      }
+    } catch (_) {
+      if (servicesEl) servicesEl.innerHTML = '';
+    }
+  }
+
+  function renderResults(cards, label, services) {
+    renderServices(services || []);
+
     if (!cards.length) {
-      resultsEl.innerHTML =
-        '<div class="state-panel">' +
+      resultsEl.innerHTML = services && services.length
+        ? ''
+        : ('<div class="state-panel">' +
           '<i class="ti ti-search-off"></i>' +
-          '<h3>No artists found</h3>' +
-          '<p>Try a different name, genre, or location. Or browse all artists.</p>' +
-          '<a href="/artists" class="btn-main" style="margin-top:20px;display:inline-flex">View all artists</a>' +
-        '</div>';
-      if (metaEl) metaEl.textContent = label || '0 results';
+          '<h3>No results found</h3>' +
+          '<p>Try a different service, category, or location.</p>' +
+          '<a href="/artists" class="btn-main" style="margin-top:20px;display:inline-flex">View all creators</a>' +
+        '</div>');
+      if (metaEl && !(services && services.length)) metaEl.textContent = label || '0 results';
       return;
     }
     resultsEl.innerHTML = '<div class="artist-grid">' +
       cards.map(function (c) { return GearshFeed.renderFeedCard(c); }).join('') +
     '</div>';
     GearshUI.initLazyImages(resultsEl);
-    if (metaEl) metaEl.textContent = (label || cards.length + ' artist' + (cards.length === 1 ? '' : 's'));
+    if (metaEl) metaEl.textContent = label || (cards.length + ' creator' + (cards.length === 1 ? '' : 's'));
   }
 
   function showSuggestions(items) {
@@ -89,19 +128,26 @@
     if (!skipUrl) setQueryParam(q);
     clearBtn.classList.toggle('visible', !!q);
 
-    if (!q) {
+    if (!q && !getMarketplaceParam()) {
       suggestions.classList.remove('is-open');
       renderTrending();
       return;
     }
 
     resultsEl.innerHTML = '<div class="artist-grid">' + GearshFeed.renderFeedSkeleton(8) + '</div>';
+    if (servicesEl) servicesEl.innerHTML = '<div class="mp-grid">' + GearshFeed.renderFeedSkeleton(4) + '</div>';
 
     await ensureLocation();
 
-    var local = GearshFeed.searchShowcase(q, 12);
+    var local = q ? GearshFeed.searchShowcase(q, 12) : [];
     var apiCards = [];
-    var searchBody = { query: q, limit: 40, sortBy: 'nearby' };
+    var apiServices = [];
+    var searchBody = {
+      query: q,
+      marketplace: getMarketplaceParam() || undefined,
+      limit: 40,
+      sortBy: 'nearby',
+    };
     if (global.GearshLocation && GearshLocation.hasPosition && GearshLocation.hasPosition()) {
       searchBody.sortBy = 'nearby';
     }
@@ -115,8 +161,20 @@
       var data = await res.json();
       if (res.ok && data.success) {
         apiCards = (data.data || []).map(GearshFeed.apiArtistToCard);
+        apiServices = data.services || [];
       }
     } catch (_) {}
+
+    if (!apiServices.length && global.GearshMarketplaceFeed) {
+      try {
+        var svcRes = await GearshMarketplaceFeed.fetchServices({
+          q: q,
+          category: getMarketplaceParam() || 'all',
+          limit: 24,
+        });
+        apiServices = svcRes.data || [];
+      } catch (_) {}
+    }
 
     var merged = [];
     var seen = {};
@@ -138,7 +196,11 @@
       });
     }
 
-    renderResults(merged, merged.length + ' result' + (merged.length === 1 ? '' : 's') + ' for “' + q + '”');
+    renderResults(
+      merged,
+      merged.length + ' creator' + (merged.length === 1 ? '' : 's') + (q ? ' for “' + q + '”' : ''),
+      apiServices
+    );
     suggestions.classList.remove('is-open');
   }
 
@@ -202,26 +264,40 @@
     }
   });
 
+  function paintTrendingCards() {
+    loadDefaultServices();
+    var cards = GearshFeed.getShowcase().slice(0, 24).map(function (item) {
+      return GearshFeed.showcaseToCard(item, null);
+    });
+    if (global.GearshLocation && GearshLocation.enrichCards) {
+      cards = GearshLocation.enrichCards(cards);
+    }
+    cards.sort(function (a, b) {
+      return GearshFeed.compareFeedCards(a, b, null);
+    });
+    resultsEl.innerHTML = '<div class="artist-grid">' +
+      GearshFeed.pickPromotedCards(cards, 8, null, 4).map(function (c) {
+        return GearshFeed.renderFeedCard(c);
+      }).join('') + '</div>';
+    if (artistsLabelEl) artistsLabelEl.hidden = false;
+    GearshUI.initLazyImages(resultsEl);
+  }
+
   function renderTrending() {
     var metaText = (global.GearshLocation && GearshLocation.artistsNearLabel)
       ? GearshLocation.artistsNearLabel()
-      : 'Browse artists';
+      : 'Popular services & creators';
     if (metaEl) metaEl.textContent = metaText;
-    ensureLocation().then(function () {
-      if (metaEl && global.GearshLocation && GearshLocation.artistsNearLabel) {
-        metaEl.textContent = GearshLocation.artistsNearLabel();
-      }
-      var cards = GearshFeed.getShowcase().slice(0, 24).map(function (item) {
-        return GearshFeed.showcaseToCard(item, null);
+    ensureLocation()
+      .then(function () {
+        if (metaEl && global.GearshLocation && GearshLocation.artistsNearLabel) {
+          metaEl.textContent = GearshLocation.artistsNearLabel();
+        }
+        paintTrendingCards();
+      })
+      .catch(function () {
+        paintTrendingCards();
       });
-      if (global.GearshLocation && GearshLocation.enrichCards) {
-        cards = GearshLocation.enrichCards(cards);
-      }
-      cards.sort(function (a, b) {
-        return GearshFeed.compareFeedCards(a, b, null);
-      });
-      renderResults(GearshFeed.pickPromotedCards(cards, 12, null, 4));
-    });
   }
 
   function renderTonightSpotlight() {
@@ -270,7 +346,7 @@
   }
   function initChips() {
     if (!chipsEl) return;
-    var chips = ['Amapiano', 'Hip Hop', 'House', 'DJ', 'Gospel', 'Johannesburg', 'Durban'];
+    var chips = ['Mixing', 'Beat maker', 'Mastering', 'Feature verse', 'Recording', 'Photography', 'Vocal lessons', 'Limpopo'];
     chipsEl.innerHTML = chips.map(function (c) {
       return '<button type="button" class="search-chip" data-q="' + GearshFeed.escapeHtml(c) + '">' + GearshFeed.escapeHtml(c) + '</button>';
     }).join('');
@@ -284,9 +360,10 @@
 
   initChips();
   var initial = getQueryParam();
+  var marketplace = getMarketplaceParam();
   var spotlight = new URLSearchParams(window.location.search).get('spotlight');
-  if (initial) {
-    input.value = initial;
+  if (initial || marketplace) {
+    if (initial) input.value = initial;
     runSearch(initial, true);
   } else if (spotlight === 'tonight') {
     renderTonightSpotlight();
@@ -294,4 +371,4 @@
     renderTrending();
   }
   input.focus();
-})();
+})(typeof window !== 'undefined' ? window : this);
