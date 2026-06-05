@@ -62,10 +62,29 @@
       display: flex; justify-content: space-between; gap: 12px; align-items: flex-start;
       padding: 14px 0; border-bottom: 0.5px solid var(--g-border);
     }
+    button.service-row {
+      width: 100%; text-align: left; background: transparent; border: none;
+      border-bottom: 0.5px solid var(--g-border); cursor: pointer; font: inherit; color: inherit;
+      transition: background 0.15s ease, box-shadow 0.15s ease;
+    }
+    button.service-row:hover { background: rgba(0,191,255,0.06); }
+    button.service-row.is-selected {
+      background: rgba(0,191,255,0.10);
+      box-shadow: inset 3px 0 0 var(--g-accent);
+    }
+    button.service-row:focus-visible {
+      outline: 2px solid rgba(0,191,255,0.45);
+      outline-offset: -2px;
+    }
     .service-row:last-child { border-bottom: none; }
     .service-name { font-size: 14px; font-weight: 700; color: var(--g-white); }
     .service-desc { font-size: 12px; color: var(--g-text-muted); margin-top: 4px; line-height: 1.5; }
     .service-price { font-size: 15px; font-weight: 700; color: var(--g-accent); white-space: nowrap; }
+    .service-book-cta {
+      font-size: 11px; font-weight: 700; color: var(--g-accent); text-transform: uppercase;
+      letter-spacing: 0.04em; white-space: nowrap; margin-top: 2px;
+    }
+    button.service-row.is-selected .service-book-cta { color: var(--g-white); }
     .field-group { margin-bottom: 12px; }
     .field-label { display: block; font-size: 12px; color: var(--g-text-muted); margin-bottom: 5px; }
     .field-input, .field-select, .field-textarea {
@@ -216,7 +235,7 @@
           <div class="field-group"><label class="field-label">Email (optional)</label><input class="field-input" id="client-email" type="email" placeholder="you@email.com"></div>
           <div class="field-group"><label class="field-label">Preferred date</label><input class="field-input" id="event-date" type="date" required></div>
           <div class="field-group"><label class="field-label">Venue</label><input class="field-input" id="event-venue" required placeholder="Venue name and address (where the gig takes place)"></div>
-          <div class="field-group"><label class="field-label">Service</label><select class="field-select" id="service-id"><option value="">Select a service</option></select></div>
+          <div class="field-group"><label class="field-label">Service</label><select class="field-select" id="service-id"><option value="">Select a service above</option></select></div>
           <div class="field-group"><label class="field-label">Notes</label><textarea class="field-textarea" id="notes" placeholder="Setup requirements, parking, special requests…"></textarea></div>
           <button class="btn-main" type="submit" id="submit-btn" style="width:100%;justify-content:center">Send booking request</button>
           <div class="book-msg" id="book-msg"></div>
@@ -280,6 +299,46 @@
 
     function formatMoney(amount) {
       return 'R' + Number(amount || 0).toLocaleString('en-ZA');
+    }
+
+    function escapeHtml(str) {
+      return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function selectService(serviceId) {
+      var serviceSelect = document.getElementById('service-id');
+      if (!serviceSelect) return;
+      serviceSelect.value = serviceId || '';
+      document.querySelectorAll('.service-row[data-service-id]').forEach(function (row) {
+        var selected = row.getAttribute('data-service-id') === serviceId;
+        row.classList.toggle('is-selected', selected);
+        row.setAttribute('aria-pressed', selected ? 'true' : 'false');
+        var cta = row.querySelector('.service-book-cta');
+        if (cta) cta.textContent = selected ? 'Selected' : 'Book';
+      });
+      if (serviceId) {
+        var form = document.getElementById('booking-form');
+        if (form) {
+          form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          var nameInput = document.getElementById('client-name');
+          if (nameInput && !nameInput.value) nameInput.focus({ preventScroll: true });
+        }
+      }
+    }
+
+    function wireServiceSelection() {
+      var serviceSelect = document.getElementById('service-id');
+      document.querySelectorAll('.service-row[data-service-id]').forEach(function (row) {
+        row.addEventListener('click', function () {
+          selectService(row.getAttribute('data-service-id'));
+        });
+      });
+      if (serviceSelect) {
+        serviceSelect.addEventListener('change', function () {
+          selectService(serviceSelect.value);
+        });
+      }
     }
 
     function resolveImageUrl(path) {
@@ -416,6 +475,8 @@
 
       var servicesEl = document.getElementById('services-list');
       var serviceSelect = document.getElementById('service-id');
+      serviceSelect.required = false;
+      serviceSelect.innerHTML = '<option value="">Select a service above</option>';
       if (!isAvailable) {
         servicesEl.innerHTML = '<p style="color:var(--g-text-muted);font-size:13px">Booking is paused for this artist.</p>';
         var form = document.getElementById('booking-form');
@@ -429,12 +490,16 @@
       } else if (!data.services || !data.services.length) {
         servicesEl.innerHTML = '<p style="color:var(--g-text-muted);font-size:13px">Contact the provider for pricing.</p>';
       } else {
+        serviceSelect.required = true;
         servicesEl.innerHTML = data.services.map(function(service) {
-          return '<div class="service-row">' +
-            '<div><div class="service-name">' + service.name + '</div>' +
-            '<div class="service-desc">' + (service.description || '') +
+          return '<button type="button" class="service-row" data-service-id="' + escapeHtml(service.id) + '" aria-pressed="false">' +
+            '<div><div class="service-name">' + escapeHtml(service.name) + '</div>' +
+            '<div class="service-desc">' + escapeHtml(service.description || '') +
             (service.duration_hours ? ' · ' + service.duration_hours + ' hrs' : '') + '</div></div>' +
-            '<div class="service-price">' + formatMoney(service.price) + '</div></div>';
+            '<div style="text-align:right">' +
+              '<div class="service-price">' + formatMoney(service.price) + '</div>' +
+              '<div class="service-book-cta">Book</div>' +
+            '</div></button>';
         }).join('');
         data.services.forEach(function(service) {
           var opt = document.createElement('option');
@@ -442,6 +507,11 @@
           opt.textContent = service.name + ' · ' + formatMoney(service.price);
           serviceSelect.appendChild(opt);
         });
+        wireServiceSelection();
+        var preselect = new URLSearchParams(window.location.search).get('service');
+        if (preselect && data.services.some(function (s) { return s.id === preselect; })) {
+          selectService(preselect);
+        }
       }
 
       if (data.phone) {
@@ -527,6 +597,13 @@
       e.preventDefault();
       var msg = document.getElementById('book-msg');
       var btn = document.getElementById('submit-btn');
+      var serviceId = document.getElementById('service-id').value;
+      if (artistData && artistData.services && artistData.services.length && !serviceId) {
+        msg.className = 'book-msg error';
+        msg.textContent = 'Tap a service above to select it before sending your request.';
+        document.getElementById('services-list').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return;
+      }
       msg.className = 'book-msg';
       msg.textContent = '';
       btn.disabled = true;
