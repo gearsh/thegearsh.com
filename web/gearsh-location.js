@@ -223,6 +223,49 @@
     return initPromise;
   }
 
+  /** Returns cached/Cloudflare geo immediately; refines with browser GPS in background. */
+  function initFast() {
+    if (position) return Promise.resolve(position);
+    if (initPromise) return initPromise;
+
+    var cached = readCache();
+    if (cached) {
+      position = { lat: cached.lat, lng: cached.lng };
+      label = normalizeCityLabel(cached.label) || resolveLabelFromCoords(cached.lat, cached.lng);
+      return Promise.resolve(position);
+    }
+
+    initPromise = (async function () {
+      var cfGeo = null;
+      try {
+        cfGeo = await fetchCloudflareGeo();
+      } catch (_) {}
+
+      if (cfGeo) {
+        position = { lat: cfGeo.lat, lng: cfGeo.lng };
+        label = cfGeo.label || resolveLabelFromCoords(cfGeo.lat, cfGeo.lng);
+        writeCache({ lat: position.lat, lng: position.lng, label: label, source: cfGeo.source });
+      }
+
+      requestBrowserPosition(4000).then(function (precise) {
+        position = { lat: precise.lat, lng: precise.lng };
+        label = pickLabelForPosition(precise.lat, precise.lng, cfGeo);
+        writeCache({ lat: position.lat, lng: position.lng, label: label, source: precise.source });
+        try {
+          global.dispatchEvent(new CustomEvent('gearsh:location-updated'));
+        } catch (_) {}
+      }).catch(function () {});
+
+      if (!label && position) {
+        label = resolveLabelFromCoords(position.lat, position.lng);
+      }
+
+      return position;
+    })();
+
+    return initPromise;
+  }
+
   function hasPosition() {
     return !!(position && Number.isFinite(position.lat) && Number.isFinite(position.lng));
   }
@@ -287,6 +330,7 @@
 
   global.GearshLocation = {
     init: init,
+    initFast: initFast,
     hasPosition: hasPosition,
     locationLabel: locationLabel,
     artistsNearLabel: artistsNearLabel,

@@ -25,7 +25,8 @@
     if (userCoords) return userCoords;
     if (global.GearshLocation) {
       try {
-        await GearshLocation.init();
+        var locInit = GearshLocation.initFast || GearshLocation.init;
+        await locInit();
         if (GearshLocation.hasPosition()) {
           userCoords = { ready: true };
         }
@@ -52,7 +53,6 @@
   function renderServices(services) {
     if (!servicesEl || !global.GearshMarketplaceFeed) return;
     GearshMarketplaceFeed.renderSearchResults(services, servicesEl);
-    if (artistsLabelEl) artistsLabelEl.hidden = !(services && services.length);
   }
 
   async function loadDefaultServices() {
@@ -72,7 +72,7 @@
       renderServices(services);
       if (metaEl && marketplace && global.GearshMarketplace) {
         var cat = (GearshMarketplace.FEATURED || []).find(function (c) { return c.id === marketplace; });
-        if (cat) metaEl.textContent = cat.title + ' services';
+        if (cat) metaEl.textContent = cat.title + ' gigs';
       }
     } catch (_) {
       if (servicesEl) servicesEl.innerHTML = '';
@@ -80,7 +80,7 @@
   }
 
   function renderResults(cards, label, services) {
-    renderServices(services || []);
+    if (artistsLabelEl) artistsLabelEl.hidden = !cards.length;
 
     if (!cards.length) {
       resultsEl.innerHTML = services && services.length
@@ -88,10 +88,11 @@
         : ('<div class="state-panel">' +
           '<i class="ti ti-search-off"></i>' +
           '<h3>No results found</h3>' +
-          '<p>Try a different service, category, or location.</p>' +
+          '<p>Try a different gig, category, or location.</p>' +
           '<a href="/artists" class="btn-main" style="margin-top:20px;display:inline-flex">View all creators</a>' +
         '</div>');
       if (metaEl && !(services && services.length)) metaEl.textContent = label || '0 results';
+      renderServices(services || []);
       return;
     }
     resultsEl.innerHTML = '<div class="artist-grid">' +
@@ -99,6 +100,8 @@
     '</div>';
     GearshUI.initLazyImages(resultsEl);
     if (metaEl) metaEl.textContent = label || (cards.length + ' creator' + (cards.length === 1 ? '' : 's'));
+
+    renderServices(services || []);
   }
 
   function showSuggestions(items) {
@@ -137,7 +140,7 @@
     resultsEl.innerHTML = '<div class="artist-grid">' + GearshFeed.renderFeedSkeleton(8) + '</div>';
     if (servicesEl) servicesEl.innerHTML = '<div class="mp-grid">' + GearshFeed.renderFeedSkeleton(4) + '</div>';
 
-    await ensureLocation();
+    var locationPromise = ensureLocation();
 
     var local = q ? GearshFeed.searchShowcase(q, 12) : [];
     var apiCards = [];
@@ -175,6 +178,8 @@
         apiServices = svcRes.data || [];
       } catch (_) {}
     }
+
+    await locationPromise;
 
     var merged = [];
     var seen = {};
@@ -286,7 +291,7 @@
   function renderTrending() {
     var metaText = (global.GearshLocation && GearshLocation.artistsNearLabel)
       ? GearshLocation.artistsNearLabel()
-      : 'Popular services & creators';
+      : 'Popular artists & gigs';
     if (metaEl) metaEl.textContent = metaText;
     ensureLocation()
       .then(function () {

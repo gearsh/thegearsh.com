@@ -713,7 +713,8 @@
   async function loadArtistFeed(opts) {
     opts = opts || {};
     if (global.GearshLocation) {
-      try { await GearshLocation.init(); } catch (_) {}
+      var locInit = GearshLocation.initFast || GearshLocation.init;
+      try { locInit(); } catch (_) {}
     }
     if (getShowcase().length) {
       paintArtistFeed(getCategories(), [], { deferCategories: true, buildNav: true });
@@ -889,6 +890,23 @@
     });
   }
 
+  function scheduleArtistFeed(feedSelector) {
+    var target = document.querySelector(feedSelector || '#feed');
+    if (!target || typeof IntersectionObserver === 'undefined') {
+      loadArtistFeed();
+      return;
+    }
+    var started = false;
+    var observer = new IntersectionObserver(function (entries) {
+      if (started) return;
+      if (!entries.some(function (e) { return e.isIntersecting; })) return;
+      started = true;
+      observer.disconnect();
+      loadArtistFeed();
+    }, { rootMargin: '240px 0px' });
+    observer.observe(target);
+  }
+
   global.GearshFeed = {
     API_BASE: API_BASE,
     normalizeName: normalizeName,
@@ -920,6 +938,7 @@
     renderHeadlinersRail: renderHeadlinersRail,
     cardHasSoloPortrait: cardHasSoloPortrait,
     compareFeedCards: compareFeedCards,
-    pickPromotedCards: pickPromotedCards
+    pickPromotedCards: pickPromotedCards,
+    scheduleArtistFeed: scheduleArtistFeed
   };
 })(typeof window !== 'undefined' ? window : this);

@@ -374,37 +374,9 @@
     .mp-cat-pill i { color: var(--g-accent); font-size: 16px; }
     .mp-cat-pill:hover { border-color: var(--g-accent); color: var(--g-white); }
     .mp-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px;
     }
-    .svc-card {
-      display: flex; flex-direction: column; gap: 10px;
-      background: var(--g-surface); border: 0.5px solid var(--g-border);
-      border-radius: 16px; padding: 16px; text-decoration: none; color: inherit;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-    .svc-card:hover { border-color: rgba(0,191,255,0.35); transform: translateY(-2px); }
-    .svc-card-top { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
-    .svc-cat {
-      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
-      color: var(--g-accent);
-    }
-    .svc-badge {
-      font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px;
-      background: rgba(0,191,255,0.12); color: var(--g-accent);
-    }
-    .svc-name { font-size: 16px; font-weight: 700; color: var(--g-white); margin: 0; line-height: 1.3; }
-    .svc-provider { font-size: 12px; color: var(--g-text-dim); margin: 0; }
-    .svc-desc { font-size: 12px; color: var(--g-text-muted); margin: 0; line-height: 1.45; }
-    .svc-foot { display: flex; justify-content: space-between; gap: 10px; align-items: flex-end; margin-top: auto; }
-    .svc-price { font-size: 15px; font-weight: 700; color: var(--g-accent); }
-    .svc-meta { font-size: 11px; color: var(--g-text-dim); display: flex; flex-direction: column; gap: 2px; text-align: right; }
-    .svc-meta i { color: #FBBF24; font-size: 11px; }
-    .svc-provider-row {
-      display: flex; align-items: center; gap: 8px; padding-top: 10px;
-      border-top: 0.5px solid var(--g-border); font-size: 11px; color: var(--g-text-dim);
-    }
-    .svc-provider-row img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
-    .svc-card--skeleton { min-height: 180px; }
+    .svc-card--skeleton { pointer-events: none; }
     .mp-empty { text-align: center; color: var(--g-text-dim); padding: 32px 16px; }
     .mp-search-block { margin-bottom: 28px; }
     .mp-search-head p { margin: 6px 0 0; font-size: 13px; color: var(--g-text-dim); }
@@ -468,15 +440,15 @@
   <main id="main">
   <section class="hero" aria-label="Get booked. Get paid. Go global.">
     <div class="hero-mosaic">
-      <img src="assets/images/artists/coffee.png" alt="" loading="eager">
-      <img src="assets/images/artists/shimza.jpg" alt="" loading="eager">
-      <img src="assets/images/artists/seether.png" alt="" loading="eager">
-      <img src="assets/images/artists/kabza.png" alt="" loading="eager">
-      <img src="assets/images/artists/maphorisa.png" alt="" loading="eager">
-      <img src="assets/images/artists/cassper.png" alt="" loading="eager">
-      <img src="assets/images/artists/tyla.jpg" alt="" loading="eager">
-      <img src="assets/images/artists/nastyc.png" alt="" loading="eager">
-      <img src="assets/images/artists/waffles.png" alt="" loading="eager">
+      <img src="assets/images/artists/coffee.png" alt="" loading="eager" fetchpriority="high">
+      <img src="assets/images/artists/shimza.jpg" alt="" loading="eager" fetchpriority="high">
+      <img src="assets/images/artists/seether.png" alt="" loading="lazy">
+      <img src="assets/images/artists/kabza.png" alt="" loading="lazy">
+      <img src="assets/images/artists/maphorisa.png" alt="" loading="lazy">
+      <img src="assets/images/artists/cassper.png" alt="" loading="lazy">
+      <img src="assets/images/artists/tyla.jpg" alt="" loading="lazy">
+      <img src="assets/images/artists/nastyc.png" alt="" loading="lazy">
+      <img src="assets/images/artists/waffles.png" alt="" loading="lazy">
       <img src="assets/images/artists/a-reece.png" alt="" loading="lazy">
       <img src="assets/images/artists/kelvin-momo.png" alt="" loading="lazy">
       <img src="assets/images/artists/empress-ngqama.jpg" alt="" loading="lazy">
@@ -484,15 +456,15 @@
     </div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <div class="hero-badge"><span class="pulse"></span> Creative services marketplace for Africa</div>
+      <div class="hero-badge"><span class="pulse"></span> Creative gigs marketplace for Africa</div>
       <h1 class="hero-title">What do you<br>need <em>today?</em></h1>
       <p class="hero-sub hero-marketplace">Find beats, mixing, mastering, features, lessons, photography, and more — book creators directly on Gearsh.</p>
       <form class="hero-search-form" id="hero-search-form" role="search">
-        <input class="hero-search-input" id="hero-search-input" type="search" name="q" autocomplete="off" aria-label="Search creative services">
+        <input class="hero-search-input" id="hero-search-input" type="search" name="q" autocomplete="off" aria-label="Search creative gigs">
         <button type="submit" class="btn-main">Search</button>
       </form>
       <div class="hero-actions" style="margin-top:16px">
-        <a href="join-gig.html" class="btn-ghost">List your services</a>
+        <a href="join-gig.html" class="btn-ghost">List your gigs</a>
         <a href="/auth.html" class="btn-ghost">Sign in</a>
       </div>
       <div class="stats-row">
@@ -504,30 +476,12 @@
     </div>
   </section>
 
-  <!-- MARKETPLACE CATEGORIES -->
-  <section class="mp-cats reveal" aria-label="Browse by service type">
-    <div class="section-label">Find creative services</div>
-    <h2 class="section-title" style="margin-bottom:16px">Book by <em>what you need</em></h2>
-    <div class="mp-cats-scroll" id="marketplace-categories"></div>
-  </section>
-
-  <!-- FEATURED SERVICES -->
-  <section class="mp-section reveal" aria-label="Featured services">
-    <div class="mp-section-head">
-      <h3>Featured services</h3>
-      <a href="/search">Browse all services <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
-    </div>
-    <div class="mp-grid" id="featured-services"><div class="svc-card svc-card--skeleton"></div></div>
-  </section>
-
-  <div id="marketplace-category-sections"></div>
-
   <!-- STORIES -->
   <div class="stories-section reveal">
     <div class="stories-bar" id="stories-bar"></div>
   </div>
 
-  <!-- CATEGORIES -->
+  <!-- GENRE NAV -->
   <div class="cats-section reveal">
     <div class="cats-scroll" id="category-nav"></div>
   </div>
@@ -543,11 +497,11 @@
     <div class="headliners-grid" id="headliners-grid"></div>
   </section>
 
-  <!-- FEED CATEGORIES -->
+  <!-- ARTIST FEED -->
   <div class="feed-divider reveal">
-    <div class="section-label">Still browsing by vibe?</div>
+    <div class="section-label">Discover artists</div>
     <h2 class="section-title" style="margin-bottom:8px">Explore by <em>genre</em></h2>
-    <p class="section-sub" style="margin-bottom:20px">Discover artists the classic way — Amapiano, hip hop, house, gospel, and more.</p>
+    <p class="section-sub" style="margin-bottom:20px">Amapiano, hip hop, house, gospel, and more — book creators across South Africa.</p>
   </div>
   <section class="feed-section reveal" id="feed">
     <div class="feed-header">
@@ -562,6 +516,29 @@
     </div>
     <div class="feed-categories" id="feed-categories"></div>
   </section>
+
+  <!-- GIGS MARKETPLACE (mid-page) -->
+  <div id="marketplace-block" class="reveal">
+    <div class="feed-divider" style="padding-top:48px">
+      <div class="section-label">Book by task</div>
+      <h2 class="section-title" style="margin-bottom:8px">Find creative <em>gigs</em></h2>
+      <p class="section-sub" style="margin-bottom:20px">Beats, mixing, mastering, features, lessons, photography, and more.</p>
+    </div>
+
+    <section class="mp-cats" aria-label="Browse by gig type">
+      <div class="mp-cats-scroll" id="marketplace-categories"></div>
+    </section>
+
+    <section class="mp-section" aria-label="Featured gigs">
+      <div class="mp-section-head">
+        <h3 class="mp-section-title"><i class="ti ti-sparkles"></i> Featured gigs</h3>
+        <a href="/search">Browse all <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
+      </div>
+      <div class="mp-grid" id="featured-services"><div class="svc-card svc-card--skeleton"><div class="svc-card-media skeleton-shimmer"></div></div></div>
+    </section>
+
+    <div id="marketplace-category-sections"></div>
+  </div>
 
   <!-- TESTIMONIALS -->
   <section class="testimonials-section reveal">
@@ -786,8 +763,7 @@
       if (window.GearshMarketplaceFeed) {
         GearshMarketplaceFeed.renderCategoryPills('marketplace-categories');
         GearshMarketplaceFeed.initHeroSearch('hero-search-input', 'hero-search-form');
-        GearshMarketplaceFeed.loadFeaturedServices('featured-services', 8);
-        GearshMarketplaceFeed.loadCategorySections('marketplace-category-sections');
+        GearshMarketplaceFeed.scheduleHomeMarketplace('#marketplace-block', 'featured-services', 'marketplace-category-sections', 8);
       }
 
       GearshFeed.showFeedSkeletons('feed-categories', 6);

@@ -38,7 +38,7 @@
       '<p class="card-sub" style="margin:0 0 16px">Wrong price from signup or a seeded profile? Edit any package below — clients see these rates when booking.</p>' +
       '<div id="asv-list"></div>' +
       '<hr style="border:none;border-top:0.5px solid var(--g-border);margin:24px 0">' +
-      '<h3 style="font-size:15px;color:var(--g-white);margin-bottom:12px">Add a service</h3>' +
+      '<h3 style="font-size:15px;color:var(--g-white);margin-bottom:12px">Add a gig</h3>' +
       '<form id="asv-form">' +
         '<div class="aps-grid">' +
           '<div class="field-group"><label class="field-label">Name *</label>' +
@@ -55,7 +55,7 @@
         '<div class="field-group"><label class="field-label">Description</label>' +
           '<textarea class="field-textarea" name="description" rows="3" placeholder="What clients get when they book this package."></textarea></div>' +
         '<div id="asv-msg" class="aps-msg"></div>' +
-        '<button type="submit" class="btn-main" style="margin-top:8px"><i class="ti ti-plus"></i> Add service</button>' +
+        '<button type="submit" class="btn-main" style="margin-top:8px"><i class="ti ti-plus"></i> Add gig</button>' +
       '</form>';
 
     document.getElementById('asv-form').addEventListener('submit', function (e) {
@@ -95,15 +95,15 @@
   ArtistServicesManage.prototype.loadServices = function () {
     var self = this;
     var list = document.getElementById('asv-list');
-    list.innerHTML = '<p class="card-sub">Loading services…</p>';
+    list.innerHTML = '<p class="card-sub">Loading gigs…</p>';
 
     fetch(API + '/services', { headers: this.authHeaders() })
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        if (!d.success) throw new Error(d.error || 'Could not load services');
+        if (!d.success) throw new Error(d.error || 'Could not load gigs');
         var svcs = (d.data.services || []).filter(function (s) { return s.is_active; });
         if (!svcs.length) {
-          list.innerHTML = '<p class="card-sub">No services yet. Add your first package below so clients can book you.</p>';
+          list.innerHTML = '<p class="card-sub">No gigs yet. Add your first package below so clients can book you.</p>';
           return;
         }
         self.services = svcs;
@@ -251,7 +251,7 @@
     })
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        if (!d.success) throw new Error(d.error || 'Failed to add service');
+        if (!d.success) throw new Error(d.error || 'Failed to add gig');
         self.setMsg('Service added.', true);
         form.reset();
         self.loadServices();

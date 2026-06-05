@@ -220,7 +220,10 @@
     readUrlState();
 
     if (global.GearshLocation) {
-      try { await GearshLocation.init(); } catch (_) {}
+      try {
+        var locInit = GearshLocation.initFast || GearshLocation.init;
+        await locInit();
+      } catch (_) {}
       updateSortLabels();
     }
 

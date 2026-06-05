@@ -222,7 +222,7 @@
 
     <div class="book-grid">
       <div class="card">
-        <h2>Services &amp; pricing</h2>
+        <h2>Gigs &amp; pricing</h2>
         <div id="services-list"></div>
       </div>
       <div class="card">
@@ -420,7 +420,7 @@
       document.getElementById('artist-location').innerHTML =
         '<i class="ti ti-map-pin"></i> ' + [data.location, data.country].filter(Boolean).join(', ') || 'Location on request';
       document.getElementById('artist-category').innerHTML =
-        '<i class="ti ti-tag"></i> ' + (data.category || 'Services');
+        '<i class="ti ti-tag"></i> ' + (data.category || 'Gigs');
 
       var photo = document.getElementById('artist-photo');
       var imageUrl = resolveImageUrl(data.image);

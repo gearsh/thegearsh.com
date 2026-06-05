@@ -58,7 +58,7 @@
           '<p class="mp-tagline">' + escapeHtml(p.tagline) + '</p>' +
           '<div class="mp-hero-actions">' +
             '<a href="#book" class="btn-main"><i class="ti ti-calendar-plus"></i> Book The Gearsh</a>' +
-            '<a href="#services" class="btn-ghost">View services</a>' +
+            '<a href="#services" class="btn-ghost">View gigs</a>' +
           '</div>' +
           '<div class="mp-stats-bar">' +
             '<div class="mp-stat"><div class="mp-stat-num accent">' + Number(stats.projects_completed || 0) + '+</div><div class="mp-stat-lbl">Projects</div></div>' +
@@ -73,7 +73,7 @@
   function renderNav() {
     var links = [
       { href: '#about', label: 'About' },
-      { href: '#services', label: 'Services' },
+      { href: '#services', label: 'Gigs' },
       { href: '#portfolio', label: 'Portfolio' },
       { href: '#activity', label: 'Activity' },
       { href: '#testimonials', label: 'Reviews' },
@@ -110,12 +110,12 @@
           '<div class="mp-service-price">From ' + formatMoney(svc.price) + '</div>' +
           '<div class="mp-service-delivery">' + (svc.delivery_days ? svc.delivery_days + ' days' : '') + '</div>' +
         '</div>' +
-        '<button type="button" class="mp-service-book" data-service="' + escapeHtml(svc.id) + '">Book this service</button>' +
+        '<button type="button" class="mp-service-book" data-service="' + escapeHtml(svc.id) + '">Book this gig</button>' +
       '</article>';
     }).join('');
 
     return '<section class="mp-section" id="services">' +
-      '<div class="mp-section-head"><div><div class="mp-section-label">Services</div><h2 class="mp-section-title">Bookable <em>tech gigs</em></h2></div></div>' +
+      '<div class="mp-section-head"><div><div class="mp-section-label">Gigs</div><h2 class="mp-section-title">Bookable <em>tech gigs</em></h2></div></div>' +
       '<div class="mp-services-grid">' + cards + '</div></section>';
   }
 

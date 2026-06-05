@@ -43,8 +43,8 @@ function mapDbRow(row) {
     duration_hours: row.duration_hours ? Number(row.duration_hours) : null,
     delivery_days: row.delivery_days ? Number(row.delivery_days) : null,
     marketplace_category: categoryId,
-    category_title: cat ? cat.title : 'Creative Service',
-    category_short: cat ? (cat.shortTitle || cat.title) : 'Service',
+    category_title: cat ? cat.title : 'Creative Gig',
+    category_short: cat ? (cat.shortTitle || cat.title) : 'Gig',
     category_icon: cat ? cat.icon : 'ti ti-tag',
     group_id: cat ? cat.groupId : null,
     is_featured: Boolean(row.is_featured),
@@ -79,8 +79,8 @@ function mapShowcaseService(artist, service, index) {
     duration_hours: service.duration_hours ? Number(service.duration_hours) : null,
     delivery_days: service.delivery_days || null,
     marketplace_category: categoryId,
-    category_title: cat ? cat.title : 'Creative Service',
-    category_short: cat ? (cat.shortTitle || cat.title) : 'Service',
+    category_title: cat ? cat.title : 'Creative Gig',
+    category_short: cat ? (cat.shortTitle || cat.title) : 'Gig',
     category_icon: cat ? cat.icon : 'ti ti-tag',
     group_id: cat ? cat.groupId : null,
     is_featured: Boolean(service.is_featured),
@@ -123,6 +123,13 @@ function buildShowcaseListings() {
     });
   });
   return listings;
+}
+
+let showcaseListingsCache = null;
+
+function getShowcaseListingsCached() {
+  if (!showcaseListingsCache) showcaseListingsCache = buildShowcaseListings();
+  return showcaseListingsCache;
 }
 
 function matchesFilters(service, filters) {
@@ -241,7 +248,7 @@ export async function searchMarketplaceServices(context, filters) {
         params.push(term, term, term, term);
       }
 
-      sql += ' ORDER BY s.is_featured DESC, s.price ASC LIMIT 200';
+      sql += ' ORDER BY s.is_featured DESC, s.price ASC LIMIT 80';
       const result = await context.env.DB.prepare(sql).bind(...params).all();
       (result.results || []).forEach(function (row) {
         const mapped = mapDbRow(row);
@@ -264,7 +271,7 @@ export async function searchMarketplaceServices(context, filters) {
   });
 
   let merged = dbServices.slice();
-  buildShowcaseListings().forEach(function (service) {
+  getShowcaseListingsCached().forEach(function (service) {
     const key = service.provider_username + '::' + service.name.toLowerCase();
     if (seen[key]) return;
     if (!matchesFilters(service, filters)) return;
@@ -303,31 +310,45 @@ export async function getFeaturedMarketplaceServices(context, opts) {
   const categories = opts.categories || [
     'recording-studios', 'beat-makers', 'mixing-engineers', 'mastering-engineers',
   ];
+  const featuredLimit = Number(opts.limit) || 12;
 
-  const sections = [];
-  for (const categoryId of categories) {
-    const result = await searchMarketplaceServices(context, {
-      category: categoryId,
-      limit: perCategory,
-      sortBy: 'rating',
-    });
-    if (result.services.length) {
-      const cat = getCategoryById(categoryId);
-      sections.push({
-        category: categoryId,
-        title: cat ? cat.title : categoryId,
-        icon: cat ? cat.icon : 'ti ti-tag',
-        services: result.services,
-      });
-    }
-  }
-
-  const featured = await searchMarketplaceServices(context, {
-    limit: Number(opts.limit) || 12,
+  const result = await searchMarketplaceServices(context, {
+    limit: 80,
     sortBy: 'rating',
   });
 
-  return { sections, featured: featured.services };
+  const all = result.services || [];
+  const sections = [];
+  const usedInSections = {};
+
+  categories.forEach(function (categoryId) {
+    const catServices = all.filter(function (s) {
+      return s.marketplace_category === categoryId && !usedInSections[s.id];
+    }).slice(0, perCategory);
+    if (!catServices.length) return;
+    catServices.forEach(function (s) { usedInSections[s.id] = true; });
+    const cat = getCategoryById(categoryId);
+    sections.push({
+      category: categoryId,
+      title: cat ? cat.title : categoryId,
+      icon: cat ? cat.icon : 'ti ti-tag',
+      services: catServices,
+    });
+  });
+
+  const featured = all
+    .filter(function (s) { return s.is_featured || !usedInSections[s.id]; })
+    .slice(0, featuredLimit);
+
+  if (featured.length < featuredLimit) {
+    all.forEach(function (s) {
+      if (featured.length >= featuredLimit) return;
+      if (featured.some(function (f) { return f.id === s.id; })) return;
+      featured.push(s);
+    });
+  }
+
+  return { sections, featured: featured.slice(0, featuredLimit) };
 }
 
 export { formatPrice, serviceBookUrl, inferMarketplaceCategory };

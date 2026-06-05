@@ -27,7 +27,9 @@ export async function onRequestGet(context) {
       const featured = await getFeaturedMarketplaceServices(context, {
         limit: parseInt(url.searchParams.get('limit') || '12', 10),
       });
-      return jsonResponse({ success: true, data: featured });
+      return jsonResponse({ success: true, data: featured }, 200, {
+        'Cache-Control': 'public, max-age=120, stale-while-revalidate=300',
+      });
     }
 
     const filters = parseFilters(url);

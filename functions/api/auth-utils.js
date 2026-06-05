@@ -14,10 +14,10 @@ const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const REMEMBER_TTL_MS = 90 * 24 * 60 * 60 * 1000;
 export const REFRESH_GRACE_MS = 14 * 24 * 60 * 60 * 1000;
 
-export function jsonResponse(body, status = 200) {
+export function jsonResponse(body, status = 200, extraHeaders) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: corsHeaders,
+    headers: extraHeaders ? Object.assign({}, corsHeaders, extraHeaders) : corsHeaders,
   });
 }
 
