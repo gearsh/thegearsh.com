@@ -588,8 +588,10 @@
     return {
       category: {
         id: 'near-you',
-        title: 'Near you',
-        subtitle: 'Artists closest to ' + GearshLocation.locationLabel(),
+        title: GearshLocation.artistsNearLabel(),
+        subtitle: GearshLocation.locationLabel()
+          ? ('Sorted by distance from ' + GearshLocation.locationLabel())
+          : 'Sorted by distance',
         icon: 'ti ti-map-pin',
       },
       cards: local.slice(0, limit),

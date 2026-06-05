@@ -1,5 +1,8 @@
-﻿// Auto-generated: 100 SA artists for Gearsh homepage
-// 100 South African artists, listed for discovery, claimable later via claim-profile
+﻿// 100 South African artists, listed for discovery, claimable later via claim-profile
+
+/** Featured profiles seeded on every feed load (before batch seed). */
+var PRIORITY_SHOWCASE_USERNAMES = ['vanz', 'rixelton'];
+
 const SA_SHOWCASE_ARTISTS = [
   {
     name: 'Black Coffee',
@@ -1429,6 +1432,97 @@ const SA_SHOWCASE_ARTISTS = [
     skills: ['Amapiano', 'DJ', 'Live Performance'],
   },
   {
+    name: 'Vanz',
+    username: 'vanz',
+    image: 'assets/images/artists/vanz.jpg',
+    category: 'Recording Studio',
+    genre: 'Recording · Mixing · Mastering · NEXTWAV REC',
+    genreSlug: 'creative-arts',
+    location: 'South Africa',
+    country: 'South Africa',
+    phone: '+27739614039',
+    masteryHours: 80,
+    badge: 'Listed',
+    badgeClass: 'fb-new',
+    hourlyRate: 200,
+    bio: 'NEXTWAV REC — Sonics From A Different Dimension. Professional recording, beat production, mixing & mastering by Vanz (@KillaBeatz99). 50% deposit required before booked session. T&Cs apply — beat sales are non-exclusive unless a license is purchased.',
+    skills: ['Recording', 'Beat Production', 'Mixing', 'Mastering', 'Music Production'],
+    bookingServices: [
+      {
+        name: 'Own Beat — Highschool Student Session',
+        description: 'Recording session on your own beat. Highschool student rate at NEXTWAV REC.',
+        price: 200,
+        duration_hours: 2,
+      },
+      {
+        name: 'Own Beat — Individual Session + Arrangement',
+        description: 'Individual recording session on your beat with full arrangement.',
+        price: 350,
+        duration_hours: 2,
+      },
+      {
+        name: 'Regular Beat — Individual Session + Arrangement',
+        description: 'Individual session on a regular beat with arrangement included.',
+        price: 500,
+        duration_hours: 3,
+      },
+      {
+        name: 'Custom Made Beat Package',
+        description: 'Recording sessions + beat session + arrangement. Custom beat built for your track.',
+        price: 800,
+        duration_hours: 4,
+      },
+      {
+        name: 'Ultimate Package',
+        description: 'Recording sessions + beat sessions + arrangement — full NEXTWAV REC production package.',
+        price: 1000,
+        duration_hours: 6,
+      },
+      {
+        name: 'Mixing — 1 to 10 Stems',
+        description: 'Professional mix for projects with up to 10 stems.',
+        price: 200,
+        duration_hours: 2,
+      },
+      {
+        name: 'Mixing — 11 to 20 Stems',
+        description: 'Professional mix for projects with 11–20 stems.',
+        price: 300,
+        duration_hours: 2,
+      },
+      {
+        name: 'Mixing — 21 to 30 Stems',
+        description: 'Professional mix for projects with 21–30 stems.',
+        price: 400,
+        duration_hours: 3,
+      },
+      {
+        name: 'Mixing — 31 to 40 Stems',
+        description: 'Professional mix for projects with 31–40 stems.',
+        price: 500,
+        duration_hours: 3,
+      },
+      {
+        name: 'Mixing — 41 to 50 Stems',
+        description: 'Professional mix for projects with 41–50 stems.',
+        price: 600,
+        duration_hours: 4,
+      },
+      {
+        name: 'Mixing — 51+ Stems',
+        description: 'Professional mix for large sessions with 51 or more stems.',
+        price: 700,
+        duration_hours: 4,
+      },
+      {
+        name: 'Mastering',
+        description: 'Final polish and loudness optimisation for release-ready audio.',
+        price: 300,
+        duration_hours: 1,
+      },
+    ],
+  },
+  {
     name: 'Artwork Sounds',
     username: 'artwork-sounds',
     image: 'assets/images/artists/artwork-sounds.jpg',
@@ -1527,7 +1621,8 @@ const SA_SHOWCASE_ARTISTS = [
   // ------------------------------------------------------------------------
   // Limpopo Night. Xigaza & Lekompo (seeded 2026-05-27 for Monday rotation).
   // Booking fees are approximate launch estimates pending verification.
-  // Photos use the generic placeholder until solo portraits are sourced.
+  // Photos use the generic placeholder until solo portraits are sourced from
+  // each artist's official Apple Music / Instagram / press kit.
   // ------------------------------------------------------------------------
   {
     name: 'Dr Thomas Chauke',
@@ -2084,14 +2179,15 @@ const SA_SHOWCASE_ARTISTS = [
 
 var GENRE_FEATURED_ORDER = {
   'hip-hop': ['a-reece'],
-  'creative-arts': ['clout-cassette', 'rich-mnisi'],
+  'creative-arts': ['vanz', 'clout-cassette', 'rich-mnisi'],
   // Limpopo Night Monday: King Monada gets the headline pin since he's the
-  // bridge between Bolobedu House and Lekompo.
+  // bridge between Bolobedu House and Lekompo. Legends (Thomas Chauke, Penny
+  // Penny, Joe Shirimani) fall in next via mastery_hours sort.
   'xigaza-lekompo': ['king-monada'],
 };
 
 /** Generic placeholder paths. artists using these sink in feed ordering. */
-var PLACEHOLDER_IMAGE_MARKERS = [
+const PLACEHOLDER_IMAGE_MARKERS = [
   '/artists.png',
   'artists/artists.png',
   'icon-512',
@@ -2099,12 +2195,11 @@ var PLACEHOLDER_IMAGE_MARKERS = [
 ];
 
 function isPlaceholderImage(path) {
-  var value = String(path || '').toLowerCase();
+  const value = String(path || '').toLowerCase();
   if (!value) return true;
-  for (var i = 0; i < PLACEHOLDER_IMAGE_MARKERS.length; i++) {
-    if (value.indexOf(PLACEHOLDER_IMAGE_MARKERS[i]) !== -1) return true;
-  }
-  return false;
+  return PLACEHOLDER_IMAGE_MARKERS.some(function(marker) {
+    return value.includes(marker);
+  });
 }
 
 function artistHasSoloPortrait(artist) {
@@ -2115,26 +2210,29 @@ function artistHasSoloPortrait(artist) {
 }
 
 function compareArtistsForGenre(genreSlug, a, b) {
-  var order = GENRE_FEATURED_ORDER[genreSlug] || [];
-  var usernameA = String(a.username || '').toLowerCase();
-  var usernameB = String(b.username || '').toLowerCase();
-  var rankA = order.indexOf(usernameA);
-  var rankB = order.indexOf(usernameB);
-  var featuredA = rankA >= 0 ? rankA : order.length;
-  var featuredB = rankB >= 0 ? rankB : order.length;
+  const order = GENRE_FEATURED_ORDER[genreSlug] || [];
+  const usernameA = String(a.username || '').toLowerCase();
+  const usernameB = String(b.username || '').toLowerCase();
+  const rankA = order.indexOf(usernameA);
+  const rankB = order.indexOf(usernameB);
+  const featuredA = rankA >= 0 ? rankA : order.length;
+  const featuredB = rankB >= 0 ? rankB : order.length;
 
   if (featuredA !== featuredB) return featuredA - featuredB;
 
-  var soloA = artistHasSoloPortrait(a) ? 1 : 0;
-  var soloB = artistHasSoloPortrait(b) ? 1 : 0;
+  const soloA = artistHasSoloPortrait(a) ? 1 : 0;
+  const soloB = artistHasSoloPortrait(b) ? 1 : 0;
   if (soloB !== soloA) return soloB - soloA;
 
-  var hoursA = Number(a.mastery_hours != null ? a.mastery_hours : a.masteryHours || 0);
-  var hoursB = Number(b.mastery_hours != null ? b.mastery_hours : b.masteryHours || 0);
+  const hoursA = Number(a.mastery_hours ?? a.masteryHours ?? 0);
+  const hoursB = Number(b.mastery_hours ?? b.masteryHours ?? 0);
   if (hoursB !== hoursA) return hoursB - hoursA;
 
-  if (a.bookable === b.bookable) return 0;
-  return a.bookable ? -1 : 1;
+  if (a.bookable !== b.bookable) return a.bookable ? -1 : 1;
+
+  return Number(b.rating || 0) - Number(a.rating || 0)
+    || Number(b.review_count || 0) - Number(a.review_count || 0)
+    || Number(b.total_bookings || 0) - Number(a.total_bookings || 0);
 }
 
 var GENRE_FEED_CATEGORIES = [
@@ -2227,6 +2325,7 @@ function resolveArtistGenreSlug(category, genreLabel) {
   if (label.includes('music video') || label.includes('video prod')) return 'creative-arts';
   if (label.includes('post-prod') || label.includes('editing') || label.includes('director')) return 'creative-arts';
   if (label.includes('music prod') || (label.includes('producer') && !label.includes('lekompo'))) return 'creative-arts';
+  if (label.includes('recording') || label.includes('mixing') || label.includes('mastering') || label.includes('nextwav')) return 'creative-arts';
   if (['afropop', 'r&b', 'soul', 'acapella', 'pop'].some(function(token) { return label.includes(token); })) return 'afropop';
   const map = {
     'Acapella': 'afropop',
@@ -2257,6 +2356,7 @@ function resolveArtistGenreSlug(category, genreLabel) {
     'Post-Production': 'creative-arts',
     'R&B': 'afropop',
     'Rap-Rave': 'hip-hop',
+    'Recording Studio': 'creative-arts',
     'Rock': 'other',
     'Shangaan': 'xigaza-lekompo',
     'Styling': 'creative-arts',

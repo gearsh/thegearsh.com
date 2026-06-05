@@ -51,8 +51,9 @@
     <div class="g-nav-inner">
       <a href="/" class="g-nav-logo"><img src="/icons/Icon-512.png" alt="Gearsh" width="40" height="40"></a>
       <ul class="g-nav-links">
-        <li><a href="/search">Artists</a></li>
-        <li><a href="/gigs">Gig Guide</a></li>
+        <li id="nav-dashboard-li" hidden><a href="/artist-dashboard.html" id="nav-dashboard">Dashboard</a></li>
+        <li><a href="/search">Book artists</a></li>
+        <li><a href="/artists">All artists</a></li>
         <li><a href="/my-bookings" class="active">My bookings</a></li>
         <li><a href="/auth.html" id="nav-auth">Sign in</a></li>
       </ul>
@@ -61,7 +62,7 @@
 
   <main class="bk-page">
     <h1 class="bk-title">My <em>bookings</em></h1>
-    <p class="bk-sub">Track requests and pay securely via PayFast once an artist accepts.</p>
+    <p class="bk-sub">Artists and clients use this page the same way — track gigs you booked with other artists and pay via PayFast once they accept.</p>
 
     <div class="bk-guest" id="guest-box" hidden>
       <p style="margin:0 0 14px;font-size:14px;color:var(--g-text-muted)">Find a booking you made without signing in:</p>
@@ -76,6 +77,7 @@
     <div id="bookings-root"><div class="bk-empty">Loading…</div></div>
   </main>
 
+  <script defer src="/gearsh-ui.js"></script>
   <script src="/my-bookings.js"></script>
 </body>
 </html>

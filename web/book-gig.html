@@ -167,13 +167,15 @@
       <a href="./" class="g-nav-logo"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
       <div class="g-nav-right">
         <a href="/auth.html" class="g-nav-mobile-login">Login</a>
+        <a href="/search" class="g-nav-mobile-search" aria-label="Search artists"><i class="ti ti-search"></i></a>
         <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu">
           <i class="ti ti-menu-2"></i>
         </button>
       </div>
       <ul class="g-nav-links">
         <li class="g-nav-menu-auth"><a href="/auth.html">Login</a></li>
-        <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
+        <li><a href="/search">Book artists</a></li>
+        <li><a href="/my-bookings">My bookings</a></li>
         <li><a href="./">Home</a></li>
       </ul>
     </div>
@@ -284,6 +286,31 @@
 
   <script>
     var API_BASE = '/api';
+
+    function getToken() {
+      return localStorage.getItem('gearsh_token') || '';
+    }
+
+    function authHeaders() {
+      var headers = { 'Content-Type': 'application/json' };
+      var token = getToken();
+      if (token) headers.Authorization = 'Bearer ' + token;
+      return headers;
+    }
+
+    async function prefillFromSession() {
+      var token = getToken();
+      if (!token) return;
+      try {
+        var res = await fetch(API_BASE + '/session', { headers: { Authorization: 'Bearer ' + token } });
+        var d = await res.json();
+        if (!d.success) return;
+        var nameEl = document.getElementById('client-name');
+        var emailEl = document.getElementById('client-email');
+        if (nameEl && d.data.display_name && !nameEl.value) nameEl.value = d.data.display_name;
+        if (emailEl && d.data.email && !emailEl.value) emailEl.value = d.data.email;
+      } catch (_) {}
+    }
 
     function getArtistSlug() {
       var params = new URLSearchParams(window.location.search);
@@ -612,7 +639,7 @@
       try {
         var res = await fetch(API_BASE + '/booking-request', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: authHeaders(),
           body: JSON.stringify({
             artist_id: artistData.artist_id,
             client_name: document.getElementById('client-name').value.trim(),
@@ -645,8 +672,9 @@
       }
     });
 
-    loadProfile();
+    loadProfile().then(prefillFromSession);
   </script>
+  <script defer src="/gearsh-ui.js"></script>
   <script defer src="/activity-feed.js"></script>
 </body>
 </html>

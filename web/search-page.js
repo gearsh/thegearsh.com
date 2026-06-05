@@ -203,8 +203,14 @@
   });
 
   function renderTrending() {
-    if (metaEl) metaEl.textContent = 'Artists near you';
+    var metaText = (global.GearshLocation && GearshLocation.artistsNearLabel)
+      ? GearshLocation.artistsNearLabel()
+      : 'Browse artists';
+    if (metaEl) metaEl.textContent = metaText;
     ensureLocation().then(function () {
+      if (metaEl && global.GearshLocation && GearshLocation.artistsNearLabel) {
+        metaEl.textContent = GearshLocation.artistsNearLabel();
+      }
       var cards = GearshFeed.getShowcase().slice(0, 24).map(function (item) {
         return GearshFeed.showcaseToCard(item, null);
       });

@@ -123,17 +123,34 @@
       });
   }
 
+  function updateNavFromSession() {
+    var token = getToken();
+    if (!token) return Promise.resolve(null);
+    return fetch(API + '/session', { headers: authHeaders() })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.success) return null;
+        var session = d.data;
+        var navAuth = document.getElementById('nav-auth');
+        var dashLi = document.getElementById('nav-dashboard-li');
+        if (session.has_artist_dashboard || session.user_type === 'artist') {
+          if (dashLi) dashLi.hidden = false;
+          if (navAuth) navAuth.hidden = true;
+        } else if (navAuth) {
+          navAuth.textContent = 'Home';
+          navAuth.href = '/';
+        }
+        return session.email || null;
+      })
+      .catch(function () { return null; });
+  }
+
   function boot() {
     var params = new URLSearchParams(window.location.search);
     var highlightId = params.get('booking');
     var guestEmailParam = params.get('email') || '';
     var token = getToken();
-
-    var navAuth = document.getElementById('nav-auth');
-    if (token && navAuth) {
-      navAuth.textContent = 'Dashboard';
-      navAuth.href = '/artist-dashboard.html';
-    }
+    var sessionEmail = null;
 
     var guestBox = document.getElementById('guest-box');
     if (!token) {
@@ -161,9 +178,12 @@
     });
 
     if (token) {
-      loadAuthed()
+      updateNavFromSession().then(function (email) {
+        sessionEmail = email;
+        return loadAuthed();
+      })
         .then(function (list) {
-          renderList(list);
+          renderList(list, sessionEmail);
           if (highlightId) {
             var el = document.querySelector('[data-booking="' + highlightId + '"]');
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });

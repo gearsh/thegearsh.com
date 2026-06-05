@@ -1,5 +1,5 @@
 import { hashPassword, buildProfileUrl } from './auth-utils.js';
-import { SA_SHOWCASE_ARTISTS } from './sa-showcase-data.js';
+import { SA_SHOWCASE_ARTISTS, PRIORITY_SHOWCASE_USERNAMES } from './sa-showcase-data.js';
 import { ensureDemoColumns } from './demo-artists.js';
 import {
   getBookingFee,
@@ -205,7 +205,50 @@ export async function enrichShowcaseArtist(db, artist) {
   return true;
 }
 
+export async function seedPriorityShowcaseArtists(db) {
+  await ensureDemoColumns(db);
+  const demoPasswordHash = await getDemoPasswordHash();
+  const byUsername = new Map(
+    SA_SHOWCASE_ARTISTS.map(function (artist) {
+      return [String(artist.username || '').toLowerCase(), artist];
+    })
+  );
+  const results = { seeded: 0, refreshed: 0, skipped: 0, claimed: 0, failed: 0 };
+
+  for (const username of PRIORITY_SHOWCASE_USERNAMES) {
+    const artist = byUsername.get(String(username || '').toLowerCase());
+    if (!artist) continue;
+
+    try {
+      const existing = await db.prepare(`
+        SELECT id, email FROM users WHERE LOWER(username) = LOWER(?) LIMIT 1
+      `).bind(artist.username).first();
+
+      if (existing && !isPlaceholderEmail(existing.email)) {
+        results.claimed += 1;
+        continue;
+      }
+
+      if (existing) {
+        const refreshed = await enrichShowcaseArtist(db, artist);
+        if (refreshed) results.refreshed += 1;
+        else results.skipped += 1;
+        continue;
+      }
+
+      const result = await seedShowcaseArtist(db, artist, demoPasswordHash);
+      if (result.seeded) results.seeded += 1;
+    } catch (err) {
+      console.error(`Priority showcase seed failed for ${artist.username}:`, err);
+      results.failed += 1;
+    }
+  }
+
+  return results;
+}
+
 export async function seedShowcaseArtistsBatch(db, limit = 20) {
+  await seedPriorityShowcaseArtists(db);
   await ensureDemoColumns(db);
   const demoPasswordHash = await getDemoPasswordHash();
   const results = { seeded: 0, skipped: 0, claimed: 0, failed: 0 };

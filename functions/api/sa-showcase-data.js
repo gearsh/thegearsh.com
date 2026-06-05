@@ -1,4 +1,8 @@
 ﻿// 100 South African artists, listed for discovery, claimable later via claim-profile
+
+/** Featured profiles seeded on every feed load (before batch seed). */
+export const PRIORITY_SHOWCASE_USERNAMES = ['vanz', 'rixelton'];
+
 export const SA_SHOWCASE_ARTISTS = [
   {
     name: 'Black Coffee',
@@ -2175,7 +2179,7 @@ export const SA_SHOWCASE_ARTISTS = [
 
 export const GENRE_FEATURED_ORDER = {
   'hip-hop': ['a-reece'],
-  'creative-arts': ['clout-cassette', 'rich-mnisi'],
+  'creative-arts': ['vanz', 'clout-cassette', 'rich-mnisi'],
   // Limpopo Night Monday: King Monada gets the headline pin since he's the
   // bridge between Bolobedu House and Lekompo. Legends (Thomas Chauke, Penny
   // Penny, Joe Shirimani) fall in next via mastery_hours sort.
@@ -2321,6 +2325,7 @@ export function resolveArtistGenreSlug(category, genreLabel) {
   if (label.includes('music video') || label.includes('video prod')) return 'creative-arts';
   if (label.includes('post-prod') || label.includes('editing') || label.includes('director')) return 'creative-arts';
   if (label.includes('music prod') || (label.includes('producer') && !label.includes('lekompo'))) return 'creative-arts';
+  if (label.includes('recording') || label.includes('mixing') || label.includes('mastering') || label.includes('nextwav')) return 'creative-arts';
   if (['afropop', 'r&b', 'soul', 'acapella', 'pop'].some(function(token) { return label.includes(token); })) return 'afropop';
   const map = {
     'Acapella': 'afropop',
@@ -2351,6 +2356,7 @@ export function resolveArtistGenreSlug(category, genreLabel) {
     'Post-Production': 'creative-arts',
     'R&B': 'afropop',
     'Rap-Rave': 'hip-hop',
+    'Recording Studio': 'creative-arts',
     'Rock': 'other',
     'Shangaan': 'xigaza-lekompo',
     'Styling': 'creative-arts',

@@ -2,14 +2,20 @@
 
 const SA_PLACES = [
   { keys: ['johannesburg', 'joburg', 'jhb', 'sandton', 'midrand', 'randburg', 'roodepoort'], lat: -26.2041, lng: 28.0473 },
-  { keys: ['soweto', 'tembisa', 'alexandra'], lat: -26.2678, lng: 27.8585 },
+  { keys: ['soweto'], lat: -26.2678, lng: 27.8585 },
+  { keys: ['tembisa', 'alexandra'], lat: -25.9969, lng: 28.2294 },
   { keys: ['pretoria', 'tshwane', 'centurion', 'menlyn'], lat: -25.7479, lng: 28.2293 },
   { keys: ['cape town', 'cpt', 'bellville', 'stellenbosch'], lat: -33.9249, lng: 18.4241 },
   { keys: ['durban', 'dbn', 'umhlanga', 'pinetown'], lat: -29.8587, lng: 31.0218 },
   { keys: ['port elizabeth', 'gqeberha', 'pe'], lat: -33.9608, lng: 25.6022 },
   { keys: ['east london'], lat: -33.0153, lng: 27.9116 },
   { keys: ['bloemfontein', 'mangaung'], lat: -29.0852, lng: 26.1596 },
-  { keys: ['polokwane', 'limpopo', 'tzaneen', 'thohoyandou', 'musina'], lat: -23.9045, lng: 29.4689 },
+  { keys: ['polokwane'], lat: -23.9045, lng: 29.4689 },
+  { keys: ['louis trichardt', 'makhado', 'soutpansberg'], lat: -23.0435, lng: 29.9038 },
+  { keys: ['tzaneen'], lat: -23.8335, lng: 30.1635 },
+  { keys: ['thohoyandou'], lat: -22.9706, lng: 30.4388 },
+  { keys: ['musina'], lat: -22.3456, lng: 30.0417 },
+  { keys: ['limpopo'], lat: -23.9045, lng: 29.4689 },
   { keys: ['nelspruit', 'mbombela', 'mpumalanga', 'witbank', 'emalahleni'], lat: -25.4653, lng: 30.9703 },
   { keys: ['rustenburg', 'north west', 'mahikeng'], lat: -25.6672, lng: 27.2423 },
   { keys: ['kimberley', 'northern cape'], lat: -28.7282, lng: 24.7499 },
@@ -80,9 +86,10 @@ export function compareArtistsByDistance(a, b, userLat, userLng) {
   return 0;
 }
 
-export function formatDistanceKm(km) {
+export function formatDistanceKm(km, placeLabel) {
   if (km == null || !Number.isFinite(km)) return '';
-  if (km < 1) return 'Near you';
-  if (km < 100) return Math.round(km) + ' km away';
-  return Math.round(km) + ' km away';
+  const place = String(placeLabel || '').trim();
+  if (km < 1) return place ? `In ${place}` : 'Nearby';
+  if (km < 100) return `${Math.round(km)} km away`;
+  return `${Math.round(km)} km away`;
 }

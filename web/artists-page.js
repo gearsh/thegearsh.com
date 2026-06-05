@@ -31,7 +31,8 @@
 
   var SA_LOCATIONS = [
     'Johannesburg', 'Cape Town', 'Durban', 'Pretoria', 'Soweto',
-    'Tembisa', 'Polokwane', 'Bloemfontein', 'Port Elizabeth', 'East London'
+    'Tembisa', 'Polokwane', 'Louis Trichardt', 'Thohoyandou', 'Tzaneen',
+    'Bloemfontein', 'Port Elizabeth', 'East London'
   ];
 
   function readUrlState() {
@@ -206,12 +207,21 @@
     if (drawerOverlay) drawerOverlay.classList.remove('is-open');
   }
 
+  function updateSortLabels() {
+    if (!global.GearshLocation || !GearshLocation.sortNearLabel) return;
+    var text = GearshLocation.sortNearLabel();
+    document.querySelectorAll('option[value="nearby"]').forEach(function (opt) {
+      opt.textContent = text;
+    });
+  }
+
   async function init() {
     grid.innerHTML = GearshFeed.renderFeedSkeleton(12);
     readUrlState();
 
     if (global.GearshLocation) {
       try { await GearshLocation.init(); } catch (_) {}
+      updateSortLabels();
     }
 
     var data = await GearshFeed.fetchFeedData();

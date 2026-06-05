@@ -95,31 +95,78 @@
     };
   }
 
-  async function updateNavForSession() {
+  function injectSessionNavLinks(session) {
+    var links = document.querySelector('.g-nav-links');
+    if (!links) return;
+
+    function ensure(marker, href, text) {
+      if (links.querySelector('[data-gearsh-nav="' + marker + '"]')) return;
+      var li = document.createElement('li');
+      li.setAttribute('data-gearsh-nav', marker);
+      var a = document.createElement('a');
+      a.href = href;
+      a.textContent = text;
+      li.appendChild(a);
+
+      var searchLi = links.querySelector('a[href="/search"], a[href="./search"]');
+      if (searchLi && searchLi.parentElement) {
+        searchLi.parentElement.insertAdjacentElement('afterend', li);
+        return;
+      }
+      var lastAuth = null;
+      links.querySelectorAll('.g-nav-menu-auth').forEach(function (el) { lastAuth = el; });
+      if (lastAuth) {
+        lastAuth.insertAdjacentElement('afterend', li);
+      } else {
+        links.insertBefore(li, links.firstChild);
+      }
+    }
+
+    ensure('my-bookings', '/my-bookings', 'My bookings');
+    if (session.has_artist_dashboard || session.user_type === 'artist') {
+      ensure('book-artists', '/search', 'Book artists');
+    }
+  }
+
+  async function fetchSession() {
     var token = localStorage.getItem('gearsh_token');
-    if (!token) return;
+    if (!token) return null;
     try {
       var res = await fetch('/api/session', { headers: { Authorization: 'Bearer ' + token } });
       var data = await res.json();
-      if (!res.ok || !data.success) return;
-      var dashHref = data.data.redirect_path || (
-        data.data.has_artist_dashboard || data.data.user_type === 'artist'
-          ? '/artist-dashboard.html'
-          : (data.data.user_type === 'admin' ? '/gearsh-god.html' : '/')
-      );
-      var label = (data.data.has_artist_dashboard || data.data.user_type === 'artist')
-        ? 'Dashboard'
-        : (data.data.user_type === 'admin' ? 'Command' : 'Home');
-      document.querySelectorAll('.g-nav-mobile-login, .g-nav-menu-auth a[href="/auth.html"]').forEach(function (el) {
-        el.textContent = label;
-        el.href = dashHref;
-      });
-      var heroSignIn = document.querySelector('.hero-actions .btn-ghost');
-      if (heroSignIn && (data.data.has_artist_dashboard || data.data.user_type === 'artist')) {
-        heroSignIn.textContent = 'Go to dashboard';
-        heroSignIn.href = '/artist-dashboard.html';
-      }
-    } catch (_) {}
+      if (!res.ok || !data.success) return null;
+      return data.data;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  async function updateNavForSession() {
+    var session = await fetchSession();
+    if (!session) return;
+
+    var isArtist = session.has_artist_dashboard || session.user_type === 'artist';
+    var dashHref = session.redirect_path || (
+      isArtist
+        ? '/artist-dashboard.html'
+        : (session.user_type === 'admin' ? '/gearsh-god.html' : '/')
+    );
+    var label = isArtist
+      ? 'Dashboard'
+      : (session.user_type === 'admin' ? 'Command' : 'Home');
+
+    document.querySelectorAll('.g-nav-mobile-login, .g-nav-menu-auth a[href="/auth.html"]').forEach(function (el) {
+      el.textContent = label;
+      el.href = dashHref;
+    });
+
+    injectSessionNavLinks(session);
+
+    var heroSignIn = document.querySelector('.hero-actions .btn-ghost');
+    if (heroSignIn && isArtist) {
+      heroSignIn.textContent = 'Go to dashboard';
+      heroSignIn.href = '/artist-dashboard.html';
+    }
   }
 
   function initPage() {
@@ -140,6 +187,7 @@
     initNav: initNav,
     initReveal: initReveal,
     debounce: debounce,
+    fetchSession: fetchSession,
     updateNavForSession: updateNavForSession
   };
 })(typeof window !== 'undefined' ? window : this);

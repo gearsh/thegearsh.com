@@ -4,6 +4,7 @@ import {
   jsonResponse,
   corsPreflightResponse,
   resolveArtistProfile,
+  parseToken,
 } from './auth-utils.js';
 
 export async function onRequestPost(context) {
@@ -43,6 +44,11 @@ export async function onRequestPost(context) {
 
     const resolvedArtistId = artistProfile.artist_id;
 
+    const authUserId = await parseToken(context.request.headers.get('Authorization'), context.env);
+    if (authUserId && artistProfile.user_id === authUserId) {
+      return jsonResponse({ success: false, error: 'You cannot book your own profile.' }, 400);
+    }
+
     let totalPrice = 0;
     if (service_id) {
       const service = await context.env.DB.prepare(`
@@ -57,9 +63,34 @@ export async function onRequestPost(context) {
 
     const phoneDigits = String(client_phone).replace(/\D/g, '');
     const guestEmail = (client_email || `guest_${phoneDigits || Date.now()}@gearsh.guest`).toLowerCase();
-    let client = await context.env.DB.prepare(`
-      SELECT id FROM users WHERE email = ? AND is_active = 1
-    `).bind(guestEmail).first();
+    let client = null;
+
+    if (authUserId) {
+      client = await context.env.DB.prepare(`
+        SELECT id, email FROM users WHERE id = ? AND is_active = 1
+      `).bind(authUserId).first();
+      if (client) {
+        const updatedAt = new Date().toISOString();
+        await context.env.DB.prepare(`
+          UPDATE users
+          SET display_name = COALESCE(?, display_name),
+              phone = COALESCE(?, phone),
+              updated_at = ?
+          WHERE id = ?
+        `).bind(
+          client_name.trim() || null,
+          client_phone.trim() || null,
+          updatedAt,
+          client.id
+        ).run();
+      }
+    }
+
+    if (!client) {
+      client = await context.env.DB.prepare(`
+        SELECT id FROM users WHERE email = ? AND is_active = 1
+      `).bind(guestEmail).first();
+    }
 
     if (!client) {
       const clientId = `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
