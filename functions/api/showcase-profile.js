@@ -38,6 +38,7 @@ export const VERIFIED_BOOKING_RATES = {
   'die-antwoord': 250000,
   'yung-swiss': 35000,
   'rixelton': 2000,
+  'vanz': 200,
   'artwork-sounds': 45000,
   'zj90': 3500,
   'empress-ngqama': 4500,
@@ -111,6 +112,7 @@ export const SOLO_PORTRAIT_IMAGES = {
   'die-antwoord': 'assets/images/artists/antwoord.png',
   'yung-swiss': 'assets/images/artists/yung-swiss.jpg',
   'rixelton': 'assets/images/artists/rixelton.jpg',
+  'vanz': 'assets/images/artists/vanz.jpg',
   'artwork-sounds': 'assets/images/artists/artwork-sounds.jpg',
   'empress-ngqama': 'assets/images/artists/empress-ngqama.jpg',
   'dripmaker': 'assets/images/artists/dripmaker.png',
@@ -154,6 +156,11 @@ export function getBookingFee(artist) {
 
 /** Lowest showcase service tier — used for homepage/listing cards. */
 export function getShowcaseMinPrice(artist, fee) {
+  if (Array.isArray(artist.bookingServices) && artist.bookingServices.length) {
+    return Math.min.apply(null, artist.bookingServices.map(function (s) {
+      return Number(s.price || 0);
+    }).filter(function (p) { return p > 0; }));
+  }
   const price = Number(fee || getBookingFee(artist));
   const mult = isDjCategory(artist.category) ? 0.35 : 0.45;
   return Math.round(price * mult);
@@ -409,6 +416,18 @@ function buildCreativeServices(artist, price) {
 }
 
 export function buildShowcaseServices(artist, fee) {
+  if (Array.isArray(artist.bookingServices) && artist.bookingServices.length) {
+    return artist.bookingServices.map(function (service, index) {
+      return {
+        id: service.id || `svc_showcase_${artist.username}_${index + 1}`,
+        name: service.name,
+        description: service.description || '',
+        price: Number(service.price),
+        duration_hours: Number(service.duration_hours || 2),
+      };
+    });
+  }
+
   const price = Number(fee || getBookingFee(artist));
   const category = artist.category || 'Live Performance';
   const dj = isDjCategory(category);

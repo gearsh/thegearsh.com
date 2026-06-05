@@ -69,7 +69,7 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
     await db.prepare(`
       UPDATE users
       SET email = ?, password_hash = ?, user_type = 'artist', first_name = ?, last_name = ?,
-          display_name = ?, username = ?, profile_picture_url = ?, phone = NULL, location = ?,
+          display_name = ?, username = ?, profile_picture_url = ?, phone = ?, location = ?,
           country = ?, bio = ?, is_verified = 1, is_active = 1, is_demo = 1,
           claim_token = ?, updated_at = ?
       WHERE id = ?
@@ -81,6 +81,7 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
       artist.name,
       artist.username,
       profileImage,
+      artist.phone || null,
       artist.location,
       artist.country || 'South Africa',
       artist.bio,
@@ -92,9 +93,9 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
     await db.prepare(`
       INSERT INTO users (
         id, email, password_hash, user_type, first_name, last_name, display_name, username,
-        profile_picture_url, location, country, bio, is_verified, is_active, is_demo,
+        profile_picture_url, phone, location, country, bio, is_verified, is_active, is_demo,
         claim_token, created_at, updated_at
-      ) VALUES (?, ?, ?, 'artist', ?, '—', ?, ?, ?, ?, ?, ?, 1, 1, 1, ?, ?, ?)
+      ) VALUES (?, ?, ?, 'artist', ?, '—', ?, ?, ?, ?, ?, ?, ?, 1, 1, 1, ?, ?, ?)
     `).bind(
       userId,
       placeholderEmail,
@@ -103,6 +104,7 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
       artist.name,
       artist.username,
       profileImage,
+      artist.phone || null,
       artist.location,
       artist.country || 'South Africa',
       artist.bio,
