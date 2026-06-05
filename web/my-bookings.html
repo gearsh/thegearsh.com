@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>My Bookings | Gearsh</title>
+  <link rel="icon" type="image/png" href="/icons/Icon-192.png">
+  <link rel="stylesheet" href="/gearsh-brand.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    body { margin: 0; background: var(--g-black); color: var(--g-text); font-family: var(--g-font, system-ui, sans-serif); }
+    .bk-page { max-width: 720px; margin: 0 auto; padding: 32px 20px 80px; }
+    .bk-title { font-size: clamp(28px, 6vw, 40px); margin: 0 0 8px; }
+    .bk-title em { font-style: normal; color: var(--g-accent); }
+    .bk-sub { color: var(--g-text-muted); font-size: 15px; margin-bottom: 28px; line-height: 1.5; }
+    .bk-card {
+      background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 16px;
+      padding: 18px; margin-bottom: 14px;
+    }
+    .bk-card-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
+    .bk-artist { font-size: 17px; font-weight: 700; color: var(--g-white); }
+    .bk-meta { font-size: 13px; color: var(--g-text-dim); margin-top: 4px; line-height: 1.45; }
+    .bk-price { font-size: 18px; font-weight: 700; color: var(--g-accent); }
+    .bk-status {
+      display: inline-block; font-size: 11px; font-weight: 700; text-transform: capitalize;
+      padding: 4px 10px; border-radius: 999px; margin-top: 8px;
+    }
+    .bk-status.pending { background: rgba(255,200,80,0.15); color: #ffd27a; }
+    .bk-status.accepted { background: rgba(0,191,255,0.15); color: var(--g-accent); }
+    .bk-status.confirmed, .bk-status.completed { background: rgba(110,231,168,0.15); color: #6ee7a8; }
+    .bk-status.cancelled { background: rgba(255,120,120,0.12); color: #ff8a8a; }
+    .bk-actions { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .bk-fee-note { font-size: 12px; color: var(--g-text-dim); }
+    .bk-guest {
+      background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 16px;
+      padding: 18px; margin-bottom: 24px;
+    }
+    .bk-guest label { display: block; font-size: 12px; color: var(--g-text-muted); margin-bottom: 6px; font-weight: 600; }
+    .bk-guest input {
+      width: 100%; box-sizing: border-box; background: var(--g-black); border: 0.5px solid var(--g-border);
+      border-radius: 10px; padding: 11px 13px; color: var(--g-text); font-size: 14px; margin-bottom: 12px;
+    }
+    .bk-msg { font-size: 13px; margin-top: 10px; min-height: 16px; }
+    .bk-msg.error { color: #ff8a8a; }
+    .bk-empty { text-align: center; color: var(--g-text-dim); padding: 48px 20px; }
+  </style>
+</head>
+<body>
+  <nav class="g-nav">
+    <div class="g-nav-inner">
+      <a href="/" class="g-nav-logo"><img src="/icons/Icon-512.png" alt="Gearsh" width="40" height="40"></a>
+      <ul class="g-nav-links">
+        <li><a href="/search">Artists</a></li>
+        <li><a href="/gigs">Gig Guide</a></li>
+        <li><a href="/my-bookings" class="active">My bookings</a></li>
+        <li><a href="/auth.html" id="nav-auth">Sign in</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="bk-page">
+    <h1 class="bk-title">My <em>bookings</em></h1>
+    <p class="bk-sub">Track requests and pay securely via PayFast once an artist accepts.</p>
+
+    <div class="bk-guest" id="guest-box" hidden>
+      <p style="margin:0 0 14px;font-size:14px;color:var(--g-text-muted)">Find a booking you made without signing in:</p>
+      <label for="guest-email">Email used when booking</label>
+      <input id="guest-email" type="email" autocomplete="email" placeholder="you@example.com">
+      <label for="guest-id">Booking reference</label>
+      <input id="guest-id" type="text" placeholder="book_…">
+      <button type="button" class="btn-main" id="guest-find">Find booking</button>
+      <div class="bk-msg" id="guest-msg"></div>
+    </div>
+
+    <div id="bookings-root"><div class="bk-empty">Loading…</div></div>
+  </main>
+
+  <script src="/my-bookings.js"></script>
+</body>
+</html>

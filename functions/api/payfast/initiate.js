@@ -21,9 +21,12 @@ async function initiateBookingPayment(context, auth, body) {
   }
 
   const booking = await context.env.DB.prepare(`
-    SELECT b.*, u.email, u.first_name, u.last_name, u.display_name
+    SELECT b.*, u.email, u.first_name, u.last_name, u.display_name,
+           u_artist.display_name AS artist_name
     FROM bookings b
     JOIN users u ON b.client_id = u.id
+    JOIN artist_profiles ap ON b.artist_id = ap.id
+    JOIN users u_artist ON ap.user_id = u_artist.id
     WHERE b.id = ?
   `).bind(bookingId).first();
 
@@ -31,12 +34,40 @@ async function initiateBookingPayment(context, auth, body) {
     return jsonResponse({ success: false, error: 'Booking not found' }, 404);
   }
 
-  if (booking.client_id !== auth.userId) {
-    return jsonResponse({ success: false, error: 'Not your booking' }, 403);
+  // Authenticated client, or guest checkout with matching email.
+  const guestEmail = String(body.client_email || '').trim().toLowerCase();
+  if (auth && auth.userId) {
+    if (booking.client_id !== auth.userId) {
+      return jsonResponse({ success: false, error: 'Not your booking' }, 403);
+    }
+  } else if (guestEmail && guestEmail === String(booking.email || '').toLowerCase()) {
+    // Guest pay — email must match the booking client record.
+  } else {
+    return jsonResponse({ success: false, error: 'Sign in or use the email from your booking request' }, 401);
+  }
+
+  if (booking.status !== 'accepted') {
+    return jsonResponse({
+      success: false,
+      error: booking.status === 'confirmed'
+        ? 'This booking is already paid'
+        : 'Payment unlocks after the artist accepts your request',
+    }, 409);
+  }
+
+  const subtotal = Number(booking.total_price || 0);
+  if (subtotal <= 0) {
+    return jsonResponse({ success: false, error: 'No amount to pay yet. Ask the artist to confirm a quote.' }, 400);
+  }
+
+  const existingPaid = await context.env.DB.prepare(`
+    SELECT id FROM payments WHERE booking_id = ? AND status = 'complete' LIMIT 1
+  `).bind(bookingId).first();
+  if (existingPaid) {
+    return jsonResponse({ success: false, error: 'This booking is already paid' }, 409);
   }
 
   const config = getPayfastConfig(context.env);
-  const subtotal = Number(booking.total_price || 0);
   const serviceFee = Math.round(subtotal * PLATFORM_FEE_RATE * 100) / 100;
   const amount = Math.round((subtotal + serviceFee) * 100) / 100;
   const origin = new URL(context.request.url).origin;
@@ -44,15 +75,15 @@ async function initiateBookingPayment(context, auth, body) {
   const paymentData = {
     merchant_id: config.merchantId,
     merchant_key: config.merchantKey,
-    return_url: body.return_url || `${origin}/my-bookings`,
-    cancel_url: body.cancel_url || `${origin}/booking-flow/${booking.artist_id}`,
+    return_url: body.return_url || `${origin}/booking-success?booking=${encodeURIComponent(bookingId)}`,
+    cancel_url: body.cancel_url || `${origin}/my-bookings?booking=${encodeURIComponent(bookingId)}`,
     notify_url: `${origin}/api/payfast/notify`,
     name_first: booking.first_name || 'Client',
     name_last: booking.last_name || 'User',
     email_address: booking.email,
     m_payment_id: bookingId,
     amount: amount.toFixed(2),
-    item_name: body.item_name || `Gearsh booking ${bookingId}`,
+    item_name: body.item_name || `Gearsh booking — ${booking.artist_name || 'Artist'}`,
     item_description: body.item_description || booking.event_location || 'Artist booking',
   };
 
@@ -60,6 +91,7 @@ async function initiateBookingPayment(context, auth, body) {
 
   const paymentId = newId('pay');
   const now = new Date().toISOString();
+  const payerId = auth && auth.userId ? auth.userId : booking.client_id;
 
   await context.env.DB.prepare(`
     INSERT INTO payments (id, booking_id, amount, platform_fee, status, currency, created_at, updated_at)
@@ -74,7 +106,7 @@ async function initiateBookingPayment(context, auth, body) {
     bookingId,
     paymentId,
     amount,
-    auth.userId,
+    payerId,
     now
   ).run();
 
@@ -86,6 +118,7 @@ async function initiateBookingPayment(context, auth, body) {
       fields: paymentData,
       amount,
       platform_fee: serviceFee,
+      subtotal,
     },
   });
 }
@@ -184,8 +217,8 @@ export async function onRequestPost(context) {
     }
 
     const auth = await requireAuth(context);
-    if (auth.error) return auth.error;
-    return initiateBookingPayment(context, auth, body);
+    // auth may fail for guest checkout — initiateBookingPayment handles guest email.
+    return initiateBookingPayment(context, auth.error ? null : auth, body);
   } catch (err) {
     console.error('PayFast initiate error:', err);
     return jsonResponse({ success: false, error: 'Failed to initiate payment' }, 500);

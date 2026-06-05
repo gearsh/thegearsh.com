@@ -59,7 +59,7 @@ async function handleBookingNotify(db, bookingId, paymentStatus, payfastPaymentI
     }
 
     await db.prepare(`
-      UPDATE bookings SET status = 'confirmed', updated_at = ? WHERE id = ? AND status = 'pending'
+      UPDATE bookings SET status = 'confirmed', updated_at = ? WHERE id = ? AND status IN ('pending', 'accepted')
     `).bind(now, bookingId).run();
   } else if (paymentStatus === 'FAILED' || paymentStatus === 'CANCELLED') {
     if (payment) {

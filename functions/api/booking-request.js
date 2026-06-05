@@ -119,11 +119,12 @@ export async function onRequestPost(context) {
 
     return jsonResponse({
       success: true,
-      message: 'Booking request sent! The provider will confirm with you soon.',
+      message: 'Booking request sent! Pay via PayFast once the artist accepts.',
       data: {
         booking_id: bookingId,
         artist_name: artistProfile.artist_name,
         artist_phone: artistProfile.artist_phone,
+        pay_url: `/my-bookings?booking=${encodeURIComponent(bookingId)}`,
       },
     }, 201);
   } catch (err) {

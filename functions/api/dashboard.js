@@ -129,7 +129,7 @@ export async function onRequestGet(context) {
     const statsRow = await context.env.DB.prepare(`
       SELECT
         COUNT(*) AS total_bookings,
-        SUM(CASE WHEN status IN ('confirmed', 'completed') THEN 1 ELSE 0 END) AS active_bookings,
+        SUM(CASE WHEN status IN ('accepted', 'confirmed', 'completed') THEN 1 ELSE 0 END) AS active_bookings,
         SUM(CASE WHEN status = 'completed' THEN COALESCE(total_price, 0) ELSE 0 END) AS earnings,
         SUM(CASE WHEN status = 'completed' THEN COALESCE(duration_hours, 0) ELSE 0 END) AS mastery_hours
       FROM bookings

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Booking confirmed | Gearsh</title>
+  <link rel="icon" type="image/png" href="/icons/Icon-192.png">
+  <link rel="stylesheet" href="/gearsh-brand.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+</head>
+<body>
+  <main style="max-width:640px;margin:0 auto;padding:48px 20px;text-align:center">
+    <div id="root">
+      <div style="color:var(--g-accent);font-size:48px;margin-bottom:12px"><i class="ti ti-circle-check"></i></div>
+      <h1 style="font-size:28px;margin:0 0 8px">Processing payment…</h1>
+      <p style="color:var(--g-text-muted)">Confirming with PayFast. This usually takes a few seconds.</p>
+    </div>
+  </main>
+  <script>
+  (function () {
+    var bookingId = new URLSearchParams(location.search).get('booking');
+    var root = document.getElementById('root');
+    if (!bookingId) {
+      root.innerHTML = '<p>Booking not found.</p>';
+      return;
+    }
+    var token = localStorage.getItem('gearsh_token');
+    var headers = { Accept: 'application/json' };
+    if (token) headers.Authorization = 'Bearer ' + token;
+
+    function poll(n) {
+      if (!token) {
+        root.innerHTML =
+          '<div style="color:#6ee7a8;font-size:48px;margin-bottom:12px"><i class="ti ti-circle-check"></i></div>' +
+          '<h1 style="font-size:28px;margin:0 0 8px">Payment submitted</h1>' +
+          '<p style="color:var(--g-text-muted);margin-bottom:20px">PayFast is confirming your payment. ' +
+          'Your booking will show as confirmed within a minute.</p>' +
+          '<a href="/my-bookings?booking=' + encodeURIComponent(bookingId) + '" class="btn-main">View booking</a>';
+        return;
+      }
+      fetch('/api/bookings/' + encodeURIComponent(bookingId), { headers: headers })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d.success && n < 8) {
+            setTimeout(function () { poll(n + 1); }, 2000);
+            return;
+          }
+          if (!d.success) throw new Error(d.error || 'Could not verify payment');
+          var b = d.data;
+          if (b.status !== 'confirmed' && n < 12) {
+            setTimeout(function () { poll(n + 1); }, 2000);
+            return;
+          }
+          root.innerHTML =
+            '<div style="color:#6ee7a8;font-size:48px;margin-bottom:12px"><i class="ti ti-circle-check"></i></div>' +
+            '<h1 style="font-size:28px;margin:0 0 8px">You\'re booked</h1>' +
+            '<p style="color:var(--g-text-muted);margin-bottom:20px">' +
+            '<strong style="color:var(--g-white)">' + (b.artist_name || 'Artist') + '</strong><br>' +
+            (b.event_date || '') + (b.event_location ? ' · ' + b.event_location : '') + '</p>' +
+            '<a href="/my-bookings" class="btn-main">View my bookings</a>';
+        })
+        .catch(function () {
+          if (n < 12) setTimeout(function () { poll(n + 1); }, 2000);
+          else {
+            root.innerHTML =
+              '<h1 style="font-size:24px">Payment received</h1>' +
+              '<p style="color:var(--g-text-muted)">Your payment is processing. Check <a href="/my-bookings" style="color:var(--g-accent)">My bookings</a> in a moment.</p>';
+          }
+        });
+    }
+    poll(0);
+  })();
+  </script>
+</body>
+</html>

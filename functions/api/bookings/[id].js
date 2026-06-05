@@ -15,11 +15,12 @@ async function getBookingParties(db, booking) {
 }
 
 const ALLOWED_STATUSES = new Set([
-  'pending', 'confirmed', 'cancelled', 'completed', 'disputed',
+  'pending', 'accepted', 'confirmed', 'cancelled', 'completed', 'disputed',
 ]);
 
 const TRANSITIONS = {
-  pending: new Set(['confirmed', 'cancelled']),
+  pending: new Set(['accepted', 'cancelled']),
+  accepted: new Set(['cancelled']),
   confirmed: new Set(['completed', 'cancelled', 'disputed']),
   completed: new Set([]),
   cancelled: new Set([]),
@@ -52,7 +53,7 @@ export async function onRequestPatch(context) {
     const action = String(body.action || '').trim().toLowerCase();
 
     let status = nextStatus;
-    if (!status && action === 'accept') status = 'confirmed';
+    if (!status && action === 'accept') status = 'accepted';
     if (!status && action === 'decline') status = 'cancelled';
     if (!status && action === 'complete') status = 'completed';
     if (!status && action === 'cancel') status = 'cancelled';
@@ -83,8 +84,15 @@ export async function onRequestPatch(context) {
       }, 400);
     }
 
-    if (status === 'confirmed' && booking.client_id === auth.user.id) {
-      return jsonResponse({ success: false, error: 'Only the artist can confirm bookings' }, 403);
+    if (status === 'accepted' && booking.client_id === auth.user.id) {
+      return jsonResponse({ success: false, error: 'Only the artist can accept bookings' }, 403);
+    }
+
+    if (status === 'accepted' && auth.user.user_type !== 'admin') {
+      const artistProfileId = await getArtistProfileId(context.env.DB, auth.user.id);
+      if (!artistProfileId || booking.artist_id !== artistProfileId) {
+        return jsonResponse({ success: false, error: 'Only the artist can accept bookings' }, 403);
+      }
     }
 
     const now = new Date().toISOString();

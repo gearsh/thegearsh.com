@@ -203,7 +203,8 @@
       flex-shrink: 0; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px;
       text-transform: capitalize;
     }
-    .status-pending { background: rgba(251,191,36,0.12); color: #fbbf24; }
+    .status-pending { background: rgba(255,200,80,0.12); color: #ffd27a; }
+    .status-accepted { background: rgba(0,191,255,0.12); color: var(--g-accent); }
     .status-confirmed { background: rgba(0,191,255,0.12); color: var(--g-accent); }
     .status-completed { background: rgba(52,211,153,0.12); color: #34d399; }
     .status-cancelled { background: rgba(248,113,113,0.12); color: #f87171; }
@@ -647,16 +648,56 @@
         return;
       }
       root.innerHTML = '<div class="list-stack">' + data.bookings.map(function(booking) {
-        return '<div class="list-row">' +
+        var acts = '';
+        if (booking.status === 'pending') {
+          acts = '<div style="display:flex;gap:6px;margin-top:8px;justify-content:flex-end">' +
+            '<button type="button" class="btn-ghost bk-act" data-id="' + escapeHtml(booking.id) + '" data-act="decline" style="font-size:12px;padding:6px 10px">Decline</button>' +
+            '<button type="button" class="btn-main bk-act" data-id="' + escapeHtml(booking.id) + '" data-act="accept" style="font-size:12px;padding:6px 10px">Accept</button></div>';
+        }
+        return '<div class="list-row" style="flex-wrap:wrap">' +
           '<div class="list-row-main">' +
           '<div class="list-row-title">' + escapeHtml(booking.client_name) + '</div>' +
           '<div class="list-row-sub">' + escapeHtml(booking.event_date) +
           (booking.event_location ? ' · ' + escapeHtml(booking.event_location) : '') +
           (booking.service_name ? ' · ' + escapeHtml(booking.service_name) : '') + '</div></div>' +
-          '<div style="text-align:right">' +
+          '<div style="text-align:right;min-width:120px">' +
           '<div class="service-price">' + formatMoney(booking.total_price) + '</div>' +
-          '<span class="status-pill status-' + escapeHtml(booking.status) + '">' + escapeHtml(booking.status) + '</span></div></div>';
+          '<span class="status-pill status-' + escapeHtml(booking.status) + '">' + escapeHtml(booking.status === 'accepted' ? 'awaiting payment' : booking.status) + '</span>' +
+          acts + '</div></div>';
       }).join('') + '</div>';
+
+      root.querySelectorAll('.bk-act').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          bookingAction(btn.getAttribute('data-id'), btn.getAttribute('data-act'));
+        });
+      });
+    }
+
+    async function bookingAction(id, action) {
+      var token = localStorage.getItem('gearsh_token');
+      var payload = { action: action };
+      if (action === 'accept') {
+        var quote = prompt('Confirm or update the quote (ZAR). Leave blank to keep the listed price.');
+        if (quote === null) return;
+        if (quote.trim()) {
+          var amount = Number(quote);
+          if (!isFinite(amount) || amount < 0) { alert('Enter a valid amount.'); return; }
+          payload.quote_amount = amount;
+        }
+      }
+      if (action === 'decline' && !confirm('Decline this booking request?')) return;
+      try {
+        var res = await fetch(API_BASE + '/bookings/' + encodeURIComponent(id), {
+          method: 'PATCH',
+          headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        var data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || 'Update failed');
+        loadDashboard();
+      } catch (err) {
+        alert(err.message);
+      }
     }
 
     function renderServices(data) {

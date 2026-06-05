@@ -549,8 +549,15 @@
         });
         var data = await res.json();
         if (!res.ok || !data.success) throw new Error(data.error || 'Booking failed');
+        var bid = data.data && data.data.booking_id;
+        var email = document.getElementById('client-email').value.trim();
         msg.className = 'book-msg success';
-        msg.textContent = data.message;
+        msg.innerHTML = 'Booking request sent! The artist will review it. ' +
+          (bid
+            ? '<a href="/my-bookings?booking=' + encodeURIComponent(bid) +
+              (email ? '&email=' + encodeURIComponent(email) : '') +
+              '" style="color:var(--g-accent);font-weight:600">Track &amp; pay here</a> once they accept.'
+            : 'You can pay via PayFast once they accept.');
         document.getElementById('booking-form').reset();
       } catch (err) {
         msg.className = 'book-msg error';

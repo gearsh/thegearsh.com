@@ -85,6 +85,9 @@ jobs:
           cp web/gig-guide.css build/web/gig-guide.css 2>/dev/null || true
           cp web/gig-guide.js build/web/gig-guide.js 2>/dev/null || true
           cp web/gig-detail.html build/web/gig-detail.html 2>/dev/null || true
+          cp web/my-bookings.html build/web/my-bookings.html 2>/dev/null || true
+          cp web/my-bookings.js build/web/my-bookings.js 2>/dev/null || true
+          cp web/booking-success.html build/web/booking-success.html 2>/dev/null || true
           cp web/tickets.css build/web/tickets.css 2>/dev/null || true
           cp web/terms.html build/web/terms.html
           cp web/privacy.html build/web/privacy.html

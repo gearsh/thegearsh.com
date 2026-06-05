@@ -65,6 +65,8 @@
 /gig/*                    /gig-detail?slug=:splat 200
 /ticket/*                 /ticket-view?code=:splat 200
 /my-tickets               /my-tickets.html 200
+/my-bookings              /my-bookings.html 200
+/booking-success          /booking-success.html 200
 /ticket-success           /ticket-success.html 200
 
 # Other marketing static pages
