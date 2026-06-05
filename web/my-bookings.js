@@ -243,7 +243,7 @@
           } catch (_) {}
         }
         if (!bookings.some(function (b) { return b.id === highlightId; })) {
-          var lookupEmail = guestEmailParam || sessionEmail;
+          var lookupEmail = guestEmailParam || sessionEmail || document.getElementById('guest-email').value.trim();
           if (lookupEmail) {
             try {
               var guestOne = await loadGuest(highlightId, lookupEmail);
@@ -314,7 +314,7 @@
       });
     });
 
-    if (highlightId && guestEmailParam && !token) {
+    if (highlightId && guestEmailParam) {
       loadEverything(highlightId, guestEmailParam).catch(function () {
         document.getElementById('bookings-root').innerHTML =
           '<div class="bk-empty">Could not load that booking. Check the email and reference above.</div>';

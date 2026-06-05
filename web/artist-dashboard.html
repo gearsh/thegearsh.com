@@ -469,6 +469,7 @@
     </div>
   </footer>
 
+  <script src="gearsh-auth.js"></script>
   <script>
     var API_BASE = '/api';
     var dashboardData = null;
@@ -882,10 +883,19 @@
     }
 
     async function loadDashboard() {
-      var token = localStorage.getItem('gearsh_token');
+      var token = window.GearshAuth ? GearshAuth.getToken() : localStorage.getItem('gearsh_token');
       if (!token) {
         window.location.replace('/auth.html?logout=1');
         return;
+      }
+
+      if (window.GearshAuth) {
+        var sessionOk = await GearshAuth.ensureSession();
+        if (sessionOk === false) {
+          signOut();
+          return;
+        }
+        token = GearshAuth.getToken();
       }
 
       try {
@@ -894,6 +904,10 @@
         });
         var data = await res.json();
         if (!res.ok || !data.success) {
+          if (res.status === 401 && window.GearshAuth) {
+            var refreshed = await GearshAuth.refreshSession();
+            if (refreshed) return loadDashboard();
+          }
           if (res.status === 401) {
             signOut();
             return;

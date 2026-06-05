@@ -108,6 +108,10 @@
             <label class="field-label" for="password">Password</label>
             <input class="field-input" id="password" type="password" required placeholder="Your password" autocomplete="current-password">
           </div>
+          <label class="remember-row" style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:14px;cursor:pointer">
+            <input type="checkbox" id="remember-me" checked>
+            Keep me signed in
+          </label>
           <div class="auth-error" id="login-error"></div>
           <button class="btn-submit" type="submit" id="login-btn">Sign in</button>
         </form>
@@ -130,6 +134,7 @@
     </div>
   </footer>
 
+  <script src="gearsh-auth.js"></script>
   <script>
     var API_BASE = '/api';
 
@@ -157,7 +162,8 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             identifier: document.getElementById('identifier').value.trim(),
-            password: document.getElementById('password').value
+            password: document.getElementById('password').value,
+            remember: document.getElementById('remember-me').checked
           })
         });
         var data = {};
@@ -171,6 +177,7 @@
         }
 
         var user = data.data;
+        GearshAuth.setRemember(document.getElementById('remember-me').checked);
         localStorage.setItem('gearsh_token', user.token);
         localStorage.setItem('gearsh_user_id', user.user_id || '');
         localStorage.setItem('gearsh_user_name', user.display_name || user.first_name || '');
@@ -198,10 +205,13 @@
     }
 
     function clearSession() {
-      ['gearsh_token', 'gearsh_user_id', 'gearsh_user_name', 'gearsh_user_type',
-        'gearsh_skills', 'gearsh_artist_id', 'gearsh_profile_url', 'gearsh_username'].forEach(function(k) {
-        localStorage.removeItem(k);
-      });
+      if (window.GearshAuth) GearshAuth.clearSession();
+      else {
+        ['gearsh_token', 'gearsh_user_id', 'gearsh_user_name', 'gearsh_user_type',
+          'gearsh_skills', 'gearsh_artist_id', 'gearsh_profile_url', 'gearsh_username'].forEach(function(k) {
+          localStorage.removeItem(k);
+        });
+      }
     }
 
     async function resumeIfSignedIn() {
@@ -209,22 +219,31 @@
         clearSession();
         return;
       }
-      var token = localStorage.getItem('gearsh_token');
-      if (!token) return;
+      if (!localStorage.getItem('gearsh_token')) return;
+
+      var session = await GearshAuth.ensureSession();
+      if (session === false) {
+        clearSession();
+        return;
+      }
+
       try {
+        var token = GearshAuth.getToken();
         var res = await fetch(API_BASE + '/session', {
           headers: { Authorization: 'Bearer ' + token },
         });
         var data = await res.json();
-        if (!res.ok || !data.success) {
-          clearSession();
+        if (res.ok && data.success) {
+          redirectAfterAuth(data.data);
           return;
         }
-        var user = data.data;
-        localStorage.setItem('gearsh_user_type', user.user_type || '');
-        redirectAfterAuth(user);
+        if (res.status === 401) {
+          var refreshed = await GearshAuth.refreshSession();
+          if (refreshed) redirectAfterAuth(refreshed);
+          else clearSession();
+        }
       } catch (_) {
-        clearSession();
+        /* Offline — keep existing session */
       }
     }
 

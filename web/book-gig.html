@@ -643,7 +643,7 @@
         var bid = data.data && data.data.booking_id;
         var email = document.getElementById('client-email').value.trim();
         var trackUrl = '/my-bookings?booking=' + encodeURIComponent(bid) +
-          (email && !getToken() ? '&email=' + encodeURIComponent(email) : '');
+          (email ? '&email=' + encodeURIComponent(email) : '');
         msg.className = 'book-msg success';
         msg.innerHTML = '<strong>Booking request sent!</strong> The artist will review it. ' +
           (bid
@@ -662,6 +662,7 @@
 
     loadProfile().then(prefillFromSession);
   </script>
+  <script defer src="/gearsh-auth.js"></script>
   <script defer src="/gearsh-ui.js"></script>
   <script defer src="/activity-feed.js"></script>
 </body>

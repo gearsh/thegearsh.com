@@ -37,7 +37,7 @@ export async function onRequestPost(context) {
     } catch (gearErr) {
       console.error('Gearsh login bootstrap failed:', gearErr);
     }
-    const { password } = body;
+    const { password, remember } = body;
 
     if (!identifier || !password) {
       return jsonResponse(
@@ -95,7 +95,7 @@ export async function onRequestPost(context) {
       console.error('Artist profile load failed:', artistErr);
     }
 
-    const token = await generateToken(user.id, context.env);
+    const token = await generateToken(user.id, context.env, { remember: remember !== false });
     const responseData = await formatUserResponse(context.env.DB, user, token, artistProfile);
 
     return jsonResponse({

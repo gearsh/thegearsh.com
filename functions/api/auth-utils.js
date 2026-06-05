@@ -10,6 +10,9 @@ export const corsHeaders = {
 
 const LEGACY_SALT = 'gearsh_salt_2025';
 const PBKDF2_ITERATIONS = 100000;
+const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const REMEMBER_TTL_MS = 90 * 24 * 60 * 60 * 1000;
+export const REFRESH_GRACE_MS = 14 * 24 * 60 * 60 * 1000;
 
 export function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -168,12 +171,19 @@ export function passwordNeedsRehash(storedHash) {
   return !String(storedHash || '').startsWith('pbkdf2:');
 }
 
-export async function generateToken(userId, env) {
+export function getTokenTtlMs(remember) {
+  return remember ? REMEMBER_TTL_MS : SESSION_TTL_MS;
+}
+
+export async function generateToken(userId, env, options = {}) {
+  const remember = options.remember !== false;
+  const ttlMs = getTokenTtlMs(remember);
   const header = base64UrlEncode(new TextEncoder().encode(JSON.stringify({ alg: 'HS256', typ: 'JWT' })));
   const payload = base64UrlEncode(new TextEncoder().encode(JSON.stringify({
     userId,
-    exp: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    exp: Date.now() + ttlMs,
     iat: Date.now(),
+    remember,
   })));
   const unsigned = `${header}.${payload}`;
   const key = await importHmacKey(getJwtSecret(env));
@@ -191,7 +201,7 @@ function parseLegacyToken(token) {
   }
 }
 
-async function parseJwtToken(token, env) {
+async function parseJwtToken(token, env, graceMs = 0) {
   const parts = String(token || '').split('.');
   if (parts.length !== 3) return null;
   const unsigned = `${parts[0]}.${parts[1]}`;
@@ -211,8 +221,20 @@ async function parseJwtToken(token, env) {
   if (!valid) return null;
   const payloadJson = new TextDecoder().decode(base64UrlDecode(parts[1]));
   const payload = JSON.parse(payloadJson);
-  if (!payload.userId || !payload.exp || payload.exp < Date.now()) return null;
+  if (!payload.userId || !payload.exp || payload.exp + graceMs < Date.now()) return null;
   return payload.userId;
+}
+
+export async function parseTokenForRefresh(authHeader, env) {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+  const token = authHeader.slice(7).trim();
+  if (!token) return null;
+  if (token.includes('.')) {
+    const jwtUserId = await parseJwtToken(token, env, REFRESH_GRACE_MS);
+    if (jwtUserId) return jwtUserId;
+  }
+  if (!allowLegacyTokens(env)) return null;
+  return parseLegacyToken(token);
 }
 
 export async function parseToken(authHeader, env) {

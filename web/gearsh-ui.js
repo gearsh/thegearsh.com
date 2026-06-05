@@ -129,21 +129,29 @@
   }
 
   async function fetchSession() {
-    var token = localStorage.getItem('gearsh_token');
+    if (global.GearshAuth) {
+      var sessionOk = await GearshAuth.ensureSession();
+      if (sessionOk === false) return null;
+    }
+    var token = global.GearshAuth ? GearshAuth.getToken() : localStorage.getItem('gearsh_token');
     if (!token) return null;
     try {
       var res = await fetch('/api/session', { headers: { Authorization: 'Bearer ' + token } });
       var data = await res.json();
+      if (res.status === 401 && global.GearshAuth) {
+        var refreshed = await GearshAuth.refreshSession();
+        return refreshed || null;
+      }
       if (!res.ok || !data.success) return null;
       return data.data;
     } catch (_) {
-      return null;
+      return localStorage.getItem('gearsh_token') ? { cached: true } : null;
     }
   }
 
   async function updateNavForSession() {
     var session = await fetchSession();
-    if (!session) return;
+    if (!session || session.cached) return;
 
     var isArtist = session.has_artist_dashboard || session.user_type === 'artist';
     var dashHref = session.redirect_path || (
