@@ -1,7 +1,7 @@
 ﻿// 100 South African artists, listed for discovery, claimable later via claim-profile
 
 /** Featured profiles seeded on every feed load (before batch seed). */
-var PRIORITY_SHOWCASE_USERNAMES = ['vanz', 'rixelton', 'sir-lsg'];
+var PRIORITY_SHOWCASE_USERNAMES = ['vanz', 'rixelton', 'sir-lsg', 'sol-phenduka'];
 
 const SA_SHOWCASE_ARTISTS = [
   {

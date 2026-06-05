@@ -1,7 +1,7 @@
 ﻿// 100 South African artists, listed for discovery, claimable later via claim-profile
 
 /** Featured profiles seeded on every feed load (before batch seed). */
-export const PRIORITY_SHOWCASE_USERNAMES = ['vanz', 'rixelton', 'sir-lsg'];
+export const PRIORITY_SHOWCASE_USERNAMES = ['vanz', 'rixelton', 'sir-lsg', 'sol-phenduka'];
 
 export const SA_SHOWCASE_ARTISTS = [
   {
@@ -1571,6 +1571,43 @@ export const SA_SHOWCASE_ARTISTS = [
         description: 'Live soulful house performance with keys and vocalists (venue-dependent).',
         price: 85000,
         duration_hours: 2,
+      },
+    ],
+  },
+  {
+    name: 'Sol',
+    username: 'sol-phenduka',
+    image: 'assets/images/artists/artists.png',
+    category: 'DJ',
+    genre: 'Hip-Hop · Amapiano · Johannesburg',
+    genreSlug: 'hip-hop',
+    location: 'Johannesburg',
+    country: 'South Africa',
+    phone: '+27817432499',
+    masteryHours: 8000,
+    badge: 'Expert',
+    badgeClass: 'fb-feat',
+    hourlyRate: 35000,
+    bio: 'Sol Phenduka — DJ and co-host of Podcast and Chill with MacG (@podcastwithmacg), SA’s number-one podcast. Book Sol for club, festival, and private DJ sets. Claim this profile to manage bookings and payments, or request removal if you prefer not to be listed.',
+    skills: ['DJ', 'Hip-Hop', 'Amapiano', 'Live Performance', 'Podcast Host'],
+    bookingServices: [
+      {
+        name: 'DJ Set — Club / Event',
+        description: 'Hip-hop and amapiano set for clubs, festivals, and private events.',
+        price: 35000,
+        duration_hours: 2,
+      },
+      {
+        name: 'Corporate / Brand Event',
+        description: 'DJ set or hosted appearance for corporate functions and brand activations.',
+        price: 55000,
+        duration_hours: 3,
+      },
+      {
+        name: 'Private Party',
+        description: 'Curated DJ set for birthdays, launches, and private celebrations.',
+        price: 45000,
+        duration_hours: 3,
       },
     ],
   },
