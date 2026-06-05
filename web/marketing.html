@@ -109,7 +109,7 @@
     }
     .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
     .stats-row {
-      display: grid; grid-template-columns: repeat(4, 1fr);
+      display: grid; grid-template-columns: repeat(3, 1fr);
       gap: 1px; background: var(--g-border);
       border-radius: 14px; overflow: hidden;
       margin-top: 56px;
@@ -187,7 +187,7 @@
     .section-sub { font-size: 14px; color: var(--g-text-muted); max-width: 460px; margin-top: 10px; line-height: 1.55; }
     /* ── HOW ── */
     .how-section { padding: 72px 20px 0; max-width: 1200px; margin: 0 auto; }
-    .how-visual { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 28px; border-radius: 16px; overflow: hidden; }
+    .how-visual { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; border-radius: 16px; overflow: hidden; }
     .how-card { background: var(--g-surface); padding: 40px 28px; position: relative; }
     .how-card::before { content: attr(data-num); font-size: 80px; font-weight: 700; color: rgba(0,191,255,0.06); position: absolute; top: 16px; right: 20px; line-height: 1; letter-spacing: -0.05em; }
     .how-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--g-accent-light); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
@@ -216,7 +216,7 @@
     .why-card p { font-size: 12px; color: var(--g-text-muted); line-height: 1.55; }
     @media (max-width: 768px) { .why-grid { grid-template-columns: 1fr; } }
     /* ── CTA ── */
-    .cta-section { padding: 80px 20px 100px; max-width: 1200px; margin: 0 auto; }
+    .cta-section { padding: 0 20px 80px; max-width: 1200px; margin: 0 auto; }
     .cta-box { position: relative; overflow: hidden; border-radius: 20px; padding: 64px 32px; text-align: center; }
     .cta-mosaic { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(2, 1fr); gap: 2px; opacity: 0.15; }
     .cta-mosaic img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -253,7 +253,7 @@
 
     /* Headliners rail — Artists of the Day above the genre feed */
     .headliners-section {
-      padding: 32px 20px 8px; max-width: 1280px; margin: 0 auto;
+      padding: 0 0 20px; max-width: none; margin: 0;
     }
     .headliners-header {
       display: flex; align-items: baseline; justify-content: space-between;
@@ -348,7 +348,8 @@
       border-radius: 12px; padding: 14px 16px; color: var(--g-white); font-size: 15px;
     }
     .hero-search-input::placeholder { color: var(--g-text-dim); }
-    .mp-section { padding: 48px 20px 0; max-width: 1200px; margin: 0 auto; }
+    .mp-section { padding: 0; max-width: none; margin: 0; }
+    .mp-cats { padding: 0; max-width: none; margin: 0 0 8px; }
     .mp-section-head, .mp-search-head {
       display: flex; align-items: flex-end; justify-content: space-between;
       gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
@@ -359,7 +360,6 @@
     }
     .mp-section-head h3 i, .mp-search-head h2 { color: var(--g-accent); }
     .mp-section-head a { font-size: 13px; color: var(--g-accent); text-decoration: none; }
-    .mp-cats { padding: 28px 20px 0; max-width: 1200px; margin: 0 auto; }
     .mp-cats-scroll {
       display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px;
       -ms-overflow-style: none; scrollbar-width: none;
@@ -384,6 +384,88 @@
       max-width: 1200px; margin: 56px auto 0; padding: 0 20px;
       border-top: 0.5px solid var(--g-border); padding-top: 40px;
     }
+    /* ── HOMEPAGE ZONES (ordered layout) ── */
+    .home-zone {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 20px 56px;
+      border-top: 0.5px solid var(--g-border);
+    }
+    .home-zone:first-of-type { border-top: none; padding-top: 32px; }
+    .home-zone--gigs {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+    }
+    .home-zone__header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .home-zone__title {
+      font-family: var(--g-serif);
+      font-weight: 400;
+      font-size: clamp(24px, 4vw, 34px);
+      line-height: 1.15;
+      color: var(--g-white);
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+    .home-zone__title em { font-style: italic; color: var(--g-accent); }
+    .home-zone__sub {
+      font-size: 14px;
+      color: var(--g-text-muted);
+      margin: 8px 0 0;
+      line-height: 1.5;
+      max-width: 480px;
+    }
+    .home-zone__link {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--g-accent);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .home-zone__link:hover { text-decoration: underline; }
+    .home-zone__footer {
+      text-align: center;
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+    .home-zone__footer a {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--g-accent);
+      text-decoration: none;
+    }
+    .feed-section--home {
+      padding: 0;
+      max-width: none;
+      margin: 0;
+    }
+    .feed-section--home .feed-categories { gap: 32px; }
+    .home-explore-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 8px;
+    }
+    .home-explore-col h3 {
+      font-family: var(--g-serif);
+      font-weight: 400;
+      font-size: 20px;
+      color: var(--g-white);
+      margin: 0 0 4px;
+    }
+    .home-explore-col p {
+      font-size: 13px;
+      color: var(--g-text-dim);
+      margin: 0 0 16px;
+    }
+    .home-explore-col .collab-home-grid { margin-top: 0; grid-template-columns: repeat(2, 1fr); }
+    .home-zone .testimonial-feed { padding-bottom: 0; }
+    .home-zone .mp-grid { padding-left: 0; padding-right: 0; }
     .rail-badge {
       display: inline-flex; align-items: center; gap: 4px;
       background: var(--g-accent); color: var(--g-black);
@@ -456,9 +538,9 @@
     </div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <div class="hero-badge"><span class="pulse"></span> Creative gigs marketplace for Africa</div>
-      <h1 class="hero-title">What do you<br>need <em>today?</em></h1>
-      <p class="hero-sub hero-marketplace">Find beats, mixing, mastering, features, lessons, photography, and more — book creators directly on Gearsh.</p>
+      <div class="hero-badge"><span class="pulse"></span> Book artists & creative gigs in one place</div>
+      <h1 class="hero-title">Discover. Book.<br>Get <em>paid.</em></h1>
+      <p class="hero-sub hero-marketplace">South Africa's creators — from Amapiano DJs to beat makers and photographers.</p>
       <form class="hero-search-form" id="hero-search-form" role="search">
         <input class="hero-search-input" id="hero-search-input" type="search" name="q" autocomplete="off" aria-label="Search creative gigs">
         <button type="submit" class="btn-main">Search</button>
@@ -468,81 +550,68 @@
         <a href="/auth.html" class="btn-ghost">Sign in</a>
       </div>
       <div class="stats-row">
-        <div class="stat-item"><div class="stat-value accent">Free</div><div class="stat-label">To list your gig</div></div>
-        <div class="stat-item"><div class="stat-value">Global</div><div class="stat-label">Client reach</div></div>
-        <div class="stat-item"><div class="stat-value">10,000</div><div class="stat-label">Hours to mastery</div></div>
-        <div class="stat-item"><div class="stat-value">Secure</div><div class="stat-label">Payments guaranteed</div></div>
+        <div class="stat-item"><div class="stat-value accent">Free</div><div class="stat-label">To list</div></div>
+        <div class="stat-item"><div class="stat-value">Secure</div><div class="stat-label">Payments</div></div>
+        <div class="stat-item"><div class="stat-value">10,000</div><div class="stat-label">Hrs to mastery</div></div>
       </div>
     </div>
   </section>
 
-  <!-- STORIES -->
-  <div class="stories-section reveal">
-    <div class="stories-bar" id="stories-bar"></div>
-  </div>
-
-  <!-- GENRE NAV -->
-  <div class="cats-section reveal">
-    <div class="cats-scroll" id="category-nav"></div>
-  </div>
-
-  <!-- HEADLINERS — Artists of the Day, populated by artist-feed.js -->
-  <section class="headliners-section reveal" id="headliners-section" hidden>
-    <div class="headliners-header">
+  <!-- ① ARTISTS -->
+  <section class="home-zone home-zone--artists reveal" id="artists">
+    <header class="home-zone__header">
       <div>
-        <h2 class="headliners-title"><em id="headliners-title-text">Artists of the day</em></h2>
-        <p class="headliners-subtitle" id="headliners-subtitle">Sorted by bookings and craft hours.</p>
+        <h2 class="home-zone__title">Browse <em>artists</em></h2>
+        <p class="home-zone__sub">Profiles and bookable packages — explore by genre below.</p>
       </div>
-    </div>
-    <div class="headliners-grid" id="headliners-grid"></div>
-  </section>
+      <a href="/artists" class="home-zone__link">View all artists <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
+    </header>
 
-  <!-- ARTIST FEED -->
-  <div class="feed-divider reveal">
-    <div class="section-label">Discover artists</div>
-    <h2 class="section-title" style="margin-bottom:8px">Explore by <em>genre</em></h2>
-    <p class="section-sub" style="margin-bottom:20px">Amapiano, hip hop, house, gospel, and more — book creators across South Africa.</p>
-  </div>
-  <section class="feed-section reveal" id="feed">
-    <div class="feed-header">
-      <div>
-        <h2 class="feed-title">Artist <em>directory</em></h2>
-        <p class="feed-subtitle">Profiles, portfolios, and bookable packages from creators across South Africa.</p>
+    <section class="headliners-section" id="headliners-section" hidden>
+      <div class="headliners-header">
+        <div>
+          <h3 class="headliners-title"><em id="headliners-title-text">Artists of the day</em></h3>
+          <p class="headliners-subtitle" id="headliners-subtitle">Sorted by bookings and craft hours.</p>
+        </div>
       </div>
-      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
-        <a href="/artists" class="feed-link">View all artists <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
-        <a href="join-gig.html" class="feed-link">List your gig <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
-      </div>
-    </div>
-    <div class="feed-categories" id="feed-categories"></div>
-  </section>
-
-  <!-- GIGS MARKETPLACE (mid-page) -->
-  <div id="marketplace-block" class="reveal">
-    <div class="feed-divider" style="padding-top:48px">
-      <div class="section-label">Book by task</div>
-      <h2 class="section-title" style="margin-bottom:8px">Find creative <em>gigs</em></h2>
-      <p class="section-sub" style="margin-bottom:20px">Beats, mixing, mastering, features, lessons, photography, and more.</p>
-    </div>
-
-    <section class="mp-cats" aria-label="Browse by gig type">
-      <div class="mp-cats-scroll" id="marketplace-categories"></div>
+      <div class="headliners-grid" id="headliners-grid"></div>
     </section>
 
-    <section class="mp-section" aria-label="Featured gigs">
+    <div class="feed-section feed-section--home" id="feed">
+      <div class="feed-categories feed-categories--home" id="feed-categories"></div>
+      <p class="home-zone__footer"><a href="/artists">Explore the full artist directory <i class="ti ti-arrow-right" style="font-size:13px"></i></a></p>
+    </div>
+  </section>
+
+  <!-- ② GIGS -->
+  <section class="home-zone home-zone--gigs reveal" id="marketplace-block">
+    <header class="home-zone__header">
+      <div>
+        <h2 class="home-zone__title">Book a <em>gig</em></h2>
+        <p class="home-zone__sub">Beats, mixing, mastering, features, lessons, and more.</p>
+      </div>
+      <a href="/search" class="home-zone__link">Search all gigs <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
+    </header>
+
+    <div class="mp-cats" aria-label="Browse by gig type">
+      <div class="mp-cats-scroll" id="marketplace-categories"></div>
+    </div>
+
+    <section class="mp-section" aria-label="Featured gigs" style="padding-top:24px">
       <div class="mp-section-head">
-        <h3 class="mp-section-title"><i class="ti ti-sparkles"></i> Featured gigs</h3>
-        <a href="/search">Browse all <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
+        <h3 class="mp-section-title"><i class="ti ti-sparkles"></i> Featured</h3>
       </div>
       <div class="mp-grid" id="featured-services"><div class="svc-card svc-card--skeleton"><div class="svc-card-media skeleton-shimmer"></div></div></div>
     </section>
+  </section>
 
-    <div id="marketplace-category-sections"></div>
-  </div>
-
-  <!-- TESTIMONIALS -->
-  <section class="testimonials-section reveal">
-    <div class="feed-header"><h2 class="feed-title">What artists <em>say</em></h2></div>
+  <!-- ③ TESTIMONIALS -->
+  <section class="home-zone home-zone--proof reveal">
+    <header class="home-zone__header">
+      <div>
+        <h2 class="home-zone__title">What artists <em>say</em></h2>
+      </div>
+    </header>
     <div class="testimonial-feed">
       <div class="testi-card"><p class="testi-text">"Straight out of Louis Trichardt. Gearsh gave me a platform to reach clients I never could before. The work speaks."</p><div class="testi-author"><img src="assets/images/artists/yde.png" alt="Y.D.E" class="testi-ava"><div><div class="testi-name">Y.D.E</div><div class="testi-role">Hip Hop · Louis Trichardt</div></div></div></div>
       <div class="testi-card"><p class="testi-text">"As a female DJ, having a verified profile that clients trust changed everything. Now the bookings come to me."</p><div class="testi-author"><img src="assets/images/artists/ZJ90.jpg" alt="ZJ90" class="testi-ava"><div><div class="testi-name">ZJ90</div><div class="testi-role">DJ · Johannesburg</div></div></div></div>
@@ -550,37 +619,48 @@
     </div>
   </section>
 
-  <!-- COLLABORATE -->
-  <style>
-    .collab-home { padding: 72px 20px 0; max-width: 1200px; margin: 0 auto; }
-    .collab-home-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 28px; }
-    .collab-home-card { background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 16px; overflow: hidden; text-decoration: none; display: block; transition: transform .15s ease, border-color .15s ease; }
-    .collab-home-card:hover { transform: translateY(-3px); border-color: var(--g-border-light); }
-    .collab-home-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: var(--g-surface-2); }
-    .collab-home-card .ch-body { padding: 12px; }
-    .collab-home-card .ch-name { font-size: 14px; font-weight: 700; color: var(--g-white); }
-    .collab-home-card .ch-meta { font-size: 12px; color: var(--g-text-dim); margin-top: 2px; }
-    .collab-home-card .ch-fee { font-size: 12px; font-weight: 700; color: var(--g-accent); margin-top: 6px; }
-    @media (max-width: 768px) { .collab-home-grid { grid-template-columns: repeat(2, 1fr); } }
-  </style>
-  <section class="collab-home reveal" id="lessons">
-    <div class="section-label">Why Gearsh exists · Gear, shared</div>
-    <h2 class="section-title">Learn from the artists. <em>On their gear.</em></h2>
-    <p class="section-sub">Book one-on-one lessons and get hands-on with the decks, studios, and cameras you don't own yet — taught by the people who mastered them.</p>
-    <div class="collab-home-grid" id="lessons-home-grid"></div>
-    <div style="text-align:center;margin-top:28px">
-      <a href="/lessons.html" class="btn-main"><i class="ti ti-school"></i> Browse lessons</a>
+  <!-- ④ EXPLORE MORE -->
+  <section class="home-zone home-zone--explore reveal">
+    <header class="home-zone__header">
+      <div>
+        <h2 class="home-zone__title">Explore <em>more</em></h2>
+        <p class="home-zone__sub">Lessons, collaborations, and artist-to-artist bookings.</p>
+      </div>
+    </header>
+    <div class="home-explore-grid">
+      <div class="home-explore-col">
+        <h3>Lessons</h3>
+        <p>Learn on real gear from working artists.</p>
+        <div class="collab-home-grid" id="lessons-home-grid"></div>
+        <p class="home-zone__footer" style="text-align:left;margin-top:12px"><a href="/lessons.html">All lessons <i class="ti ti-arrow-right" style="font-size:13px"></i></a></p>
+      </div>
+      <div class="home-explore-col">
+        <h3>Collaborations</h3>
+        <p>Find features, commissions, and co-writes.</p>
+        <div class="collab-home-grid" id="collab-home-grid"></div>
+        <p class="home-zone__footer" style="text-align:left;margin-top:12px"><a href="/collaborate.html">All collaborations <i class="ti ti-arrow-right" style="font-size:13px"></i></a></p>
+      </div>
     </div>
   </section>
+  <style>
+    .collab-home-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .collab-home-card { background: var(--g-surface); border: 0.5px solid var(--g-border); border-radius: 14px; overflow: hidden; text-decoration: none; display: block; transition: transform .15s ease, border-color .15s ease; }
+    .collab-home-card:hover { transform: translateY(-2px); border-color: var(--g-border-light); }
+    .collab-home-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: var(--g-surface-2); }
+    .collab-home-card .ch-body { padding: 10px; }
+    .collab-home-card .ch-name { font-size: 13px; font-weight: 700; color: var(--g-white); }
+    .collab-home-card .ch-meta { font-size: 11px; color: var(--g-text-dim); margin-top: 2px; }
+    .collab-home-card .ch-fee { font-size: 11px; font-weight: 700; color: var(--g-accent); margin-top: 4px; }
+  </style>
   <script>
     (function () {
       var grid = document.getElementById('lessons-home-grid');
       if (!grid) return;
-      fetch('/api/lessons?limit=8').then(function (r) { return r.json(); }).then(function (res) {
+      fetch('/api/lessons?limit=4').then(function (r) { return r.json(); }).then(function (res) {
         if (!res || !res.success || !res.data) return;
         var sec = res.data.sections;
         var list = (sec && sec.top_tutors && sec.top_tutors.length ? sec.top_tutors : res.data.tutors) || [];
-        list = list.slice(0, 8);
+        list = list.slice(0, 4);
         grid.innerHTML = list.map(function (t) {
           var from = t.from_price ? ('from R' + Number(t.from_price).toLocaleString('en-ZA')) : 'Lessons available';
           var img = t.image || 'assets/images/artists/artists.png';
@@ -593,25 +673,15 @@
       }).catch(function () {});
     })();
   </script>
-
-  <section class="collab-home reveal" id="collaborate">
-    <div class="section-label">New · Artist-to-artist</div>
-    <h2 class="section-title">Find your next <em>collaboration.</em></h2>
-    <p class="section-sub">Connect directly with creatives, book features, commission work, and build together.</p>
-    <div class="collab-home-grid" id="collab-home-grid"></div>
-    <div style="text-align:center;margin-top:28px">
-      <a href="/collaborate.html" class="btn-main"><i class="ti ti-sparkles"></i> Explore collaborations</a>
-    </div>
-  </section>
   <script>
     (function () {
       var grid = document.getElementById('collab-home-grid');
       if (!grid) return;
-      fetch('/api/collaborators?limit=8').then(function (r) { return r.json(); }).then(function (res) {
+      fetch('/api/collaborators?limit=4').then(function (r) { return r.json(); }).then(function (res) {
         if (!res || !res.success || !res.data) return;
         var sec = res.data.sections;
         var list = (sec && sec.trending && sec.trending.length ? sec.trending : res.data.artists) || [];
-        list = list.slice(0, 8);
+        list = list.slice(0, 4);
         grid.innerHTML = list.map(function (a) {
           var fee = (a.estimated_fee && a.estimated_fee.display) || 'Custom Quote';
           var img = a.image || 'assets/images/artists/artists.png';
@@ -626,57 +696,17 @@
   </script>
 
   <!-- HOW IT WORKS -->
-  <section class="how-section reveal" id="how">
-    <div class="section-label">How it works</div>
-    <h2 class="section-title">From profile to payment <em>in minutes.</em></h2>
-    <p class="section-sub">No agency fees. No middleman. Just you, your gigs, and paying clients.</p>
-    <div class="how-visual">
-      <div class="how-card" data-num="01"><div class="how-icon"><i class="ti ti-user-plus"></i></div><h3>Create your artist profile</h3><p>Showcase your gigs, set your rates, go live in minutes. Free to join. No credit card.</p></div>
-      <div class="how-card" data-num="02"><div class="how-icon"><i class="ti ti-bell"></i></div><h3>Receive bookings</h3><p>Clients find you and send requests. Review, negotiate, accept. On your terms.</p></div>
-      <div class="how-card" data-num="03"><div class="how-icon"><i class="ti ti-coin"></i></div><h3>Deliver and get paid</h3><p>Show up, do your thing, get paid securely. Gearsh handles contracts and payments.</p></div>
-    </div>
-  </section>
-
-  <!-- MASTERY -->
-  <section class="mastery-section reveal">
-    <div class="section-label">10,000 hours to mastery</div>
-    <h2 class="section-title">The more you book, <em>the more you earn.</em></h2>
-    <p class="section-sub">Every booking grows your mastery score. Climb from Newcomer to Legend.</p>
-    <div class="mastery-bar">
-      <div class="mastery-tier mt-1"><div class="mt-icon"><i class="ti ti-seedling" style="color:var(--g-accent)"></i></div><div class="mt-name">Newcomer</div><div class="mt-hrs">0 to 99 hrs</div><div class="mt-desc">Get listed. 80% intro discount to attract your first clients.</div></div>
-      <div class="mastery-tier mt-2"><div class="mt-icon"><i class="ti ti-rocket" style="color:#A78BFA"></i></div><div class="mt-name">Rising</div><div class="mt-hrs">100 to 4,999 hrs</div><div class="mt-desc">Track record builds. Reviews stack. Clients seek you out.</div></div>
-      <div class="mastery-tier mt-3"><div class="mt-icon"><i class="ti ti-star" style="color:#FBBF24"></i></div><div class="mt-name">Expert</div><div class="mt-hrs">5,000 to 9,999 hrs</div><div class="mt-desc">Elite status. Priority placement. Premium badge.</div></div>
-      <div class="mastery-tier mt-4"><div class="mt-icon"><i class="ti ti-crown" style="color:#F472B6"></i></div><div class="mt-name">Legend</div><div class="mt-hrs">10,000+ hrs</div><div class="mt-desc">Maximum visibility, trust, and earning potential.</div></div>
-    </div>
-  </section>
-
-  <!-- WHY -->
-  <section class="why-section reveal" id="why">
-    <div class="section-label">Why Gearsh</div>
-    <h2 class="section-title">Built for artists <em>who are serious.</em></h2>
-    <p class="section-sub">Everything you need to turn your craft into a career.</p>
-    <div class="why-grid">
-      <div class="why-card"><div class="why-icon"><i class="ti ti-coin"></i></div><h3>Keep more of what you earn</h3><p>No upfront fees. Transparent commission so you always know what you take home.</p></div>
-      <div class="why-card"><div class="why-icon"><i class="ti ti-world"></i></div><h3>Global client reach</h3><p>Get discovered by clients across South Africa and beyond.</p></div>
-      <div class="why-card"><div class="why-icon"><i class="ti ti-lock"></i></div><h3>Payments protected</h3><p>Every booking is payment-guaranteed. No more chasing invoices.</p></div>
-      <div class="why-card"><div class="why-icon"><i class="ti ti-device-mobile"></i></div><h3>Manage from your phone</h3><p>Accept bookings, message clients, track earnings. All in the app.</p></div>
-      <div class="why-card"><div class="why-icon"><i class="ti ti-star"></i></div><h3>Build your reputation</h3><p>Verified reviews. Growing mastery score. Better rates as you level up.</p></div>
-      <div class="why-card"><div class="why-icon"><i class="ti ti-file-text"></i></div><h3>Contracts on autopilot</h3><p>Gearsh generates booking contracts automatically. Less admin, more creating.</p></div>
-    </div>
-  </section>
-
-  <!-- CLAIM PROFILE -->
-  <section class="claim-section reveal" id="claim">
-    <div class="claim-card">
-      <div class="claim-content">
-        <span class="section-label">For listed artists</span>
-        <h2>Already on <em>The Gearsh?</em></h2>
-        <p>Claim your official profile. Manage bookings, portfolio, and your presence. All in one place.</p>
-        <div class="claim-actions">
-          <a href="/artists" class="btn-ghost">Find your profile</a>
-          <a href="claim-profile.html" class="btn-main">Claim your profile <i class="ti ti-arrow-right" style="font-size:16px"></i></a>
-        </div>
+  <section class="home-zone reveal" id="how">
+    <header class="home-zone__header">
+      <div>
+        <h2 class="home-zone__title">How it <em>works</em></h2>
+        <p class="home-zone__sub">From profile to payment in minutes. No agency fees.</p>
       </div>
+    </header>
+    <div class="how-visual">
+      <div class="how-card" data-num="01"><div class="how-icon"><i class="ti ti-user-plus"></i></div><h3>Create your profile</h3><p>List your gigs, set your rates, go live free.</p></div>
+      <div class="how-card" data-num="02"><div class="how-icon"><i class="ti ti-bell"></i></div><h3>Get booked</h3><p>Clients find you and send requests on your terms.</p></div>
+      <div class="how-card" data-num="03"><div class="how-icon"><i class="ti ti-coin"></i></div><h3>Deliver &amp; get paid</h3><p>Secure payments and contracts handled by Gearsh.</p></div>
     </div>
   </section>
 
@@ -763,11 +793,16 @@
       if (window.GearshMarketplaceFeed) {
         GearshMarketplaceFeed.renderCategoryPills('marketplace-categories');
         GearshMarketplaceFeed.initHeroSearch('hero-search-input', 'hero-search-form');
-        GearshMarketplaceFeed.scheduleHomeMarketplace('#marketplace-block', 'featured-services', 'marketplace-category-sections', 8);
+        GearshMarketplaceFeed.scheduleHomeMarketplace('#marketplace-block', 'featured-services', '', 8);
       }
 
-      GearshFeed.buildCategoryNav(GearshFeed.getCategories());
-      GearshFeed.loadArtistFeed();
+      GearshFeed.loadArtistFeed({
+        maxCategories: 4,
+        cardsPerCategory: 10,
+        hideNav: true,
+        hideStories: true,
+        buildNav: false,
+      });
       if (typeof GearshFeed.renderHeadlinersRail === 'function') {
         GearshFeed.renderHeadlinersRail();
       }

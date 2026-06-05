@@ -619,6 +619,9 @@
     );
     if (!feedCategories.length) feedCategories = getCategories();
     feedCategories = reorderForTonight(feedCategories);
+    if (opts.maxCategories > 0) {
+      feedCategories = feedCategories.slice(0, opts.maxCategories);
+    }
 
     var tonight = getTonight();
     var tonightCatId = tonight ? 'genre-' + tonight.slug : null;
@@ -629,7 +632,7 @@
       htmlParts.push({ category: nearYouRail.category, cards: nearYouRail.cards, priority: true, isTonight: false });
     }
 
-    if (opts.buildNav !== false) {
+    if (opts.buildNav !== false && !opts.hideNav) {
       var navCategories = feedCategories.slice();
       if (nearYouRail) navCategories.unshift(nearYouRail.category);
       buildCategoryNav(navCategories);
@@ -685,7 +688,7 @@
       container.innerHTML = '<div class="feed-empty">More artists coming soon. <a href="join-gig.html" style="color:var(--g-accent)">List your gig</a> to appear here.</div>';
     }
 
-    if (stories) {
+    if (stories && !opts.hideStories) {
       if (!storyCards.length && getShowcase().length) {
         storyCards = getShowcase().slice(0, 16).map(function (item) {
           return showcaseToCard(item, findArtistMatch(item.name, index));
@@ -725,12 +728,20 @@
 
   async function loadArtistFeed(opts) {
     opts = opts || {};
+    var paintOpts = {
+      deferCategories: false,
+      buildNav: opts.buildNav !== false && !opts.hideNav,
+      hideNav: opts.hideNav,
+      hideStories: opts.hideStories,
+      maxCategories: opts.maxCategories,
+      cardsPerCategory: opts.cardsPerCategory,
+    };
     if (global.GearshLocation) {
       var locInit = GearshLocation.initFast || GearshLocation.init;
       try { locInit(); } catch (_) {}
     }
     if (getShowcase().length) {
-      paintArtistFeed(getCategories(), [], { deferCategories: false, buildNav: true });
+      paintArtistFeed(getCategories(), [], paintOpts);
     } else if (!opts.skipSkeleton) {
       showFeedSkeletons('feed-categories', 6);
     }
@@ -740,13 +751,13 @@
       paintArtistFeed(
         data.categories.length ? data.categories : getCategories(),
         data.apiArtists,
-        { deferCategories: false, buildNav: !opts.skipNav }
+        paintOpts
       );
     } catch (_) {
       if (!getShowcase().length) {
         showFeedSkeletons('feed-categories', 6);
       } else {
-        paintArtistFeed(getCategories(), [], { deferCategories: false, buildNav: true });
+        paintArtistFeed(getCategories(), [], paintOpts);
       }
     }
 
