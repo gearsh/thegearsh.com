@@ -17,6 +17,20 @@
   var debounce = GearshUI.debounce;
   var activeIndex = -1;
   var suggestionItems = [];
+  var userCoords = null;
+
+  async function ensureLocation() {
+    if (userCoords) return userCoords;
+    if (global.GearshLocation) {
+      try {
+        await GearshLocation.init();
+        if (GearshLocation.hasPosition()) {
+          userCoords = { ready: true };
+        }
+      } catch (_) {}
+    }
+    return userCoords;
+  }
 
   function getQueryParam() {
     return new URLSearchParams(window.location.search).get('q') || '';
@@ -83,14 +97,20 @@
 
     resultsEl.innerHTML = '<div class="artist-grid">' + GearshFeed.renderFeedSkeleton(8) + '</div>';
 
+    await ensureLocation();
+
     var local = GearshFeed.searchShowcase(q, 12);
     var apiCards = [];
+    var searchBody = { query: q, limit: 40, sortBy: 'nearby' };
+    if (global.GearshLocation && GearshLocation.hasPosition && GearshLocation.hasPosition()) {
+      searchBody.sortBy = 'nearby';
+    }
 
     try {
       var res = await fetch('/api/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: q, limit: 40, sortBy: 'relevance' })
+        body: JSON.stringify(searchBody)
       });
       var data = await res.json();
       if (res.ok && data.success) {
@@ -110,6 +130,13 @@
     merged.sort(function (a, b) {
       return GearshFeed.compareFeedCards(a, b, null);
     });
+
+    if (global.GearshLocation && GearshLocation.enrichCards) {
+      merged = GearshLocation.enrichCards(merged);
+      merged.sort(function (a, b) {
+        return GearshFeed.compareFeedCards(a, b, null);
+      });
+    }
 
     renderResults(merged, merged.length + ' result' + (merged.length === 1 ? '' : 's') + ' for “' + q + '”');
     suggestions.classList.remove('is-open');
@@ -176,14 +203,19 @@
   });
 
   function renderTrending() {
-    if (metaEl) metaEl.textContent = 'Trending artists';
-    var cards = GearshFeed.getShowcase().slice(0, 12).map(function (item) {
-      return GearshFeed.showcaseToCard(item, null);
+    if (metaEl) metaEl.textContent = 'Artists near you';
+    ensureLocation().then(function () {
+      var cards = GearshFeed.getShowcase().slice(0, 24).map(function (item) {
+        return GearshFeed.showcaseToCard(item, null);
+      });
+      if (global.GearshLocation && GearshLocation.enrichCards) {
+        cards = GearshLocation.enrichCards(cards);
+      }
+      cards.sort(function (a, b) {
+        return GearshFeed.compareFeedCards(a, b, null);
+      });
+      renderResults(GearshFeed.pickPromotedCards(cards, 12, null, 4));
     });
-    cards.sort(function (a, b) {
-      return GearshFeed.compareFeedCards(a, b, null);
-    });
-    renderResults(GearshFeed.pickPromotedCards(cards, 12, null, 4));
   }
 
   function renderTonightSpotlight() {

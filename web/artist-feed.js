@@ -46,6 +46,10 @@
   }
 
   function compareFeedCards(a, b, genreSlug) {
+    if (global.GearshLocation && GearshLocation.hasPosition()) {
+      var locCmp = GearshLocation.compare(a, b);
+      if (locCmp !== 0) return locCmp;
+    }
     if (a.bookable !== b.bookable) return a.bookable ? -1 : 1;
     if (genreSlug && typeof compareArtistsForGenre === 'function') {
       return compareArtistsForGenre(genreSlug, a, b);
@@ -262,6 +266,7 @@
       genre: [artist.category, artist.location].filter(Boolean).join(' · ') || 'Available to book',
       category: artist.category || '',
       location: artist.location || '',
+      country: artist.country || '',
       genreSlug: artistGenreSlugFromRecord(artist),
       badge: unavailable ? 'Unavailable' : (tier ? tier.label : (artist.is_verified ? 'Verified' : (artist.is_trending ? 'Trending' : 'Book now'))),
       badgeClass: unavailable ? 'fb-deal' : (tier ? tier.badgeClass : (artist.is_verified ? 'fb-feat' : (artist.is_trending ? 'fb-rise' : 'fb-deal'))),
@@ -294,6 +299,7 @@
       genre: item.genre || item.category || '',
       category: item.category || '',
       location: item.location || '',
+      country: item.country || (match && match.country) || 'South Africa',
       genreSlug: item.genreSlug || artistGenreSlugFromRecord(item),
       badge: unavailable
         ? 'Unavailable'
@@ -397,7 +403,11 @@
       '</div>' +
       '<div class="feed-card-body">' +
         '<div class="feed-card-name">' + escapeHtml(item.name) + '</div>' +
-        '<div class="feed-card-genre">' + escapeHtml(item.genre) + '</div>' +
+        '<div class="feed-card-genre">' + escapeHtml(
+          item.distance_label
+            ? item.distance_label + ' · ' + (item.location || item.genre || '')
+            : (item.genre || item.location || '')
+        ) + '</div>' +
         (item.price ? '<div class="feed-card-price">' + escapeHtml(item.price) + '</div>' : '') +
       '</div>';
 
@@ -564,6 +574,28 @@
     };
   }
 
+  function buildNearYouRail(apiArtists, index, limit) {
+    if (!global.GearshLocation || !GearshLocation.hasPosition()) return null;
+    limit = limit || 16;
+    var cards = buildAllArtistCards(apiArtists, index);
+    cards = GearshLocation.enrichCards(cards);
+    cards.sort(function (a, b) { return compareFeedCards(a, b, null); });
+    var local = cards.filter(function (card) {
+      return card.distance_km != null && card.distance_km <= 250;
+    });
+    if (!local.length) local = cards.filter(function (card) { return card.distance_km != null; }).slice(0, limit);
+    if (!local.length) return null;
+    return {
+      category: {
+        id: 'near-you',
+        title: 'Near you',
+        subtitle: 'Artists closest to ' + GearshLocation.locationLabel(),
+        icon: 'ti ti-map-pin',
+      },
+      cards: local.slice(0, limit),
+    };
+  }
+
   function paintArtistFeed(categories, apiArtists, opts) {
     opts = opts || {};
     var container = document.getElementById('feed-categories');
@@ -576,17 +608,28 @@
     var feedCategories = visibleFeedCategories(categories && categories.length ? categories : getCategories());
     feedCategories = reorderForTonight(feedCategories);
 
-    if (opts.buildNav !== false) {
-      buildCategoryNav(feedCategories);
-    }
-
     var tonight = getTonight();
     var tonightCatId = tonight ? 'genre-' + tonight.slug : null;
 
     var htmlParts = [];
+    var nearYouRail = buildNearYouRail(apiArtists, index, opts.cardsPerCategory || 16);
+    if (nearYouRail) {
+      htmlParts.push({ category: nearYouRail.category, cards: nearYouRail.cards, priority: true, isTonight: false });
+    }
+
+    if (opts.buildNav !== false) {
+      var navCategories = feedCategories.slice();
+      if (nearYouRail) navCategories.unshift(nearYouRail.category);
+      buildCategoryNav(navCategories);
+    }
+
     feedCategories.forEach(function (category, idx) {
       var limit = opts.cardsPerCategory || 16;
       var cards = mergeCategoryArtists(category.id, category.artists || apiArtists || [], index, limit);
+      if (global.GearshLocation && GearshLocation.hasPosition()) {
+        cards = GearshLocation.enrichCards(cards);
+        cards.sort(function (a, b) { return compareFeedCards(a, b, null); });
+      }
       cards.slice(0, 8).forEach(function (card) {
         var storyKey = card.artist_id || normalizeName(card.name);
         if (seenStories[storyKey]) return;
@@ -664,6 +707,9 @@
 
   async function loadArtistFeed(opts) {
     opts = opts || {};
+    if (global.GearshLocation) {
+      try { await GearshLocation.init(); } catch (_) {}
+    }
     if (getShowcase().length) {
       paintArtistFeed(getCategories(), [], { deferCategories: true, buildNav: true });
     } else if (!opts.skipSkeleton) {
@@ -799,6 +845,7 @@
 
   function sortCards(cards, sortBy, genreSlug) {
     var list = cards.slice();
+    if (global.GearshLocation) list = GearshLocation.enrichCards(list);
     switch (sortBy) {
       case 'alpha':
         list.sort(function (a, b) { return a.name.localeCompare(b.name); });
@@ -813,6 +860,11 @@
         });
         break;
       case 'popular':
+        list.sort(function (a, b) {
+          return compareFeedCards(a, b, genreSlug && genreSlug !== 'all' ? genreSlug : null);
+        });
+        break;
+      case 'nearby':
       default:
         list.sort(function (a, b) {
           return compareFeedCards(a, b, genreSlug && genreSlug !== 'all' ? genreSlug : null);

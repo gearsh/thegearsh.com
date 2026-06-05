@@ -1,6 +1,11 @@
 // POST /api/search - Search artists with filters
 // GET  /api/search?q=...&genre=...&sort=...
 
+import {
+  artistDistanceKm,
+  compareArtistsByDistance,
+} from './location-utils.js';
+
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
   const body = {
@@ -11,6 +16,8 @@ export async function onRequestGet(context) {
     sortBy: url.searchParams.get('sort') || 'relevance',
     limit: parseInt(url.searchParams.get('limit') || '50', 10),
     offset: parseInt(url.searchParams.get('offset') || '0', 10),
+    userLat: parseFloat(url.searchParams.get('lat') || ''),
+    userLng: parseFloat(url.searchParams.get('lng') || ''),
   };
   return runSearch(context, body);
 }
@@ -36,8 +43,27 @@ async function runSearch(context, body) {
       verified = false,
       sortBy = 'relevance',
       limit = 50,
-      offset = 0
+      offset = 0,
+      userLat,
+      userLng,
     } = body;
+
+    const lat = Number(userLat);
+    const lng = Number(userLng);
+    let resolvedLat = lat;
+    let resolvedLng = lng;
+
+    if (!Number.isFinite(resolvedLat) || !Number.isFinite(resolvedLng)) {
+      const cf = context.request.cf || {};
+      const cfLat = parseFloat(cf.latitude);
+      const cfLng = parseFloat(cf.longitude);
+      if (Number.isFinite(cfLat) && Number.isFinite(cfLng)) {
+        resolvedLat = cfLat;
+        resolvedLng = cfLng;
+      }
+    }
+
+    const sortNearby = Number.isFinite(resolvedLat) && Number.isFinite(resolvedLng);
 
     let sql = `
       SELECT
@@ -48,6 +74,7 @@ async function runSearch(context, body) {
         u.profile_picture_url as image,
         u.bio,
         u.location,
+        u.country,
         u.is_verified,
         ap.category,
         ap.genre,
@@ -118,6 +145,9 @@ async function runSearch(context, body) {
       case 'popular':
         sql += ` ORDER BY ap.total_reviews DESC`;
         break;
+      case 'nearby':
+        sql += ` ORDER BY ap.is_trending DESC, ap.avg_rating DESC, ap.total_reviews DESC`;
+        break;
       default:
         // Relevance - prioritize trending, rating, reviews
         sql += ` ORDER BY ap.is_trending DESC, ap.avg_rating DESC, ap.total_reviews DESC`;
@@ -159,12 +189,22 @@ async function runSearch(context, body) {
         skills: artist.skills ? JSON.parse(artist.skills) : [],
         is_verified: Boolean(artist.is_verified),
         is_trending: Boolean(artist.is_trending),
-        relevance_score: score
+        relevance_score: score,
+        distance_km: sortNearby
+          ? artistDistanceKm(artist, resolvedLat, resolvedLng)
+          : null,
       };
     });
 
-    // Sort by relevance score if sorting by relevance
-    if (sortBy === 'relevance' && query) {
+    if (sortNearby && (sortBy === 'nearby' || sortBy === 'relevance' || !query)) {
+      artists.sort(function (a, b) {
+        return compareArtistsByDistance(a, b, resolvedLat, resolvedLng)
+          || (b.relevance_score || 0) - (a.relevance_score || 0);
+      });
+    }
+
+    // Sort by relevance score if sorting by relevance with a query
+    if (sortBy === 'relevance' && query && !sortNearby) {
       artists.sort((a, b) => b.relevance_score - a.relevance_score);
     }
 

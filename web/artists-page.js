@@ -26,7 +26,7 @@
     verified: false,
     trending: false,
     bookable: false,
-    sort: 'popular'
+    sort: 'nearby'
   };
 
   var SA_LOCATIONS = [
@@ -43,7 +43,7 @@
     filters.verified = p.get('verified') === '1';
     filters.trending = p.get('trending') === '1';
     filters.bookable = p.get('bookable') === '1';
-    filters.sort = p.get('sort') || 'popular';
+    filters.sort = p.get('sort') || 'nearby';
   }
 
   function writeUrlState() {
@@ -55,7 +55,7 @@
     if (filters.verified) p.set('verified', '1');
     if (filters.trending) p.set('trending', '1');
     if (filters.bookable) p.set('bookable', '1');
-    if (filters.sort !== 'popular') p.set('sort', filters.sort);
+    if (filters.sort !== 'nearby') p.set('sort', filters.sort);
     var qs = p.toString();
     history.replaceState(null, '', qs ? ('?' + qs) : window.location.pathname);
   }
@@ -209,6 +209,10 @@
   async function init() {
     grid.innerHTML = GearshFeed.renderFeedSkeleton(12);
     readUrlState();
+
+    if (global.GearshLocation) {
+      try { await GearshLocation.init(); } catch (_) {}
+    }
 
     var data = await GearshFeed.fetchFeedData();
     var index = GearshFeed.buildArtistIndex(data.apiArtists);

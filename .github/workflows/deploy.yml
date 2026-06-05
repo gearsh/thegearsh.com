@@ -45,6 +45,7 @@ jobs:
           cp web/discovery.css build/web/discovery.css 2>/dev/null || true
           cp web/artist-feed.js build/web/artist-feed.js 2>/dev/null || true
           cp web/gearsh-ui.js build/web/gearsh-ui.js 2>/dev/null || true
+          cp web/gearsh-location.js build/web/gearsh-location.js 2>/dev/null || true
           cp web/search.html build/web/search.html 2>/dev/null || true
           cp web/search-page.js build/web/search-page.js 2>/dev/null || true
           cp web/artists.html build/web/artists.html 2>/dev/null || true
