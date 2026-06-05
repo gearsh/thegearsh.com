@@ -114,12 +114,6 @@
       color: var(--g-text); font-size: 13px; line-height: 1.5;
     }
     .unavailable-notice strong { color: #f59e0b; display: block; margin-bottom: 4px; }
-    .wa-btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; margin-top: 10px; padding: 13px 18px; border-radius: 10px;
-      background: rgba(37,211,102,0.12); color: #25d366; border: 0.5px solid rgba(37,211,102,0.25);
-      text-decoration: none; font-size: 14px; font-weight: 600;
-    }
     .loading { text-align: center; padding: 80px 20px; color: var(--g-text-muted); }
     .claim-banner {
       margin-bottom: 20px; padding: 16px 18px; border-radius: 14px;
@@ -134,6 +128,9 @@
     }
     .book-bio {
       font-size: 14px; color: var(--g-text-muted); line-height: 1.65; margin-top: 14px; max-width: 56ch;
+    }
+    .book-platform-note {
+      margin: 14px 0 0; font-size: 12px; color: var(--g-text-dim); line-height: 1.45; text-align: center;
     }
     .book-portfolio { margin-bottom: 20px; }
     .book-portfolio h2 {
@@ -167,16 +164,15 @@
       <a href="./" class="g-nav-logo"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
       <div class="g-nav-right">
         <a href="/auth.html" class="g-nav-mobile-login">Login</a>
-        <a href="/search" class="g-nav-mobile-search" aria-label="Search artists"><i class="ti ti-search"></i></a>
         <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu">
           <i class="ti ti-menu-2"></i>
         </button>
       </div>
       <ul class="g-nav-links">
-        <li class="g-nav-menu-auth"><a href="/auth.html">Login</a></li>
         <li><a href="/search">Book artists</a></li>
         <li><a href="/my-bookings">My bookings</a></li>
         <li><a href="./">Home</a></li>
+        <li class="g-nav-menu-auth"><a href="/auth.html">Login</a></li>
       </ul>
     </div>
   </nav>
@@ -241,9 +237,7 @@
           <div class="field-group"><label class="field-label">Notes</label><textarea class="field-textarea" id="notes" placeholder="Setup requirements, parking, special requests…"></textarea></div>
           <button class="btn-main" type="submit" id="submit-btn" style="width:100%;justify-content:center">Send booking request</button>
           <div class="book-msg" id="book-msg"></div>
-          <a class="wa-btn" id="wa-link" href="#" target="_blank" rel="noopener" style="display:none">
-            <i class="ti ti-brand-whatsapp"></i> Chat on WhatsApp
-          </a>
+          <p class="book-platform-note">All bookings go through Gearsh — secure requests, PayFast payment, and a clear paper trail.</p>
         </form>
       </div>
     </div>
@@ -541,13 +535,6 @@
         }
       }
 
-      if (data.phone) {
-        var wa = document.getElementById('wa-link');
-        var msg = encodeURIComponent('Hi ' + (data.name || '') + ', I found your gig on Gearsh and I\'d like to book you.');
-        wa.href = 'https://wa.me/' + data.phone.replace(/\D/g, '') + '?text=' + msg;
-        wa.style.display = 'inline-flex';
-      }
-
       document.title = 'Book ' + (data.name || 'Gig') + ' | Gearsh';
       document.getElementById('loading').style.display = 'none';
       document.getElementById('content').style.display = 'block';
@@ -655,13 +642,14 @@
         if (!res.ok || !data.success) throw new Error(data.error || 'Booking failed');
         var bid = data.data && data.data.booking_id;
         var email = document.getElementById('client-email').value.trim();
+        var trackUrl = '/my-bookings?booking=' + encodeURIComponent(bid) +
+          (email && !getToken() ? '&email=' + encodeURIComponent(email) : '');
         msg.className = 'book-msg success';
-        msg.innerHTML = 'Booking request sent! The artist will review it. ' +
+        msg.innerHTML = '<strong>Booking request sent!</strong> The artist will review it. ' +
           (bid
-            ? '<a href="/my-bookings?booking=' + encodeURIComponent(bid) +
-              (email ? '&email=' + encodeURIComponent(email) : '') +
-              '" style="color:var(--g-accent);font-weight:600">Track &amp; pay here</a> once they accept.'
-            : 'You can pay via PayFast once they accept.');
+            ? '<a href="' + trackUrl + '" class="btn-main" style="margin-top:14px;display:inline-flex;align-items:center;gap:8px">' +
+              '<i class="ti ti-receipt"></i> Track &amp; pay</a>'
+            : '<span style="display:block;margin-top:8px">You can pay via PayFast once they accept.</span>');
         document.getElementById('booking-form').reset();
       } catch (err) {
         msg.className = 'book-msg error';

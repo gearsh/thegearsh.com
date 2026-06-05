@@ -95,31 +95,31 @@
     };
   }
 
+  function navHasHref(links, href) {
+    var target = String(href || '').split('?')[0];
+    return !!links.querySelector('a[href="' + href + '"], a[href="' + target + '"]');
+  }
+
+  function insertBeforeAuth(links, li) {
+    var firstAuth = links.querySelector('.g-nav-menu-auth');
+    if (firstAuth) links.insertBefore(li, firstAuth);
+    else links.appendChild(li);
+  }
+
   function injectSessionNavLinks(session) {
     var links = document.querySelector('.g-nav-links');
     if (!links) return;
 
     function ensure(marker, href, text) {
       if (links.querySelector('[data-gearsh-nav="' + marker + '"]')) return;
+      if (navHasHref(links, href)) return;
       var li = document.createElement('li');
       li.setAttribute('data-gearsh-nav', marker);
       var a = document.createElement('a');
       a.href = href;
       a.textContent = text;
       li.appendChild(a);
-
-      var searchLi = links.querySelector('a[href="/search"], a[href="./search"]');
-      if (searchLi && searchLi.parentElement) {
-        searchLi.parentElement.insertAdjacentElement('afterend', li);
-        return;
-      }
-      var lastAuth = null;
-      links.querySelectorAll('.g-nav-menu-auth').forEach(function (el) { lastAuth = el; });
-      if (lastAuth) {
-        lastAuth.insertAdjacentElement('afterend', li);
-      } else {
-        links.insertBefore(li, links.firstChild);
-      }
+      insertBeforeAuth(links, li);
     }
 
     ensure('my-bookings', '/my-bookings', 'My bookings');
@@ -153,9 +153,9 @@
     );
     var label = isArtist
       ? 'Dashboard'
-      : (session.user_type === 'admin' ? 'Command' : 'Home');
+      : (session.user_type === 'admin' ? 'Command' : 'Login');
 
-    document.querySelectorAll('.g-nav-mobile-login, .g-nav-menu-auth a[href="/auth.html"]').forEach(function (el) {
+    document.querySelectorAll('.g-nav-mobile-login, .g-nav-menu-auth a[href="/auth.html"], #nav-auth').forEach(function (el) {
       el.textContent = label;
       el.href = dashHref;
     });

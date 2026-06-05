@@ -187,7 +187,7 @@
           '<div class="mp-book-grid">' +
             '<div class="mp-field"><label>Your name *</label><input name="client_name" required placeholder="Full name"></div>' +
             '<div class="mp-field"><label>Email *</label><input name="client_email" type="email" required placeholder="you@company.com"></div>' +
-            '<div class="mp-field"><label>Phone / WhatsApp *</label><input name="client_phone" required placeholder="+27…"></div>' +
+            '<div class="mp-field"><label>Phone number *</label><input name="client_phone" required placeholder="+27…"></div>' +
             '<div class="mp-field"><label>Service *</label><select name="service_id" id="mp-service-select" required><option value="">Select a service</option>' + serviceOptions + '</select></div>' +
             '<div class="mp-field"><label>Preferred date *</label><input name="event_date" id="mp-date-input" type="date" required></div>' +
             '<div class="mp-field"><label>Preferred time</label><input name="preferred_time" placeholder="e.g. 14:00 SAST"></div>' +

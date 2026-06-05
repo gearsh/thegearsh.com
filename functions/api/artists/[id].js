@@ -210,6 +210,8 @@ export async function onRequestGet(context) {
       reviews: reviews.results || [],
     };
     delete artistData.claim_token;
+    delete artistData.phone;
+    delete artistData.email;
 
     if (showcase) {
       enrichFromShowcase(artistData, showcase);

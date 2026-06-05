@@ -154,7 +154,6 @@ export async function onRequestPost(context) {
       data: {
         booking_id: bookingId,
         artist_name: artistProfile.artist_name,
-        artist_phone: artistProfile.artist_phone,
         pay_url: `/my-bookings?booking=${encodeURIComponent(bookingId)}`,
       },
     }, 201);

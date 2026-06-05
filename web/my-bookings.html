@@ -44,25 +44,43 @@
     .bk-msg { font-size: 13px; margin-top: 10px; min-height: 16px; }
     .bk-msg.error { color: #ff8a8a; }
     .bk-empty { text-align: center; color: var(--g-text-dim); padding: 48px 20px; }
+    .bk-ref { font-size: 11px; color: var(--g-text-dim); opacity: 0.85; }
+    .bk-help { font-size: 13px; color: var(--g-text-muted); margin: 12px 0 0; line-height: 1.45; }
+    .bk-card-highlight { border-color: rgba(0,191,255,0.35); box-shadow: 0 0 0 1px rgba(0,191,255,0.12); }
+    .bk-banner {
+      background: rgba(0,191,255,0.08); border: 0.5px solid rgba(0,191,255,0.22);
+      border-radius: 16px; padding: 16px 18px; margin-bottom: 20px;
+    }
+    .bk-banner-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .bk-banner strong { color: var(--g-white); font-size: 14px; }
+    .bk-banner p { margin: 6px 0 0; font-size: 13px; color: var(--g-text-muted); line-height: 1.45; }
+    .bk-pay-error { width: 100%; margin-top: 4px; }
   </style>
 </head>
 <body>
   <nav class="g-nav">
     <div class="g-nav-inner">
       <a href="/" class="g-nav-logo"><img src="/icons/Icon-512.png" alt="Gearsh" width="40" height="40"></a>
+      <div class="g-nav-right">
+        <a href="/auth.html" class="g-nav-mobile-login">Login</a>
+        <button class="g-nav-menu-btn" type="button" aria-label="Open menu" aria-expanded="false"><i class="ti ti-menu-2"></i></button>
+      </div>
       <ul class="g-nav-links">
-        <li id="nav-dashboard-li" hidden><a href="/artist-dashboard.html" id="nav-dashboard">Dashboard</a></li>
+        <li id="nav-dashboard-li" hidden><a href="/artist-dashboard.html">Dashboard</a></li>
         <li><a href="/search">Book artists</a></li>
         <li><a href="/artists">All artists</a></li>
         <li><a href="/my-bookings" class="active">My bookings</a></li>
-        <li><a href="/auth.html" id="nav-auth">Sign in</a></li>
+        <li class="g-nav-menu-auth"><a href="/auth.html" id="nav-auth">Login</a></li>
+        <li class="g-nav-menu-auth"><a href="/join-gig.html" class="g-nav-cta">List your gig</a></li>
       </ul>
     </div>
   </nav>
 
   <main class="bk-page">
     <h1 class="bk-title">My <em>bookings</em></h1>
-    <p class="bk-sub">Artists and clients use this page the same way — track gigs you booked with other artists and pay via PayFast once they accept.</p>
+    <p class="bk-sub">Track gigs you booked and pay via PayFast once the artist accepts.</p>
+
+    <div class="bk-banner" id="track-banner" hidden></div>
 
     <div class="bk-guest" id="guest-box" hidden>
       <p style="margin:0 0 14px;font-size:14px;color:var(--g-text-muted)">Find a booking you made without signing in:</p>

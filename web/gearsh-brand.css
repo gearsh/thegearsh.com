@@ -87,8 +87,9 @@ a.skip-link:focus-visible {
   position: relative;
   max-width: 1200px; margin: 0 auto;
   height: 56px; padding: 0 20px;
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; gap: 20px;
 }
+.g-nav-logo { flex-shrink: 0; }
 .g-nav-logo {
   display: flex; align-items: center; gap: 10px;
   text-decoration: none; color: var(--g-white);
@@ -99,10 +100,35 @@ a.skip-link:focus-visible {
   border-radius: 0; object-fit: contain;
   background: transparent;
 }
-.g-nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+.g-nav-links { display: flex; align-items: center; gap: 22px; list-style: none; margin: 0; padding: 0; }
 .g-nav-links a {
   text-decoration: none; color: var(--g-text-muted);
   font-size: 13px; font-weight: 500; transition: color 0.2s;
+  white-space: nowrap;
+}
+@media (min-width: 769px) {
+  .g-nav-right { display: none; }
+  .g-nav-links {
+    flex: 1;
+    justify-content: flex-end;
+    min-width: 0;
+    gap: 18px;
+  }
+  .g-nav-menu-auth {
+    margin-left: 4px;
+    padding-left: 18px;
+    border-left: 0.5px solid var(--g-border);
+  }
+  .g-nav-menu-auth + .g-nav-menu-auth {
+    margin-left: 0;
+    padding-left: 10px;
+    border-left: none;
+  }
+  .g-nav-links .g-nav-secondary { display: none; }
+}
+@media (min-width: 769px) and (max-width: 1080px) {
+  .g-nav-links { gap: 14px; }
+  .g-nav-links a { font-size: 12px; }
 }
 .g-nav-links a:hover { color: var(--g-white); }
 .g-nav-cta {
@@ -147,6 +173,7 @@ a.skip-link:focus-visible {
 @media (max-width: 768px) {
   .g-nav-mobile-login { display: block; }
   .g-nav-mobile-search { display: inline-flex; }
+  .g-nav-right { margin-left: auto; }
   .g-nav-links { display: none; }
   .g-nav-menu-btn { display: block; }
   .g-nav-links.open {

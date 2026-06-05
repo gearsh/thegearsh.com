@@ -210,7 +210,6 @@
         var kind = btn.getAttribute('data-share');
         var shareUrl = '';
         if (kind === 'x') shareUrl = 'https://twitter.com/intent/tweet?url=' + url + '&text=' + text;
-        if (kind === 'whatsapp') shareUrl = 'https://wa.me/?text=' + text + '%20' + url;
         if (kind === 'facebook') shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + url;
         if (kind === 'instagram') {
           navigator.clipboard.writeText('https://thegearsh.com/glog/' + post.slug).catch(function () {});
