@@ -6,7 +6,7 @@
   'use strict';
 
   var API_BASE = '/api';
-  var CACHE_KEY = 'gearsh_feed_cache_v5';
+  var CACHE_KEY = 'gearsh_feed_cache_v6';
   var CACHE_TTL = 5 * 60 * 1000;
 
   // Tonight helper — reads from day-genre-schedule.js when present.
@@ -505,11 +505,13 @@
     return result;
   }
 
-  function visibleFeedCategories(categories) {
+  function visibleFeedCategories(categories, apiArtists, index) {
     var source = categories && categories.length ? categories : getCategories();
+    index = index || buildArtistIndex(apiArtists || []);
     return source.filter(function (category) {
       if (category.id === 'mastery-legends') return true;
-      var cards = mergeCategoryArtists(category.id, [], buildArtistIndex([]), 1);
+      if (category.artists && category.artists.length) return true;
+      var cards = mergeCategoryArtists(category.id, apiArtists || [], index, 1);
       return cards.length > 0;
     });
   }
@@ -610,7 +612,12 @@
     var index = buildArtistIndex(apiArtists || []);
     var storyCards = [];
     var seenStories = {};
-    var feedCategories = visibleFeedCategories(categories && categories.length ? categories : getCategories());
+    var feedCategories = visibleFeedCategories(
+      categories && categories.length ? categories : getCategories(),
+      apiArtists,
+      index
+    );
+    if (!feedCategories.length) feedCategories = getCategories();
     feedCategories = reorderForTonight(feedCategories);
 
     var tonight = getTonight();
@@ -656,11 +663,13 @@
     });
 
     if (opts.deferCategories) {
-      container.innerHTML = htmlParts.filter(function (p) { return p.priority; })
+      var priorityParts = htmlParts.filter(function (p) { return p.priority; });
+      var initialParts = priorityParts.length ? priorityParts : htmlParts;
+      container.innerHTML = initialParts
         .map(function (p) { return renderCategorySection(p.category, p.cards, { isTonight: p.isTonight }); }).join('');
 
       requestAnimationFrame(function () {
-        var rest = htmlParts.filter(function (p) { return !p.priority; });
+        var rest = htmlParts.filter(function (p) { return priorityParts.length && !p.priority; });
         if (!rest.length) return;
         var frag = rest.map(function (p) { return renderCategorySection(p.category, p.cards, { isTonight: p.isTonight }); }).join('');
         container.insertAdjacentHTML('beforeend', frag);
@@ -670,6 +679,10 @@
       container.innerHTML = htmlParts.map(function (p) {
         return renderCategorySection(p.category, p.cards, { isTonight: p.isTonight });
       }).join('');
+    }
+
+    if (!container.innerHTML.trim()) {
+      container.innerHTML = '<div class="feed-empty">More artists coming soon. <a href="join-gig.html" style="color:var(--g-accent)">List your gig</a> to appear here.</div>';
     }
 
     if (stories) {
@@ -717,17 +730,25 @@
       try { locInit(); } catch (_) {}
     }
     if (getShowcase().length) {
-      paintArtistFeed(getCategories(), [], { deferCategories: true, buildNav: true });
+      paintArtistFeed(getCategories(), [], { deferCategories: false, buildNav: true });
     } else if (!opts.skipSkeleton) {
       showFeedSkeletons('feed-categories', 6);
     }
 
-    var data = await fetchFeedData();
-    paintArtistFeed(
-      data.categories.length ? data.categories : getCategories(),
-      data.apiArtists,
-      { deferCategories: true }
-    );
+    try {
+      var data = await fetchFeedData();
+      paintArtistFeed(
+        data.categories.length ? data.categories : getCategories(),
+        data.apiArtists,
+        { deferCategories: false, buildNav: !opts.skipNav }
+      );
+    } catch (_) {
+      if (!getShowcase().length) {
+        showFeedSkeletons('feed-categories', 6);
+      } else {
+        paintArtistFeed(getCategories(), [], { deferCategories: false, buildNav: true });
+      }
+    }
 
     // Headliners rail refreshes once API data lands so total_bookings flows in.
     if (typeof renderHeadlinersRail === 'function') {
