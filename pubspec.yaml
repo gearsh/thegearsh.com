@@ -1,63 +1,78 @@
 name: gearsh_app
-description: "Gearsh - Book artists and gigs. The global marketplace for DJs, musicians, comedians, and creators."
+description: "Gearsh - Get Booked. Get Paid. Go Global. South African direct marketplace for artists, DJs, beatmakers, producers & photographers."
 publish_to: 'none'
 version: 1.0.0+3
+
 environment:
-  sdk: '>=3.4.4 <4.0.0'
-dependencies: 
-  dio: ^5.3.2
+  sdk: '>=3.5.0 <4.0.0'
+  flutter: '>=3.24.0'
+
+dependencies:
   flutter:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  flutter_riverpod: ^3.0.3
+
+  # State Management (Riverpod 2.5+ style)
+  flutter_riverpod: ^3.3.2
+  riverpod_annotation: ^3.0.0
+
+  # Firebase (updated + aligned)
+  firebase_core: ^4.10.0
+  firebase_auth: ^6.0.0
+  cloud_firestore: ^6.0.0
+  firebase_storage: ^13.0.0
+  firebase_crashlytics: ^5.0.0
+  firebase_analytics: ^11.0.0
+
+  # Networking & Utils
+  dio: ^5.3.2
+  http: ^1.6.0
+  connectivity_plus: ^6.0.0
+
+  # UI & Experience
   go_router: ^17.0.1
-  google_fonts: ^6.0.0
-  cached_network_image: ^3.3.0
+  google_fonts: ^6.2.0
+  cached_network_image: ^3.4.0
+  shimmer: ^3.0.0
+  flutter_staggered_grid_view: ^0.7.0
+  pull_to_refresh_flutter3: ^2.0.0
+  flutter_animate: ^4.3.0
+  flex_color_scheme: ^8.2.0
+
+  # Offline-first
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  shared_preferences: ^2.5.4
+
+  # Others you already use
   intl: ^0.20.2
   cupertino_icons: ^1.0.6
-  http: ^1.6.0
-  shared_preferences: ^2.5.4
-  flex_color_scheme: ^8.2.0
-  flutter_animate: ^4.3.0
   google_maps_flutter: ^2.4.0
   table_calendar: ^3.0.9
   fl_chart: ^0.68.0
   geocoding: ^4.0.0
   fuzzywuzzy: ^1.2.0
-  firebase_core: ^3.8.1
-  firebase_auth: ^5.3.4
-  firebase_crashlytics: ^4.0.1
-  firebase_analytics: ^11.0.1
   google_sign_in: ^6.2.1
   sign_in_with_apple: ^6.1.4
   crypto: ^3.0.6
   url_launcher: ^6.2.1
   package_info_plus: ^8.0.0
   image_picker: ^1.0.7
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.6 
-  freezed: ^3.0.6 
-  json_serializable: ^6.7.1 
+  build_runner: ^2.4.6
+  riverpod_generator: ^3.0.0
+  freezed: ^3.0.6
+  json_serializable: ^6.7.1
   flutter_launcher_icons: ^0.14.1
   flutter_lints: ^5.0.0
-flutter_launcher_icons:
-  android: true
-  ios: true
-  image_path: "assets/images/gearsh-logo.png"
-  min_sdk_android: 21
-  adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/images/gearsh-logo.png"
-  web:
-    generate: true
-    image_path: "assets/images/gearsh-logo.png"
-  windows:
-    generate: true
-    image_path: "assets/images/gearsh-logo.png"
+
 flutter:
   uses-material-design: true
+  
   fonts:
     - family: Syne
       fonts:
@@ -71,15 +86,8 @@ flutter:
           weight: 700
         - asset: assets/fonts/Syne-ExtraBold.ttf
           weight: 800
+
   assets:
-    - assets/images/gearsh-logo.png
-    - assets/images/storyboard.png
-    - assets/images/storyboard2.png
-    - assets/images/allthestars.jpg
-    - assets/images/icons/calendar.png
-    - assets/images/icons/art.png
-    - assets/images/icons/superstar.png
+    - assets/images/
     - assets/images/artists/
-    - assets/images/artists/rixelton.jpg
-    - assets/images/artists/dripmaker.png
     - assets/fonts/
