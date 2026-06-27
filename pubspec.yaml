@@ -13,9 +13,9 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
 
-  # State Management (Riverpod — all three must match)
+  # State Management (Riverpod — versions must be compatible)
   flutter_riverpod: ^3.3.2
-  riverpod_annotation: ^3.3.2
+  riverpod_annotation: ^4.0.3
 
   # Firebase (updated + aligned)
   firebase_core: ^4.10.0
@@ -64,7 +64,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.4.6
-  riverpod_generator: ^3.3.2
+  riverpod_generator: ^4.0.4
   freezed: ^3.0.6
   json_serializable: ^6.7.1
   flutter_launcher_icons: ^0.14.1
