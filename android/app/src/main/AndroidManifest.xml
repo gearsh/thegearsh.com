@@ -1,29 +1,30 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.gearsh.thegearsh">
+
     <!-- ==================== NETWORK ==================== -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <!-- Explicitly remove background location (in case any plugin injects it) -->
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" tools:node="remove" />
 
     <!-- ==================== LOCATION ==================== -->
+    <!-- Background location explicitly removed to comply with Google Play policy -->
+    <!-- We only use foreground location for gig discovery and nearby features -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" tools:node="remove" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-   
+
     <!-- ==================== CAMERA & MEDIA ==================== -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 
-    <!-- Storage - For Android versions below 13 only -->
+    <!-- Storage - Only for Android < 13 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
 
-    <!-- Note: READ_MEDIA_IMAGES and READ_MEDIA_VIDEO removed - using Android Photo Picker instead -->
-    <!-- Photo Picker doesn't require these permissions on Android 13+ -->
-
-    <!-- Media - Android 13+ (Only audio if needed for other features) -->
+    <!-- Media - Android 13+ -->
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
     <!-- ==================== AUDIO & MICROPHONE ==================== -->
@@ -55,7 +56,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
-    <!-- ==================== BLUETOOTH (for nearby) ==================== -->
+    <!-- ==================== BLUETOOTH (for nearby devices) ==================== -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
@@ -66,7 +67,9 @@
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="false"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:enableOnBackInvokedCallback="true">
+        android:enableOnBackInvokedCallback="true"
+        android:requestLegacyExternalStorage="false">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -75,6 +78,7 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
+
             <!-- Splash screen theme -->
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
@@ -85,7 +89,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
-            <!-- Deep linking for thegearsh.com -->
+            <!-- Deep linking -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -94,7 +98,7 @@
                 <data android:scheme="https" android:host="thegearsh.com"/>
             </intent-filter>
 
-            <!-- Custom scheme for app links -->
+            <!-- Custom scheme -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -109,7 +113,7 @@
     </application>
 
     <queries>
-        <!-- Web browsing -->
+        <!-- Web -->
         <intent>
             <action android:name="android.intent.action.VIEW"/>
             <data android:scheme="https"/>
@@ -119,7 +123,7 @@
             <data android:scheme="http"/>
         </intent>
 
-        <!-- Phone calls -->
+        <!-- Phone -->
         <intent>
             <action android:name="android.intent.action.DIAL"/>
         </intent>
@@ -127,7 +131,7 @@
             <action android:name="android.intent.action.CALL"/>
         </intent>
 
-        <!-- SMS/Text -->
+        <!-- SMS -->
         <intent>
             <action android:name="android.intent.action.SENDTO"/>
             <data android:scheme="sms"/>
@@ -143,13 +147,9 @@
             <data android:scheme="mailto"/>
         </intent>
 
-        <!-- Share/Send -->
+        <!-- Share -->
         <intent>
             <action android:name="android.intent.action.SEND"/>
-            <data android:mimeType="*/*"/>
-        </intent>
-        <intent>
-            <action android:name="android.intent.action.SEND_MULTIPLE"/>
             <data android:mimeType="*/*"/>
         </intent>
 
@@ -165,22 +165,16 @@
             <data android:mimeType="vnd.android.cursor.item/event"/>
         </intent>
 
-        <!-- Text processing -->
-        <intent>
-            <action android:name="android.intent.action.PROCESS_TEXT"/>
-            <data android:mimeType="text/plain"/>
-        </intent>
-
         <!-- Google Sign-In -->
         <package android:name="com.google.android.gms" />
 
-        <!-- Social apps for sharing -->
+        <!-- Social apps -->
         <package android:name="com.whatsapp" />
         <package android:name="com.instagram.android" />
         <package android:name="com.twitter.android" />
         <package android:name="com.facebook.katana" />
 
-        <!-- Payment apps -->
+        <!-- Payment -->
         <package android:name="com.payfast.android" />
     </queries>
 </manifest>
