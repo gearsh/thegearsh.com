@@ -24,7 +24,7 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'   # Automatically gets latest stable (Dart 3.9+)
+          flutter-version: 'stable'   # Fixed - this gets the latest stable
           channel: 'stable'
 
       - name: Install dependencies
