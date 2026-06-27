@@ -13,17 +13,17 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
 
-  # State Management (Riverpod — versions must be compatible)
+  # State Management
   flutter_riverpod: ^3.3.2
   riverpod_annotation: ^4.0.3
 
-  # Firebase (updated + aligned)
-  firebase_core: ^4.10.0
-  firebase_auth: ^6.0.0
-  cloud_firestore: ^6.0.0
-  firebase_storage: ^13.0.0
-  firebase_crashlytics: ^5.0.0
-  firebase_analytics: ^11.0.0
+  # Firebase
+  firebase_core:
+  firebase_auth:
+  cloud_firestore:
+  firebase_storage:
+  firebase_crashlytics:
+  firebase_analytics:
 
   # Networking & Utils
   dio: ^5.3.2
