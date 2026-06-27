@@ -24,8 +24,9 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'   # Fixed - this gets the latest stable
           channel: 'stable'
+          architecture: x64
+          cache: false
 
       - name: Install dependencies
         run: flutter pub get
