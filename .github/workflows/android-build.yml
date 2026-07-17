@@ -1,0 +1,53 @@
+name: Android Build
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'android/**'
+      - 'lib/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'android/**'
+      - 'lib/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+
+jobs:
+  build_android:
+    name: Build Android AAB
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build release AAB
+        run: flutter build appbundle --release
+
+      - name: Show merged manifest
+        run: |
+          echo "=== Checking merged manifest for BACKGROUND_LOCATION ==="
+          find android/app/build/intermediates/merged_manifests -name "AndroidManifest.xml" -exec grep -l "BACKGROUND_LOCATION" {} \; || echo "BACKGROUND_LOCATION NOT FOUND"
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gearsh-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
