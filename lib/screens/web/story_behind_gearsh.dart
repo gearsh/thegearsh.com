@@ -136,8 +136,6 @@ class _StoryBehindGearshPageState extends State<StoryBehindGearshPage>
                               icon: Icons.lightbulb_rounded,
                               iconColor: _amber500,
                               title: 'From DJ Dreams to a New Idea',
-                              imagePath: 'assets/images/blackcoffee.png',
-                              imageCaption: 'Black Coffee at Hï Ibiza – a DJ performing on professional gear, the kind of setup that sparked the idea for Gearsh.',
                               content: '''The story of Gearsh begins with a personal passion and a challenge. Our founder aspired to be a DJ, but professional DJ equipment – the turntables, mixers, speakers, and more – was prohibitively expensive for a student.
 
 As a computer science student with an entrepreneurial spirit, he looked at this problem and saw an opportunity: what if there were a way to share gear? Musicians and creators often have equipment that sits unused, while others need that gear temporarily.

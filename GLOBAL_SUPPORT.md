@@ -61,7 +61,7 @@ Gearsh is now a **global marketplace** for booking artists and gigs worldwide. T
 
 3. **Conversion Example**
    ```
-   Artist: DJ Maphorisa (South Africa)
+   Artist: Rix Elton (South Africa)
    Service Price: R50,000 (ZAR)
    
    User in USA sees: $2,703 (USD)
