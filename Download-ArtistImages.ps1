@@ -21,7 +21,6 @@ $imageMap = @{
     # Format: "filename" = "URL"
 
     # Already existing - verify they're there
-    "tyla.jpg" = "";
     "makhadzi.jpg" = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Makhadzi_%28cropped%29.jpg/220px-Makhadzi_%28cropped%29.jpg";
     "masterkg.jpg" = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Master_KG_by_Albert_Gonzalez.jpg/220px-Master_KG_by_Albert_Gonzalez.jpg";
     "lloyiso.jpg" = "";

@@ -222,13 +222,9 @@ echo.
 echo Ninth batch opened! Press any key for more artists...
 pause >nul
 
-start "" "https://www.google.com/search?q=Tyla+South+African+singer+photo&tbm=isch"
-timeout /t 1 >nul
 start "" "https://www.google.com/search?q=William+Last+KRM+DJ+photo&tbm=isch"
 timeout /t 1 >nul
-start "" "https://www.google.com/search?q=DJ+Maphorisa+Kabza+De+Small+photo&tbm=isch"
-timeout /t 1 >nul
-start "" "https://www.google.com/search?q=Kabza+De+Small+amapiano+DJ+photo&tbm=isch"
+start "" "https://www.google.com/search?q=DJ+Maphorisa+photo&tbm=isch"
 timeout /t 1 >nul
 start "" "https://www.google.com/search?q=Nasty+C+rapper+South+Africa+photo&tbm=isch"
 timeout /t 1 >nul
@@ -237,8 +233,6 @@ timeout /t 1 >nul
 start "" "https://www.google.com/search?q=Kelvin+Momo+DJ+amapiano+photo&tbm=isch"
 timeout /t 1 >nul
 start "" "https://www.google.com/search?q=Uncle+Waffles+DJ+photo&tbm=isch"
-timeout /t 1 >nul
-start "" "https://www.google.com/search?q=Black+Coffee+DJ+photo&tbm=isch"
 timeout /t 1 >nul
 start "" "https://www.google.com/search?q=A-Reece+rapper+photo&tbm=isch"
 timeout /t 1 >nul
@@ -253,8 +247,8 @@ echo Download images and save them to:
 echo assets\images\artists\
 echo.
 echo Use these filenames:
-echo   tyla.jpg, lastkrm.png, maphorisa.png, kabza.png, nastyc.png
-echo   cassper.png, kelvinmomo.png, waffles.png, coffee.png, areece.png
+echo   lastkrm.png, maphorisa.png, nastyc.png
+echo   cassper.png, kelvinmomo.png, waffles.png, areece.png
 echo   emtee.webp, seether.png, kiffness.png, antwoord.png, scotts.png
 echo   joyouscelebration.jpg, zeenxumalo.jpg, makhadzi.jpg, tylericu.jpg
 echo   mawhoo.jpg, focalistic.jpg, luckydube.jpg, sjava.jpg, mrjazziq.jpg

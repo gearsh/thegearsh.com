@@ -18,7 +18,6 @@ const RESOURCES = {"assets/AssetManifest.bin": "51673071e82eac38a09f18c962bc23be
 "assets/assets/images/artists/lock-in.png": "6b4de3ad007591defbe228d3906f572f",
 "assets/assets/images/artists/nasty%2520c.png": "ae2a94a442bdcda51c550e9a40ddd121",
 "assets/assets/images/artists/NOTA.png": "9587435645ab7627943e0fcd0d9ae413",
-"assets/assets/images/artists/P9-Kabza-de-Small.webp": "22189651cb6d613740b65c9d8d461418",
 "assets/assets/images/artists/revenge.jpg": "6e3fd30899434ce1ee76039aa973a8ca",
 "assets/assets/images/artists/sony.png": "1604681dbce7aa8cbc3cd57d763c094c",
 "assets/assets/images/artists/uni.png": "3b2ede881f6b710d76314df42b55cb75",

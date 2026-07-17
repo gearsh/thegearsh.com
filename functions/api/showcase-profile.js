@@ -4,10 +4,7 @@ import { inferMarketplaceCategory } from './marketplace-categories.js';
 
 /** Published SA booking fees (Briefly.co.za, celebrity agencies, 2025–2026). */
 export const VERIFIED_BOOKING_RATES = {
-  'tyla': 15000000,
-  'black-coffee': 5500000,
   'shimza': 350000,
-  'kabza-de-small': 300000,
   'cassper-nyovest': 207000,
   'nasty-c': 100000,
   'kwesta': 85000,
@@ -63,13 +60,10 @@ export const VERIFIED_BOOKING_RATES = {
 
 /** Solo portrait overrides — prefer headshots over crowd / duo shots. */
 export const SOLO_PORTRAIT_IMAGES = {
-  'kabza-de-small': 'assets/images/artists/P9-Kabza-de-Small.webp',
   'cassper-nyovest': 'assets/images/artists/cassper.png',
   'nasty-c': 'assets/images/artists/nastyc.png',
   'dj-maphorisa': 'assets/images/artists/maphorisa.png',
-  'black-coffee': 'assets/images/artists/coffee.png',
   'shimza': 'assets/images/artists/shimza.jpg',
-  'tyla': 'assets/images/artists/tyla.jpg',
   'a-reece': 'assets/images/artists/a-reece.png',
   'kwesta': 'assets/images/artists/kwesta.png',
   'focalistic': 'assets/images/artists/focalistic.png',

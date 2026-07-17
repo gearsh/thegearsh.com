@@ -14,7 +14,6 @@ import shutil
 
 # Direct image sources for artists (artist name -> image URL)
 IMAGE_SOURCES = {
-    "tyla.jpg": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Tyla_%28singer%29.png/220px-Tyla_%28singer%29.png",
     "makhadzi.jpg": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Makhadzi_%28cropped%29.jpg/220px-Makhadzi_%28cropped%29.jpg",
     "masterkg.jpg": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Master_KG_by_Albert_Gonzalez.jpg/220px-Master_KG_by_Albert_Gonzalez.jpg",
     "lloyiso.jpg": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/LLOYISO_BET_Experience.jpg/220px-LLOYISO_BET_Experience.jpg",

@@ -7,10 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 VERIFIED_RATES = {
-    "tyla": 15000000,
-    "black-coffee": 5500000,
     "shimza": 350000,
-    "kabza-de-small": 300000,
     "cassper-nyovest": 207000,
     "nasty-c": 100000,
     "kwesta": 85000,
@@ -50,7 +47,6 @@ VERIFIED_RATES = {
 }
 
 SOLO_IMAGES = {
-    "kabza-de-small": "assets/images/artists/P9-Kabza-de-Small.webp",
     "cassper-nyovest": "assets/images/artists/cassper.png",
     "nasty-c": "assets/images/artists/nastyc.png",
     "sho-madjozi": "assets/images/artists/sho.png",

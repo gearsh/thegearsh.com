@@ -7,12 +7,9 @@ FALLBACK = "assets/images/artists/artists.png"
 
 # name, username, image file, category, genre label, location, mastery_hours
 ARTISTS = [
-    ("Black Coffee", "black-coffee", "coffee.png", "DJ", "House · International", "Johannesburg", 10000),
     ("Shimza", "shimza", "shimza.jpg", "DJ", "Afro House · Tembisa", "Tembisa", 10000),
-    ("Kabza De Small", "kabza-de-small", "kabza.png", "Amapiano", "Amapiano · Pretoria", "Pretoria", 9800),
     ("DJ Maphorisa", "dj-maphorisa", "maphorisa.png", "Amapiano", "Amapiano · SA", "Soweto", 9200),
     ("Cassper Nyovest", "cassper-nyovest", "cassper.png", "Hip Hop", "Hip Hop · Joburg", "Johannesburg", 8800),
-    ("Tyla", "tyla", "tyla.jpg", "Afropop", "Afropop · Global", "Johannesburg", 8500),
     ("Nasty C", "nasty-c", "nastyc.png", "Hip Hop", "Hip Hop · Durban", "Durban", 7800),
     ("Yung Swiss", "yung-swiss", "yung-swiss.jpg", "Hip Hop", "Hip Hop · Pretoria", "Pretoria", 6800),
     ("A-Reece", "a-reece", "a-reece.png", "Hip Hop", "Hip Hop · Pretoria", "Pretoria", 6200),

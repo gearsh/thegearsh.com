@@ -32,15 +32,12 @@ You have 3 ways to download the remaining artist images:
 
 ### ✅ Already Have Images (15)
 ```
-tyla.jpg
 lastkrm.png
 maphorisa.png
-kabza.png
 nastyc.png
 cassper.png
 kelvin-momo.png
 waffles.png
-coffee.png
 a-reece.png
 emtee.webp
 seether.png
@@ -115,7 +112,6 @@ benjamindube.jpg           alicephoebelou.jpg
 assets/
 └── images/
     └── artists/
-        ├── tyla.jpg
         ├── makhadzi.jpg
         ├── masterkg.jpg
         └── ... (all 100 artist images)

@@ -76,15 +76,12 @@ All files must be saved with these exact names in `assets/images/artists/`:
 
 ### Existing (15) - Already Present
 ```
-tyla.jpg
 lastkrm.png
 maphorisa.png
-kabza.png
 nastyc.png
 cassper.png
 kelvin-momo.png
 waffles.png
-coffee.png
 a-reece.png
 emtee.webp
 seether.png

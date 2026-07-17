@@ -11,7 +11,7 @@ if (!(Test-Path $artistsDir)) {
 # List of artists that need images (name => filename)
 # These are placeholder URLs - you'll need to manually source proper licensed images
 $artists = @{
-    # Already have: tyla.jpg, lastkrm.png, maphorisa.png, kabza.png, nastyc.png, cassper.png, kelvin-momo.png, waffles.png, coffee.png
+    # Already have: lastkrm.png, maphorisa.png, nastyc.png, cassper.png, kelvin-momo.png, waffles.png
 
     # Need images for these artists:
     "Seether" = "seether.jpg"

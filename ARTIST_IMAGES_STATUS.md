@@ -5,15 +5,12 @@ These artists already have images in `assets/images/artists/`:
 
 | Artist | File |
 |--------|------|
-| Tyla | tyla.jpg |
 | William Last KRM | lastkrm.png |
 | DJ Maphorisa | maphorisa.png |
-| Kabza De Small | kabza.png |
 | Nasty C | nastyc.png |
 | Cassper Nyovest | cassper.png |
 | Kelvin Momo | kelvin-momo.png |
 | Uncle Waffles | waffles.png |
-| Black Coffee | coffee.png |
 | A-Reece | a-reece.png |
 | Emtee | emtee.webp |
 | Seether | seether.png |

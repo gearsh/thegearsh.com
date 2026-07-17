@@ -16,15 +16,12 @@ import json
 # Artist list with search terms
 ARTISTS = {
     # Already have images (for completeness)
-    "tyla.jpg": "Tyla South African singer",
     "lastkrm.png": "William Last KRM DJ",
     "maphorisa.png": "DJ Maphorisa",
-    "kabza.png": "Kabza De Small",
     "nastyc.png": "Nasty C rapper",
     "cassper.png": "Cassper Nyovest",
     "kelvin-momo.png": "Kelvin Momo DJ",
     "waffles.png": "Uncle Waffles DJ",
-    "coffee.png": "Black Coffee DJ",
     "a-reece.png": "A-Reece rapper",
     "emtee.webp": "Emtee rapper",
     "seether.png": "Seether band",

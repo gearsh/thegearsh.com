@@ -19,9 +19,6 @@ if not exist "assets\images\artists" mkdir "assets\images\artists"
 REM Wikipedia images (reliable sources)
 echo [1/5] Downloading from Wikipedia...
 
-REM Tyla
-curl -s -L "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Tyla_%%28singer%%29.png/220px-Tyla_%%28singer%%29.png" -o "assets\images\artists\tyla_wiki.jpg" 2>nul
-
 REM Master KG
 curl -s -L "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Master_KG_by_Albert_Gonzalez.jpg/220px-Master_KG_by_Albert_Gonzalez.jpg" -o "assets\images\artists\masterkg_wiki.jpg" 2>nul
 
