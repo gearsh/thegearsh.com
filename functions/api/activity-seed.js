@@ -14,45 +14,7 @@ export const ACTIVITY_TYPE_LABELS = {
   custom: 'Update',
 };
 
-export const ACTIVITY_SEED_BY_USERNAME = {
-  shimza: [
-    {
-      id: 'seed_shimza_1',
-      activity_type: 'gig',
-      title: 'Headline set at Ultra South Africa',
-      description: 'Closing the main stage with a two-hour Afro-tech journey. Cape Town, you showed out.',
-      location: 'Cape Town, South Africa',
-      venue: 'Cape Town Stadium',
-      event_date: '2026-04-12',
-      media_urls: ['assets/images/artists/shimza.jpg'],
-      like_count: 284,
-      comment_count: 41,
-      created_at: '2026-04-13T10:00:00Z',
-    },
-    {
-      id: 'seed_shimza_2',
-      activity_type: 'collaboration',
-      title: 'Festival-season remix out now',
-      description: 'Dropping a reworked club cut built for festival season. Link in bio on all platforms.',
-      location: 'Johannesburg, South Africa',
-      media_urls: ['assets/images/artists/shimza.jpg'],
-      like_count: 512,
-      comment_count: 88,
-      created_at: '2026-04-28T14:30:00Z',
-    },
-    {
-      id: 'seed_shimza_3',
-      activity_type: 'photoshoot',
-      title: 'Press shoot for GQ South Africa',
-      description: 'Behind the lens day in Sandton. Suiting up for the summer festival cover story.',
-      location: 'Sandton, Johannesburg',
-      media_urls: ['assets/images/artists/shimza.jpg'],
-      like_count: 193,
-      comment_count: 22,
-      created_at: '2026-05-08T09:15:00Z',
-    },
-  ],
-};
+export const ACTIVITY_SEED_BY_USERNAME = {};
 
 export function getSeedActivities(username) {
   const key = String(username || '').trim().toLowerCase();

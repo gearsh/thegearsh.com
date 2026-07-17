@@ -30,86 +30,8 @@ class _ArtistProfileState extends State<ArtistProfile> {
   static const Color _sky400 = Color(0xFF38BDF8);
   static const Color _cyan500 = Color(0xFF06B6D4);
 
-  // Mock artist data based on ID
+  // Artist data resolved from the Gearsh roster by ID.
   Map<String, dynamic> get _artistData {
-    final artists = {
-      '1': {
-        'name': 'A-Reece',
-        'category': 'Hip Hop',
-        'location': 'Pretoria, SA',
-        'rating': 4.9,
-        'reviewCount': 127,
-        'headerImage': 'assets/images/artists/a-reece.png',
-        'avatar': 'assets/images/artists/a-reece.png',
-        'about': 'Award-winning Hip Hop artist known for lyrical prowess and authentic storytelling. With multiple platinum records, A-Reece delivers unforgettable live performances that captivate audiences.',
-        'discography': [
-          {'title': 'Paradise', 'type': 'Album', 'year': '2018', 'tracks': 14, 'image': 'assets/images/artists/a-reece.png'},
-          {'title': 'Reece Effect', 'type': 'Album', 'year': '2017', 'tracks': 12, 'image': 'assets/images/artists/a-reece.png'},
-          {'title': 'From Me to You & Only You', 'type': 'Album', 'year': '2016', 'tracks': 16, 'image': 'assets/images/artists/a-reece.png'},
-          {'title': 'Today\'s Tragedy, Tomorrow\'s Memory', 'type': 'EP', 'year': '2021', 'tracks': 7, 'image': 'assets/images/artists/a-reece.png'},
-          {'title': 'Couldn\'t Have Said It Better, Pt. 3', 'type': 'Single', 'year': '2020', 'tracks': 1, 'image': 'assets/images/artists/a-reece.png'},
-          {'title': 'MeanWhile in Honeydew', 'type': 'Single', 'year': '2019', 'tracks': 1, 'image': 'assets/images/artists/a-reece.png'},
-        ],
-        'services': [
-          {'id': 's1', 'name': 'Live Performance (2 hours)', 'price': 15000.0, 'description': 'Full live performance with DJ support'},
-          {'id': 's2', 'name': 'Festival Set (1 hour)', 'price': 25000.0, 'description': 'High-energy festival performance'},
-          {'id': 's3', 'name': 'Private Event', 'price': 35000.0, 'description': 'Exclusive private event performance'},
-        ],
-      },
-      '2': {
-        'name': 'Nasty C',
-        'category': 'Rap',
-        'location': 'Durban, SA',
-        'rating': 5.0,
-        'reviewCount': 156,
-        'headerImage': 'assets/images/artists/nasty c.png',
-        'avatar': 'assets/images/artists/nasty c.png',
-        'about': 'International rap sensation with a global fanbase. Known for chart-topping hits and electrifying stage presence. Nasty C brings world-class entertainment to every event.',
-        'discography': [
-          {'title': 'Zulu Man With Some Power', 'type': 'Album', 'year': '2020', 'tracks': 21, 'image': 'assets/images/artists/nasty c.png'},
-          {'title': 'Strings and Bling', 'type': 'Album', 'year': '2018', 'tracks': 15, 'image': 'assets/images/artists/nasty c.png'},
-          {'title': 'Bad Hair', 'type': 'Album', 'year': '2016', 'tracks': 14, 'image': 'assets/images/artists/nasty c.png'},
-          {'title': 'I Love It Here', 'type': 'Album', 'year': '2023', 'tracks': 16, 'image': 'assets/images/artists/nasty c.png'},
-          {'title': 'There They Go', 'type': 'Single', 'year': '2019', 'tracks': 1, 'image': 'assets/images/artists/nasty c.png'},
-          {'title': 'Black and White', 'type': 'Single', 'year': '2020', 'tracks': 1, 'image': 'assets/images/artists/nasty c.png'},
-        ],
-        'services': [
-          {'id': 's1', 'name': 'Live Performance (2 hours)', 'price': 20000.0, 'description': 'Full live performance with band'},
-          {'id': 's2', 'name': 'Festival Headline', 'price': 40000.0, 'description': 'Headline festival performance'},
-          {'id': 's3', 'name': 'Corporate Event', 'price': 30000.0, 'description': 'Professional corporate entertainment'},
-        ],
-      },
-      '3': {
-        'name': 'Emtee',
-        'category': 'Hip Hop',
-        'location': 'Johannesburg, SA',
-        'rating': 4.8,
-        'reviewCount': 98,
-        'headerImage': 'assets/images/artists/emtee.png',
-        'avatar': 'assets/images/artists/emtee.png',
-        'about': 'Multi-platinum artist known for trap-influenced sound and hit singles. Emtee brings raw energy and authentic vibes to every performance.',
-        'discography': [
-          {'title': 'Avery', 'type': 'Album', 'year': '2017', 'tracks': 18, 'image': 'assets/images/artists/emtee.png'},
-          {'title': 'Manando', 'type': 'Album', 'year': '2017', 'tracks': 16, 'image': 'assets/images/artists/emtee.png'},
-          {'title': 'DIY 3', 'type': 'Album', 'year': '2021', 'tracks': 14, 'image': 'assets/images/artists/emtee.png'},
-          {'title': 'Logan', 'type': 'Album', 'year': '2022', 'tracks': 12, 'image': 'assets/images/artists/emtee.png'},
-          {'title': 'Roll Up', 'type': 'Single', 'year': '2015', 'tracks': 1, 'image': 'assets/images/artists/emtee.png'},
-          {'title': 'Pearl Thusi', 'type': 'Single', 'year': '2016', 'tracks': 1, 'image': 'assets/images/artists/emtee.png'},
-        ],
-        'services': [
-          {'id': 's1', 'name': 'Club Performance', 'price': 12000.0, 'description': 'High-energy club set'},
-          {'id': 's2', 'name': 'Festival Set', 'price': 18000.0, 'description': 'Festival stage performance'},
-          {'id': 's3', 'name': 'Private Party', 'price': 25000.0, 'description': 'Exclusive private party performance'},
-        ],
-      },
-    };
-
-    // First check mock data
-    if (artists.containsKey(widget.artistId)) {
-      return artists[widget.artistId]!;
-    }
-
-    // Then check gearsh_artists data
     try {
       final gearshArtist = gearshArtists.firstWhere(
         (a) => a.id == widget.artistId,
