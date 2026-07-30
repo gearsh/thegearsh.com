@@ -1,10 +1,15 @@
-# The Gearsh App — Artist Booking Platfrom
+# The Gearsh
 
-## Overview
-The Gearsh App is an innovative platform connecting artists with bookers for seamless gig booking and event management. This MVP showcases core features including artist discovery, profiles, and booking flows.
+A mobile app built for artists and creatives.  
+Get booked. Get paid. Go global.  
+Started from Makhado.
 
-## App category
-Most Innovative Solution
+Flutter marketplace for Amapiano DJs, producers, photographers & creatives.  
+Local first (Makhado / Louis Trichardt) → global.
 
-## Note
-Written by Nhlanhla Collins Mahlangu.
+- Free to list
+- Secure payments
+- Dark + gold street-luxury UI
+
+Live: [thegearsh.com](https://thegearsh.com)
+
