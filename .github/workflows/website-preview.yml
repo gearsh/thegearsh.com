@@ -1,0 +1,35 @@
+name: Website Revamp Preview
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build preview site
+        run: |
+          rm -rf preview-site
+          mkdir -p preview-site/assets/images
+          cp web/marketing-v2.html preview-site/index.html
+          cp -r assets/images/* preview-site/assets/images/
+          cp -r web/icons preview-site/icons
+          cp web/gearsh-brand.css preview-site/gearsh-brand.css 2>/dev/null || true
+          cp web/discovery.css preview-site/discovery.css 2>/dev/null || true
+          cp web/search.html preview-site/search.html 2>/dev/null || true
+          cp web/join-gig.html preview-site/join-gig.html 2>/dev/null || true
+          cp web/login.html preview-site/login.html 2>/dev/null || true
+          cp web/terms.html preview-site/terms.html 2>/dev/null || true
+          cp web/privacy.html preview-site/privacy.html 2>/dev/null || true
+          echo "Preview bundle ready"
+
+      - name: Deploy preview to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy preview-site --project-name=thegearsh-com --branch=website-revamp-v1
