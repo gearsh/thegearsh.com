@@ -32,9 +32,8 @@
 /booking/*                /gearsh-app.html 200
 /glog/*                   /glog-post?slug=:splat 200
 /artist/*                 /gearsh-app.html 200
-# /artists and /search served via Cloudflare Pretty URLs from artists.html /
-# search.html. Do NOT add explicit rewrite rules — they will trigger the same
-# 308 loop documented at the top of this file.
+# /artists and /search served via Cloudflare Pretty URLs from artists.html / search.html.
+# Do NOT add explicit rewrite rules — they will trigger the same 308 loop documented above.
 /category/*               /gearsh-app.html 200
 /gigs                     /gig-guide.html 200
 /gig-guide                /gig-guide.html 200
@@ -48,16 +47,10 @@
 /help                     /gearsh-app.html 200
 /faq                      /gearsh-app.html 200
 /settings                 /gearsh-app.html 200
-# NOTE: do NOT add rewrite rules like `/terms /terms.html 200`.
-# Cloudflare Pages' Pretty URLs auto-serves /terms from terms.html, and an
-# explicit rewrite causes a 308 redirect loop (Pretty URLs strips .html each
-# time the rewrite serves terms.html). The same applies to /privacy and
-# /login (see comment at the top of this file).
+# Cloudflare Pages Pretty URLs serve /terms from terms.html and /privacy from privacy.html.
 /privacy-policy           /privacy 301
 
-# Tonight — shareable shortlink to today's featured genre. search-page.js
-# reads ?spotlight=tonight and pre-fills the genre filter from
-# day-genre-schedule.js so the same URL works every night of the week.
+# Tonight — shareable shortlink to today's featured genre.
 /tonight                  /search?spotlight=tonight 302
 /following                /following-feed 302
 /gearsh                   /gearsh.html 200
@@ -79,4 +72,6 @@
 /icons/*                  /icons/:splat 200
 /assets/*                 /assets/:splat 200
 
-/                         /index.html 200
+# Website revamp homepage. This lets the existing production deploy publish the new homepage
+# without changing the Flutter app bundle path.
+/                         /marketing-v2.html 200
