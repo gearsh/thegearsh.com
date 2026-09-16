@@ -39,24 +39,44 @@
     };
   }
 
-  function boot() {
-    if (typeof SA_SHOWCASE_ARTISTS === 'undefined') return;
+  function getPreviewProfile() {
     var params = new URLSearchParams(window.location.search);
     var slug = params.get('artist') || params.get('username');
-    if (!slug) return;
+    if (!slug) return null;
     var item = findArtist(slug);
-    if (!item || typeof renderProfile !== 'function') return;
+    return item ? toProfile(item) : null;
+  }
 
+  function renderPreviewProfile() {
+    var profile = getPreviewProfile();
+    if (!profile || typeof renderProfile !== 'function') return false;
+    renderProfile(profile);
     var error = document.getElementById('error');
-    var content = document.getElementById('content');
-    if (!content) return;
-
-    renderProfile(toProfile(item));
     if (error) error.style.display = 'none';
+    return true;
+  }
+
+  function boot() {
+    if (typeof SA_SHOWCASE_ARTISTS === 'undefined') return;
+
+    // The preview deployment is static and does not have the production
+    // /api/artists/:username endpoint. If that request fails, the original
+    // page calls showError(). Override that function so the API failure cannot
+    // replace a valid showcase profile with "Gig not found".
+    if (typeof window.showError === 'function') {
+      window.showError = function () {
+        if (!renderPreviewProfile()) {
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('error').style.display = 'block';
+        }
+      };
+    }
+
+    renderPreviewProfile();
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () { setTimeout(boot, 0); });
+    document.addEventListener('DOMContentLoaded', boot);
   } else {
     setTimeout(boot, 0);
   }
