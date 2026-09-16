@@ -47,6 +47,7 @@ jobs:
           cp -r web/icons build/web/icons 2>/dev/null || true
           cp web/gearsh-brand.css build/web/gearsh-brand.css 2>/dev/null || true
           cp web/discovery.css build/web/discovery.css 2>/dev/null || true
+          cp web/legal-theme.css build/web/legal-theme.css 2>/dev/null || true
           cp web/artist-feed.js build/web/artist-feed.js 2>/dev/null || true
           cp web/gearsh-ui.js build/web/gearsh-ui.js 2>/dev/null || true
           cp web/gearsh-auth.js build/web/gearsh-auth.js 2>/dev/null || true
@@ -122,7 +123,7 @@ jobs:
       - name: Cache-bust JS/CSS references in HTML
         run: |
           VERSION=$(git rev-parse --short HEAD)
-          ASSETS="day-genre-schedule sa-showcase-data artist-feed gearsh-auth marketplace-data marketplace-feed gearsh-ui search-page artists-page glog-data glog-page glog-post activity-feed activity-create gearsh-brand discovery glog"
+          ASSETS="day-genre-schedule sa-showcase-data artist-feed gearsh-auth marketplace-data marketplace-feed gearsh-ui search-page artists-page glog-data glog-page glog-post activity-feed activity-create gearsh-brand discovery glog legal-theme"
           for html in build/web/*.html; do
             [ -f "$html" ] || continue
             for asset in $ASSETS; do
@@ -140,11 +141,17 @@ jobs:
           test -f build/web/index.html
           test -f build/web/profile.html
           test -f build/web/profile-theme.css
+          test -f build/web/terms.html
+          test -f build/web/privacy.html
           test -f build/web/service-agreement.html
+          test -f build/web/legal-theme.css
           test ! -f build/web/app/index.html
           grep -q "flutter_bootstrap" build/web/gearsh-app.html
           grep -q "gearsh-app.html" build/web/_redirects
           grep -q "Find the right talent" build/web/index.html
+          grep -q "/terms.*terms.html" build/web/_redirects
+          grep -q "/privacy.*privacy.html" build/web/_redirects
+          grep -q "/service-agreement.*service-agreement.html" build/web/_redirects
           echo "Deployment bundle OK"
 
       - name: Validate Pages Functions bundle
