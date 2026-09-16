@@ -37,6 +37,9 @@ jobs:
           cp web/terms.html preview-site/terms.html 2>/dev/null || true
           cp web/privacy.html preview-site/privacy.html 2>/dev/null || true
           cp web/book-gig.html preview-site/book-gig.html 2>/dev/null || true
+          cp web/profile.html preview-site/profile.html 2>/dev/null || true
+          cp web/profile-preview-fallback.js preview-site/profile-preview-fallback.js 2>/dev/null || true
+          cp web/profile-preview-links.js preview-site/profile-preview-links.js 2>/dev/null || true
           cp web/activity-feed.js preview-site/activity-feed.js 2>/dev/null || true
           cp web/activity-feed.css preview-site/activity-feed.css 2>/dev/null || true
           cp web/tickets.css preview-site/tickets.css 2>/dev/null || true
@@ -44,8 +47,7 @@ jobs:
           cp web/claim-profile.html preview-site/claim-profile.html 2>/dev/null || true
           cp web/collaborate.html preview-site/collaborate.html 2>/dev/null || true
           cp web/lessons.html preview-site/lessons.html 2>/dev/null || true
-          cp web/profile-preview-fallback.js preview-site/profile-preview-fallback.js 2>/dev/null || true
-          printf '\n<script src="/sa-showcase-data.js"></script>\n<script src="/profile-preview-fallback.js"></script>\n' >> preview-site/book-gig.html
+          printf '\n<script src="/profile-preview-links.js"></script>\n' >> preview-site/search.html
           echo "Preview bundle ready"
 
       - name: Deploy preview to Cloudflare Pages
