@@ -32,8 +32,6 @@
 /booking/*                /gearsh-app.html 200
 /glog/*                   /glog-post?slug=:splat 200
 /artist/*                 /gearsh-app.html 200
-# /artists and /search served via Cloudflare Pretty URLs from artists.html / search.html.
-# Do NOT add explicit rewrite rules — they will trigger the same 308 loop documented above.
 /category/*               /gearsh-app.html 200
 /gigs                     /gig-guide.html 200
 /gig-guide                /gig-guide.html 200
@@ -47,8 +45,12 @@
 /help                     /gearsh-app.html 200
 /faq                      /gearsh-app.html 200
 /settings                 /gearsh-app.html 200
-# Cloudflare Pages Pretty URLs serve /terms from terms.html and /privacy from privacy.html.
-/privacy-policy           /privacy 301
+
+# Legal pages — explicit rewrites so clean URLs work reliably on Cloudflare Pages.
+/terms                    /terms.html 200
+/privacy                  /privacy.html 200
+/privacy-policy           /privacy.html 301
+/service-agreement        /service-agreement.html 200
 
 # Tonight — shareable shortlink to today's featured genre.
 /tonight                  /search?spotlight=tonight 302
@@ -67,11 +69,11 @@
 /claim-profile.html       /claim-profile.html 200
 /terms.html               /terms.html 200
 /privacy.html             /privacy.html 200
+/service-agreement.html   /service-agreement.html 200
 /landing.html             /landing.html 200
 
 /icons/*                  /icons/:splat 200
 /assets/*                 /assets/:splat 200
 
-# Website revamp homepage. This lets the existing production deploy publish the new homepage
-# without changing the Flutter app bundle path.
+# Website revamp homepage.
 /                         /marketing-v2.html 200
