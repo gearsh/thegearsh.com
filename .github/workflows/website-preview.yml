@@ -23,6 +23,15 @@ jobs:
           cp web/gearsh-brand.css preview-site/gearsh-brand.css 2>/dev/null || true
           cp web/discovery.css preview-site/discovery.css 2>/dev/null || true
           cp web/search.html preview-site/search.html 2>/dev/null || true
+          cp web/search-page.js preview-site/search-page.js 2>/dev/null || true
+          cp web/artist-feed.js preview-site/artist-feed.js 2>/dev/null || true
+          cp web/marketplace-feed.js preview-site/marketplace-feed.js 2>/dev/null || true
+          cp web/marketplace-data.js preview-site/marketplace-data.js 2>/dev/null || true
+          cp web/sa-showcase-data.js preview-site/sa-showcase-data.js 2>/dev/null || true
+          cp web/day-genre-schedule.js preview-site/day-genre-schedule.js 2>/dev/null || true
+          cp web/gearsh-location.js preview-site/gearsh-location.js 2>/dev/null || true
+          cp web/gearsh-auth.js preview-site/gearsh-auth.js 2>/dev/null || true
+          cp web/gearsh-ui.js preview-site/gearsh-ui.js 2>/dev/null || true
           cp web/join-gig.html preview-site/join-gig.html 2>/dev/null || true
           cp web/login.html preview-site/login.html 2>/dev/null || true
           cp web/terms.html preview-site/terms.html 2>/dev/null || true
