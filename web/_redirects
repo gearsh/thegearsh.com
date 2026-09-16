@@ -46,11 +46,14 @@
 /faq                      /gearsh-app.html 200
 /settings                 /gearsh-app.html 200
 
-# Legal pages — explicit rewrites so clean URLs work reliably on Cloudflare Pages.
+# Legal pages — explicit rewrites, including trailing-slash variants.
 /terms                    /terms.html 200
+/terms/                   /terms.html 200
 /privacy                  /privacy.html 200
+/privacy/                 /privacy.html 200
 /privacy-policy           /privacy.html 301
 /service-agreement        /service-agreement.html 200
+/service-agreement/      /service-agreement.html 200
 
 # Tonight — shareable shortlink to today's featured genre.
 /tonight                  /search?spotlight=tonight 302
