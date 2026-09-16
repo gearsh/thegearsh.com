@@ -16,6 +16,8 @@ jobs:
           rm -rf preview-site
           mkdir -p preview-site/assets/images
           cp web/marketing-v2.html preview-site/index.html
+          cp web/mobile-fix.css preview-site/mobile-fix.css
+          printf '\n<style>@media (max-width:520px){.steps{grid-template-columns:1fr}.step{text-align:center}.step .num{margin-left:auto;margin-right:auto}}</style>\n' >> preview-site/index.html
           cp -r assets/images/* preview-site/assets/images/
           cp -r web/icons preview-site/icons
           cp web/gearsh-brand.css preview-site/gearsh-brand.css 2>/dev/null || true
