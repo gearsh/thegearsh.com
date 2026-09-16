@@ -1,144 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Read the Gearsh Terms & Conditions. Account rules, booking policies, payments, cancellations, and your rights.">
-  <link rel="canonical" href="https://thegearsh.com/terms">
-  <meta name="theme-color" content="#0A0A0A">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Gearsh">
-  <meta property="og:title" content="Terms &amp; Conditions | Gearsh">
-  <meta property="og:description" content="Account rules, booking policies, payments, cancellations, and your rights.">
-  <meta property="og:url" content="https://thegearsh.com/terms">
-  <meta property="og:image" content="https://thegearsh.com/icons/og-banner.png">
-  <meta name="twitter:card" content="summary">
-  <title>Terms &amp; Conditions | Gearsh</title>
-  <link rel="icon" type="image/png" href="icons/Icon-192.png">
-  <link rel="apple-touch-icon" href="icons/Icon-512.png">
-  <link rel="stylesheet" href="gearsh-brand.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-  <style>
-    .legal-page { padding: 100px 20px 60px; max-width: 720px; margin: 0 auto; }
-    .legal-page h1 {
-      font-family: var(--g-serif); font-weight: 400;
-      font-size: clamp(28px, 5vw, 38px); color: var(--g-white);
-      letter-spacing: -0.02em; margin-bottom: 6px;
-    }
-    .legal-page h1 em { font-style: italic; color: var(--g-accent); }
-    .legal-meta { font-size: 13px; color: var(--g-text-dim); margin-bottom: 32px; }
-    .legal-notice {
-      background: var(--g-accent-light); border: 0.5px solid rgba(0,191,255,0.15);
-      border-radius: 12px; padding: 16px 20px; margin-bottom: 32px;
-      font-size: 13px; color: var(--g-accent); line-height: 1.55;
-    }
-    .legal-toc {
-      background: var(--g-surface); border: 0.5px solid var(--g-border);
-      border-radius: 14px; padding: 24px; margin-bottom: 40px;
-    }
-    .legal-toc-title { font-size: 13px; font-weight: 700; color: var(--g-white); margin-bottom: 12px; }
-    .legal-toc ol { list-style: none; counter-reset: toc; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; }
-    .legal-toc li { counter-increment: toc; }
-    .legal-toc li::before { content: counter(toc, decimal-leading-zero); color: var(--g-accent); font-weight: 700; font-size: 12px; margin-right: 8px; }
-    .legal-toc a { text-decoration: none; color: var(--g-text-muted); font-size: 13px; transition: color 0.2s; }
-    .legal-toc a:hover { color: var(--g-white); }
-    @media (max-width: 520px) { .legal-toc ol { grid-template-columns: 1fr; } }
-    .legal-section { margin-bottom: 36px; }
-    .legal-section-num {
-      font-size: 12px; font-weight: 700; color: var(--g-accent);
-      letter-spacing: 0.06em; margin-bottom: 6px;
-    }
-    .legal-section h2 { font-size: 18px; font-weight: 700; color: var(--g-white); margin-bottom: 12px; }
-    .legal-section p { font-size: 14px; color: var(--g-text-muted); line-height: 1.7; margin-bottom: 10px; }
-    .legal-section ul { list-style: none; margin: 8px 0 12px; }
-    .legal-section ul li {
-      font-size: 14px; color: var(--g-text-muted); line-height: 1.7;
-      padding-left: 20px; position: relative; margin-bottom: 4px;
-    }
-    .legal-section ul li::before {
-      content: ''; position: absolute; left: 0; top: 10px;
-      width: 5px; height: 5px; border-radius: 50%; background: var(--g-accent);
-    }
-    .legal-divider { height: 0.5px; background: var(--g-border); margin: 36px 0; }
-  </style>
-</head>
-<body>
-
-  <nav class="g-nav">
-    <div class="g-nav-inner">
-      <a href="./" class="g-nav-logo"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
-      <div class="g-nav-right">
-        <a href="/auth.html" class="g-nav-mobile-login">Login</a>
-        <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
-      </div>
-      <ul class="g-nav-links">
-        <li class="g-nav-menu-auth"><a href="/auth.html">Login</a></li>
-        <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
-        <li><a href="./">Home</a></li>
-        <li><a href="privacy.html">Privacy</a></li>
-      </ul>
-    </div>
-  </nav>
-
-  <main class="legal-page">
-    <h1>Terms & <em>Conditions</em></h1>
-    <div class="legal-meta">Effective upon platform use · South African Law Applies</div>
-
-    <div class="legal-notice">
-      <strong>Legal Notice:</strong> These Terms & Conditions govern the use of the Gearsh platform. This is a draft framework and must be reviewed by a qualified legal professional before public release.
-    </div>
-
-    <div class="legal-toc">
-      <div class="legal-toc-title">Contents</div>
-      <ol>
-        <li><a href="#s1">Introduction</a></li>
-        <li><a href="#s2">Definitions</a></li>
-        <li><a href="#s3">Registration & Account Rules</a></li>
-        <li><a href="#s4">User Conduct & Platform Policy</a></li>
-        <li><a href="#s5">Rights of Gearsh & Termination</a></li>
-        <li><a href="#s6">Financial Terms & Payments</a></li>
-        <li><a href="#s7">Cancellations & Refunds</a></li>
-        <li><a href="#s8">Dispute Resolution</a></li>
-        <li><a href="#s9">Safety & Liability</a></li>
-        <li><a href="#s10">Artist Obligations</a></li>
-        <li><a href="#s11">Client Obligations</a></li>
-        <li><a href="#s12">Amendments</a></li>
-        <li><a href="#s13">Contact</a></li>
-      </ol>
-    </div>
-
-    <div class="legal-section" id="s1"><div class="legal-section-num">01</div><h2>Introduction</h2><p>Gearsh is a digital marketplace that connects Clients with Artists for entertainment bookings. By accessing or using the Gearsh application or website, you agree to be bound by these Terms & Conditions.</p></div>
-    <div class="legal-divider"></div>
-    <div class="legal-section" id="s2"><div class="legal-section-num">02</div><h2>Definitions</h2><p>"Platform" refers to the Gearsh website, web application, and mobile application. "Artist" refers to any individual or group offering services through the Platform. "Client" refers to any individual or organisation booking services through the Platform. "Booking" refers to a confirmed service agreement between an Artist and a Client.</p></div>
-    <div class="legal-divider"></div>
-    <div class="legal-section" id="s3"><div class="legal-section-num">03</div><h2>Registration & Account Rules</h2><p>Users must provide accurate, truthful information when creating an account. Each user may maintain only one account. Users are responsible for maintaining the confidentiality of their login credentials. Gearsh reserves the right to suspend or terminate accounts that violate these terms.</p></div>
-    <div class="legal-divider"></div>
-    <div class="legal-section" id="s4"><div class="legal-section-num">04</div><h2>User Conduct & Platform Policy</h2><p>All users agree to conduct themselves professionally and respectfully. Prohibited conduct includes:</p><ul><li>Harassment, discrimination, or abusive behaviour</li><li>Fraudulent listings, fake reviews, or misrepresentation</li><li>Circumventing the platform's payment system</li><li>Uploading harmful, illegal, or infringing content</li></ul></div>
-    <div class="legal-divider"></div>
-    <div class="legal-section" id="s5"><div class="legal-section-num">05</div><h2>Rights of Gearsh & Termination</h2><p>Gearsh reserves the right to modify, suspend, or discontinue any part of the Platform at any time. Gearsh may terminate or suspend any user account for violations of these terms, at its sole discretion.</p></div>
-    <div class="legal-divider"></div>
-    <div class="legal-section" id="s6"><div class="legal-section-num">06</div><h2>Financial Terms & Payments</h2><p>All payments are processed through the Platform's secure payment system. Gearsh charges a commission on each completed booking. Payment terms and commission rates are communicated transparently to all users. Artists will receive payment within the specified settlement period after service delivery.</p></div>
-    <div class="legal-divider"></div>
-    <div class="legal-section" id="s7"><div class="legal-section-num">07</div><h2>Cancellations & Refunds</h2><p>Cancellation policies are established at the time of booking. Refund eligibility depends on the timing of cancellation and the applicable cancellation policy. Gearsh will mediate disputes between Artists and Clients regarding cancellations.</p></div>
-    <div class="legal-divider"></div>
-    <div class="legal-section" id="s8"><div class="legal-section-num">08</div><h2>Dispute Resolution</h2><p>Users are encouraged to resolve disputes directly through the Platform's messaging system. Where direct resolution fails, Gearsh will provide mediation support. Any unresolved disputes will be governed by the laws of the Republic of South Africa.</p></div>
-    <div class="legal-divider"></div>
-    <div class="legal-section" id="s9"><div class="legal-section-num">09</div><h2>Safety & Liability</h2><p>Gearsh does not assume liability for the quality, safety, or legality of services provided by Artists. Users engage with each other at their own risk. Gearsh provides the platform infrastructure but is not a party to bookings between Artists and Clients.</p></div>
-    <div class="legal-divider"></div>
-    <div class="legal-section" id="s10"><div class="legal-section-num">10</div><h2>Artist Obligations</h2><p>Artists must deliver services as described in their profile and booking agreements. Artists must maintain professional conduct at all events and engagements. Artists are responsible for their own equipment, transport, and insurance.</p></div>
-    <div class="legal-divider"></div>
-    <div class="legal-section" id="s11"><div class="legal-section-num">11</div><h2>Client Obligations</h2><p>Clients must provide accurate event details and requirements. Clients must honour confirmed bookings and make timely payments. Clients are responsible for providing a safe working environment for Artists.</p></div>
-    <div class="legal-divider"></div>
-    <div class="legal-section" id="s12"><div class="legal-section-num">12</div><h2>Amendments</h2><p>Gearsh reserves the right to update these Terms & Conditions at any time. Users will be notified of material changes via email or platform notification. Continued use of the Platform following any changes constitutes acceptance of the revised terms.</p></div>
-    <div class="legal-divider"></div>
-    <div class="legal-section" id="s13"><div class="legal-section-num">13</div><h2>Contact</h2><p>For questions or concerns about these Terms & Conditions, please contact us at support@thegearsh.com.</p></div>
-  </main>
-
-  <footer class="g-footer">
-    <div class="g-footer-inner">
-      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="The Gearsh"> &copy; 2025 Gearsh (Pty) Ltd. All rights reserved.</div>
-      <ul class="g-footer-links"><li><a href="/terms">Terms</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/auth.html">Sign in</a></li><li><a href="join-gig.html">List your gig</a></li></ul>
-    </div>
-  </footer>
-</body>
-</html>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Gearsh Terms & Conditions covering accounts, creative bookings, fees, payments, cancellations, disputes and payouts.">
+<link rel="canonical" href="https://thegearsh.com/terms"><meta name="theme-color" content="#0A0A0A">
+<title>Terms & Conditions | Gearsh</title><link rel="icon" href="icons/Icon-192.png"><link rel="stylesheet" href="gearsh-brand.css">
+<style>.legal-page{padding:100px 20px 60px;max-width:760px;margin:auto}.legal-page h1{font-family:var(--g-serif);font-weight:400;font-size:clamp(30px,5vw,42px);color:var(--g-white)}.legal-page h1 em{color:var(--g-accent)}.meta{color:var(--g-text-dim);font-size:13px;margin-bottom:36px}.notice{background:var(--g-accent-light);border:1px solid rgba(0,191,255,.15);border-radius:12px;padding:16px 20px;color:var(--g-text-muted);font-size:13px;line-height:1.6;margin-bottom:38px}.notice strong{color:var(--g-accent)}section{margin:0 0 34px}h2{color:var(--g-white);font-size:19px;margin:0 0 12px}p,li{color:var(--g-text-muted);font-size:14px;line-height:1.75}ul{padding-left:22px}.divider{height:1px;background:var(--g-border);margin:34px 0}.fees{overflow-x:auto}table{width:100%;border-collapse:collapse;color:var(--g-text-muted);font-size:14px}th,td{text-align:left;padding:11px;border-bottom:1px solid var(--g-border)}th{color:var(--g-white)}a{color:var(--g-accent)}</style>
+</head><body>
+<nav class="g-nav"><div class="g-nav-inner"><a href="./" class="g-nav-logo"><img src="icons/Icon-512.png" alt="The Gearsh"></a><div class="g-nav-right"><a href="/auth.html" class="g-nav-mobile-login">Login</a><button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu">☰</button></div><ul class="g-nav-links"><li><a href="./">Home</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/service-agreement.html">Service Agreement</a></li></ul></div></nav>
+<main class="legal-page"><h1>Terms & <em>Conditions</em></h1><div class="meta">Last updated: 17 September 2026 · South African law applies</div>
+<div class="notice"><strong>Important:</strong> Gearsh is a marketplace and technology platform. Artists are independent service providers. Gearsh facilitates discovery, booking, agreements, payment collection, dispute handling and payouts; the underlying creative service is provided by the Artist.</div>
+<section><h2>1. Acceptance and platform role</h2><p>These Terms govern use of the Gearsh website, applications and related services. By using Gearsh, you agree to these Terms. Gearsh provides marketplace and transaction infrastructure and is not the provider of the creative service described in a booking.</p></section>
+<section><h2>2. Definitions</h2><p><strong>Artist</strong> means an independent creative professional or creative business offering a service through Gearsh. <strong>Client</strong> means a person or organisation booking an Artist. <strong>Booking</strong> means a confirmed engagement between a Client and Artist. <strong>Booking Service Agreement</strong> means the booking-specific agreement containing the service, price, date, terms and other agreed details. <strong>Platform</strong> means Gearsh websites, applications, systems and related services.</p></section>
+<section><h2>3. Accounts and accurate information</h2><p>Users must provide accurate information and keep account information current. Users are responsible for their credentials and activity under their accounts. Gearsh may suspend or terminate accounts for fraud, abuse, material breach, unlawful conduct or conduct that threatens the integrity or safety of the marketplace.</p></section>
+<section><h2>4. Artists are independent contractors</h2><p>Artists operate independently and are not employees, agents, partners or representatives of Gearsh. An Artist is responsible for delivering the booked service, equipment, transport, permits, insurance, taxes and other obligations applicable to the Artist's business. Nothing on Gearsh creates an employment relationship between Gearsh and an Artist.</p></section>
+<section><h2>5. Bookings and agreements</h2><p>A booking becomes confirmed when the applicable booking process has been completed and the Artist has accepted the request and the Client has completed any required payment. The Booking Service Agreement records the commercial terms between the Client and Artist. Once accepted, the parties must perform according to those terms. Material changes should be made through the Gearsh booking process and may require agreement by both parties.</p></section>
+<section><h2>6. Fees and payments</h2><div class="fees"><table><tr><th>Party</th><th>Gearsh fee</th></tr><tr><td>Artist</td><td>4% of the Artist service subtotal</td></tr><tr><td>Client</td><td>12.6% of the applicable Artist service subtotal</td></tr></table></div><p>PayFast processing costs are currently absorbed by Gearsh. The applicable fees are shown or communicated during the booking/payment process. Artists do not pay an upfront deposit to Gearsh under the current V1 model.</p><p>Payments are processed through the payment infrastructure made available by Gearsh, including PayFast for applicable South African transactions. After a successful payment, funds may be held pending completion of the booking and the applicable dispute period. Gearsh may apply refunds, holds or payment restrictions where required by these Terms, a dispute, a chargeback, fraud controls, payment-provider requirements or law.</p></section>
+<section><h2>7. Completion and Artist payouts</h2><p>Once a booking is completed and the applicable 36-hour dispute period has passed, the Artist payout becomes eligible for release through PayFast, subject to there being no open dispute, refund, chargeback, payment hold or other applicable restriction. PayFast processing and settlement timing may affect when funds reach the Artist's nominated account.</p></section>
+<section><h2>8. Client cancellations and refunds</h2><p>Unless a Booking Service Agreement states a different lawful commercial term agreed through Gearsh, the following Client cancellation schedule applies to the Artist service subtotal. Gearsh fees are retained on Client cancellations under this schedule.</p><div class="fees"><table><tr><th>Cancellation timing</th><th>Refund of Artist subtotal</th></tr><tr><td>More than 7 days before booking</td><td>100%</td></tr><tr><td>48 hours to 7 days before booking</td><td>50%</td></tr><tr><td>Less than 48 hours before booking</td><td>0%</td></tr></table></div><p>For a Client cancellation, the Artist receives R0 under this schedule. Refunds are processed through the applicable payment provider and may be subject to provider processing timelines.</p></section>
+<section><h2>9. Artist cancellations and no-shows</h2><p>If an Artist cancels a confirmed booking or fails to attend or deliver the booked service without an agreed or qualifying reason, the Client is entitled to a full refund of the amount paid, including applicable Gearsh fees, subject to payment-provider and legal requirements. The Artist receives R0 for the cancelled/no-show booking.</p></section>
+<section><h2>10. Client no-shows</h2><p>If a Client does not attend or is unavailable for the booked service after the Artist has attended or otherwise made the agreed service available, the Client is generally not entitled to a refund. Subject to any dispute or exception, the Artist becomes eligible for the agreed net payout and Gearsh retains its applicable fees.</p></section>
+<section><h2>11. Disputes</h2><p>For live or performance bookings, the Client has 36 hours after the booking is marked completed to open a dispute. For deliverable-based services, completion is determined by the applicable Booking Service Agreement and the 36-hour period begins when completion is recorded under that agreement. When a dispute is opened, any applicable held funds are frozen while Gearsh reviews the available evidence.</p><p>Depending on the evidence and applicable agreement, a dispute may result in release of funds to the Artist, a refund to the Client, or a split outcome. Gearsh may request messages, booking details, files, attendance evidence, delivery evidence, photographs, receipts or other relevant information.</p></section>
+<section><h2>12. Force majeure and exceptional circumstances</h2><p>Events outside a party's reasonable control may be considered separately, including serious emergencies, government restrictions, natural disasters or other qualifying circumstances. Gearsh may request supporting evidence and determine an appropriate operational outcome consistent with the Booking Service Agreement, payment-provider rules and applicable law.</p></section>
+<section><h2>13. Prohibited conduct</h2><ul><li>Fraudulent listings, fake reviews or material misrepresentation</li><li>Harassment, threats, discrimination or abusive conduct</li><li>Circumventing Gearsh payment systems to avoid applicable fees</li><li>Illegal, infringing or harmful content or activity</li><li>Attempting to manipulate bookings, reviews, payments or marketplace records</li></ul></section>
+<section><h2>14. Safety, quality and liability</h2><p>Gearsh does not control the quality, legality, safety, availability or suitability of services supplied by Artists. Clients and Artists must make their own reasonable checks and communicate relevant requirements before a booking. To the extent permitted by law, Gearsh is not liable for losses arising from the underlying service supplied by an Artist, including an Artist's performance, attendance, equipment, transport or professional conduct.</p></section>
+<section><h2>15. Intellectual property and platform content</h2><p>Users retain ownership of content they lawfully own. By submitting content to Gearsh, users grant Gearsh the permissions reasonably necessary to display, host, distribute and operate that content as part of the Platform and marketplace. Users must not upload content they do not have the right to use.</p></section>
+<section><h2>16. Privacy</h2><p>Personal information is handled according to the <a href="/privacy">Gearsh Privacy Policy</a>. Payment information may also be processed by applicable payment providers under their own terms and privacy practices.</p></section>
+<section><h2>17. Changes and termination</h2><p>Gearsh may update these Terms when reasonably necessary. Material changes may be communicated through the Platform or other appropriate channels. Gearsh may suspend or terminate access where justified by these Terms, security requirements, payment-provider requirements or law. Confirmed bookings may remain subject to their applicable Booking Service Agreement and cancellation/dispute provisions.</p></section>
+<section><h2>18. Governing law</h2><p>These Terms are governed by the laws of the Republic of South Africa, subject to any mandatory rights or remedies available under applicable law.</p></section>
+<section><h2>19. Contact</h2><p>Questions about these Terms can be sent to <a href="mailto:support@thegearsh.com">support@thegearsh.com</a>.</p></section>
+</main><footer class="g-footer"><div class="g-footer-inner"><div class="g-footer-left"><img src="icons/Icon-512.png" alt="The Gearsh"> © 2026 Gearsh (Pty) Ltd. All rights reserved.</div><ul class="g-footer-links"><li><a href="/terms">Terms</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/service-agreement.html">Service Agreement</a></li><li><a href="/auth.html">Sign in</a></li></ul></div></footer>
+</body></html>
