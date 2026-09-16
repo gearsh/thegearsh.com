@@ -36,6 +36,14 @@ jobs:
           cp web/login.html preview-site/login.html 2>/dev/null || true
           cp web/terms.html preview-site/terms.html 2>/dev/null || true
           cp web/privacy.html preview-site/privacy.html 2>/dev/null || true
+          cp web/book-gig.html preview-site/book-gig.html 2>/dev/null || true
+          cp web/activity-feed.js preview-site/activity-feed.js 2>/dev/null || true
+          cp web/activity-feed.css preview-site/activity-feed.css 2>/dev/null || true
+          cp web/tickets.css preview-site/tickets.css 2>/dev/null || true
+          cp web/tickets.js preview-site/tickets.js 2>/dev/null || true
+          cp web/claim-profile.html preview-site/claim-profile.html 2>/dev/null || true
+          cp web/collaborate.html preview-site/collaborate.html 2>/dev/null || true
+          cp web/lessons.html preview-site/lessons.html 2>/dev/null || true
           echo "Preview bundle ready"
 
       - name: Deploy preview to Cloudflare Pages
