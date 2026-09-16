@@ -48,6 +48,7 @@ jobs:
           cp web/collaborate.html preview-site/collaborate.html 2>/dev/null || true
           cp web/lessons.html preview-site/lessons.html 2>/dev/null || true
           sed -i 's/new URLSearchParams(location.search)/new URLSearchParams(window.location.search)/g' preview-site/profile.html
+          sed -i 's/async function init(){if(!slug)/async function init(){var previewProfile=fallback(findShowcase());if(previewProfile){render(previewProfile);return}if(!slug)/' preview-site/profile.html
           printf '\n<script src="/profile-preview-links.js"></script>\n' >> preview-site/search.html
           echo "Preview bundle ready"
 
