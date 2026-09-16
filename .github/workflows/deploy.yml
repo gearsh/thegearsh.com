@@ -13,13 +13,8 @@ jobs:
 
       - name: Remove stale build artifacts from web/
         run: |
-          rm -f web/main.dart.js
-          rm -f web/flutter_bootstrap.js
-          rm -f web/flutter_service_worker.js
-          rm -f web/flutter.js
-          rm -f web/version.json
-          rm -rf web/canvaskit
-          rm -rf web/assets
+          rm -f web/main.dart.js web/flutter_bootstrap.js web/flutter_service_worker.js web/flutter.js web/version.json
+          rm -rf web/canvaskit web/assets
 
       - name: Install Flutter
         uses: subosito/flutter-action@v2
@@ -41,15 +36,11 @@ jobs:
 
       - name: Copy static assets to build output
         run: |
-          # Flutter shell at root; JS/assets under /app/ (no index in /app/ — avoids /app/ redirect loops)
           mkdir -p build/web/app
           mv build/web/index.html build/web/gearsh-app.html
           for item in main.dart.js flutter.js flutter_bootstrap.js flutter_service_worker.js version.json canvaskit assets; do
-            if [ -e "build/web/$item" ]; then
-              mv "build/web/$item" "build/web/app/$item"
-            fi
+            if [ -e "build/web/$item" ]; then mv "build/web/$item" "build/web/app/$item"; fi
           done
-          # Marketing static assets at site root
           mkdir -p build/web/assets/images/artists build/web/assets/images
           cp -r assets/images/artists/* build/web/assets/images/artists/
           cp assets/images/command-header.png build/web/assets/images/command-header.png 2>/dev/null || true
@@ -66,7 +57,6 @@ jobs:
           cp web/search-page.js build/web/search-page.js 2>/dev/null || true
           cp web/artists.html build/web/artists.html 2>/dev/null || true
           cp web/artists-page.js build/web/artists-page.js 2>/dev/null || true
-          # Website revamp homepage
           cp web/marketing-v2.html build/web/index.html
           cp web/join-gig.html build/web/join-gig.html
           cp web/artist-onboarding.html build/web/artist-onboarding.html
@@ -78,6 +68,7 @@ jobs:
           cp web/profile.html build/web/profile.html
           cp web/profile-theme.css build/web/profile-theme.css
           cp web/claim-profile.html build/web/claim-profile.html
+          cp web/service-agreement.html build/web/service-agreement.html
           node scripts/sync-showcase-data.mjs
           cp web/sa-showcase-data.js build/web/sa-showcase-data.js
           cp web/day-genre-schedule.js build/web/day-genre-schedule.js 2>/dev/null || true
@@ -116,7 +107,6 @@ jobs:
           cp web/_headers build/web/_headers 2>/dev/null || true
           cp web/robots.txt build/web/robots.txt 2>/dev/null || true
           cp web/sitemap.xml build/web/sitemap.xml 2>/dev/null || true
-          # Cloudflare Pages Functions + D1 config
           mkdir -p build/web/functions/api build/web/functions/book build/web/functions/act
           cp functions/_og-utils.js build/web/functions/_og-utils.js
           cp -r functions/api/* build/web/functions/api/
@@ -132,7 +122,6 @@ jobs:
       - name: Cache-bust JS/CSS references in HTML
         run: |
           VERSION=$(git rev-parse --short HEAD)
-          echo "Asset version: $VERSION"
           ASSETS="day-genre-schedule sa-showcase-data artist-feed gearsh-auth marketplace-data marketplace-feed gearsh-ui search-page artists-page glog-data glog-page glog-post activity-feed activity-create gearsh-brand discovery glog"
           for html in build/web/*.html; do
             [ -f "$html" ] || continue
@@ -151,6 +140,7 @@ jobs:
           test -f build/web/index.html
           test -f build/web/profile.html
           test -f build/web/profile-theme.css
+          test -f build/web/service-agreement.html
           test ! -f build/web/app/index.html
           grep -q "flutter_bootstrap" build/web/gearsh-app.html
           grep -q "gearsh-app.html" build/web/_redirects
@@ -171,17 +161,7 @@ jobs:
         continue-on-error: true
         run: |
           set -euo pipefail
-          ZONE_ID=$(curl -fsSL \
-            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-            "https://api.cloudflare.com/client/v4/zones?name=thegearsh.com" \
-            | jq -r '.result[0].id // empty')
-          if [ -z "$ZONE_ID" ]; then
-            echo "::warning::Could not resolve zone ID for thegearsh.com — skip CDN purge."
-            exit 0
-          fi
-          curl -fsSL -X POST \
-            "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/purge_cache" \
-            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            --data '{"purge_everything":true}'
+          ZONE_ID=$(curl -fsSL -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" "https://api.cloudflare.com/client/v4/zones?name=thegearsh.com" | jq -r '.result[0].id // empty')
+          if [ -z "$ZONE_ID" ]; then echo "::warning::Could not resolve zone ID — skip CDN purge."; exit 0; fi
+          curl -fsSL -X POST "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/purge_cache" -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" -H "Content-Type: application/json" --data '{"purge_everything":true}'
           echo "CDN cache purged."
