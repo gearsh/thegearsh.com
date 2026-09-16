@@ -206,7 +206,10 @@
       merged.length + ' creator' + (merged.length === 1 ? '' : 's') + (q ? ' for “' + q + '”' : ''),
       apiServices
     );
-    suggestions.classList.remove('is-open');
+    // Do not close suggestions here. Typing should keep matching creatives
+    // visible and clickable beside the search field. Suggestions only close
+    // when the user clicks outside, presses Escape, clears the query, or
+    // explicitly chooses a suggestion.
   }
 
   var debouncedSuggest = debounce(function () {
@@ -216,15 +219,15 @@
       return;
     }
     showSuggestions(GearshFeed.searchShowcase(q, 6));
-  }, 180);
+  }, 120);
 
-  var debouncedSearch = debounce(function () {
-    runSearch(input.value);
-  }, 320);
-
+  // Searching the full result set while the user is still typing causes the
+  // suggestion layer to flicker/disappear. Keep live suggestions responsive,
+  // and run the full search only when the user presses Enter or the Search
+  // button.
   input.addEventListener('input', function () {
+    clearBtn.classList.toggle('visible', !!input.value.trim());
     debouncedSuggest();
-    debouncedSearch();
   });
 
   input.addEventListener('keydown', function (e) {
@@ -375,5 +378,4 @@
   } else {
     renderTrending();
   }
-  input.focus();
 })(typeof window !== 'undefined' ? window : this);
