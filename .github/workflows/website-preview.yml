@@ -22,6 +22,7 @@ jobs:
           cp -r web/icons preview-site/icons
           cp web/gearsh-brand.css preview-site/gearsh-brand.css 2>/dev/null || true
           cp web/discovery.css preview-site/discovery.css 2>/dev/null || true
+          cp web/profile-theme.css preview-site/profile-theme.css 2>/dev/null || true
           cp web/search.html preview-site/search.html 2>/dev/null || true
           cp web/search-page.js preview-site/search-page.js 2>/dev/null || true
           cp web/artist-feed.js preview-site/artist-feed.js 2>/dev/null || true
@@ -51,6 +52,7 @@ jobs:
           cp web/lessons.html preview-site/lessons.html 2>/dev/null || true
           sed -i 's/new URLSearchParams(location.search)/new URLSearchParams(window.location.search)/g' preview-site/profile.html
           sed -i 's/async function init(){if(!slug)/async function init(){var previewProfile=fallback(findShowcase());if(previewProfile){render(previewProfile);return}if(!slug)/' preview-site/profile.html
+          printf '\n<link rel="stylesheet" href="/profile-theme.css">\n' >> preview-site/profile.html
           printf '\n<script src="/profile-preview-rescue.js"></script>\n<script src="/profile-preview-booking.js"></script>\n' >> preview-site/profile.html
           printf '\n<script src="/profile-preview-links.js"></script>\n' >> preview-site/search.html
           echo "Preview bundle ready"
