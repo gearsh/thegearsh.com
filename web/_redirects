@@ -39,7 +39,7 @@
 /cart/*                   /gearsh-app.html 200
 /messages                 /gearsh-app.html 200
 /bookings                 /gearsh-app.html 200
-/saved-artists            /gearsh-app.html 200
+/saved-artists             /gearsh-app.html 200
 /forgot-password          /gearsh-app.html 200
 /reset-password           /gearsh-app.html 200
 /help                     /gearsh-app.html 200
@@ -51,9 +51,9 @@
 /terms/                   /terms.html 200
 /privacy                  /privacy.html 200
 /privacy/                 /privacy.html 200
-/privacy-policy           /privacy.html 301
+/privacy-policy           /privacy.html 200
 /service-agreement        /service-agreement.html 200
-/service-agreement/      /service-agreement.html 200
+/service-agreement/       /service-agreement.html 200
 
 # Tonight — shareable shortlink to today's featured genre.
 /tonight                  /search?spotlight=tonight 302
@@ -70,9 +70,6 @@
 /gearsh-god.html          /gearsh-god.html 200
 /book-gig.html            /book-gig.html 200
 /claim-profile.html       /claim-profile.html 200
-/terms.html               /terms.html 200
-/privacy.html             /privacy.html 200
-/service-agreement.html   /service-agreement.html 200
 /landing.html             /landing.html 200
 
 /icons/*                  /icons/:splat 200
