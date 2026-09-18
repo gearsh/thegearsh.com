@@ -6,6 +6,7 @@ import {
 } from '../auth-utils.js';
 import { ensureMarketplaceTables } from '../db-schema.js';
 import { recordReliabilityEvent } from '../reliability-utils.js';
+import { ARTIST_FEE_RATE } from '../payfast-utils.js';
 
 async function getBookingParties(db, booking) {
   const artist = await db.prepare(
@@ -104,9 +105,8 @@ export async function onRequestPatch(context) {
       updates.push('quote_amount = ?', 'total_price = ?');
       binds.push(Number(body.quote_amount), Number(body.quote_amount));
     }
-    if (body.deposit_amount !== undefined) {
-      updates.push('deposit_amount = ?');
-      binds.push(Number(body.deposit_amount));
+    if (body.deposit_amount !== undefined && Number(body.deposit_amount) !== 0) {
+      return jsonResponse({ success: false, error: 'Artist deposits are not supported in the V1 booking model' }, 400);
     }
 
     binds.push(bookingId);
@@ -121,7 +121,7 @@ export async function onRequestPatch(context) {
       `).bind(
         `escrow_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
         bookingId,
-        booking.total_price,
+        Math.round(Number(booking.total_price || 0) * (1 - ARTIST_FEE_RATE) * 100) / 100,
         auth.user.id,
         now
       ).run();
