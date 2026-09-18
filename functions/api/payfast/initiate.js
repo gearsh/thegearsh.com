@@ -10,7 +10,9 @@ import { ensureTicketsTables } from '../tickets-schema.js';
 import {
   getPayfastConfig,
   buildSignature,
-  PLATFORM_FEE_RATE,
+  CLIENT_FEE_RATE,
+  ARTIST_FEE_RATE,
+  TOTAL_GEARSH_FEE_RATE,
 } from '../payfast-utils.js';
 import { newId, expireStaleOrders } from '../tickets-utils.js';
 
@@ -68,8 +70,11 @@ async function initiateBookingPayment(context, auth, body) {
   }
 
   const config = getPayfastConfig(context.env);
-  const serviceFee = Math.round(subtotal * PLATFORM_FEE_RATE * 100) / 100;
-  const amount = Math.round((subtotal + serviceFee) * 100) / 100;
+  const clientFee = Math.round(subtotal * CLIENT_FEE_RATE * 100) / 100;
+  const artistFee = Math.round(subtotal * ARTIST_FEE_RATE * 100) / 100;
+  const totalGearshFees = Math.round((clientFee + artistFee) * 100) / 100;
+  const artistPayout = Math.round((subtotal - artistFee) * 100) / 100;
+  const amount = Math.round((subtotal + clientFee) * 100) / 100;
   const origin = new URL(context.request.url).origin;
 
   const paymentData = {
@@ -96,7 +101,7 @@ async function initiateBookingPayment(context, auth, body) {
   await context.env.DB.prepare(`
     INSERT INTO payments (id, booking_id, amount, platform_fee, status, currency, created_at, updated_at)
     VALUES (?, ?, ?, ?, 'pending', 'ZAR', ?, ?)
-  `).bind(paymentId, bookingId, amount, serviceFee, now, now).run();
+  `).bind(paymentId, bookingId, amount, totalGearshFees, now, now).run();
 
   await context.env.DB.prepare(`
     INSERT INTO escrow_ledger (id, booking_id, payment_id, event_type, amount, note, created_by, created_at)
@@ -117,7 +122,11 @@ async function initiateBookingPayment(context, auth, body) {
       process_url: config.processUrl,
       fields: paymentData,
       amount,
-      platform_fee: serviceFee,
+      platform_fee: totalGearshFees,
+      client_fee: clientFee,
+      artist_fee: artistFee,
+      artist_payout: artistPayout,
+      total_gearsh_fee_rate: TOTAL_GEARSH_FEE_RATE,
       subtotal,
     },
   });
