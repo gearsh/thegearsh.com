@@ -539,7 +539,7 @@ class _ArtistPricingPageState extends State<ArtistPricingPage>
       ['Verified badge',            '—', '✓', 'Gold ✓'],
       ['Analytics dashboard',       '—', '✓', 'Advanced'],
       ['Direct messaging',          '—', '✓', '✓'],
-      ['Commission rate',           '15%', '8%', '0%'],
+      ['Artist fee',                '4%', '4%', '4%'],
       ['Homepage feature',          '—', '—', '✓'],
       ['Social media promotion',    '—', '—', '✓'],
       ['Dedicated account manager', '—', '—', '✓'],
@@ -680,7 +680,7 @@ class _ArtistPricingPageState extends State<ArtistPricingPage>
           ),
           _faqItem(
             'How does the commission work?',
-            'Basic artists pay 15% per completed booking. Standard pays 8%. Premium artists keep 100% of their booking fee — zero commission.',
+            'Artists pay a 4% fee on completed bookings, deducted from the Artist's booking amount.',
           ),
           _faqItem(
             'What payment methods do you accept?',
