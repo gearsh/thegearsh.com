@@ -189,7 +189,7 @@ class _FAQPageState extends State<FAQPage> with SingleTickerProviderStateMixin {
             ),
             _FAQItem(
               question: 'Do I need to pay to use Gearsh?',
-              answer: 'Creating an account and browsing artists is completely free. You only pay when you book an artist. Artists pay a 12.6% service fee on completed bookings.',
+              answer: 'Creating an account and browsing artists is completely free. You only pay when you book an artist. Clients pay a 12.6% Client fee, while Artists pay a 4% fee deducted from their booking amount.',
             ),
           ]),
 
@@ -223,7 +223,7 @@ class _FAQPageState extends State<FAQPage> with SingleTickerProviderStateMixin {
             ),
             _FAQItem(
               question: 'What is the service fee?',
-              answer: 'Gearsh charges a 12.6% service fee on completed bookings. This covers payment processing, platform maintenance, support, and marketing.',
+              answer: 'Gearsh charges a 12.6% Client fee and a 4% Artist fee. PayFast processing costs are absorbed by Gearsh.',
             ),
             _FAQItem(
               question: 'When do I get paid?',
