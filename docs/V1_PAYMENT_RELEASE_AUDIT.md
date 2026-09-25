@@ -9,6 +9,7 @@
 - A booking completion no longer records a bank payout that was never executed. A paid cancellation is blocked instead of recording an unprocessed refund.
 - Checkout now requires an explicit `GEARSH_BOOKING_PAYMENTS_ENABLED=true` setting; production mode also requires all three PayFast merchant credentials. Leave the setting unset until the release gates are met.
 - Website and app payment terms are marked drafts and no longer promise automatic escrow, payout, fixed cancellation percentages or an enforced 36-hour dispute window.
+- Founder payments API now exposes a read-only reconciliation queue with PayFast transaction IDs, gross collected, calculated Artist share and internal ledger amounts. Every row explicitly requires external verification; the queue does not initiate a refund or payout.
 
 ## Open blockers
 
@@ -20,3 +21,8 @@
 6. **Live integration evidence.** Verify sandbox payment, wrong amount and merchant rejection, duplicate ITN, failed checkout, completion, dispute, refund and payout with transaction IDs and bank reconciliation. Unit tests and syntax checks alone cannot satisfy this gate.
 
 The code changes here reduce false accounting and reject unsafe state transitions. They do not authorize a production merge or payment launch.
+
+## Processor references
+
+- PayFast [Merchant Refund](https://payfast.io/features/merchant-refund/) describes full and partial refunds through its merchant dashboard.
+- PayFast [Split Payments](https://payfast.io/features/split-payments/) describes an immediate split of a payment with a third party, not a deferred Artist payout after completion.

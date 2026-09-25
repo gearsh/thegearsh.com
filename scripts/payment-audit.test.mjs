@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { matchesBookingPayment, handleBookingNotify } from '../functions/api/payfast/notify.js';
 import { CLIENT_FEE_RATE, ARTIST_FEE_RATE, TOTAL_GEARSH_FEE_RATE } from '../functions/api/payfast-utils.js';
 import { onRequestPost as initiatePayment } from '../functions/api/payfast/initiate.js';
+import { reconciliationRow } from '../functions/api/founder/payments.js';
 
 test('V1 client and artist fees add to the stated total', () => {
   assert.equal(CLIENT_FEE_RATE, 0.126);
@@ -76,4 +77,16 @@ test('invalid ITN never updates booking or ledger', async () => {
     { amount_gross: '1125.99', merchant_id: 'merchant' }, 'merchant'));
   assert.equal(db.operations.length, 0);
   assert.equal(db.booking.status, 'accepted');
+});
+
+test('founder reconciliation shows gross and calculated artist share without claiming a transfer', () => {
+  const row = reconciliationRow({
+    booking_id: 'book_1', payment_id: 'pay_1', payfast_payment_id: 'pf_1',
+    booking_status: 'completed', amount: 1126, total_price: 1000,
+    recorded_refund: 0, recorded_release: 0,
+  });
+  assert.equal(row.gross_collected, 1126);
+  assert.equal(row.artist_share_if_fully_payable, 960);
+  assert.equal(row.ledger_release, 0);
+  assert.equal(row.requires_external_verification, true);
 });

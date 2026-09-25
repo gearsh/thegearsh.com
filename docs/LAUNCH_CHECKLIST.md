@@ -18,6 +18,7 @@
 - [ ] Confirm PayFast merchant account capability for the intended Artist settlement model; Split Payments at checkout is not deferred escrow release
 - [ ] Document and test the merchant dashboard refund procedure, including partial refunds and reconciliation to transaction IDs
 - [ ] Agree and test the Artist payout method, beneficiary verification, dispute handling, bank evidence, and settlement reconciliation
+- [ ] Compare `GET /api/founder/payments` reconciliation queue against PayFast transaction history and bank records; investigate every unmatched reference and amount
 - [ ] Obtain qualified South African legal approval for operative Terms and cancellation/refund policy; replace the marked drafts in website and app
 - [ ] Verify the `V1 Payment Audit` CI check on the exact branch commit and sandbox ITN, duplicate, wrong amount, failed payment and dispute flows
 
