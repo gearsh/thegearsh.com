@@ -14,8 +14,20 @@ function isTicketOrderId(id) {
   return String(id || '').startsWith('tord_');
 }
 
-async function handleTicketNotify(db, orderId, paymentStatus, payfastPaymentId, payload) {
+async function handleTicketNotify(db, orderId, paymentStatus, payfastPaymentId, payload, merchantId) {
   await ensureTicketsTables(db);
+
+  const payment = await db.prepare(`
+    SELECT id, amount, status, payfast_payment_id FROM ticket_payments
+    WHERE ticket_order_id = ? ORDER BY created_at DESC LIMIT 1
+  `).bind(orderId).first();
+  const order = await db.prepare(`SELECT status FROM ticket_orders WHERE id = ?`).bind(orderId).first();
+  if (order?.status === 'paid' && payment?.status === 'complete' &&
+      payment.payfast_payment_id === payfastPaymentId) return;
+  if (!order || order.status !== 'pending_payment' ||
+      !matchesPaymentAmountAndMerchant(payment, payload, merchantId)) {
+    throw new Error('Ticket order does not match pending payment, amount or merchant');
+  }
 
   if (paymentStatus === 'COMPLETE') {
     await fulfillTicketOrder(db, orderId, payfastPaymentId, payload);
@@ -23,10 +35,6 @@ async function handleTicketNotify(db, orderId, paymentStatus, payfastPaymentId, 
   }
 
   if (paymentStatus === 'FAILED' || paymentStatus === 'CANCELLED') {
-    const payment = await db.prepare(`
-      SELECT id FROM ticket_payments WHERE ticket_order_id = ? ORDER BY created_at DESC LIMIT 1
-    `).bind(orderId).first();
-
     const now = new Date().toISOString();
     if (payment) {
       await db.prepare(`
@@ -37,13 +45,15 @@ async function handleTicketNotify(db, orderId, paymentStatus, payfastPaymentId, 
   }
 }
 
-export function matchesBookingPayment(payment, payload, merchantId) {
+export function matchesPaymentAmountAndMerchant(payment, payload, merchantId) {
   const paidCents = Math.round(Number(payload.amount_gross) * 100);
   return payment && payment.status === 'pending' &&
     payload.merchant_id === merchantId &&
     Number.isFinite(paidCents) && paidCents > 0 &&
     paidCents === Math.round(Number(payment.amount) * 100);
 }
+
+export const matchesBookingPayment = matchesPaymentAmountAndMerchant;
 
 export async function handleBookingNotify(db, paymentRef, paymentStatus, payfastPaymentId, payload, merchantId) {
   const now = new Date().toISOString();
@@ -114,7 +124,7 @@ export async function onRequestPost(context) {
     }
 
     if (isTicketOrderId(paymentRef)) {
-      await handleTicketNotify(context.env.DB, paymentRef, paymentStatus, payfastPaymentId, payload);
+      await handleTicketNotify(context.env.DB, paymentRef, paymentStatus, payfastPaymentId, payload, config.merchantId);
     } else {
       await handleBookingNotify(context.env.DB, paymentRef, paymentStatus, payfastPaymentId, payload, config.merchantId);
     }
