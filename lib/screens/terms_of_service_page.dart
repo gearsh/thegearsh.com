@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:gearsh_app/services/global_config_service.dart';
 
 class TermsOfServicePage extends StatelessWidget {
   const TermsOfServicePage({super.key});
@@ -95,7 +94,7 @@ class TermsOfServicePage extends StatelessWidget {
                       _buildLegalNotice(),
                       const SizedBox(height: 24),
                       _buildSection('1. Introduction', [
-                        'Gearsh is a global digital marketplace that connects Clients with Artists for entertainment and creative services bookings worldwide. By accessing or using the Gearsh application or website from any country, you agree to be bound by these Terms & Conditions.',
+                        'The Gearsh (Pty) Ltd operates a marketplace connecting Clients with independent Artists. This draft requires legal approval before paid bookings are offered under it.',
                         '',
                         'These Terms apply to users in all regions where Gearsh operates. Some provisions may vary based on local law requirements.',
                       ]),
@@ -121,62 +120,56 @@ class TermsOfServicePage extends StatelessWidget {
                         '• Engage in fraud, abuse, or harassment',
                         '• Use the platform for unlawful purposes',
                         '',
-                        'Violation may result in suspension, termination, or loss of funds.',
+                        'Violation may result in suspension or termination, subject to applicable law and existing booking obligations.',
                       ]),
                       _buildSection('5. Rights of Gearsh & Termination', [
                         'Gearsh may:',
                         '1. Suspend or terminate any User account for breach of these Terms.',
                         '2. Remove content or listings that violate policy.',
-                        '3. Withhold or delay payouts in cases of disputes, fraud, or safety concerns.',
+                        '3. Review disputes and payment concerns before communicating a resolution to affected users.',
                         '',
                         'Users may close their accounts, subject to existing bookings and disputes.',
                       ]),
                       _buildSection('6. Financial Terms & Payments', [
                         '6.1 Payment Structure',
-                        '1. Clients must pay 100% of the booking amount upfront through the Gearsh platform.',
-                        '2. Payments are accepted in local currencies based on your region.',
-                        '3. Funds are held by Gearsh until the performance is completed.',
-                        '4. Artists receive payment after successful performance completion, less Gearsh\'s service fee (12.6%).',
+                        '1. Where checkout is enabled, payment follows Artist acceptance and a confirmed positive price. A booking is confirmed only after verified payment notification.',
+                        '2. The Client pays the Artist Subtotal plus a 12.6% Client fee. Gearsh deducts a 4% Artist fee from the Artist Subtotal. The combined fees are 16.6% of the Artist Subtotal.',
+                        '3. For a R1,000 Artist Subtotal, the Client pays R1,126 and the Artist\'s calculated share is R960 before adjustments. No separate Artist deposit or PayFast processing charge is added at checkout.',
+                        '4. A calculated Artist share is not a completed payout. Gearsh must confirm payout method and timing before accepting live paid bookings; automated escrow release is not available.',
                         '',
                         '6.2 Currency & Conversion',
-                        '1. Artists set prices in their local currency.',
-                        '2. Clients see prices converted to their selected currency.',
-                        '3. Final charges are processed in the Client\'s local currency where supported.',
-                        '4. Exchange rates are indicative and may vary at time of payment.',
+                        'The current booking checkout is denominated in South African rand. Any later currency support must be disclosed before payment.',
                         '',
                         '6.3 Travel, Distance & Additional Costs',
                         '1. Artists may define travel radius, per-kilometre fees, and accommodation requirements.',
                         '2. Gearsh calculates distance using location data and displays it via an in-app map.',
-                        '3. Additional costs are automatically added to the booking total.',
+                        '3. Additional costs must be agreed and reflected in the confirmed price before payment.',
                         '',
                         'Clients are responsible for all agreed additional expenses.',
                       ]),
                       _buildSection('7. Cancellations & Refunds', [
                         '7.1 Client Cancellations',
-                        '• Refund eligibility depends on cancellation timing.',
-                        '• Cancellation terms are displayed at checkout.',
-                        '• Late cancellations may result in partial or no refund.',
+                        '• Before payment, either party may request cancellation.',
+                        '• After payment, contact support@thegearsh.com with the booking reference and reason. A status change does not issue a refund.',
+                        '• Gearsh reviews the agreed terms, facts, payment record and applicable law. Any cancellation charge must be reasonable in the circumstances.',
                         '',
                         '7.2 Artist Cancellations',
-                        '• Artists who cancel without valid reason may face penalties, including suspension or loss of payout.',
-                        '• Artists may be required to assist in finding a replacement.',
+                        '• Report an Artist cancellation or no-show promptly with supporting information.',
                         '',
-                        'Gearsh reserves discretion in issuing refunds.',
+                        'An approved refund is complete only when confirmed by the payment provider. Statutory consumer rights remain available.',
                       ]),
                       _buildSection('8. Dispute Resolution', [
                         '1. Users must first attempt resolution via Gearsh support.',
                         '2. Gearsh may mediate disputes between Clients and Artists.',
-                        '3. These Terms are governed by the laws of ${globalConfigService.getTermsJurisdiction()}.',
+                        '3. The platform does not currently enforce an automatic 36-hour dispute window, freeze a payout, or issue split refunds. South African law applies to these draft terms.',
                         '',
                         'For international disputes:',
-                        '• EU users may use the EU Online Dispute Resolution platform',
-                        '• Users may have additional rights under their local consumer protection laws',
-                        '• Arbitration may be available in certain jurisdictions',
+                        '• Report a dispute promptly to support@thegearsh.com with the booking reference and available evidence.',
                       ]),
                       _buildSection('9. Safety & Liability', [
                         '1. Artists must perform professionally and lawfully.',
                         '2. Clients must provide a safe event environment.',
-                        '3. Gearsh is not responsible for injuries, damages, or losses arising from events.',
+                        '3. Nothing in these draft terms limits rights or liabilities that cannot lawfully be excluded.',
                         '4. Safety incidents must be reported promptly.',
                       ]),
                       _buildSection('10. Artist Obligations', [
@@ -191,7 +184,7 @@ class TermsOfServicePage extends StatelessWidget {
                         'Clients agree to:',
                         '• Provide accurate event details',
                         '• Ensure venue access and safety',
-                        '• Pay all fees upfront',
+                        '• Pay the displayed amount when a booking is accepted and checkout is enabled',
                       ]),
                       _buildSection('12. Amendments', [
                         'Gearsh may update these Terms at any time. Continued use constitutes acceptance of changes.',
@@ -199,7 +192,7 @@ class TermsOfServicePage extends StatelessWidget {
                       _buildSection('13. Contact', [
                         'For questions regarding these Terms, contact Gearsh:',
                         '',
-                        '• Email: legal@thegearsh.com',
+                        '• Email: support@thegearsh.com',
                         '• In-app: Settings > Help Centre',
                         '• Website: thegearsh.com/terms',
                       ]),
@@ -242,7 +235,7 @@ class TermsOfServicePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'These Terms & Conditions govern the use of the Gearsh platform globally. Terms are applicable to all users worldwide and comply with international consumer protection standards. Last updated: December 2025.',
+                  'Draft for legal review, 25 September 2026. These terms require approval before paid bookings are offered under them. Payment and consumer rights depend on applicable law.',
                   style: TextStyle(
                     color: Colors.white.withAlpha(179),
                     fontSize: 13,
@@ -293,4 +286,3 @@ class TermsOfServicePage extends StatelessWidget {
     );
   }
 }
-
