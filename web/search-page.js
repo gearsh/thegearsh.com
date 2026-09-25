@@ -113,7 +113,7 @@
       return;
     }
     suggestions.innerHTML = items.map(function (item, i) {
-      var href = GearshFeed.bookUrl(item) || (item.username ? 'book-gig?artist=' + encodeURIComponent(item.username) : '#');
+      var href = GearshFeed.bookUrl(item) || (item.username ? 'profile.html?artist=' + encodeURIComponent(item.username) : '#');
       return '<a class="search-suggestion" href="' + href + '" data-idx="' + i + '" role="option">' +
         '<img src="' + (item.image || 'icons/Icon-512.png') + '" alt="" loading="lazy">' +
         '<div class="search-suggestion-meta">' +
