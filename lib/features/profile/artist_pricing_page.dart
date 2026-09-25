@@ -680,7 +680,7 @@ class _ArtistPricingPageState extends State<ArtistPricingPage>
           ),
           _faqItem(
             'How does the commission work?',
-            'Artists pay a 4% fee on completed bookings, deducted from the Artist's booking amount.',
+            "Artists pay a 4% fee on completed bookings, deducted from the Artist's booking amount.",
           ),
           _faqItem(
             'What payment methods do you accept?',
