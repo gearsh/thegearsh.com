@@ -102,6 +102,7 @@ test('bank payout amount is calculated server-side and blocked by disputes, refu
   assert.equal(payoutEligibility({ ...row, disputes: 1 }), null);
   assert.equal(payoutEligibility({ ...row, refunds: 50 }), null);
   assert.equal(payoutEligibility({ ...row, holds: 0 }), null);
+  assert.equal(payoutEligibility({ ...row, prior_releases: 960 }), null);
   assert.equal(payoutEligibility({ ...row, payment_status: 'pending' }), null);
 });
 

@@ -8,6 +8,7 @@ import { ARTIST_FEE_RATE } from '../payfast-utils.js';
 export function payoutEligibility(row) {
   if (!row || row.payment_status !== 'complete' || row.booking_status !== 'completed') return null;
   if (!row.payfast_payment_id || Number(row.disputes || 0) > 0 || Number(row.refunds || 0) > 0 ||
+      Number(row.prior_releases || 0) > 0 ||
       Number(row.holds || 0) < Number(row.payment_amount || 0) - 0.005) return null;
   const subtotalCents = Math.round(Number(row.total_price) * 100);
   if (!Number.isSafeInteger(subtotalCents) || subtotalCents <= 0) return null;
@@ -23,8 +24,10 @@ async function getPayoutContext(db, paymentId) {
               AND d.status IN ('open', 'investigating')) AS disputes,
            (SELECT COALESCE(SUM(amount), 0) FROM escrow_ledger e WHERE e.payment_id = p.id
               AND e.event_type = 'hold') AS holds,
-           (SELECT COALESCE(SUM(amount), 0) FROM escrow_ledger e WHERE e.payment_id = p.id
-              AND e.event_type IN ('refund', 'partial_refund')) AS refunds
+           (SELECT COALESCE(SUM(amount), 0) FROM escrow_ledger e WHERE e.booking_id = b.id
+              AND e.event_type IN ('refund', 'partial_refund')) AS refunds,
+           (SELECT COALESCE(SUM(amount), 0) FROM escrow_ledger e WHERE e.booking_id = b.id
+              AND e.event_type = 'release') AS prior_releases
     FROM payments p JOIN bookings b ON b.id = p.booking_id WHERE p.id = ?
   `).bind(paymentId).first();
 }
