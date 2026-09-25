@@ -4,6 +4,9 @@ import { matchesBookingPayment, handleBookingNotify } from '../functions/api/pay
 import { CLIENT_FEE_RATE, ARTIST_FEE_RATE, TOTAL_GEARSH_FEE_RATE } from '../functions/api/payfast-utils.js';
 import { onRequestPost as initiatePayment } from '../functions/api/payfast/initiate.js';
 import { reconciliationRow } from '../functions/api/founder/payments.js';
+import { payoutEligibility } from '../functions/api/founder/payouts.js';
+import { DatabaseSync } from 'node:sqlite';
+import { readFileSync } from 'node:fs';
 
 test('V1 client and artist fees add to the stated total', () => {
   assert.equal(CLIENT_FEE_RATE, 0.126);
@@ -89,4 +92,33 @@ test('founder reconciliation shows gross and calculated artist share without cla
   assert.equal(row.artist_share_if_fully_payable, 960);
   assert.equal(row.ledger_release, 0);
   assert.equal(row.requires_external_verification, true);
+});
+
+test('bank payout amount is calculated server-side and blocked by disputes, refunds or unsettled payment', () => {
+  const row = { payment_status: 'complete', booking_status: 'completed',
+    payfast_payment_id: 'pf_1', total_price: 1000, payment_amount: 1126,
+    holds: 1126, refunds: 0, disputes: 0 };
+  assert.equal(payoutEligibility(row), 960);
+  assert.equal(payoutEligibility({ ...row, disputes: 1 }), null);
+  assert.equal(payoutEligibility({ ...row, refunds: 50 }), null);
+  assert.equal(payoutEligibility({ ...row, holds: 0 }), null);
+  assert.equal(payoutEligibility({ ...row, payment_status: 'pending' }), null);
+});
+
+test('payout records cannot reuse a payment, bank transfer or bank statement reference', () => {
+  const db = new DatabaseSync(':memory:');
+  db.exec(readFileSync(new URL('../database/schema.sql', import.meta.url), 'utf8'));
+  // This test isolates the payout uniqueness constraints from booking fixtures.
+  db.exec('PRAGMA foreign_keys = OFF');
+  const insert = db.prepare(`INSERT INTO payout_reconciliations
+    (id, payment_id, booking_id, amount, payfast_settlement_reference,
+     bank_transfer_reference, beneficiary_last4, recorded_by, created_at)
+    VALUES (?, ?, 'book_1', 960, 'settlement_1', ?, '1234', 'founder', '2026-09-25')`);
+  insert.run('pout_1', 'pay_1', 'bank_1');
+  assert.throws(() => insert.run('pout_2', 'pay_1', 'bank_2'));
+  assert.throws(() => insert.run('pout_3', 'pay_2', 'bank_1'));
+  db.prepare(`UPDATE payout_reconciliations SET bank_statement_reference = 'statement_1' WHERE id = 'pout_1'`).run();
+  insert.run('pout_4', 'pay_4', 'bank_4');
+  assert.throws(() => db.prepare(`UPDATE payout_reconciliations SET bank_statement_reference = 'statement_1' WHERE id = 'pout_4'`).run());
+  db.close();
 });

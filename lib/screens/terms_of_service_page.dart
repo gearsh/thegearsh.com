@@ -135,7 +135,7 @@ class TermsOfServicePage extends StatelessWidget {
                         '1. Where checkout is enabled, payment follows Artist acceptance and a confirmed positive price. A booking is confirmed only after verified payment notification.',
                         '2. The Client pays the Artist Subtotal plus a 12.6% Client fee. Gearsh deducts a 4% Artist fee from the Artist Subtotal. The combined fees are 16.6% of the Artist Subtotal.',
                         '3. For a R1,000 Artist Subtotal, the Client pays R1,126 and the Artist\'s calculated share is R960 before adjustments. No separate Artist deposit or PayFast processing charge is added at checkout.',
-                        '4. A calculated Artist share is not a completed payout. Gearsh must confirm payout method and timing before accepting live paid bookings; automated escrow release is not available.',
+                        '4. Gearsh receives payment in its PayFast merchant account. After booking completion, resolution of any dispute or refund, and settlement to Gearsh, Gearsh sends the payable Artist share to the Artist\'s verified bank account. Bank timing may vary. A calculated share is not proof of transfer; automated escrow release is not available.',
                         '',
                         '6.2 Currency & Conversion',
                         'The current booking checkout is denominated in South African rand. Any later currency support must be disclosed before payment.',

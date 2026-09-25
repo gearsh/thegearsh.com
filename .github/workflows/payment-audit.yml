@@ -23,5 +23,6 @@ jobs:
           node --check functions/api/bookings/'[id].js'
           node --check functions/api/escrow/'[bookingId].js'
           node --check functions/api/founder/payments.js
+          node --check functions/api/founder/payouts.js
           node --check web/collaborate.js
           git diff --check
