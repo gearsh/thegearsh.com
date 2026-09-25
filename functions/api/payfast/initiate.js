@@ -205,6 +205,16 @@ async function initiateTicketPayment(context, body) {
 
 export async function onRequestPost(context) {
   try {
+    // Enabling collection is an explicit operational decision after refund,
+    // payout and legal arrangements have been verified for this merchant.
+    if (String(context.env.GEARSH_BOOKING_PAYMENTS_ENABLED || '').toLowerCase() !== 'true') {
+      return jsonResponse({ success: false, error: 'Online checkout is not available yet. Contact support@thegearsh.com.' }, 503);
+    }
+    if (String(context.env.PAYFAST_SANDBOX || 'true') === 'false' &&
+        (!context.env.PAYFAST_MERCHANT_ID || !context.env.PAYFAST_MERCHANT_KEY ||
+         !context.env.PAYFAST_PASSPHRASE)) {
+      return jsonResponse({ success: false, error: 'Online checkout is not configured' }, 503);
+    }
     await ensureMarketplaceTables(context.env.DB);
     const body = await context.request.json();
 

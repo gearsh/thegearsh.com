@@ -2,11 +2,22 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { matchesBookingPayment, handleBookingNotify } from '../functions/api/payfast/notify.js';
 import { CLIENT_FEE_RATE, ARTIST_FEE_RATE, TOTAL_GEARSH_FEE_RATE } from '../functions/api/payfast-utils.js';
+import { onRequestPost as initiatePayment } from '../functions/api/payfast/initiate.js';
 
 test('V1 client and artist fees add to the stated total', () => {
   assert.equal(CLIENT_FEE_RATE, 0.126);
   assert.equal(ARTIST_FEE_RATE, 0.04);
   assert.equal(TOTAL_GEARSH_FEE_RATE, 0.166);
+});
+
+test('checkout is disabled until explicitly enabled and production credentials are complete', async () => {
+  const context = { env: {}, request: new Request('https://example.com/api/payfast/initiate', { method: 'POST' }) };
+  const disabled = await initiatePayment(context);
+  assert.equal(disabled.status, 503);
+  context.env.GEARSH_BOOKING_PAYMENTS_ENABLED = 'true';
+  context.env.PAYFAST_SANDBOX = 'false';
+  const unconfigured = await initiatePayment(context);
+  assert.equal(unconfigured.status, 503);
 });
 
 test('ITN must match a pending amount and merchant', () => {

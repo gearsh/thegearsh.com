@@ -7,14 +7,16 @@
 - Booking checkout charges Artist Subtotal plus 12.6% Client fee; the quoted Artist payout is Artist Subtotal less 4% Artist fee. The total Gearsh fee is 16.6% of Artist Subtotal, before processor costs.
 - A pending checkout no longer creates an escrow hold. A signed, PayFast validated notification must match the pending payment's merchant and amount before recording a hold and confirming the booking.
 - A booking completion no longer records a bank payout that was never executed. A paid cancellation is blocked instead of recording an unprocessed refund.
+- Checkout now requires an explicit `GEARSH_BOOKING_PAYMENTS_ENABLED=true` setting; production mode also requires all three PayFast merchant credentials. Leave the setting unset until the release gates are met.
+- Website and app payment terms are marked drafts and no longer promise automatic escrow, payout, fixed cancellation percentages or an enforced 36-hour dispute window.
 
 ## Open blockers
 
-1. **No actual payout integration or settlement reconciliation.** A completed booking does not transfer money to an artist. The 36 hour dispute hold in `web/terms.html` is not enforced by a payout scheduler. Do not promise automatic release through PayFast until an authorized payout mechanism and reconciliation exist.
-2. **No actual refund integration.** Cancellation tiers, artist no-show, client no-show, fee retention and split dispute outcomes in `web/terms.html` are not implemented. Paid cancellation is now rejected pending a verified refund operation. Support must resolve existing paid booking cases manually and reconcile the ledger to processor statements.
+1. **No actual payout integration or settlement reconciliation.** A completed booking does not transfer money to an artist. PayFast Split Payments divides a transaction at checkout; it does not implement a deferred release. An authorized Artist payout method, verified beneficiary data and bank reconciliation are still needed.
+2. **No actual refund integration.** Paid cancellation is rejected pending a verified refund operation. PayFast documents full and partial refunds in its merchant dashboard; the app has no verified dashboard-to-ledger reconciliation. Support must resolve existing paid booking cases manually and reconcile against processor statements.
 3. **Payment concurrency and recovery.** A webhook after a partially completed legacy attempt, duplicate checkout or a concurrent status update needs transaction and idempotency testing against D1 and PayFast sandbox. The booking reference in historical checkouts was a booking ID; new checkouts use a unique payment ID.
 4. **Ticket payments are a separate flow.** Ticket order fulfillment, duplicate and delayed ITNs, amount validation, chargebacks and refund policy need independent audit before ticket sales are enabled.
-5. **Legal approval.** `web/terms.html` calls itself a draft requiring review. Its escrow, payout, 36 hour dispute, cancellation and refund promises exceed the implemented system. Obtain qualified South African legal review and align the actual processor arrangement before publishing these claims as operative terms.
+5. **Legal approval.** Website and app terms are explicitly marked as drafts aligned to the current technical limits. Obtain qualified South African legal review and align the actual processor arrangement and cancellation policy before publishing them as operative terms.
 6. **Live integration evidence.** Verify sandbox payment, wrong amount and merchant rejection, duplicate ITN, failed checkout, completion, dispute, refund and payout with transaction IDs and bank reconciliation. Unit tests and syntax checks alone cannot satisfy this gate.
 
 The code changes here reduce false accounting and reject unsafe state transitions. They do not authorize a production merge or payment launch.
