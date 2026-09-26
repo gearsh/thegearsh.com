@@ -61,7 +61,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
         eventLocation: _locationController.text.trim(),
         eventType: 'Event Booking',
         durationHours: 2.0,
-        totalPrice: (artist.baseRate ?? 0) * 1.05, // Including 5% fee
+        totalPrice: (artist.baseRate ?? 0) * 1.126, // Client pays Artist price + 12.6% Client fee
         notes: _notesController.text.trim(),
       );
 
@@ -135,7 +135,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
 
   Widget _buildBookingForm(BuildContext context, ThemeData theme, Artist artist) {
     final instantQuote = artist.baseRate ?? 0;
-    final fee = instantQuote * 0.05;
+    final fee = instantQuote * 0.126;
     final total = instantQuote + fee;
 
     return Column(
@@ -205,7 +205,7 @@ class _BookingPageState extends ConsumerState<BookingPage> {
             children: [
               _buildPriceRow('Artist Fee', 'R${instantQuote.toStringAsFixed(0)}', theme),
               const Divider(color: Colors.white30, height: 24),
-              _buildPriceRow('Service Fee (5%)', 'R${fee.toStringAsFixed(0)}', theme),
+              _buildPriceRow('Client Fee (12.6%)', 'R${fee.toStringAsFixed(0)}', theme),
               const Divider(color: Colors.white30, height: 24),
               _buildPriceRow('Total', 'R${total.toStringAsFixed(0)}', theme, isBold: true),
             ],

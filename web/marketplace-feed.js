@@ -49,7 +49,7 @@
 
   function renderServiceCard(service) {
     var href = service.book_url || (service.provider_username
-      ? '/book-gig?artist=' + encodeURIComponent(service.provider_username)
+      ? '/profile.html?artist=' + encodeURIComponent(service.provider_username)
       : '#');
     var img = service.provider_image || 'icons/Icon-512.png';
     var hasPhoto = !isPlaceholderImage(img);

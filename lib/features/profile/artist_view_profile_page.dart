@@ -1181,8 +1181,10 @@ class _ArtistViewProfilePageState extends ConsumerState<ArtistViewProfilePage>
     final int? discountPercent = service['discountPercent'] as int?;
     final bool hasDiscount = originalPrice != null && discountPercent != null && discountPercent > 0;
 
-    final double serviceFee = price * 0.126; // 12.6% service fee
+    final double serviceFee = price * 0.126; // 12.6% Client fee
     final double total = price + serviceFee;
+    final double artistFee = price * 0.04;
+    final double artistPayout = price - artistFee;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),

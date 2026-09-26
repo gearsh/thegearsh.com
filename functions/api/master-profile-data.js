@@ -134,7 +134,7 @@ This is not agency fluff. This is hands-on building from someone who ships their
     },
     {
       title: 'Artist Booking System',
-      description: 'Secure direct booking with PayFast payments, escrow, and real-time dashboards.',
+      description: 'Direct booking with PayFast checkout and booking dashboards where enabled.',
       image: '/icons/og-image.png',
       url: 'https://thegearsh.com',
       tags: ['Web App', 'PayFast', 'Cloudflare'],

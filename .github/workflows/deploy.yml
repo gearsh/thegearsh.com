@@ -29,6 +29,11 @@ jobs:
           cache: false
 
       - name: Install dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Flutter dependencies
         run: flutter pub get
 
       - name: Build web
@@ -48,6 +53,11 @@ jobs:
           mkdir -p build/web/assets/images/artists build/web/assets/images
           cp -r assets/images/artists/* build/web/assets/images/artists/
           cp assets/images/command-header.png build/web/assets/images/command-header.png 2>/dev/null || true
+          cp web/assets/images/scorpion-kings-live-hero.webp build/web/assets/images/scorpion-kings-live-hero.webp
+          cp web/assets/images/clients-live-event.webp web/assets/images/creatives-at-work.webp build/web/assets/images/
+          cp web/assets/images/category-*.webp build/web/assets/images/
+          cp web/assets/images/step-*.svg build/web/assets/images/
+          cp web/assets/images/soutpansberg-inspired-cta.webp build/web/assets/images/
           cp -r web/icons build/web/icons 2>/dev/null || true
           cp web/gearsh-brand.css build/web/gearsh-brand.css 2>/dev/null || true
           cp web/discovery.css build/web/discovery.css 2>/dev/null || true
@@ -61,7 +71,8 @@ jobs:
           cp web/search-page.js build/web/search-page.js 2>/dev/null || true
           cp web/artists.html build/web/artists.html 2>/dev/null || true
           cp web/artists-page.js build/web/artists-page.js 2>/dev/null || true
-          cp web/marketing.html build/web/index.html
+          # Website revamp homepage
+          cp web/marketing-v2.html build/web/index.html
           cp web/join-gig.html build/web/join-gig.html
           cp web/artist-onboarding.html build/web/artist-onboarding.html
           cp web/auth.html build/web/auth.html
@@ -69,6 +80,8 @@ jobs:
           cp web/artist-dashboard.html build/web/artist-dashboard.html
           cp web/gearsh-god.html build/web/gearsh-god.html
           cp web/book-gig.html build/web/book-gig.html
+          cp web/profile.html build/web/profile.html
+          cp web/profile-theme.css build/web/profile-theme.css
           cp web/claim-profile.html build/web/claim-profile.html
           node scripts/sync-showcase-data.mjs
           cp web/sa-showcase-data.js build/web/sa-showcase-data.js
@@ -140,9 +153,13 @@ jobs:
         run: |
           test -f build/web/_redirects
           test -f build/web/gearsh-app.html
+          test -f build/web/index.html
+          test -f build/web/profile.html
+          test -f build/web/profile-theme.css
           test ! -f build/web/app/index.html
           grep -q "flutter_bootstrap" build/web/gearsh-app.html
           grep -q "gearsh-app.html" build/web/_redirects
+          grep -q "Find the right talent" build/web/index.html
           echo "Deployment bundle OK"
 
       - name: Validate Pages Functions bundle
