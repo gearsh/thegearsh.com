@@ -56,6 +56,7 @@ jobs:
           cp web/assets/images/scorpion-kings-live-hero.webp build/web/assets/images/scorpion-kings-live-hero.webp
           cp web/assets/images/clients-live-event.webp web/assets/images/creatives-at-work.webp build/web/assets/images/
           cp web/assets/images/category-*.webp build/web/assets/images/
+          cp web/assets/images/step-*.svg build/web/assets/images/
           cp -r web/icons build/web/icons 2>/dev/null || true
           cp web/gearsh-brand.css build/web/gearsh-brand.css 2>/dev/null || true
           cp web/discovery.css build/web/discovery.css 2>/dev/null || true
