@@ -48,6 +48,16 @@
     .service--mcs-hosts{background-image:url("/assets/images/category-mcs-hosts.webp")}
     .service--more-creative{background-image:url("/assets/images/category-more-creative.webp")}
     @media(max-width:520px){.service--photo{min-height:170px}.service--photo::before{background:rgba(2,6,23,.68)}}
+    /* Quiet, flat vector artwork for the six booking steps. */
+    .step{background-color:#0f172a;background-size:cover;background-position:center;background-repeat:no-repeat}
+    .step .num,.step h3,.step p{position:relative;z-index:1}
+    .step:nth-child(1){background-image:url("/assets/images/step-discover.svg")}
+    .step:nth-child(2){background-image:url("/assets/images/step-book.svg")}
+    .step:nth-child(3){background-image:url("/assets/images/step-agree.svg")}
+    .step:nth-child(4){background-image:url("/assets/images/step-pay.svg")}
+    .step:nth-child(5){background-image:url("/assets/images/step-deliver.svg")}
+    .step:nth-child(6){background-image:url("/assets/images/step-review.svg")}
+    @media(max-width:520px){.step{padding:42px 18px;min-height:205px}}
   </style>
 </head>
 <body>
