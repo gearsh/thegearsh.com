@@ -23,6 +23,7 @@ jobs:
           cp web/assets/images/clients-live-event.webp web/assets/images/creatives-at-work.webp preview-site/assets/images/
           cp web/assets/images/category-*.webp preview-site/assets/images/
           cp web/assets/images/step-*.svg preview-site/assets/images/
+          cp web/assets/images/soutpansberg-inspired-cta.webp preview-site/assets/images/
           cp -r web/icons preview-site/icons
           cp web/gearsh-brand.css preview-site/gearsh-brand.css 2>/dev/null || true
           cp web/discovery.css preview-site/discovery.css 2>/dev/null || true
