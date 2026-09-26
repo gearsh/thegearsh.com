@@ -19,6 +19,7 @@ jobs:
           cp web/preview-overrides.css preview-site/preview-overrides.css
           printf '\n<link rel="stylesheet" href="preview-overrides.css">\n' >> preview-site/index.html
           cp -r assets/images/* preview-site/assets/images/
+          cp web/assets/images/scorpion-kings-live-hero.webp preview-site/assets/images/scorpion-kings-live-hero.webp
           cp -r web/icons preview-site/icons
           cp web/gearsh-brand.css preview-site/gearsh-brand.css 2>/dev/null || true
           cp web/discovery.css preview-site/discovery.css 2>/dev/null || true
