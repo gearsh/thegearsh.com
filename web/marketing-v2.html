@@ -58,6 +58,13 @@
     .step:nth-child(5){background-image:url("/assets/images/step-deliver.svg")}
     .step:nth-child(6){background-image:url("/assets/images/step-review.svg")}
     @media(max-width:520px){.step{padding:42px 18px;min-height:205px}}
+    /* Soutpansberg-inspired landscape stays behind the live CTA content. */
+    .cta-box{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:390px;background:#020617 url("/assets/images/soutpansberg-inspired-cta.webp") center 56% / cover no-repeat}
+    .cta-box::before{content:"";position:absolute;inset:0;background:rgba(2,6,23,.53);pointer-events:none}
+    .cta-box > *{position:relative;z-index:1}
+    .cta-box .section-intro{color:#e2e8f0}
+    .cta-box h2,.cta-box p{text-shadow:0 2px 12px rgba(0,0,0,.65)}
+    @media(max-width:520px){.cta-box{min-height:450px;padding:54px 24px;background-position:58% center}.cta-box::before{background:rgba(2,6,23,.64)}}
   </style>
 </head>
 <body>
