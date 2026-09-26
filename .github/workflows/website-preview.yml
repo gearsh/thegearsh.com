@@ -1,0 +1,62 @@
+name: Website Revamp Preview
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build preview site
+        run: |
+          rm -rf preview-site
+          mkdir -p preview-site/assets/images
+          cp web/marketing-v2.html preview-site/index.html
+          cp web/preview-overrides.css preview-site/preview-overrides.css
+          printf '\n<link rel="stylesheet" href="preview-overrides.css">\n' >> preview-site/index.html
+          cp -r assets/images/* preview-site/assets/images/
+          cp web/assets/images/scorpion-kings-live-hero.webp preview-site/assets/images/scorpion-kings-live-hero.webp
+          cp web/assets/images/clients-live-event.webp web/assets/images/creatives-at-work.webp preview-site/assets/images/
+          cp web/assets/images/category-*.webp preview-site/assets/images/
+          cp web/assets/images/step-*.svg preview-site/assets/images/
+          cp web/assets/images/soutpansberg-inspired-cta.webp preview-site/assets/images/
+          cp -r web/icons preview-site/icons
+          cp web/gearsh-brand.css preview-site/gearsh-brand.css 2>/dev/null || true
+          cp web/discovery.css preview-site/discovery.css 2>/dev/null || true
+          cp web/profile-theme.css preview-site/profile-theme.css 2>/dev/null || true
+          cp web/search.html preview-site/search.html 2>/dev/null || true
+          cp web/search-page.js preview-site/search-page.js 2>/dev/null || true
+          cp web/artist-feed.js preview-site/artist-feed.js 2>/dev/null || true
+          cp web/marketplace-feed.js preview-site/marketplace-feed.js 2>/dev/null || true
+          cp web/marketplace-data.js preview-site/marketplace-data.js 2>/dev/null || true
+          cp web/sa-showcase-data.js preview-site/sa-showcase-data.js 2>/dev/null || true
+          cp web/day-genre-schedule.js preview-site/day-genre-schedule.js 2>/dev/null || true
+          cp web/gearsh-location.js preview-site/gearsh-location.js 2>/dev/null || true
+          cp web/gearsh-auth.js preview-site/gearsh-auth.js 2>/dev/null || true
+          cp web/gearsh-ui.js preview-site/gearsh-ui.js 2>/dev/null || true
+          cp web/join-gig.html preview-site/join-gig.html 2>/dev/null || true
+          cp web/login.html preview-site/login.html 2>/dev/null || true
+          cp web/terms.html preview-site/terms.html 2>/dev/null || true
+          cp web/privacy.html preview-site/privacy.html 2>/dev/null || true
+          cp web/book-gig.html preview-site/book-gig.html 2>/dev/null || true
+          cp web/profile.html preview-site/profile.html 2>/dev/null || true
+          cp web/activity-feed.js preview-site/activity-feed.js 2>/dev/null || true
+          cp web/activity-feed.css preview-site/activity-feed.css 2>/dev/null || true
+          cp web/tickets.css preview-site/tickets.css 2>/dev/null || true
+          cp web/tickets.js preview-site/tickets.js 2>/dev/null || true
+          cp web/claim-profile.html preview-site/claim-profile.html 2>/dev/null || true
+          cp web/collaborate.html preview-site/collaborate.html 2>/dev/null || true
+          cp web/lessons.html preview-site/lessons.html 2>/dev/null || true
+          printf '\n<link rel="stylesheet" href="/profile-theme.css">\n' >> preview-site/profile.html
+          echo "Preview bundle ready"
+
+      - name: Deploy preview to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy preview-site --project-name=thegearsh-com --branch=website-revamp-v1

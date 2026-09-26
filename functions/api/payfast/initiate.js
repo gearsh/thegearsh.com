@@ -10,7 +10,9 @@ import { ensureTicketsTables } from '../tickets-schema.js';
 import {
   getPayfastConfig,
   buildSignature,
-  PLATFORM_FEE_RATE,
+  CLIENT_FEE_RATE,
+  ARTIST_FEE_RATE,
+  TOTAL_GEARSH_FEE_RATE,
 } from '../payfast-utils.js';
 import { newId, expireStaleOrders } from '../tickets-utils.js';
 
@@ -56,7 +58,7 @@ async function initiateBookingPayment(context, auth, body) {
   }
 
   const subtotal = Number(booking.total_price || 0);
-  if (subtotal <= 0) {
+  if (!Number.isFinite(subtotal) || subtotal <= 0) {
     return jsonResponse({ success: false, error: 'No amount to pay yet. Ask the artist to confirm a quote.' }, 400);
   }
 
@@ -68,10 +70,14 @@ async function initiateBookingPayment(context, auth, body) {
   }
 
   const config = getPayfastConfig(context.env);
-  const serviceFee = Math.round(subtotal * PLATFORM_FEE_RATE * 100) / 100;
-  const amount = Math.round((subtotal + serviceFee) * 100) / 100;
+  const clientFee = Math.round(subtotal * CLIENT_FEE_RATE * 100) / 100;
+  const artistFee = Math.round(subtotal * ARTIST_FEE_RATE * 100) / 100;
+  const totalGearshFees = Math.round((clientFee + artistFee) * 100) / 100;
+  const artistPayout = Math.round((subtotal - artistFee) * 100) / 100;
+  const amount = Math.round((subtotal + clientFee) * 100) / 100;
   const origin = new URL(context.request.url).origin;
 
+  const paymentId = newId('pay');
   const paymentData = {
     merchant_id: config.merchantId,
     merchant_key: config.merchantKey,
@@ -81,7 +87,7 @@ async function initiateBookingPayment(context, auth, body) {
     name_first: booking.first_name || 'Client',
     name_last: booking.last_name || 'User',
     email_address: booking.email,
-    m_payment_id: bookingId,
+    m_payment_id: paymentId,
     amount: amount.toFixed(2),
     item_name: body.item_name || `Gearsh booking — ${booking.artist_name || 'Artist'}`,
     item_description: body.item_description || booking.event_location || 'Artist booking',
@@ -89,26 +95,12 @@ async function initiateBookingPayment(context, auth, body) {
 
   paymentData.signature = buildSignature(paymentData, config.passphrase);
 
-  const paymentId = newId('pay');
   const now = new Date().toISOString();
-  const payerId = auth && auth.userId ? auth.userId : booking.client_id;
 
   await context.env.DB.prepare(`
     INSERT INTO payments (id, booking_id, amount, platform_fee, status, currency, created_at, updated_at)
     VALUES (?, ?, ?, ?, 'pending', 'ZAR', ?, ?)
-  `).bind(paymentId, bookingId, amount, serviceFee, now, now).run();
-
-  await context.env.DB.prepare(`
-    INSERT INTO escrow_ledger (id, booking_id, payment_id, event_type, amount, note, created_by, created_at)
-    VALUES (?, ?, ?, 'hold', ?, 'Payment initiated', ?, ?)
-  `).bind(
-    newId('escrow'),
-    bookingId,
-    paymentId,
-    amount,
-    payerId,
-    now
-  ).run();
+  `).bind(paymentId, bookingId, amount, totalGearshFees, now, now).run();
 
   return jsonResponse({
     success: true,
@@ -117,7 +109,11 @@ async function initiateBookingPayment(context, auth, body) {
       process_url: config.processUrl,
       fields: paymentData,
       amount,
-      platform_fee: serviceFee,
+      platform_fee: totalGearshFees,
+      client_fee: clientFee,
+      artist_fee: artistFee,
+      artist_payout: artistPayout,
+      total_gearsh_fee_rate: TOTAL_GEARSH_FEE_RATE,
       subtotal,
     },
   });
@@ -209,6 +205,16 @@ async function initiateTicketPayment(context, body) {
 
 export async function onRequestPost(context) {
   try {
+    // Enabling collection is an explicit operational decision after refund,
+    // payout and legal arrangements have been verified for this merchant.
+    if (String(context.env.GEARSH_BOOKING_PAYMENTS_ENABLED || '').toLowerCase() !== 'true') {
+      return jsonResponse({ success: false, error: 'Online checkout is not available yet. Contact support@thegearsh.com.' }, 503);
+    }
+    if (String(context.env.PAYFAST_SANDBOX || 'true') === 'false' &&
+        (!context.env.PAYFAST_MERCHANT_ID || !context.env.PAYFAST_MERCHANT_KEY ||
+         !context.env.PAYFAST_PASSPHRASE)) {
+      return jsonResponse({ success: false, error: 'Online checkout is not configured' }, 503);
+    }
     await ensureMarketplaceTables(context.env.DB);
     const body = await context.request.json();
 

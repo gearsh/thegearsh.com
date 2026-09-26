@@ -17,10 +17,10 @@ async function canViewEscrow(db, user, booking) {
 
 function computeEscrowStatus(ledger, payment) {
   if (!ledger.length && !payment) return 'pending';
-  const holds = ledger.filter((e) => e.event_type === 'hold').reduce((s, e) => s + e.amount, 0);
-  const releases = ledger.filter((e) => e.event_type === 'release').reduce((s, e) => s + e.amount, 0);
+  const holds = ledger.filter((e) => e.event_type === 'hold').reduce((s, e) => s + Number(e.amount || 0), 0);
+  const releases = ledger.filter((e) => e.event_type === 'release').reduce((s, e) => s + Number(e.amount || 0), 0);
   const refunds = ledger.filter((e) => e.event_type === 'refund' || e.event_type === 'partial_refund')
-    .reduce((s, e) => s + e.amount, 0);
+    .reduce((s, e) => s + Number(e.amount || 0), 0);
 
   if (payment?.status === 'refunded' || refunds >= holds) return 'refunded';
   if (releases >= holds && holds > 0) return 'released';
@@ -53,7 +53,7 @@ export async function onRequestGet(context) {
         SELECT * FROM escrow_ledger WHERE booking_id = ? ORDER BY created_at ASC
       `).bind(bookingId).all(),
       context.env.DB.prepare(`
-        SELECT * FROM payments WHERE booking_id = ? ORDER BY created_at DESC LIMIT 1
+        SELECT * FROM payments WHERE booking_id = ? AND status = 'complete' ORDER BY created_at DESC LIMIT 1
       `).bind(bookingId).first(),
     ]);
 

@@ -94,12 +94,12 @@
 
   function bookUrl(artist) {
     if (!artist || !artist.bookable) return null;
-    if (artist.username) return 'book-gig?artist=' + encodeURIComponent(String(artist.username).toLowerCase());
+    if (artist.username) return 'profile.html?artist=' + encodeURIComponent(String(artist.username).toLowerCase());
     if (artist.profile_url) {
       var match = String(artist.profile_url).match(/\/book\/([^/?#]+)/i);
-      if (match) return 'book-gig?artist=' + encodeURIComponent(match[1].toLowerCase());
+      if (match) return 'profile.html?artist=' + encodeURIComponent(match[1].toLowerCase());
     }
-    if (artist.artist_id) return 'book-gig?artist=' + encodeURIComponent(artist.artist_id);
+    if (artist.artist_id) return 'profile.html?artist=' + encodeURIComponent(artist.artist_id);
     return null;
   }
 
