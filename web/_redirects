@@ -39,8 +39,7 @@
 /messages                 /app.html 200
 /bookings                 /app.html 200
 /saved-artists            /app.html 200
-/forgot-password          /app.html 200
-/reset-password           /app.html 200
+# Static password reset pages are served by Cloudflare Pretty URLs.
 /help                     /app.html 200
 /faq                      /app.html 200
 /settings                 /app.html 200

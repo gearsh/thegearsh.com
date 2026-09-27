@@ -74,10 +74,16 @@ jobs:
           # Website revamp homepage
           cp web/marketing-v2.html build/web/index.html
           cp web/join-gig.html build/web/join-gig.html
+          cp web/join-revamp.css build/web/join-revamp.css
           cp web/artist-onboarding.html build/web/artist-onboarding.html
           cp web/auth.html build/web/auth.html
+          cp web/auth-revamp.css build/web/auth-revamp.css
+          cp web/auth-recovery.js build/web/auth-recovery.js
+          cp web/forgot-password.html build/web/forgot-password.html
+          cp web/reset-password.html build/web/reset-password.html
           cp web/login.html build/web/login.html
           cp web/artist-dashboard.html build/web/artist-dashboard.html
+          cp web/dashboard-revamp.css build/web/dashboard-revamp.css
           cp web/gearsh-god.html build/web/gearsh-god.html
           cp web/book-gig.html build/web/book-gig.html
           cp web/profile.html build/web/profile.html
