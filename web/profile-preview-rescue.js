@@ -34,7 +34,7 @@
     if(bio) bio.textContent=artist.bio||'';
     if(about) about.textContent=artist.bio||'Explore this creative professional and the services available through Gearsh.';
     if(skills) skills.innerHTML=(artist.skills||[]).map(function(s){return '<span class="skill">'+esc(s)+'</span>';}).join('');
-    if(claim && claimLink){claim.hidden=false;claimLink.href='claim-profile.html?artist='+encodeURIComponent(artist.username);}
+    if(claim && claimLink){claim.hidden=false;claimLink.href='claim-creative-profile.html?artist='+encodeURIComponent(artist.username);}
     if(servicesList){
       servicesList.innerHTML=services.length?services.map(function(s){return '<button class="service" type="button" data-id="'+esc(s.id)+'"><div class="service-top"><div class="service-name">'+esc(s.name)+'</div><div class="service-price">'+money(s.price)+'</div></div><div class="service-desc">'+esc(s.description)+(s.duration_hours?' · '+esc(s.duration_hours)+' hrs':'')+'</div><div class="service-choose">Choose service <i class="ti ti-arrow-right"></i></div></button>';}).join(''):'<p class="section-copy">Contact this creative to discuss the work and pricing.</p>';
       servicesList.querySelectorAll('.service').forEach(function(btn){btn.addEventListener('click',function(){servicesList.querySelectorAll('.service').forEach(function(x){x.classList.remove('selected');});btn.classList.add('selected');if(serviceSelect)serviceSelect.value=btn.dataset.id;if(selected)selected.textContent='Selected: '+btn.querySelector('.service-name').textContent;var book=document.getElementById('book');if(book)book.scrollIntoView({behavior:'smooth'});});});

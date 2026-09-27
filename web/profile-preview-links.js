@@ -4,7 +4,7 @@
     document.querySelectorAll('a[href*="book-gig?artist="]').forEach(function(a){
       var href=a.getAttribute('href');
       var match=href.match(/book-gig\?artist=([^&#]+)/i);
-      if(match) a.setAttribute('href','/profile.html?artist='+match[1]);
+      if(match) a.setAttribute('href','/creative-profile.html?artist='+match[1]);
     });
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',rewrite);
