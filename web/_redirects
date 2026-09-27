@@ -23,7 +23,7 @@
 /home                     /app.html 200
 /discover                 /app.html 200
 /discover/*               /app.html 200
-/profile                  /app.html 200
+/profile                  /profile.html 200
 /profile/*                /app.html 200
 /profile-settings         /app.html 200
 /edit-profile             /app.html 200
