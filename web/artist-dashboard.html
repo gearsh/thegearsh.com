@@ -607,8 +607,13 @@
       document.getElementById('mastery-desc').textContent =
         'You have ' + data.stats.mastery_hours + ' mastery hours logged from completed bookings. Keep your profile and services up to date.';
 
+      var skills = data.artist_profile.skills || localStorage.getItem('gearsh_skills');
+      try {
+        var parsedSkills = JSON.parse(skills);
+        if (Array.isArray(parsedSkills)) skills = parsedSkills.join(', ');
+      } catch (_) {}
       document.getElementById('skills-list').textContent =
-        data.artist_profile.skills || user.bio || localStorage.getItem('gearsh_skills') || 'No skills added yet.';
+        skills || 'No skills added yet.';
       document.getElementById('location-line').textContent =
         [user.location, user.country].filter(Boolean).join(', ') || 'Location not set';
 
