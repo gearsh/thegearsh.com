@@ -7,8 +7,6 @@
 /app/login                /auth.html 200
 /join-gig.html            /join-gig.html 200
 /artist-dashboard.html    /artist-dashboard.html 200
-/my-bookings              /my-bookings.html 200
-/booking-success          /booking-success.html 200
 /artist-onboarding.html   /artist-onboarding.html 200
 /onboarding               /join-gig.html 200
 /signup                   /join-gig.html 200
@@ -35,8 +33,7 @@
 # /artists and /search served via Cloudflare Pretty URLs from artists.html / search.html.
 # Do NOT add explicit rewrite rules — they will trigger the same 308 loop documented above.
 /category/*               /app.html 200
-/gigs                     /gig-guide.html 200
-/gig-guide                /gig-guide.html 200
+/gigs                     /gig-guide 302
 /cart                     /app.html 200
 /cart/*                   /app.html 200
 /messages                 /app.html 200
@@ -58,8 +55,6 @@
 /book/gearsh              /gearsh 302
 /gig/*                    /gig-detail?slug=:splat 200
 /ticket/*                 /ticket-view?code=:splat 200
-/my-tickets               /my-tickets.html 200
-/ticket-success           /ticket-success.html 200
 
 # Other marketing static pages
 /gearsh-god.html          /gearsh-god.html 200
