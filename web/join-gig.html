@@ -8,15 +8,15 @@
   <meta name="theme-color" content="#020617">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Gearsh">
-  <meta property="og:title" content="Join as an Artist | Gearsh">
+  <meta property="og:title" content="Join as a Creative | Gearsh">
   <meta property="og:description" content="Create your artist profile and start getting booked on Gearsh.">
   <meta property="og:url" content="https://thegearsh.com/join-gig.html">
   <meta property="og:image" content="https://thegearsh.com/icons/og-banner.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Join as an Artist | Gearsh">
+  <meta name="twitter:title" content="Join as a Creative | Gearsh">
   <meta name="twitter:description" content="Create your artist profile and start getting booked on Gearsh.">
   <meta name="twitter:image" content="https://thegearsh.com/icons/og-banner.png">
-  <title>Join as an Artist | Gearsh</title>
+  <title>Join as a Creative | Gearsh</title>
   <link rel="icon" type="image/png" href="icons/Icon-192.png">
   <link rel="apple-touch-icon" href="icons/Icon-512.png">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -263,7 +263,7 @@
           <p>Start with your name and contact details. You can add your creative services in the next step.</p>
         </div>
         <div class="step-form">
-          <div class="field-group"><label class="field-label" for="stage-name">Business / stage name</label><input type="text" id="stage-name" class="field-input" placeholder="e.g. Nhlanhla, Sparkle Wash, DJ ZJ90" required></div>
+          <div class="field-group"><label class="field-label" for="stage-name">Business / stage name</label><input type="text" id="stage-name" class="field-input" placeholder="e.g. DJ ZJ90, Vanz, your studio name" required></div>
           <div class="field-group"><label class="field-label" for="email">Email</label><input type="email" id="email" class="field-input" placeholder="you@email.com" required></div>
           <div class="field-group"><label class="field-label" for="phone">Phone</label><input type="tel" id="phone" class="field-input" placeholder="+27 00 000 0000"></div>
           <div id="signup-error" class="signup-error" style="display:none;margin-bottom:12px"></div>
@@ -313,7 +313,7 @@
           </div>
           <div class="field-group">
             <label class="field-label" for="starting-price">Starting price (R)</label>
-            <input type="number" id="starting-price" class="field-input" placeholder="e.g. 3500 for websites, 200 for car wash" min="0" step="1">
+            <input type="number" id="starting-price" class="field-input" placeholder="e.g. 1500 for a DJ set" min="0" step="1">
           </div>
           <div class="mastery-note">
             <div style="font-size:18px; flex-shrink:0;"><i class="ti ti-trophy" style="color:var(--g-accent)"></i></div>
@@ -558,6 +558,7 @@
       document.querySelectorAll('.step-panel').forEach(function(p) { p.classList.remove('visible'); });
       var t = document.getElementById('step' + n);
       if (t) t.classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'auto' });
       var labels = { 1:'Step 1 of 3 · Stage name & contact', 2:'Step 2 of 3 · Your craft', 3:'Step 3 of 3 · Security', 4:'' };
       document.getElementById('step-label').textContent = labels[n] || '';
       ['ps1','ps2','ps3'].forEach(function(id, i) {
