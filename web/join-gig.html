@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Join Gearsh free as an artist. Create your artist profile, list your gig, and start getting booked.">
   <link rel="canonical" href="https://thegearsh.com/join-gig.html">
-  <meta name="theme-color" content="#0A0A0A">
+  <meta name="theme-color" content="#020617">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Gearsh">
   <meta property="og:title" content="Join as an Artist | Gearsh">
@@ -214,30 +214,31 @@
     }
     .signin-link a { color: var(--g-accent); text-decoration: none; font-weight: 500; }
   </style>
+  <link rel="stylesheet" href="join-revamp.css">
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav class="g-nav">
-    <div class="g-nav-inner">
-      <a href="./" class="g-nav-logo">
-        <img src="icons/Icon-512.png" alt="The Gearsh">
-      </a>
-      <div class="g-nav-right">
-        <a href="/auth.html" class="g-nav-mobile-login">Login</a>
-        <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu">
-          <i class="ti ti-menu-2"></i>
-        </button>
-      </div>
-      <ul class="g-nav-links">
-        <li class="g-nav-menu-auth"><a href="/auth.html">Login</a></li>
-        <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
-        <li><a href="./">Home</a></li>
-      </ul>
+  <header class="join-nav">
+    <div class="join-nav-inner">
+      <a class="join-home" href="/" aria-label="Gearsh home"><img src="icons/Icon-512.png" alt="Gearsh"></a>
+      <nav class="join-links" aria-label="Main navigation">
+        <a href="/search">Find Talent</a><a href="/join-gig.html" aria-current="page">For Creatives</a><a href="/#how-it-works">How It Works</a><a href="/#about">About</a><a class="join-signin" href="/auth.html">Sign In</a>
+      </nav>
+      <button class="join-menu-button" id="join-menu-button" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="join-mobile-menu">☰</button>
     </div>
-  </nav>
+    <nav class="join-mobile-menu" id="join-mobile-menu" aria-label="Mobile navigation" hidden>
+      <a href="/search">Find Talent</a><a href="/join-gig.html" aria-current="page">For Creatives</a><a href="/#how-it-works">How It Works</a><a href="/#about">About</a><a href="/auth.html">Sign In</a>
+    </nav>
+  </header>
 
-  <div class="signup-page">
+  <main class="signup-page">
+    <div class="join-intro">
+      <div class="join-intro-copy">
+        <span class="join-eyebrow">FOR CREATIVES</span>
+        <h1>Make your work <span>bookable.</span></h1>
+        <p>Create your profile, show what you offer, and make it easier for clients to find you on Gearsh.</p>
+      </div>
+    </div>
     <div class="signup-card">
       <div class="signup-header">
         <a href="./" class="signup-logo">
@@ -252,26 +253,21 @@
           <div class="progress-step" id="ps2"></div>
           <div class="progress-step" id="ps3"></div>
         </div>
-        <div class="progress-label" id="step-label">Step 1 of 3 � Your details</div>
+        <div class="progress-label" id="step-label">Step 1 of 3 · Your details</div>
       </div>
 
       <!-- STEP 1 -->
       <div class="step-panel visible" id="step1">
         <div class="step-hero">
-          <h1>Join as an <em>artist</em></h1>
-          <p>Your business name, email, and phone. DJs, tech, car wash, photography, and more.</p>
+          <h2>Join as a <em>creative</em></h2>
+          <p>Start with your name and contact details. You can add your creative services in the next step.</p>
         </div>
         <div class="step-form">
-          <div class="field-group"><label class="field-label">Business / stage name</label><input type="text" id="stage-name" class="field-input" placeholder="e.g. Nhlanhla, Sparkle Wash, DJ ZJ90" required></div>
-          <div class="field-group"><label class="field-label">Email</label><input type="email" id="email" class="field-input" placeholder="you@email.com" required></div>
-          <div class="field-group"><label class="field-label">Phone</label><input type="tel" id="phone" class="field-input" placeholder="+27 00 000 0000"></div>
+          <div class="field-group"><label class="field-label" for="stage-name">Business / stage name</label><input type="text" id="stage-name" class="field-input" placeholder="e.g. Nhlanhla, Sparkle Wash, DJ ZJ90" required></div>
+          <div class="field-group"><label class="field-label" for="email">Email</label><input type="email" id="email" class="field-input" placeholder="you@email.com" required></div>
+          <div class="field-group"><label class="field-label" for="phone">Phone</label><input type="tel" id="phone" class="field-input" placeholder="+27 00 000 0000"></div>
           <div id="signup-error" class="signup-error" style="display:none;margin-bottom:12px"></div>
           <button class="btn-signup" onclick="goStep(2)">Continue <i class="ti ti-arrow-right" style="font-size:18px"></i></button>
-          <div class="divider-or">or</div>
-          <button class="social-btn">
-            <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-            Continue with Google
-          </button>
           <div class="terms-text">By signing up, you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a></div>
         </div>
       </div>
@@ -279,49 +275,49 @@
       <!-- STEP 2 -->
       <div class="step-panel" id="step2">
         <div class="step-hero">
-          <h1>Show your <em>craft</em></h1>
+          <h2>Show your <em>craft</em></h2>
           <p>Pick your skills and where you're based.</p>
         </div>
         <div class="step-form">
           <div class="field-group">
-            <label class="field-label">Your skills</label>
-            <div class="skills-grid">
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-car" style="font-size:16px"></i> Car wash</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-headphones" style="font-size:16px"></i> DJ</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-camera" style="font-size:16px"></i> Photography</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-video" style="font-size:16px"></i> Videography</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-movie" style="font-size:16px"></i> Music videos</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-adjustments" style="font-size:16px"></i> Producer</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-cut" style="font-size:16px"></i> Post-production</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-microphone" style="font-size:16px"></i> MC / Host</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-music" style="font-size:16px"></i> Live music</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-bulb" style="font-size:16px"></i> Lighting</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-device-speaker" style="font-size:16px"></i> Sound tech</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-shirt" style="font-size:16px"></i> Fashion</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-brush" style="font-size:16px"></i> Makeup</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-writing" style="font-size:16px"></i> Tattoo</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-scissors" style="font-size:16px"></i> Hair styling</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-man" style="font-size:16px"></i> Dance</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-brush" style="font-size:16px"></i> Visual art</div>
-              <div class="skill-chip" onclick="toggleSkill(this)"><i class="ti ti-code" style="font-size:16px"></i> Tech artist</div>
+            <div class="field-label" id="skills-label">Your skills</div>
+            <div class="skills-grid" role="group" aria-labelledby="skills-label">
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-car" style="font-size:16px"></i> Car wash</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-headphones" style="font-size:16px"></i> DJ</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-camera" style="font-size:16px"></i> Photography</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-video" style="font-size:16px"></i> Videography</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-movie" style="font-size:16px"></i> Music videos</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-adjustments" style="font-size:16px"></i> Producer</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-cut" style="font-size:16px"></i> Post-production</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-microphone" style="font-size:16px"></i> MC / Host</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-music" style="font-size:16px"></i> Live music</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-bulb" style="font-size:16px"></i> Lighting</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-device-speaker" style="font-size:16px"></i> Sound tech</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-shirt" style="font-size:16px"></i> Fashion</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-brush" style="font-size:16px"></i> Makeup</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-writing" style="font-size:16px"></i> Tattoo</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-scissors" style="font-size:16px"></i> Hair styling</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-man" style="font-size:16px"></i> Dance</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-brush" style="font-size:16px"></i> Visual art</button>
+              <button type="button" class="skill-chip" aria-pressed="false" onclick="toggleSkill(this)"><i class="ti ti-code" style="font-size:16px"></i> Tech artist</button>
             </div>
             <p class="field-hint" style="font-size:12px;color:var(--g-text-muted);margin-top:10px;line-height:1.5">
               Tech artists build apps, websites, bots, and automations for clients.
             </p>
           </div>
           <div class="field-row">
-            <div class="field-group"><label class="field-label">Country</label>
+            <div class="field-group"><label class="field-label" for="country">Country</label>
               <select id="country" class="field-select"><option value="">Select</option><option value="South Africa" selected>South Africa</option><option value="Zimbabwe">Zimbabwe</option><option value="Zambia">Zambia</option><option value="Mozambique">Mozambique</option><option value="Botswana">Botswana</option><option value="Nigeria">Nigeria</option><option value="Kenya">Kenya</option><option value="Ghana">Ghana</option><option value="United Kingdom">United Kingdom</option><option value="United States">United States</option></select>
             </div>
-            <div class="field-group"><label class="field-label">City</label><input type="text" id="city" class="field-input" placeholder="Johannesburg"></div>
+            <div class="field-group"><label class="field-label" for="city">City</label><input type="text" id="city" class="field-input" placeholder="Johannesburg"></div>
           </div>
           <div class="field-group">
-            <label class="field-label">Starting price (R)</label>
+            <label class="field-label" for="starting-price">Starting price (R)</label>
             <input type="number" id="starting-price" class="field-input" placeholder="e.g. 3500 for websites, 200 for car wash" min="0" step="1">
           </div>
           <div class="mastery-note">
             <div style="font-size:18px; flex-shrink:0;"><i class="ti ti-trophy" style="color:var(--g-accent)"></i></div>
-            <p>You'll start as a <strong>Newcomer</strong> with an 80% introductory discount to help you land your first bookings.</p>
+            <p>Set a starting price you are comfortable with. You can review and update your services in your dashboard.</p>
           </div>
           <div class="signup-error" style="display:none;margin-bottom:12px"></div>
           <button class="btn-signup" onclick="goStep(3)" style="margin-top:16px">Continue <i class="ti ti-arrow-right" style="font-size:18px"></i></button>
@@ -332,7 +328,7 @@
       <!-- STEP 3 -->
       <div class="step-panel" id="step3">
         <div class="step-hero">
-          <h1>Secure your <em>account</em></h1>
+          <h2>Secure your <em>account</em></h2>
           <p>Set a strong password to protect your profile.</p>
         </div>
         <div class="step-form">
@@ -341,8 +337,8 @@
             <input type="text" id="username" class="field-input" placeholder="e.g. rix-elton" autocomplete="username">
             <p class="field-hint" id="username-hint">Your shareable booking link: <strong>thegearsh.com/book/<span id="username-preview">yourname</span></strong></p>
           </div>
-          <div class="field-group"><label class="field-label">Password</label><input type="password" class="field-input" placeholder="Create a password" id="pw1" oninput="checkPw()"></div>
-          <div class="field-group"><label class="field-label">Confirm password</label><input type="password" class="field-input" placeholder="Re-enter password" id="pw2" oninput="checkPw()"></div>
+          <div class="field-group"><label class="field-label" for="pw1">Password</label><input type="password" class="field-input" placeholder="Create a password" id="pw1" oninput="checkPw()"></div>
+          <div class="field-group"><label class="field-label" for="pw2">Confirm password</label><input type="password" class="field-input" placeholder="Re-enter password" id="pw2" oninput="checkPw()"></div>
           <div class="password-rules">
             <div class="pw-rule" id="pr-len"><span class="dot"></span> 8+ characters</div>
             <div class="pw-rule" id="pr-upper"><span class="dot"></span> Uppercase</div>
@@ -355,12 +351,12 @@
         </div>
       </div>
 
-      <!-- STEP 4 � Success -->
+      <!-- STEP 4 · Success -->
       <div class="step-panel" id="step4">
         <div class="success-area">
           <div class="success-icon"><i class="ti ti-check" style="font-size:28px; color:var(--g-accent);"></i></div>
           <h2>You're in</h2>
-          <p>Your gig is live on Gearsh. Share your personal booking link with clients anywhere in the world. Gearsh handles bookings and gets you paid.</p>
+          <p>Your profile is ready. Review your services and pricing, then share your booking link with clients.</p>
           <p style="font-size:13px;color:var(--g-text-muted);margin-top:10px;line-height:1.55">Check your <strong style="color:var(--g-white)">Services</strong> tab if the price from signup needs correcting.</p>
           <div class="share-box" id="share-box" style="display:none;margin:20px 0;padding:14px;background:var(--g-black);border:0.5px solid var(--g-border);border-radius:12px;text-align:left">
             <div style="font-size:11px;color:var(--g-text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Your global booking link</div>
@@ -376,9 +372,21 @@
 
       <div class="signin-link" id="signin-row">Already on Gearsh? <a href="/auth.html">Sign in</a></div>
     </div>
-  </div>
+  </main>
 
   <script>
+    const joinMenuButton = document.getElementById('join-menu-button');
+    const joinMobileMenu = document.getElementById('join-mobile-menu');
+    joinMenuButton.addEventListener('click', function() {
+      const open = joinMobileMenu.hidden;
+      joinMobileMenu.hidden = !open;
+      joinMenuButton.setAttribute('aria-expanded', String(open));
+      joinMenuButton.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      joinMenuButton.textContent = open ? '×' : '☰';
+    });
+    joinMobileMenu.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() { joinMobileMenu.hidden = true; joinMenuButton.setAttribute('aria-expanded', 'false'); });
+    });
     var API_BASE = '/api';
 
     function slugifyUsername(value) {
@@ -402,7 +410,7 @@
     document.getElementById('username').addEventListener('input', updateUsernamePreview);
     document.getElementById('stage-name').addEventListener('input', updateUsernamePreview);
 
-    function toggleSkill(el) { el.classList.toggle('selected'); }
+    function toggleSkill(el) { var selected = el.classList.toggle('selected'); el.setAttribute('aria-pressed', String(selected)); }
 
     function getSelectedSkills() {
       return Array.from(document.querySelectorAll('.skill-chip.selected'))
@@ -480,7 +488,7 @@
       showError('');
       var btn = document.getElementById('create-btn');
       btn.disabled = true;
-      btn.textContent = 'Creating account�';
+      btn.textContent = 'Creating account…';
 
       var country = document.getElementById('country').value || 'South Africa';
       var stageName = document.getElementById('stage-name').value.trim();
@@ -550,7 +558,7 @@
       document.querySelectorAll('.step-panel').forEach(function(p) { p.classList.remove('visible'); });
       var t = document.getElementById('step' + n);
       if (t) t.classList.add('visible');
-      var labels = { 1:'Step 1 of 3 � Stage name & contact', 2:'Step 2 of 3 � Your craft', 3:'Step 3 of 3 � Security', 4:'' };
+      var labels = { 1:'Step 1 of 3 · Stage name & contact', 2:'Step 2 of 3 · Your craft', 3:'Step 3 of 3 · Security', 4:'' };
       document.getElementById('step-label').textContent = labels[n] || '';
       ['ps1','ps2','ps3'].forEach(function(id, i) {
         var el = document.getElementById(id);
@@ -587,9 +595,9 @@
     }
   </script>
 
-  <footer class="g-footer" style="margin-top: 40px;">
+  <footer class="g-footer join-footer">
     <div class="g-footer-inner">
-      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="The Gearsh"> &copy; 2025 Gearsh (Pty) Ltd. All rights reserved.</div>
+      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="The Gearsh"> &copy; 2026 Gearsh (Pty) Ltd. All rights reserved.</div>
       <ul class="g-footer-links"><li><a href="/terms">Terms</a></li><li><a href="/privacy">Privacy</a></li><li><a href="./">Home</a></li></ul>
     </div>
   </footer>
