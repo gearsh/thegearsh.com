@@ -65,7 +65,7 @@ function buildChecklist(user, artistProfile, services) {
       title: 'Get verified',
       description: verificationPending
         ? 'Your profile is under review. We typically approve within 24–48 hours.'
-        : 'Verified artists get 3× more bookings. Submit when your profile, portfolio, and services are ready.',
+        : 'Submit your profile for review when your portfolio and services are ready.',
       action: user.is_verified ? 'Verified' : (verificationPending ? 'Under review' : 'Submit'),
       completed: Boolean(user.is_verified),
       pending: verificationPending,
@@ -186,7 +186,6 @@ export async function onRequestGet(context) {
         mastery: {
           ...tier,
           hours: masteryHours,
-          intro_discount: tier.id === 'newcomer' ? 80 : 0,
         },
         checklist,
         checklist_complete: checklistComplete,
