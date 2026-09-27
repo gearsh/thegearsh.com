@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Your Gearsh artist dashboard. Manage bookings, profile, and earnings.">
-  <meta name="theme-color" content="#0A0A0A">
+  <meta name="theme-color" content="#020617">
   <title>Artist Dashboard | Gearsh</title>
   <link rel="icon" type="image/png" href="icons/Icon-192.png">
   <link rel="apple-touch-icon" href="icons/Icon-512.png">
@@ -27,7 +27,7 @@
     .dash-hero-bg img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .dash-hero-overlay {
       position: absolute; inset: 0;
-      background: linear-gradient(to bottom, rgba(10,10,10,0.55) 0%, var(--g-black) 100%);
+      background: rgba(2,6,23,.82);
     }
     .dash-hero-inner {
       position: relative; z-index: 1;
@@ -132,7 +132,7 @@
     .check-action:hover { opacity: 0.85; }
     .mastery-card {
       margin-top: 28px; overflow: hidden;
-      background: linear-gradient(135deg, rgba(0,191,255,0.08) 0%, rgba(139,92,246,0.06) 100%);
+      background: #111c31;
       border: 0.5px solid rgba(0,191,255,0.15);
     }
     .mastery-inner { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
@@ -273,6 +273,7 @@
       .nav-user span { display: none; }
     }
   </style>
+  <link rel="stylesheet" href="dashboard-revamp.css">
 </head>
 <body>
 
@@ -351,7 +352,7 @@
         <div class="card" id="share-card" style="display:none;margin-bottom:20px">
           <div class="section-label">Share your gig</div>
           <h2 class="card-title">Your global <em>booking link</em></h2>
-          <p class="card-sub">Send this link to clients anywhere. They can view your services, book you, and Gearsh handles payment.</p>
+          <p class="card-sub">Send this link to clients anywhere. They can view your services and send a booking request.</p>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <input type="text" id="dash-share-link" readonly style="flex:1;min-width:220px;height:44px;background:var(--g-black);border:0.5px solid var(--g-border);border-radius:10px;padding:0 14px;color:var(--g-text);font-size:13px">
             <button type="button" class="btn-main" onclick="copyDashboardLink()" style="height:44px">Copy link</button>
@@ -592,7 +593,6 @@
       }
 
       var tierText = mastery.label + ' tier';
-      if (mastery.intro_discount) tierText += ' · ' + mastery.intro_discount + '% intro discount';
       document.getElementById('tier-badge').innerHTML =
         '<i class="ti ti-' + escapeHtml(mastery.icon) + '" style="font-size:14px"></i> ' + escapeHtml(tierText);
 
@@ -604,9 +604,8 @@
       document.getElementById('mastery-icon').className = 'ti ti-' + mastery.icon;
       document.getElementById('mastery-name').textContent = mastery.label;
       document.getElementById('mastery-range').textContent = mastery.range;
-      document.getElementById('mastery-desc').textContent = mastery.intro_discount
-        ? 'You\'re starting with an ' + mastery.intro_discount + '% introductory discount to attract your first clients. Every completed booking grows your mastery score.'
-        : 'You\'ve reached ' + mastery.label + ' status with ' + data.stats.mastery_hours + ' mastery hours logged from completed bookings.';
+      document.getElementById('mastery-desc').textContent =
+        'You have ' + data.stats.mastery_hours + ' mastery hours logged from completed bookings. Keep your profile and services up to date.';
 
       document.getElementById('skills-list').textContent =
         data.artist_profile.skills || user.bio || localStorage.getItem('gearsh_skills') || 'No skills added yet.';
