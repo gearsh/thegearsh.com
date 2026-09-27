@@ -23,6 +23,20 @@ jobs:
           cp -r assets/images/* preview-site/assets/images/
           echo "Preview bundle ready"
 
+      - name: Bind preview database
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          # Pages preview bindings are independent of production bindings.
+          # Keep the existing preview settings and add the DB binding used by signup/login.
+          curl -fsS --request PATCH \
+            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/thegearsh-com" \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            --header "Content-Type: application/json" \
+            --data '{"deployment_configs":{"preview":{"d1_databases":{"DB":{"id":"625dcd0a-84b7-4cce-a8b4-af6e4d3b37b0"}}}}}' \
+            | jq -e '.success and .result.deployment_configs.preview.d1_databases.DB.id == "625dcd0a-84b7-4cce-a8b4-af6e4d3b37b0"' > /dev/null
+
       - name: Deploy preview to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
