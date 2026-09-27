@@ -72,6 +72,14 @@ export async function onRequestPost(context) {
       }, 400);
     }
 
+    if (!context.env.DB) {
+      console.error('Signup unavailable: DB binding is missing');
+      return jsonResponse({
+        success: false,
+        error: 'Registration is temporarily unavailable. Please try again later.'
+      }, 503);
+    }
+
     try {
       await ensureAuthTables(context.env.DB);
       await ensureOnboardingTables(context.env.DB);
