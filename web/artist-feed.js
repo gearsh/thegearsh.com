@@ -94,18 +94,18 @@
 
   function bookUrl(artist) {
     if (!artist || !artist.bookable) return null;
-    if (artist.username) return 'profile.html?artist=' + encodeURIComponent(String(artist.username).toLowerCase());
+    if (artist.username) return 'creative-profile.html?artist=' + encodeURIComponent(String(artist.username).toLowerCase());
     if (artist.profile_url) {
       var match = String(artist.profile_url).match(/\/book\/([^/?#]+)/i);
-      if (match) return 'profile.html?artist=' + encodeURIComponent(match[1].toLowerCase());
+      if (match) return 'creative-profile.html?artist=' + encodeURIComponent(match[1].toLowerCase());
     }
-    if (artist.artist_id) return 'profile.html?artist=' + encodeURIComponent(artist.artist_id);
+    if (artist.artist_id) return 'creative-profile.html?artist=' + encodeURIComponent(artist.artist_id);
     return null;
   }
 
   function claimUrl(item) {
     if (!item || !item.username) return null;
-    return 'claim-profile.html?artist=' + encodeURIComponent(String(item.username).toLowerCase());
+    return 'claim-creative-profile.html?artist=' + encodeURIComponent(String(item.username).toLowerCase());
   }
 
   function isDjCategory(category) {

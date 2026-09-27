@@ -34,7 +34,7 @@
       is_verified: false,
       is_claimable: true,
       is_demo: true,
-      claim_url: 'claim-profile.html?artist=' + encodeURIComponent(String(item.username || '').toLowerCase()),
+      claim_url: 'claim-creative-profile.html?artist=' + encodeURIComponent(String(item.username || '').toLowerCase()),
       availability_status: 'available'
     };
   }
