@@ -6,136 +6,93 @@
   <meta name="description" content="Sign in to your Gearsh account.">
   <meta name="robots" content="noindex, follow">
   <link rel="canonical" href="https://thegearsh.com/auth.html">
-  <meta name="theme-color" content="#0A0A0A">
+  <meta name="theme-color" content="#020617">
   <title>Sign in | Gearsh</title>
   <link rel="icon" type="image/png" href="icons/Icon-192.png">
   <link rel="apple-touch-icon" href="icons/Icon-512.png">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="gearsh-brand.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-  <style>
-    .auth-page {
-      min-height: 100vh; min-height: 100svh;
-      display: flex; align-items: center; justify-content: center;
-      padding: 80px 20px 40px; position: relative; overflow: hidden;
-    }
-    .auth-page::before {
-      content: ''; position: absolute;
-      top: -100px; left: 50%; transform: translateX(-50%);
-      width: 600px; height: 600px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(0,191,255,0.05) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .auth-card {
-      width: 100%; max-width: 420px;
-      background: var(--g-surface); border: 0.5px solid var(--g-border);
-      border-radius: 20px; overflow: hidden; position: relative; z-index: 1;
-    }
-    .auth-header {
-      padding: 28px 28px 0;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .auth-logo img { height: 36px; width: auto; max-width: 130px; object-fit: contain; }
-    .auth-body { padding: 24px 28px 28px; }
-    .auth-body h1 {
-      font-family: var(--g-serif); font-weight: 400; font-size: 26px;
-      line-height: 1.15; color: var(--g-white); letter-spacing: -0.01em;
-    }
-    .auth-body h1 em { font-style: italic; color: var(--g-accent); }
-    .auth-body p { font-size: 14px; color: var(--g-text-muted); margin-top: 6px; line-height: 1.5; }
-    .field-group { margin-bottom: 14px; margin-top: 20px; }
-    .field-label {
-      display: block; font-size: 12px; font-weight: 500;
-      color: var(--g-text-muted); margin-bottom: 5px;
-    }
-    .field-input {
-      width: 100%; height: 48px; background: var(--g-black);
-      border: 0.5px solid var(--g-border); border-radius: 10px;
-      padding: 0 16px; font-family: var(--g-font); font-size: 15px;
-      color: var(--g-text); outline: none;
-    }
-    .field-input:focus {
-      border-color: rgba(0,191,255,0.45);
-      box-shadow: 0 0 0 3px rgba(0,191,255,0.06);
-    }
-    .auth-error {
-      font-size: 13px; color: #f87171; margin-top: 12px; display: none;
-    }
-    .btn-submit {
-      width: 100%; height: 52px; background: var(--g-accent); color: var(--g-black);
-      border: none; border-radius: 10px; font-family: var(--g-font);
-      font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px;
-    }
-    .btn-submit:hover { opacity: 0.88; }
-    .auth-footer {
-      text-align: center; font-size: 14px; color: var(--g-text-muted);
-      margin-top: 20px; padding-top: 20px; border-top: 0.5px solid var(--g-border);
-    }
-    .auth-footer a { color: var(--g-accent); text-decoration: none; font-weight: 600; }
-  </style>
+  <link rel="stylesheet" href="join-revamp.css">
+  <link rel="stylesheet" href="auth-revamp.css">
 </head>
 <body>
-  <nav class="g-nav">
-    <div class="g-nav-inner">
-      <a href="./" class="g-nav-logo"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
-      <div class="g-nav-right">
-        <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu">
-          <i class="ti ti-menu-2"></i>
-        </button>
-      </div>
-      <ul class="g-nav-links">
-        <li class="g-nav-menu-auth"><a href="/auth.html" class="active">Login</a></li>
-        <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
-        <li><a href="./">Home</a></li>
-      </ul>
+  <header class="join-nav">
+    <div class="join-nav-inner">
+      <a class="join-home" href="/" aria-label="Gearsh home"><img src="icons/Icon-512.png" alt="Gearsh"></a>
+      <nav class="join-links" aria-label="Main navigation">
+        <a href="/search">Find Talent</a><a href="/join-gig.html">For Creatives</a><a href="/#how-it-works">How It Works</a><a href="/#about">About</a><a class="join-signin" href="/auth.html" aria-current="page">Sign In</a>
+      </nav>
+      <button class="join-menu-button" id="join-menu-button" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="join-mobile-menu">☰</button>
     </div>
-  </nav>
+    <nav class="join-mobile-menu" id="join-mobile-menu" aria-label="Mobile navigation" hidden>
+      <a href="/search">Find Talent</a><a href="/join-gig.html">For Creatives</a><a href="/#how-it-works">How It Works</a><a href="/#about">About</a><a href="/auth.html" aria-current="page">Sign In</a>
+    </nav>
+  </header>
 
-  <div class="auth-page">
+  <main class="auth-page">
+    <div class="join-intro auth-intro">
+      <div class="join-intro-copy">
+        <span class="join-eyebrow">YOUR GEARSH ACCOUNT</span>
+        <h1>Pick up where you <span>left off.</span></h1>
+        <p>Sign in to manage your creative profile, services, and bookings.</p>
+      </div>
+    </div>
     <div class="auth-card">
       <div class="auth-header">
-        <a href="./" class="auth-logo"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
+        <a href="/" class="auth-logo" aria-label="Gearsh home"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
+        <span class="auth-badge">Welcome back</span>
       </div>
       <div class="auth-body">
-        <h1>Welcome <em>back</em></h1>
-        <p>Sign in to manage your gigs, bookings, and dashboard.</p>
+        <h2>Sign in to <span>Gearsh.</span></h2>
+        <p>Enter your email or username and password to continue.</p>
         <form id="login-form" onsubmit="submitLogin(event)">
           <div class="field-group">
             <label class="field-label" for="identifier">Email or username</label>
-            <input class="field-input" id="identifier" type="text" required placeholder="@gearsh or you@email.com" autocomplete="username">
+            <input class="field-input" id="identifier" type="text" required placeholder="you@email.com" autocomplete="username">
           </div>
-          <div class="field-group" style="margin-top:14px">
+          <div class="field-group">
             <label class="field-label" for="password">Password</label>
             <input class="field-input" id="password" type="password" required placeholder="Your password" autocomplete="current-password">
           </div>
-          <label class="remember-row" style="display:flex;align-items:center;gap:8px;margin-top:14px;font-size:14px;cursor:pointer">
-            <input type="checkbox" id="remember-me" checked>
-            Keep me signed in
-          </label>
-          <div class="auth-error" id="login-error"></div>
+          <label class="remember-row"><input type="checkbox" id="remember-me" checked> Keep me signed in</label>
+          <div class="auth-error" id="login-error" role="alert" aria-live="polite"></div>
           <button class="btn-submit" type="submit" id="login-btn">Sign in</button>
         </form>
         <div class="auth-footer">
-          New to Gearsh? <a href="join-gig.html">List your gig free</a>
-          · <a href="/auth.html?logout=1">Use a different account</a>
+          <span>New to Gearsh? <a href="/join-gig.html">Join as a creative</a></span>
+          <a href="/auth.html?logout=1">Use a different account</a>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 
-  <footer class="g-footer">
+  <footer class="g-footer join-footer">
     <div class="g-footer-inner">
-      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="The Gearsh"> &copy; 2025 Gearsh (Pty) Ltd.</div>
-      <ul class="g-footer-links">
-        <li><a href="/terms">Terms</a></li>
-        <li><a href="/privacy">Privacy</a></li>
-        <li><a href="./">Home</a></li>
-      </ul>
+      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="The Gearsh"> &copy; 2026 Gearsh (Pty) Ltd. All rights reserved.</div>
+      <ul class="g-footer-links"><li><a href="/terms">Terms</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/">Home</a></li></ul>
     </div>
   </footer>
 
   <script src="gearsh-auth.js"></script>
   <script>
+    const joinMenuButton = document.getElementById('join-menu-button');
+    const joinMobileMenu = document.getElementById('join-mobile-menu');
+    joinMenuButton.addEventListener('click', function() {
+      const open = joinMobileMenu.hidden;
+      joinMobileMenu.hidden = !open;
+      joinMenuButton.setAttribute('aria-expanded', String(open));
+      joinMenuButton.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      joinMenuButton.textContent = open ? '×' : '☰';
+    });
+    joinMobileMenu.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        joinMobileMenu.hidden = true;
+        joinMenuButton.setAttribute('aria-expanded', 'false');
+        joinMenuButton.setAttribute('aria-label', 'Open menu');
+        joinMenuButton.textContent = '☰';
+      });
+    });
     var API_BASE = '/api';
 
     function redirectAfterAuth(user) {
