@@ -50,7 +50,7 @@ const SA_SHOWCASE_ARTISTS = [
     badge: 'Listed',
     badgeClass: 'fb-new',
     hourlyRate: 200,
-    bio: 'NEXTWAV REC — Sonics From A Different Dimension. Professional recording, beat production, mixing & mastering by Vanz (@KillaBeatz99). 50% deposit required before booked session. T&Cs apply — beat sales are non-exclusive unless a license is purchased.',
+    bio: 'NEXTWAV REC — Sonics From A Different Dimension. Professional recording, beat production, mixing & mastering by Vanz (@KillaBeatz99). Bookings are confirmed through Gearsh. T&Cs apply — beat sales are non-exclusive unless a license is purchased.',
     skills: ['Recording', 'Beat Production', 'Mixing', 'Mastering', 'Music Production'],
     bookingServices: [
       {

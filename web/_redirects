@@ -7,8 +7,6 @@
 /app/login                /auth.html 200
 /join-gig.html            /join-gig.html 200
 /artist-dashboard.html    /artist-dashboard.html 200
-/my-bookings              /my-bookings.html 200
-/booking-success          /booking-success.html 200
 /artist-onboarding.html   /artist-onboarding.html 200
 /onboarding               /join-gig.html 200
 /signup                   /join-gig.html 200
@@ -19,45 +17,36 @@
 /app/signup               /join-gig.html 302
 
 # Flutter shell (explicit path only — use /gearsh-app.html for the mobile app)
-/gearsh-app.html          /gearsh-app.html 200
-/home                     /gearsh-app.html 200
-/discover                 /gearsh-app.html 200
-/discover/*               /gearsh-app.html 200
-/profile                  /gearsh-app.html 200
-/profile/*                /gearsh-app.html 200
-/profile-settings         /gearsh-app.html 200
-/edit-profile             /gearsh-app.html 200
-/dashboard/*              /gearsh-app.html 200
-/manager                  /gearsh-app.html 200
-/booking/*                /gearsh-app.html 200
+/gearsh-app.html          /app.html 200
+/home                     /app.html 200
+/discover                 /app.html 200
+/discover/*               /app.html 200
+/profile                  /profile.html 200
+/profile/*                /app.html 200
+/profile-settings         /app.html 200
+/edit-profile             /app.html 200
+/dashboard/*              /app.html 200
+/manager                  /app.html 200
+/booking/*                /app.html 200
 /glog/*                   /glog-post?slug=:splat 200
-/artist/*                 /gearsh-app.html 200
-# /artists and /search served via Cloudflare Pretty URLs from artists.html /
-# search.html. Do NOT add explicit rewrite rules — they will trigger the same
-# 308 loop documented at the top of this file.
-/category/*               /gearsh-app.html 200
-/gigs                     /gig-guide.html 200
-/gig-guide                /gig-guide.html 200
-/cart                     /gearsh-app.html 200
-/cart/*                   /gearsh-app.html 200
-/messages                 /gearsh-app.html 200
-/bookings                 /gearsh-app.html 200
-/saved-artists            /gearsh-app.html 200
-/forgot-password          /gearsh-app.html 200
-/reset-password           /gearsh-app.html 200
-/help                     /gearsh-app.html 200
-/faq                      /gearsh-app.html 200
-/settings                 /gearsh-app.html 200
-# NOTE: do NOT add rewrite rules like `/terms /terms.html 200`.
-# Cloudflare Pages' Pretty URLs auto-serves /terms from terms.html, and an
-# explicit rewrite causes a 308 redirect loop (Pretty URLs strips .html each
-# time the rewrite serves terms.html). The same applies to /privacy and
-# /login (see comment at the top of this file).
+/artist/*                 /app.html 200
+# /artists and /search served via Cloudflare Pretty URLs from artists.html / search.html.
+# Do NOT add explicit rewrite rules — they will trigger the same 308 loop documented above.
+/category/*               /app.html 200
+/gigs                     /gig-guide 302
+/cart                     /app.html 200
+/cart/*                   /app.html 200
+/messages                 /app.html 200
+/bookings                 /app.html 200
+/saved-artists            /app.html 200
+# Static password reset pages are served by Cloudflare Pretty URLs.
+/help                     /app.html 200
+/faq                      /app.html 200
+/settings                 /app.html 200
+# Cloudflare Pages Pretty URLs serve /terms from terms.html and /privacy from privacy.html.
 /privacy-policy           /privacy 301
 
-# Tonight — shareable shortlink to today's featured genre. search-page.js
-# reads ?spotlight=tonight and pre-fills the genre filter from
-# day-genre-schedule.js so the same URL works every night of the week.
+# Tonight — shareable shortlink to today's featured genre.
 /tonight                  /search?spotlight=tonight 302
 /following                /following-feed 302
 /gearsh                   /gearsh.html 200
@@ -65,8 +54,6 @@
 /book/gearsh              /gearsh 302
 /gig/*                    /gig-detail?slug=:splat 200
 /ticket/*                 /ticket-view?code=:splat 200
-/my-tickets               /my-tickets.html 200
-/ticket-success           /ticket-success.html 200
 
 # Other marketing static pages
 /gearsh-god.html          /gearsh-god.html 200
@@ -79,4 +66,6 @@
 /icons/*                  /icons/:splat 200
 /assets/*                 /assets/:splat 200
 
-/                         /index.html 200
+# Website revamp homepage. This lets the existing production deploy publish the new homepage
+# without changing the Flutter app bundle path.
+/                         /marketing-v2.html 200

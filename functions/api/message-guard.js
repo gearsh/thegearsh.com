@@ -4,7 +4,7 @@
 // the deal off-platform ("leakage"). Before a collaboration is booked & paid
 // through Gearsh, we redact contact details and off-platform payment cues from
 // messages, warn the sender, and flag the attempt for founder review. Once the
-// work is locked in (paid via escrow), contact exchange is unlocked as a reward
+// work is booked and paid through Gearsh, contact exchange is unlocked
 // for keeping the deal on Gearsh.
 
 const MASK = '\u2022\u2022\u2022';
@@ -100,7 +100,7 @@ export function guardMessage(text, unlocked) {
 export function leakageNudge(reasons) {
   if (reasons.indexOf('off_platform_phrase') !== -1 || reasons.indexOf('phone') !== -1 ||
       reasons.indexOf('email') !== -1 || reasons.indexOf('handle') !== -1 || reasons.indexOf('link') !== -1) {
-    return 'For both artists\u2019 protection, contact and payment details are hidden until the collaboration is booked and paid through Gearsh. Keeping it on Gearsh covers you with escrow, disputes, and a verified track record.';
+    return 'Contact and payment details are hidden until the collaboration is booked and paid through Gearsh. Booking records can help support review a dispute.';
   }
   return '';
 }

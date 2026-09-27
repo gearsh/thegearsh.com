@@ -14,8 +14,20 @@ function isTicketOrderId(id) {
   return String(id || '').startsWith('tord_');
 }
 
-async function handleTicketNotify(db, orderId, paymentStatus, payfastPaymentId, payload) {
+async function handleTicketNotify(db, orderId, paymentStatus, payfastPaymentId, payload, merchantId) {
   await ensureTicketsTables(db);
+
+  const payment = await db.prepare(`
+    SELECT id, amount, status, payfast_payment_id FROM ticket_payments
+    WHERE ticket_order_id = ? ORDER BY created_at DESC LIMIT 1
+  `).bind(orderId).first();
+  const order = await db.prepare(`SELECT status FROM ticket_orders WHERE id = ?`).bind(orderId).first();
+  if (order?.status === 'paid' && payment?.status === 'complete' &&
+      payment.payfast_payment_id === payfastPaymentId) return;
+  if (!order || order.status !== 'pending_payment' ||
+      !matchesPaymentAmountAndMerchant(payment, payload, merchantId)) {
+    throw new Error('Ticket order does not match pending payment, amount or merchant');
+  }
 
   if (paymentStatus === 'COMPLETE') {
     await fulfillTicketOrder(db, orderId, payfastPaymentId, payload);
@@ -23,10 +35,6 @@ async function handleTicketNotify(db, orderId, paymentStatus, payfastPaymentId, 
   }
 
   if (paymentStatus === 'FAILED' || paymentStatus === 'CANCELLED') {
-    const payment = await db.prepare(`
-      SELECT id FROM ticket_payments WHERE ticket_order_id = ? ORDER BY created_at DESC LIMIT 1
-    `).bind(orderId).first();
-
     const now = new Date().toISOString();
     if (payment) {
       await db.prepare(`
@@ -37,30 +45,49 @@ async function handleTicketNotify(db, orderId, paymentStatus, payfastPaymentId, 
   }
 }
 
-async function handleBookingNotify(db, bookingId, paymentStatus, payfastPaymentId, payload) {
+export function matchesPaymentAmountAndMerchant(payment, payload, merchantId) {
+  const paidCents = Math.round(Number(payload.amount_gross) * 100);
+  return payment && payment.status === 'pending' &&
+    payload.merchant_id === merchantId &&
+    Number.isFinite(paidCents) && paidCents > 0 &&
+    paidCents === Math.round(Number(payment.amount) * 100);
+}
+
+export const matchesBookingPayment = matchesPaymentAmountAndMerchant;
+
+export async function handleBookingNotify(db, paymentRef, paymentStatus, payfastPaymentId, payload, merchantId) {
   const now = new Date().toISOString();
-  const amount = Number(payload.amount_gross || payload.amount || 0);
-
+  // Older checkouts used the booking ID as reference. New checkouts use the
+  // unique payment ID so a delayed webhook cannot confirm a later attempt.
   const payment = await db.prepare(`
-    SELECT id, status FROM payments WHERE booking_id = ? ORDER BY created_at DESC LIMIT 1
-  `).bind(bookingId).first();
+    SELECT id, booking_id, amount, status, payfast_payment_id FROM payments
+    WHERE id = ? OR booking_id = ? ORDER BY created_at DESC LIMIT 1
+  `).bind(paymentRef, paymentRef).first();
 
-  if (payment && payment.status === 'complete') {
+  if (payment && payment.status === 'complete' &&
+      payment.payfast_payment_id === payfastPaymentId) {
     return;
   }
+  if (!matchesBookingPayment(payment, payload, merchantId)) {
+    throw new Error('Booking payment does not match pending amount or merchant');
+  }
+  const bookingId = payment.booking_id;
 
   if (paymentStatus === 'COMPLETE') {
-    if (payment) {
-      await db.prepare(`
+    const prior = await db.prepare(`SELECT id FROM payments WHERE booking_id = ? AND status = 'complete' LIMIT 1`).bind(bookingId).first();
+    if (prior) throw new Error('Booking already has a confirmed payment');
+    const booking = await db.prepare(`SELECT status FROM bookings WHERE id = ?`).bind(bookingId).first();
+    if (!booking || booking.status !== 'accepted') throw new Error('Booking is not payable');
+    await db.batch([db.prepare(`
         UPDATE payments
         SET status = 'complete', payfast_payment_id = ?, raw_payload = ?, updated_at = ?
-        WHERE id = ?
-      `).bind(payfastPaymentId, JSON.stringify(payload), now, payment.id).run();
-    }
-
-    await db.prepare(`
+        WHERE id = ? AND status = 'pending'
+      `).bind(payfastPaymentId, JSON.stringify(payload), now, payment.id), db.prepare(`
+      INSERT INTO escrow_ledger (id, booking_id, payment_id, event_type, amount, note, created_by, created_at)
+      VALUES (?, ?, ?, 'hold', ?, 'PayFast payment confirmed', ?, ?)
+    `).bind(`escrow_${payment.id}`, bookingId, payment.id, payment.amount, bookingId, now), db.prepare(`
       UPDATE bookings SET status = 'confirmed', updated_at = ? WHERE id = ? AND status IN ('pending', 'accepted')
-    `).bind(now, bookingId).run();
+    `).bind(now, bookingId)]);
   } else if (paymentStatus === 'FAILED' || paymentStatus === 'CANCELLED') {
     if (payment) {
       await db.prepare(`
@@ -97,9 +124,9 @@ export async function onRequestPost(context) {
     }
 
     if (isTicketOrderId(paymentRef)) {
-      await handleTicketNotify(context.env.DB, paymentRef, paymentStatus, payfastPaymentId, payload);
+      await handleTicketNotify(context.env.DB, paymentRef, paymentStatus, payfastPaymentId, payload, config.merchantId);
     } else {
-      await handleBookingNotify(context.env.DB, paymentRef, paymentStatus, payfastPaymentId, payload);
+      await handleBookingNotify(context.env.DB, paymentRef, paymentStatus, payfastPaymentId, payload, config.merchantId);
     }
 
     return new Response('OK', { status: 200 });

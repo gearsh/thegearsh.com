@@ -1,0 +1,52 @@
+name: Website Revamp Preview
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Test password recovery
+        run: node --test tests/password-reset.test.mjs
+
+      - name: Build preview site
+        run: |
+          rm -rf preview-site
+          # Preview the same static routes, assets, and redirects as the site.
+          # A curated subset silently returned the homepage for missing routes.
+          cp -a web preview-site
+          cp web/marketing-v2.html preview-site/index.html
+          cp web/preview-overrides.css preview-site/preview-overrides.css
+          printf '\n<link rel="stylesheet" href="preview-overrides.css">\n' >> preview-site/index.html
+          cp -r assets/images/* preview-site/assets/images/
+          echo "Preview bundle ready"
+
+      - name: Bind preview database
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          # Pages preview bindings are independent of production bindings.
+          # Keep the existing preview settings and add the DB binding used by signup/login.
+          curl -fsS --request PATCH \
+            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/thegearsh-com" \
+            --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            --header "Content-Type: application/json" \
+            --data '{"deployment_configs":{"preview":{"d1_databases":{"DB":{"id":"625dcd0a-84b7-4cce-a8b4-af6e4d3b37b0"}}}}}' \
+            | jq -e '.success and .result.deployment_configs.preview.d1_databases.DB.id == "625dcd0a-84b7-4cce-a8b4-af6e4d3b37b0"' > /dev/null
+
+      - name: Deploy preview to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy preview-site --project-name=thegearsh-com --branch=website-revamp-v1

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Read the Gearsh Privacy Policy. Learn how we collect, use, and protect your personal information.">
   <link rel="canonical" href="https://thegearsh.com/privacy">
-  <meta name="theme-color" content="#0A0A0A">
+  <meta name="theme-color" content="#020617">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Gearsh">
   <meta property="og:title" content="Privacy Policy | Gearsh">
@@ -16,58 +16,20 @@
   <title>Privacy Policy | Gearsh</title>
   <link rel="icon" type="image/png" href="icons/Icon-192.png">
   <link rel="apple-touch-icon" href="icons/Icon-512.png">
-  <link rel="stylesheet" href="gearsh-brand.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-  <style>
-    .legal-page { padding: 100px 20px 60px; max-width: 720px; margin: 0 auto; }
-    .legal-page h1 {
-      font-family: var(--g-serif); font-weight: 400;
-      font-size: clamp(28px, 5vw, 38px); color: var(--g-white);
-      letter-spacing: -0.02em; margin-bottom: 6px;
-    }
-    .legal-page h1 em { font-style: italic; color: var(--g-accent); }
-    .legal-meta { font-size: 13px; color: var(--g-text-dim); margin-bottom: 32px; }
-    .legal-notice {
-      background: var(--g-accent-light); border: 0.5px solid rgba(0,191,255,0.15);
-      border-radius: 12px; padding: 16px 20px; margin-bottom: 32px;
-      font-size: 13px; color: var(--g-accent); line-height: 1.55;
-    }
-    .legal-section { margin-bottom: 36px; }
-    .legal-section-num { font-size: 12px; font-weight: 700; color: var(--g-accent); letter-spacing: 0.06em; margin-bottom: 6px; }
-    .legal-section h2 { font-size: 18px; font-weight: 700; color: var(--g-white); margin-bottom: 12px; }
-    .legal-section p { font-size: 14px; color: var(--g-text-muted); line-height: 1.7; margin-bottom: 10px; }
-    .legal-section ul { list-style: none; margin: 8px 0 12px; }
-    .legal-section ul li {
-      font-size: 14px; color: var(--g-text-muted); line-height: 1.7;
-      padding-left: 20px; position: relative; margin-bottom: 4px;
-    }
-    .legal-section ul li::before {
-      content: ''; position: absolute; left: 0; top: 10px;
-      width: 5px; height: 5px; border-radius: 50%; background: var(--g-accent);
-    }
-    .legal-divider { height: 0.5px; background: var(--g-border); margin: 36px 0; }
-  </style>
+  <link rel="stylesheet" href="legal-revamp.css">
 </head>
 <body>
 
-  <nav class="g-nav">
-    <div class="g-nav-inner">
-      <a href="./" class="g-nav-logo"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
-      <div class="g-nav-right">
-        <a href="/auth.html" class="g-nav-mobile-login">Login</a>
-        <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu"><i class="ti ti-menu-2"></i></button>
-      </div>
-      <ul class="g-nav-links">
-        <li class="g-nav-menu-auth"><a href="/auth.html">Login</a></li>
-        <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
-        <li><a href="./">Home</a></li>
-        <li><a href="/terms">Terms</a></li>
-      </ul>
-    </div>
-  </nav>
+  <header class="wrap nav">
+    <a href="/" aria-label="Gearsh home"><img class="logo" src="/assets/images/gearsh-logo.png" alt="Gearsh"></a>
+    <nav class="nav-links" aria-label="Main navigation"><a href="/search.html">Find Talent</a><a href="/join-gig.html">For Creatives</a><a href="/#how-it-works">How It Works</a><a href="/#about">About</a><a class="btn btn-primary" href="/auth.html">Sign In</a></nav>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">☰</button>
+  </header>
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation"><a href="/search.html">Find Talent</a><a href="/join-gig.html">For Creatives</a><a href="/#how-it-works">How It Works</a><a href="/#about">About</a><a class="mobile-signin" href="/auth.html">Sign In</a></nav>
 
   <main class="legal-page">
-    <h1>Privacy <em>Policy</em></h1>
+    <div class="eyebrow">THE GEARSH · LEGAL</div>
+    <h1>Privacy <span>Policy</span></h1>
     <div class="legal-meta">Effective upon platform use · POPIA Compliant</div>
 
     <div class="legal-notice">
@@ -93,11 +55,7 @@
     <div class="legal-section" id="p9"><div class="legal-section-num">09</div><h2>Contact</h2><p>For questions, concerns, or requests regarding your personal information, please contact our Information Officer at privacy@thegearsh.com.</p></div>
   </main>
 
-  <footer class="g-footer">
-    <div class="g-footer-inner">
-      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="The Gearsh"> &copy; 2025 Gearsh (Pty) Ltd. All rights reserved.</div>
-      <ul class="g-footer-links"><li><a href="/terms">Terms</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/auth.html">Sign in</a></li><li><a href="join-gig.html">List your gig</a></li></ul>
-    </div>
-  </footer>
+  <footer class="wrap footer"><div>© 2026 Gearsh (Pty) Ltd. All rights reserved.</div><div class="footer-links"><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/auth.html">Sign In</a></div></footer>
+  <script src="/legal-revamp.js" defer></script>
 </body>
 </html>
