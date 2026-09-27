@@ -19,34 +19,34 @@
 /app/signup               /join-gig.html 302
 
 # Flutter shell (explicit path only — use /gearsh-app.html for the mobile app)
-/gearsh-app.html          /gearsh-app.html 200
-/home                     /gearsh-app.html 200
-/discover                 /gearsh-app.html 200
-/discover/*               /gearsh-app.html 200
-/profile                  /gearsh-app.html 200
-/profile/*                /gearsh-app.html 200
-/profile-settings         /gearsh-app.html 200
-/edit-profile             /gearsh-app.html 200
-/dashboard/*              /gearsh-app.html 200
-/manager                  /gearsh-app.html 200
-/booking/*                /gearsh-app.html 200
+/gearsh-app.html          /app.html 200
+/home                     /app.html 200
+/discover                 /app.html 200
+/discover/*               /app.html 200
+/profile                  /app.html 200
+/profile/*                /app.html 200
+/profile-settings         /app.html 200
+/edit-profile             /app.html 200
+/dashboard/*              /app.html 200
+/manager                  /app.html 200
+/booking/*                /app.html 200
 /glog/*                   /glog-post?slug=:splat 200
-/artist/*                 /gearsh-app.html 200
+/artist/*                 /app.html 200
 # /artists and /search served via Cloudflare Pretty URLs from artists.html / search.html.
 # Do NOT add explicit rewrite rules — they will trigger the same 308 loop documented above.
-/category/*               /gearsh-app.html 200
+/category/*               /app.html 200
 /gigs                     /gig-guide.html 200
 /gig-guide                /gig-guide.html 200
-/cart                     /gearsh-app.html 200
-/cart/*                   /gearsh-app.html 200
-/messages                 /gearsh-app.html 200
-/bookings                 /gearsh-app.html 200
-/saved-artists            /gearsh-app.html 200
-/forgot-password          /gearsh-app.html 200
-/reset-password           /gearsh-app.html 200
-/help                     /gearsh-app.html 200
-/faq                      /gearsh-app.html 200
-/settings                 /gearsh-app.html 200
+/cart                     /app.html 200
+/cart/*                   /app.html 200
+/messages                 /app.html 200
+/bookings                 /app.html 200
+/saved-artists            /app.html 200
+/forgot-password          /app.html 200
+/reset-password           /app.html 200
+/help                     /app.html 200
+/faq                      /app.html 200
+/settings                 /app.html 200
 # Cloudflare Pages Pretty URLs serve /terms from terms.html and /privacy from privacy.html.
 /privacy-policy           /privacy 301
 
