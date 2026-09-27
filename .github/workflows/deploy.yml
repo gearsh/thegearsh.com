@@ -121,6 +121,8 @@ jobs:
           cp web/my-bookings.js build/web/my-bookings.js 2>/dev/null || true
           cp web/booking-success.html build/web/booking-success.html 2>/dev/null || true
           cp web/tickets.css build/web/tickets.css 2>/dev/null || true
+          cp web/legal-revamp.css build/web/legal-revamp.css
+          cp web/legal-revamp.js build/web/legal-revamp.js
           cp web/terms.html build/web/terms.html
           cp web/privacy.html build/web/privacy.html
           cp web/_redirects build/web/_redirects
