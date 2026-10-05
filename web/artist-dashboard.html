@@ -282,10 +282,10 @@
       <a href="./" class="g-nav-logo">
         <img src="icons/Icon-512.png" alt="The Gearsh">
       </a>
-      <button class="g-nav-menu-btn" onclick="document.querySelector('.g-nav-links').classList.toggle('open')" aria-label="Menu">
+      <button class="g-nav-menu-btn" type="button" id="dash-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="dash-nav-links">
         <i class="ti ti-menu-2"></i>
       </button>
-      <ul class="g-nav-links">
+      <ul class="g-nav-links" id="dash-nav-links">
         <li><a href="artist-dashboard.html" class="active">Dashboard</a></li>
         <li><a href="/search">Book artists</a></li>
         <li><a href="/artists">All artists</a></li>
@@ -474,6 +474,23 @@
   <script>
     var API_BASE = '/api';
     var dashboardData = null;
+    var dashMenuBtn = document.getElementById('dash-menu-btn');
+    var dashNavLinks = document.getElementById('dash-nav-links');
+    if (dashMenuBtn && dashNavLinks) {
+      dashMenuBtn.addEventListener('click', function() {
+        var open = dashNavLinks.classList.toggle('open');
+        dashMenuBtn.setAttribute('aria-expanded', String(open));
+        dashMenuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      });
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && dashNavLinks.classList.contains('open')) {
+          dashNavLinks.classList.remove('open');
+          dashMenuBtn.setAttribute('aria-expanded', 'false');
+          dashMenuBtn.setAttribute('aria-label', 'Open menu');
+          dashMenuBtn.focus();
+        }
+      });
+    }
 
     var CHECK_ICONS = {
       profile: 'ti-user',
