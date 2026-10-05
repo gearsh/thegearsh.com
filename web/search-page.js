@@ -109,6 +109,7 @@
     activeIndex = -1;
     if (!items.length) {
       suggestions.classList.remove('is-open');
+      input.setAttribute('aria-expanded', 'false');
       suggestions.innerHTML = '';
       return;
     }
@@ -124,6 +125,7 @@
       '</a>';
     }).join('');
     suggestions.classList.add('is-open');
+    input.setAttribute('aria-expanded', 'true');
   }
 
   async function runSearch(query, skipUrl) {
@@ -133,6 +135,7 @@
 
     if (!q && !getMarketplaceParam()) {
       suggestions.classList.remove('is-open');
+      input.setAttribute('aria-expanded', 'false');
       renderTrending();
       return;
     }
@@ -253,7 +256,9 @@
       return;
     }
     opts.forEach(function (el, i) {
-      el.style.background = i === activeIndex ? 'rgba(255,255,255,0.04)' : '';
+      var active = i === activeIndex;
+      el.style.background = active ? 'rgba(255,255,255,0.04)' : '';
+      el.setAttribute('aria-selected', active ? 'true' : 'false');
     });
   });
 
@@ -269,6 +274,7 @@
   document.addEventListener('click', function (e) {
     if (!suggestions.contains(e.target) && e.target !== input) {
       suggestions.classList.remove('is-open');
+      input.setAttribute('aria-expanded', 'false');
     }
   });
 
