@@ -1,7 +1,11 @@
 // PayFast helpers shared by initiate + notify endpoints
 import { md5 } from './payfast-md5.js';
 
-export const PLATFORM_FEE_RATE = 0.126;
+export const CLIENT_FEE_RATE = 0.126;
+export const ARTIST_FEE_RATE = 0.04;
+export const TOTAL_GEARSH_FEE_RATE = CLIENT_FEE_RATE + ARTIST_FEE_RATE;
+// Backwards-compatible alias for code that treats the Client fee as the checkout fee.
+export const PLATFORM_FEE_RATE = CLIENT_FEE_RATE;
 
 export function getPayfastConfig(env) {
   const sandbox = String(env.PAYFAST_SANDBOX || 'true') !== 'false';
