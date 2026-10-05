@@ -94,6 +94,15 @@
         joinMenuButton.textContent = '☰';
       });
     });
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && !joinMobileMenu.hidden) {
+        joinMobileMenu.hidden = true;
+        joinMenuButton.setAttribute('aria-expanded', 'false');
+        joinMenuButton.setAttribute('aria-label', 'Open menu');
+        joinMenuButton.textContent = '☰';
+        joinMenuButton.focus();
+      }
+    });
     var API_BASE = '/api';
 
     function redirectAfterAuth(user) {
