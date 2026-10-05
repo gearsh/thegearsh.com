@@ -47,7 +47,7 @@
         <a href="/#about">About</a>
         <a class="btn btn-primary" href="/login.html">Sign In</a>
       </nav>
-      <button class="menu-btn" id="searchMenuBtn" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+      <button class="menu-btn" id="searchMenuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="searchMobileMenu">☰</button>
     </div>
   </header>
   <nav id="searchMobileMenu" style="display:none;position:absolute;right:14px;top:68px;z-index:40;width:280px;background:#0f172a;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:10px;box-shadow:0 20px 50px rgba(0,0,0,.4)" aria-label="Mobile navigation">
@@ -68,7 +68,7 @@
           <div class="search-bar-wrap">
             <div class="search-bar" role="search">
               <i class="ti ti-search" aria-hidden="true"></i>
-              <input type="search" id="search-input" placeholder="Try “photographer”, “DJ”, “producer” or a city…" autocomplete="off" aria-label="Search creative talent" enterkeyhint="search">
+              <input type="search" id="search-input" placeholder="Try “photographer”, “DJ”, “producer” or a city…" autocomplete="off" aria-label="Search creative talent" enterkeyhint="search" role="combobox" aria-autocomplete="list" aria-controls="search-suggestions" aria-expanded="false">
               <button type="button" class="search-clear" id="search-clear" aria-label="Clear search"><i class="ti ti-x"></i></button>
               <button type="button" class="search-button" id="search-submit" aria-label="Search"><i class="ti ti-search"></i><span>Search</span></button>
             </div>
@@ -107,9 +107,9 @@
     (function(){
       var b=document.getElementById('searchMenuBtn'),m=document.getElementById('searchMobileMenu');
       if(!b||!m)return;
-      b.addEventListener('click',function(){var open=m.style.display!=='block';m.style.display=open?'block':'none';b.setAttribute('aria-expanded',open?'true':'false');b.setAttribute('aria-label',open?'Close menu':'Open menu');b.textContent=open?'×':'☰';});
+      b.addEventListener('click',function(){var open=m.style.display!=='block';m.style.display=open?'block':'none';b.setAttribute('aria-expanded',open?'true':'false');b.setAttribute('aria-label',open?'Close menu':'Open menu');b.textContent=open?'×':'☰';if(open){var first=m.querySelector('a');if(first)first.focus();}});
       m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.style.display='none';b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Open menu');b.textContent='☰';});});
-      document.addEventListener('click',function(e){if(!m.contains(e.target)&&e.target!==b){m.style.display='none';b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Open menu');b.textContent='☰';}});
+      document.addEventListener('click',function(e){if(!m.contains(e.target)&&e.target!==b){m.style.display='none';b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Open menu');b.textContent='☰';}});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&m.style.display==='block'){m.style.display='none';b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Open menu');b.textContent='☰';b.focus();}});
     })();
   </script>
   <script defer src="day-genre-schedule.js"></script>
