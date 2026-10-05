@@ -674,7 +674,7 @@
           (booking.service_name ? ' · ' + escapeHtml(booking.service_name) : '') + '</div></div>' +
           '<div style="text-align:right;min-width:120px">' +
           '<div class="service-price">' + formatMoney(booking.total_price) + '</div>' +
-          '<span class="status-pill status-' + escapeHtml(booking.status) + '">' + escapeHtml(booking.status === 'accepted' ? 'awaiting payment' : booking.status) + '</span>' +
+          '<span class="status-pill status-' + escapeHtml(booking.status) + '">' + escapeHtml(booking.status) + '</span>' +
           acts + '</div></div>';
       }).join('') + '</div>';
 
