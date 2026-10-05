@@ -3,6 +3,8 @@
 
   var API = '/api';
   var PLATFORM_FEE = 0.126;
+  // Deliberate client-side release gate. The server independently enforces GEARSH_BOOKING_PAYMENTS_ENABLED.
+  var BOOKING_CHECKOUT_ENABLED = false;
 
   function getToken() { return localStorage.getItem('gearsh_token') || ''; }
   function escapeHtml(s) {
@@ -47,7 +49,9 @@
       return 'The artist will review your request. You can pay here once they accept.';
     }
     if (status === 'accepted' && subtotal > 0) {
-      return 'Accepted — pay securely via PayFast to confirm your booking.';
+      return BOOKING_CHECKOUT_ENABLED
+        ? 'Accepted — pay securely via PayFast to confirm your booking.'
+        : 'Accepted. Online checkout is not available yet; Gearsh will show the payment step once the production payment gates are cleared.';
     }
     if (status === 'accepted' && subtotal <= 0) {
       return 'Accepted — the artist still needs to confirm a price with you.';
@@ -211,7 +215,7 @@
         '<div><strong>Tracking ' + escapeHtml(booking.id) + '</strong>' +
         (help ? '<p>' + escapeHtml(help) + '</p>' : '') +
         '</div>' +
-        (booking.status === 'accepted' && Number(booking.total_price || 0) > 0
+        (BOOKING_CHECKOUT_ENABLED && booking.status === 'accepted' && Number(booking.total_price || 0) > 0
           ? '<button type="button" class="btn-main bk-pay" data-id="' + escapeHtml(booking.id) + '" data-email="' + escapeHtml(payEmail || '') + '">Pay now</button>'
           : '') +
       '</div>';

@@ -332,7 +332,9 @@ class GlobalConfigService extends ChangeNotifier implements IConfigRepository {
   RegionConfig get currentRegion => _currentRegion;
 
   // Stored prices are in USD for consistency
-  static const double _baseServiceFeePercent = 0.126; // 12.6% service fee
+  static const double clientFeePercent = 0.126; // 12.6% paid by Client
+  static const double artistFeePercent = 0.04; // 4% deducted from Artist payout
+  static const double totalGearshFeePercent = clientFeePercent + artistFeePercent;
 
   /// Initialise from stored preferences
   Future<void> init() async {
@@ -388,7 +390,7 @@ class GlobalConfigService extends ChangeNotifier implements IConfigRepository {
 
   /// Calculate service fee
   double calculateServiceFee(double bookingAmount) {
-    return bookingAmount * _baseServiceFeePercent;
+    return bookingAmount * clientFeePercent;
   }
 
   /// Get total with service fee
