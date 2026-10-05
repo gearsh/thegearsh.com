@@ -219,6 +219,7 @@
     var q = input.value.trim();
     if (q.length < 2) {
       suggestions.classList.remove('is-open');
+      input.setAttribute('aria-expanded', 'false');
       return;
     }
     showSuggestions(GearshFeed.searchShowcase(q, 6));
@@ -251,6 +252,7 @@
       return;
     } else if (e.key === 'Escape') {
       suggestions.classList.remove('is-open');
+      input.setAttribute('aria-expanded', 'false');
       return;
     } else {
       return;
@@ -266,6 +268,7 @@
     input.value = '';
     clearBtn.classList.remove('visible');
     suggestions.classList.remove('is-open');
+    input.setAttribute('aria-expanded', 'false');
     setQueryParam('');
     renderTrending();
     input.focus();
