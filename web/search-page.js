@@ -109,11 +109,12 @@
     activeIndex = -1;
     if (!items.length) {
       suggestions.classList.remove('is-open');
+      input.setAttribute('aria-expanded', 'false');
       suggestions.innerHTML = '';
       return;
     }
     suggestions.innerHTML = items.map(function (item, i) {
-      var href = GearshFeed.bookUrl(item) || (item.username ? 'book-gig?artist=' + encodeURIComponent(item.username) : '#');
+      var href = GearshFeed.bookUrl(item) || (item.username ? 'creative-profile.html?artist=' + encodeURIComponent(item.username) : '#');
       return '<a class="search-suggestion" href="' + href + '" data-idx="' + i + '" role="option">' +
         '<img src="' + (item.image || 'icons/Icon-512.png') + '" alt="" loading="lazy">' +
         '<div class="search-suggestion-meta">' +
@@ -124,6 +125,7 @@
       '</a>';
     }).join('');
     suggestions.classList.add('is-open');
+    input.setAttribute('aria-expanded', 'true');
   }
 
   async function runSearch(query, skipUrl) {
@@ -133,6 +135,7 @@
 
     if (!q && !getMarketplaceParam()) {
       suggestions.classList.remove('is-open');
+      input.setAttribute('aria-expanded', 'false');
       renderTrending();
       return;
     }
@@ -206,25 +209,29 @@
       merged.length + ' creator' + (merged.length === 1 ? '' : 's') + (q ? ' for “' + q + '”' : ''),
       apiServices
     );
-    suggestions.classList.remove('is-open');
+    // Do not close suggestions here. Typing should keep matching creatives
+    // visible and clickable beside the search field. Suggestions only close
+    // when the user clicks outside, presses Escape, clears the query, or
+    // explicitly chooses a suggestion.
   }
 
   var debouncedSuggest = debounce(function () {
     var q = input.value.trim();
     if (q.length < 2) {
       suggestions.classList.remove('is-open');
+      input.setAttribute('aria-expanded', 'false');
       return;
     }
     showSuggestions(GearshFeed.searchShowcase(q, 6));
-  }, 180);
+  }, 120);
 
-  var debouncedSearch = debounce(function () {
-    runSearch(input.value);
-  }, 320);
-
+  // Searching the full result set while the user is still typing causes the
+  // suggestion layer to flicker/disappear. Keep live suggestions responsive,
+  // and run the full search only when the user presses Enter or the Search
+  // button.
   input.addEventListener('input', function () {
+    clearBtn.classList.toggle('visible', !!input.value.trim());
     debouncedSuggest();
-    debouncedSearch();
   });
 
   input.addEventListener('keydown', function (e) {
@@ -245,12 +252,15 @@
       return;
     } else if (e.key === 'Escape') {
       suggestions.classList.remove('is-open');
+      input.setAttribute('aria-expanded', 'false');
       return;
     } else {
       return;
     }
     opts.forEach(function (el, i) {
-      el.style.background = i === activeIndex ? 'rgba(255,255,255,0.04)' : '';
+      var active = i === activeIndex;
+      el.style.background = active ? 'rgba(255,255,255,0.04)' : '';
+      el.setAttribute('aria-selected', active ? 'true' : 'false');
     });
   });
 
@@ -258,6 +268,7 @@
     input.value = '';
     clearBtn.classList.remove('visible');
     suggestions.classList.remove('is-open');
+    input.setAttribute('aria-expanded', 'false');
     setQueryParam('');
     renderTrending();
     input.focus();
@@ -266,6 +277,7 @@
   document.addEventListener('click', function (e) {
     if (!suggestions.contains(e.target) && e.target !== input) {
       suggestions.classList.remove('is-open');
+      input.setAttribute('aria-expanded', 'false');
     }
   });
 
@@ -375,5 +387,4 @@
   } else {
     renderTrending();
   }
-  input.focus();
 })(typeof window !== 'undefined' ? window : this);

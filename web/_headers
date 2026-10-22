@@ -23,6 +23,13 @@
 /auth.html
   Cache-Control: no-store, max-age=0
 
+/forgot-password
+  Cache-Control: no-store, max-age=0
+
+/reset-password
+  Cache-Control: no-store, max-age=0
+  Referrer-Policy: no-referrer
+
 /login.html
   Cache-Control: no-store, max-age=0
 

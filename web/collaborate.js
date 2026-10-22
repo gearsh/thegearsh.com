@@ -432,7 +432,7 @@
         'Contact sharing is unlocked — this collaboration is booked &amp; protected on Gearsh.</div>';
     }
     return '<div class="collab-guard-banner"><i class="ti ti-shield-lock"></i> ' +
-      '<span><b>Keep it on Gearsh.</b> Phone numbers, emails, socials &amp; off-platform payment details are hidden until the collaboration is booked and paid here. Booking on Gearsh covers you with escrow, dispute support, and a verified track record.</span></div>';
+      '<span><b>Keep it on Gearsh.</b> Phone numbers, emails, socials &amp; off-platform payment details are hidden until the collaboration is booked and paid here. Your booking and payment history remain available for support and dispute review.</span></div>';
   }
 
   function loadThread(id) {
