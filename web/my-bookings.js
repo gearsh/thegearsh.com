@@ -3,6 +3,8 @@
 
   var API = '/api';
   var PLATFORM_FEE = 0.126;
+  // Deliberate client-side release gate. The server independently enforces GEARSH_BOOKING_PAYMENTS_ENABLED.
+  var BOOKING_CHECKOUT_ENABLED = false;
 
   function getToken() { return localStorage.getItem('gearsh_token') || ''; }
   function escapeHtml(s) {
@@ -34,7 +36,7 @@
   }
 
   function statusLabel(status) {
-    if (status === 'accepted') return 'Ready to pay';
+    if (status === 'accepted') return BOOKING_CHECKOUT_ENABLED ? 'Ready to pay' : 'Accepted';
     if (status === 'pending') return 'Awaiting artist';
     if (status === 'confirmed') return 'Paid';
     if (status === 'completed') return 'Completed';
@@ -44,10 +46,12 @@
 
   function statusHelp(status, subtotal) {
     if (status === 'pending') {
-      return 'The artist will review your request. You can pay here once they accept.';
+      return 'The artist will review your request. Online payments are coming soon.';
     }
     if (status === 'accepted' && subtotal > 0) {
-      return 'Accepted — pay securely via PayFast to confirm your booking.';
+      return BOOKING_CHECKOUT_ENABLED
+        ? 'Accepted — pay securely via PayFast to confirm your booking.'
+        : 'Accepted. Online checkout is not available yet; Contact support@thegearsh.com to discuss next steps.';
     }
     if (status === 'accepted' && subtotal <= 0) {
       return 'Accepted — the artist still needs to confirm a price with you.';
@@ -60,7 +64,7 @@
     var subtotal = Number(b.total_price || 0);
     var fee = Math.round(subtotal * PLATFORM_FEE * 100) / 100;
     var total = Math.round((subtotal + fee) * 100) / 100;
-    var payable = b.status === 'accepted' && subtotal > 0;
+    var payable = BOOKING_CHECKOUT_ENABLED && b.status === 'accepted' && subtotal > 0;
     var help = statusHelp(b.status, subtotal);
     var isHighlight = highlightId && b.id === highlightId;
     var payBtn = payable
@@ -211,7 +215,7 @@
         '<div><strong>Tracking ' + escapeHtml(booking.id) + '</strong>' +
         (help ? '<p>' + escapeHtml(help) + '</p>' : '') +
         '</div>' +
-        (booking.status === 'accepted' && Number(booking.total_price || 0) > 0
+        (BOOKING_CHECKOUT_ENABLED && booking.status === 'accepted' && Number(booking.total_price || 0) > 0
           ? '<button type="button" class="btn-main bk-pay" data-id="' + escapeHtml(booking.id) + '" data-email="' + escapeHtml(payEmail || '') + '">Pay now</button>'
           : '') +
       '</div>';

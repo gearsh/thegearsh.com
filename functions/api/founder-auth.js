@@ -9,7 +9,7 @@ import {
   generateToken,
 } from './auth-utils.js';
 
-export const COMMISSION_RATE = 0.126;
+export const COMMISSION_RATE = 0.166; // Total Gearsh fees: 12.6% Client + 4% Artist
 
 export function getFounderEmails(env) {
   const raw = env.FOUNDER_EMAIL || env.ADMIN_EMAIL || '';

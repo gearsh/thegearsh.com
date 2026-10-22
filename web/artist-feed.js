@@ -6,7 +6,7 @@
   'use strict';
 
   var API_BASE = '/api';
-  var CACHE_KEY = 'gearsh_feed_cache_v6';
+  var CACHE_KEY = 'gearsh_feed_cache_v7';
   var CACHE_TTL = 5 * 60 * 1000;
 
   // Tonight helper — reads from day-genre-schedule.js when present.
@@ -94,12 +94,12 @@
 
   function bookUrl(artist) {
     if (!artist || !artist.bookable) return null;
-    if (artist.username) return 'book-gig?artist=' + encodeURIComponent(String(artist.username).toLowerCase());
+    if (artist.username) return 'creative-profile.html?artist=' + encodeURIComponent(String(artist.username).toLowerCase());
     if (artist.profile_url) {
       var match = String(artist.profile_url).match(/\/book\/([^/?#]+)/i);
-      if (match) return 'book-gig?artist=' + encodeURIComponent(match[1].toLowerCase());
+      if (match) return 'creative-profile.html?artist=' + encodeURIComponent(match[1].toLowerCase());
     }
-    if (artist.artist_id) return 'book-gig?artist=' + encodeURIComponent(artist.artist_id);
+    if (artist.artist_id) return 'creative-profile.html?artist=' + encodeURIComponent(artist.artist_id);
     return null;
   }
 

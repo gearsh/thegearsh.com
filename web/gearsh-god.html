@@ -386,12 +386,12 @@
         <section class="god-view" data-view="payments">
           <div class="god-view-head">
             <h2>Payments</h2>
-            <p>PayFast transactions, platform fees, and escrow events.</p>
+            <p>PayFast transactions, Gearsh fees and Artist bank payout reconciliation.</p>
           </div>
 
           <div class="god-panel">
-            <h2>Payments & escrow</h2>
-            <div class="sub">PayFast transactions and escrow events</div>
+            <h2>Payments & settlement records</h2>
+            <div class="sub">Ledger amounts are internal records. Verify PayFast settlement and bank statements before marking an Artist transfer reconciled.</div>
             <div id="escrow-summary" class="god-list" style="margin-bottom:16px"></div>
             <div class="god-table-wrap">
               <table class="god-table">
@@ -401,6 +401,17 @@
                 <tbody id="payments-body"></tbody>
               </table>
             </div>
+            <h3>Artist bank payouts</h3>
+            <div id="payout-queue" class="god-list"></div>
+            <div id="payout-records" class="god-list"></div>
+            <form id="payout-form" onsubmit="recordBankPayout(event)" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px">
+              <input name="payment_id" required placeholder="Gearsh payment ID" aria-label="Gearsh payment ID">
+              <input name="payfast_settlement_reference" required placeholder="PayFast settlement reference" aria-label="PayFast settlement reference">
+              <input name="bank_transfer_reference" required placeholder="Bank transfer reference" aria-label="Bank transfer reference">
+              <input name="beneficiary_last4" required pattern="[0-9]{4}" maxlength="4" placeholder="Artist bank last 4" aria-label="Artist bank account last four digits">
+              <button type="submit">Record bank transfer</button>
+            </form>
+            <p id="payout-message" role="status"></p>
           </div>
         </section>
 
@@ -809,7 +820,55 @@
           '<td>' + formatDate(row.created_at) + '</td>' +
         '</tr>';
       }).join('') || '<tr><td colspan="7">No payments yet</td></tr>';
+      document.getElementById('payout-queue').innerHTML = (data.reconciliation_queue || []).filter(function(row) {
+        return row.booking_status === 'completed' && row.ledger_release === 0 && row.ledger_refund === 0;
+      }).map(function(row) {
+        return '<div class="god-list-item"><span>Booking ' + escapeHtmlGod(row.booking_id) +
+          ' · payment ' + escapeHtmlGod(row.payment_id) + ' · PayFast ' + escapeHtmlGod(row.payfast_payment_id) +
+          ' · calculate Artist ' + money(row.artist_share_if_fully_payable) +
+          '</span><span>Verify settlement and bank beneficiary</span></div>';
+      }).join('') || '<div class="god-list-item">No completed bookings awaiting payout review</div>';
+      var payouts = await founderFetch('/founder/payouts');
+      document.getElementById('payout-records').innerHTML = (payouts || []).map(function(row) {
+        return '<div class="god-list-item"><span>' + escapeHtmlGod(row.booking_id) +
+          ' · Artist ' + money(row.amount) + ' · bank ****' + escapeHtmlGod(row.beneficiary_last4) +
+          ' · ' + escapeHtmlGod(row.status) + '</span>' +
+          (row.status === 'awaiting_bank_statement' ? '<button type="button" class="reconcile-payout" data-payment-id="' + escapeHtmlGod(row.payment_id) + '">Verify bank statement</button>' : '') + '</div>';
+      }).join('') || '<div class="god-list-item">No bank transfers recorded</div>';
     }
+
+    async function recordBankPayout(event) {
+      event.preventDefault();
+      var form = event.target;
+      var message = document.getElementById('payout-message');
+      var fields = new FormData(form);
+      var body = Object.fromEntries(fields.entries());
+      try {
+        message.textContent = 'Recording transfer evidence…';
+        await founderFetch('/founder/payouts', { method: 'POST', body: JSON.stringify(body) });
+        message.textContent = 'Transfer recorded. Reconcile it against a bank statement before it appears as paid.';
+        form.reset();
+        await loadPayments();
+      } catch (error) { message.textContent = error.message || 'Could not record transfer'; }
+    }
+
+    async function reconcileBankPayout(paymentId) {
+      var statementRef = prompt('Bank statement transaction reference for this Artist transfer:');
+      if (!statementRef) return;
+      var message = document.getElementById('payout-message');
+      try {
+        await founderFetch('/founder/payouts', { method: 'PATCH', body: JSON.stringify({
+          payment_id: paymentId, bank_statement_reference: statementRef.trim()
+        }) });
+        message.textContent = 'Bank transfer reconciled against the supplied statement reference.';
+        await loadPayments();
+      } catch (error) { message.textContent = error.message || 'Could not reconcile transfer'; }
+    }
+
+    document.getElementById('payout-records').addEventListener('click', function(event) {
+      var button = event.target.closest('.reconcile-payout');
+      if (button) reconcileBankPayout(button.dataset.paymentId);
+    });
 
     async function resolveDispute(disputeId, status) {
       await founderFetch('/founder/disputes', {

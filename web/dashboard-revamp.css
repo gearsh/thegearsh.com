@@ -1,0 +1,37 @@
+/* Dashboard surfaces match the revamp's navy and DeepSkyBlue palette. */
+:root{
+  --g-black:#020617;--g-surface:#0f172a;--g-surface-2:#111c31;
+  --g-surface-3:#17233a;--g-surface-4:#20304a;
+  --g-border:rgba(255,255,255,.13);--g-border-light:rgba(255,255,255,.2);
+  --g-text:#f8fafc;--g-white:#f8fafc;--g-text-muted:#cbd5e1;
+  --g-text-dim:#94a3b8;--g-accent:#38bdf8;--g-accent-dim:#0ea5e9;
+  --g-accent-light:rgba(14,165,233,.1);
+  --g-font:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --g-serif:var(--g-font);
+}
+body{background:#020617;color:#f8fafc}
+.g-nav{background:#020617;backdrop-filter:none;border-bottom:1px solid rgba(255,255,255,.1)}
+.g-nav-inner{max-width:1120px;height:78px}
+.g-nav-logo img{height:42px}
+.g-nav-links a{font-size:14px;color:#cbd5e1}
+.g-nav-links a:hover,.g-nav-links a.active{color:#fff}
+.dash-page{padding-top:78px}
+.dash-hero{border-bottom:1px solid rgba(255,255,255,.13)}
+.dash-hero-inner,.dash-body{max-width:1120px}
+.dash-title,.card-title,.empty-state h3{font-family:var(--g-font);font-style:normal;font-weight:800;letter-spacing:-.04em}
+.dash-title em,.card-title em{font-style:normal;color:#38bdf8}
+.dash-badge,.checklist-badge{font-weight:700}
+.stats-row{gap:12px;background:transparent;border-radius:0;overflow:visible}
+.stat-item,.card,.list-row,.calendar-day{background:#0f172a;border:1px solid rgba(255,255,255,.13);border-radius:16px}
+.stat-label,.calendar-day-name{color:#aebdd0}
+.mastery-card{background:#111c31;border:1px solid rgba(56,189,248,.2)}
+.dash-tab{min-height:44px}
+.field-input,.field-select,.field-textarea,#dash-share-link{background:#020617!important;border:1px solid rgba(255,255,255,.17)!important;color:#f8fafc!important}
+:where(a,button,input,select,textarea):focus-visible{outline:3px solid #38bdf8!important;outline-offset:3px}
+.g-footer{background:#020617;border-top:1px solid rgba(255,255,255,.1)}
+@media(max-width:768px){
+  .g-nav-inner{height:70px}
+  .dash-page{padding-top:70px}
+  .stats-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat-item{padding:16px 10px}
+}

@@ -95,18 +95,31 @@ export async function onRequestPatch(context) {
       }
     }
 
+    // A status change cannot stand in for a processor refund or a bank payout.
+    // Keep paid cancellations in the dispute/support workflow until a verified
+    // refund integration records the actual movement of funds.
+    if (status === 'cancelled' && (currentStatus === 'confirmed' || currentStatus === 'disputed')) {
+      return jsonResponse({ success: false, error: 'Paid bookings require a verified refund before cancellation' }, 409);
+    }
+
     const now = new Date().toISOString();
 
     const updates = ['status = ?', 'updated_at = ?'];
     const binds = [status, now];
 
     if (body.quote_amount !== undefined) {
+      if (status !== 'accepted' || currentStatus !== 'pending') {
+        return jsonResponse({ success: false, error: 'Quote can only be set when accepting a pending booking' }, 409);
+      }
+      const quote = Number(body.quote_amount);
+      if (!Number.isFinite(quote) || quote <= 0) {
+        return jsonResponse({ success: false, error: 'Quote must be a positive amount' }, 400);
+      }
       updates.push('quote_amount = ?', 'total_price = ?');
-      binds.push(Number(body.quote_amount), Number(body.quote_amount));
+      binds.push(quote, quote);
     }
-    if (body.deposit_amount !== undefined) {
-      updates.push('deposit_amount = ?');
-      binds.push(Number(body.deposit_amount));
+    if (body.deposit_amount !== undefined && Number(body.deposit_amount) !== 0) {
+      return jsonResponse({ success: false, error: 'Artist deposits are not supported in the V1 booking model' }, 400);
     }
 
     binds.push(bookingId);
@@ -115,17 +128,6 @@ export async function onRequestPatch(context) {
     `).bind(...binds).run();
 
     if (status === 'completed') {
-      await context.env.DB.prepare(`
-        INSERT INTO escrow_ledger (id, booking_id, event_type, amount, note, created_by, created_at)
-        VALUES (?, ?, 'release', ?, 'Booking completed', ?, ?)
-      `).bind(
-        `escrow_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-        bookingId,
-        booking.total_price,
-        auth.user.id,
-        now
-      ).run();
-
       const parties = await getBookingParties(context.env.DB, booking);
       if (parties.artistUserId) {
         await recordReliabilityEvent(context.env.DB, {
@@ -146,17 +148,6 @@ export async function onRequestPatch(context) {
     }
 
     if (status === 'cancelled') {
-      await context.env.DB.prepare(`
-        INSERT INTO escrow_ledger (id, booking_id, event_type, amount, note, created_by, created_at)
-        VALUES (?, ?, 'refund', ?, 'Booking cancelled', ?, ?)
-      `).bind(
-        `escrow_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-        bookingId,
-        booking.total_price,
-        auth.user.id,
-        now
-      ).run();
-
       const parties = await getBookingParties(context.env.DB, booking);
       const cancelledByArtist = parties.artistUserId === auth.user.id;
       const targetId = cancelledByArtist ? parties.artistUserId : parties.clientId;

@@ -1,0 +1,28 @@
+name: V1 Payment Audit
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [website-revamp-v1]
+
+jobs:
+  payment-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Payment flow tests
+        run: node --test scripts/payment-audit.test.mjs
+      - name: JavaScript syntax and whitespace
+        run: |
+          node --check functions/api/payfast/initiate.js
+          node --check functions/api/payfast/notify.js
+          node --check functions/api/bookings/'[id].js'
+          node --check functions/api/escrow/'[bookingId].js'
+          node --check functions/api/founder/payments.js
+          node --check functions/api/founder/payouts.js
+          node --check web/collaborate.js
+          git diff --check

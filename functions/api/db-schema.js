@@ -32,6 +32,25 @@ export async function ensureMarketplaceTables(db) {
   `).run();
 
   await db.prepare(`
+    CREATE TABLE IF NOT EXISTS payout_reconciliations (
+      id TEXT PRIMARY KEY,
+      payment_id TEXT NOT NULL UNIQUE REFERENCES payments(id),
+      booking_id TEXT NOT NULL REFERENCES bookings(id),
+      amount REAL NOT NULL CHECK(amount > 0),
+      payfast_settlement_reference TEXT NOT NULL,
+      bank_transfer_reference TEXT NOT NULL UNIQUE,
+      beneficiary_last4 TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'awaiting_bank_statement'
+        CHECK(status IN ('awaiting_bank_statement', 'reconciled')),
+      bank_statement_reference TEXT UNIQUE,
+      recorded_by TEXT NOT NULL,
+      reconciled_by TEXT,
+      created_at TEXT NOT NULL,
+      reconciled_at TEXT
+    )
+  `).run();
+
+  await db.prepare(`
     CREATE TABLE IF NOT EXISTS disputes (
       id TEXT PRIMARY KEY,
       booking_id TEXT NOT NULL REFERENCES bookings(id),

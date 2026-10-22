@@ -150,7 +150,7 @@ export async function onRequestPost(context) {
 
     return jsonResponse({
       success: true,
-      message: 'Booking request sent! Pay via PayFast once the artist accepts.',
+      message: 'Booking request sent. The creative will review it and Gearsh will show the next step after acceptance.',
       data: {
         booking_id: bookingId,
         artist_name: artistProfile.artist_name,

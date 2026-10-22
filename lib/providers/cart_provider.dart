@@ -90,7 +90,11 @@ class CartState {
 
   double get subtotal => items.fold(0, (sum, item) => sum + item.servicePrice);
 
-  double get serviceFee => subtotal * 0.126; // 12.6% service fee
+  double get serviceFee => subtotal * 0.126; // 12.6% Client fee
+
+  double get artistFee => subtotal * 0.04; // 4% deducted from Artist payout
+
+  double get artistPayout => subtotal - artistFee;
 
   double get total => subtotal + serviceFee;
 
