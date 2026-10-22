@@ -39,6 +39,9 @@ function enrichFromShowcase(artistData, showcase) {
   artistData.hourly_rate = fee;
   artistData.base_rate = fee;
   artistData.booking_fee = fee;
+  if (showcase.estimatedBookingFee) artistData.booking_fee_source = 'estimated';
+  if (showcase.isVerified === false) artistData.is_verified = false;
+  artistData.social_links = { ...(showcase.socialLinks || {}), ...(artistData.social_links || {}) };
   artistData.mastery_hours = Number(showcase.masteryHours || artistData.mastery_hours || 0);
   artistData.status = status;
   artistData.is_bookable = isAvailable;

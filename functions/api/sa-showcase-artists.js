@@ -61,6 +61,7 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
     };
   }
 
+  const verified = artist.isVerified === false ? 0 : 1;
   const now = new Date().toISOString();
   const claimToken = existing?.claim_token || claimTokenFor(artist.username);
   const resolvedUserId = existing?.id || userId;
@@ -70,7 +71,7 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
       UPDATE users
       SET email = ?, password_hash = ?, user_type = 'artist', first_name = ?, last_name = ?,
           display_name = ?, username = ?, profile_picture_url = ?, phone = ?, location = ?,
-          country = ?, bio = ?, is_verified = 1, is_active = 1, is_demo = 1,
+          country = ?, bio = ?, is_verified = ?, is_active = 1, is_demo = 1,
           claim_token = ?, updated_at = ?
       WHERE id = ?
     `).bind(
@@ -85,6 +86,7 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
       artist.location,
       artist.country || 'South Africa',
       artist.bio,
+      verified,
       claimToken,
       now,
       existing.id
@@ -95,7 +97,7 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
         id, email, password_hash, user_type, first_name, last_name, display_name, username,
         profile_picture_url, phone, location, country, bio, is_verified, is_active, is_demo,
         claim_token, created_at, updated_at
-      ) VALUES (?, ?, ?, 'artist', ?, '—', ?, ?, ?, ?, ?, ?, ?, 1, 1, 1, ?, ?, ?)
+      ) VALUES (?, ?, ?, 'artist', ?, '—', ?, ?, ?, ?, ?, ?, ?, ?, 1, 1, ?, ?, ?)
     `).bind(
       userId,
       placeholderEmail,
@@ -108,6 +110,7 @@ export async function seedShowcaseArtist(db, artist, passwordHash) {
       artist.location,
       artist.country || 'South Africa',
       artist.bio,
+      verified,
       claimToken,
       now,
       now
