@@ -200,6 +200,7 @@
         </div>
         <div class="skill-tags" id="skill-tags"></div>
         <p class="book-bio" id="artist-bio" style="display:none"></p>
+        <p id="artist-youtube" style="display:none"><a target="_blank" rel="noopener noreferrer">Listen on YouTube</a></p>
         <div class="unavailable-notice" id="unavailable-notice">
           <strong>Currently unavailable for bookings</strong>
           <span id="unavailable-reason">This artist isn't taking bookings on Gearsh right now. Check back later.</span>
@@ -458,12 +459,22 @@
           document.getElementById('unavailable-reason').textContent = data.unavailable_reason;
         }
       } else if (fee) {
-        badge.innerHTML = '<i class="ti ti-currency-rand"></i> From ' + formatMoney(fee) + ' per show';
+        var servicePrices = (data.services || []).map(function(s) { return Number(s.price); }).filter(function(p) { return p > 0; });
+        var startingFee = servicePrices.length ? Math.min.apply(null, servicePrices) : fee;
+        badge.innerHTML = '<i class="ti ti-currency-rand"></i> From ' + formatMoney(startingFee) + ' per show';
+        if (data.booking_fee_source === 'estimated') {
+          document.getElementById('fee-note').textContent = 'Indicative pricing — subject to artist confirmation. Travel and production quoted separately.';
+        }
         document.getElementById('fee-note').style.display = 'block';
       } else if (data.is_verified) {
         badge.innerHTML = '<i class="ti ti-rosette-discount-check"></i> Verified on Gearsh';
       }
 
+      var youtube = data.social_links && data.social_links.youtube;
+      if (youtube && /^https:\/\/(www\.)?youtube\.com\//i.test(youtube)) {
+        document.querySelector('#artist-youtube a').href = youtube;
+        document.getElementById('artist-youtube').style.display = 'block';
+      }
       if (data.bio) {
         var bioEl = document.getElementById('artist-bio');
         bioEl.textContent = data.bio;
@@ -483,6 +494,7 @@
 
       if (data.is_claimable && data.claim_url) {
         var banner = document.getElementById('claim-banner');
+        if (data.booking_fee_source === 'estimated') document.getElementById('claim-banner-copy').textContent = 'This is an unclaimed Gearsh demo profile. Artist details and estimated prices await confirmation. Claim it with your private code to update your details.';
         document.getElementById('claim-banner-title').textContent = 'Are you ' + (data.name || 'this artist') + '?';
         document.getElementById('claim-banner-link').href = data.claim_url;
         document.getElementById('claim-removal-link').href = data.claim_url + (data.claim_url.indexOf('?') >= 0 ? '&' : '?') + 'mode=removal';
