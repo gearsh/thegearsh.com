@@ -45,6 +45,8 @@ export function getBookingFee(artist) {
     return VERIFIED_BOOKING_RATES[username];
   }
 
+  if (Number(artist.estimatedBookingFee) > 0) return Number(artist.estimatedBookingFee);
+
   const hours = Number(artist.masteryHours || 0);
   if (hours >= 10000) return 500000;
   if (hours >= 7500) return 150000;
@@ -420,11 +422,11 @@ export function buildShowcaseArtistResponse(artist) {
     genre: artist.genre,
     hourly_rate: fee,
     base_rate: fee,
-    rating: 4.8,
-    review_count: Math.max(12, Math.round(Number(artist.masteryHours || 0) / 200)),
+    rating: artist.rating ?? 4.8,
+    review_count: artist.reviewCount ?? Math.max(12, Math.round(Number(artist.masteryHours || 0) / 200)),
     total_bookings: Math.round(Number(artist.masteryHours || 0) / 10),
     mastery_hours: Number(artist.masteryHours || 0),
-    is_verified: true,
+    is_verified: artist.isVerified ?? true,
     is_trending: Number(artist.masteryHours || 0) >= 5000,
     is_demo: true,
     is_claimable: isAvailable,
@@ -434,7 +436,7 @@ export function buildShowcaseArtistResponse(artist) {
     unavailable_reason: isAvailable ? null : 'Currently unavailable for bookings.',
     skills: Array.isArray(artist.skills) ? artist.skills : [artist.category],
     portfolio_urls: buildShowcasePortfolio(artist),
-    social_links: {},
+    social_links: artist.socialLinks || {},
     services: isAvailable ? buildShowcaseServices(artist, fee) : [],
     reviews: [],
     profile_url: buildProfileUrl(artist.username),
