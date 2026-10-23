@@ -77,6 +77,8 @@ jobs:
           cp web/join-gig.html build/web/join-gig.html
           cp web/join-client.html build/web/join-client.html
           cp web/client-signup.js build/web/client-signup.js
+          cp web/password-visibility.js build/web/password-visibility.js
+          cp web/password-visibility.css build/web/password-visibility.css
           cp web/join-revamp.css build/web/join-revamp.css
           cp web/artist-onboarding.html build/web/artist-onboarding.html
           cp web/auth.html build/web/auth.html
@@ -152,7 +154,7 @@ jobs:
         run: |
           VERSION=$(git rev-parse --short HEAD)
           echo "Asset version: $VERSION"
-          ASSETS="gig-guide gig-guide-data day-genre-schedule sa-showcase-data artist-feed gearsh-auth marketplace-data marketplace-feed gearsh-ui search-page artists-page glog-data glog-page glog-post activity-feed activity-create gearsh-brand discovery glog"
+          ASSETS="password-visibility gig-guide gig-guide-data day-genre-schedule sa-showcase-data artist-feed gearsh-auth marketplace-data marketplace-feed gearsh-ui search-page artists-page glog-data glog-page glog-post activity-feed activity-create gearsh-brand discovery glog"
           for html in build/web/*.html; do
             [ -f "$html" ] || continue
             for asset in $ASSETS; do
