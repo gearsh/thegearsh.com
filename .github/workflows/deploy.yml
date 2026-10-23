@@ -75,6 +75,8 @@ jobs:
           # Website revamp homepage
           cp web/marketing-v2.html build/web/index.html
           cp web/join-gig.html build/web/join-gig.html
+          cp web/join-client.html build/web/join-client.html
+          cp web/client-signup.js build/web/client-signup.js
           cp web/join-revamp.css build/web/join-revamp.css
           cp web/artist-onboarding.html build/web/artist-onboarding.html
           cp web/auth.html build/web/auth.html

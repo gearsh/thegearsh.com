@@ -87,3 +87,9 @@
 
 /app/*
   Cache-Control: public, max-age=86400
+
+/join-client
+  Cache-Control: no-store, max-age=0
+
+/join-client.html
+  Cache-Control: no-store, max-age=0

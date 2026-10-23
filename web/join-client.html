@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create a free Gearsh client account to find and book creative talent.">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://thegearsh.com/join-client">
+  <meta name="theme-color" content="#020617">
+  <title>Join to book | Gearsh</title>
+  <link rel="icon" type="image/png" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" href="icons/Icon-512.png">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="gearsh-brand.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="join-revamp.css">
+  <link rel="stylesheet" href="auth-revamp.css">
+</head>
+<body>
+  <header class="join-nav">
+    <div class="join-nav-inner">
+      <a class="join-home" href="/" aria-label="Gearsh home"><img src="icons/Icon-512.png" alt="Gearsh"></a>
+      <nav class="join-links" aria-label="Main navigation">
+        <a href="/search">Find Talent</a><a href="/join-client">Join to book</a><a href="/join-gig.html">For Creatives</a><a href="/#how-it-works">How It Works</a><a href="/#about">About</a><a class="join-signin" href="/auth.html">Sign In</a>
+      </nav>
+      <button class="join-menu-button" id="join-menu-button" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="join-mobile-menu">☰</button>
+    </div>
+    <nav class="join-mobile-menu" id="join-mobile-menu" aria-label="Mobile navigation" hidden>
+      <a href="/search">Find Talent</a><a href="/join-client">Join to book</a><a href="/join-gig.html">For Creatives</a><a href="/#how-it-works">How It Works</a><a href="/#about">About</a><a href="/auth.html">Sign In</a>
+    </nav>
+  </header>
+
+  <main class="auth-page">
+    <div class="join-intro auth-intro" style="background-image:url('/assets/images/clients-live-event.webp')">
+      <div class="join-intro-copy">
+        <span class="join-eyebrow">FOR CLIENTS</span>
+        <h1>Great talent for <span>your next event.</span></h1>
+        <p>Create your client account to discover creatives, explore their services and manage your bookings.</p>
+      </div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-header">
+        <a href="/" class="auth-logo" aria-label="Gearsh home"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
+        <span class="auth-badge">Free to join</span>
+      </div>
+      <div class="auth-body">
+        <h2>Join to <span>book.</span></h2>
+        <p>Create a client account to book artists and creative professionals.</p>
+        <form id="client-signup-form">
+          <div class="field-group">
+            <label class="field-label" for="first-name">First name</label>
+            <input class="field-input" id="first-name" name="first_name" required autocomplete="given-name" maxlength="100">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="last-name">Last name</label>
+            <input class="field-input" id="last-name" name="last_name" required autocomplete="family-name" maxlength="100">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="email">Email</label>
+            <input class="field-input" id="email" name="email" type="email" required placeholder="you@email.com" autocomplete="email">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="password">Password (at least 8 characters)</label>
+            <input class="field-input" id="password" name="password" type="password" required minlength="8" autocomplete="new-password">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="confirm-password">Confirm password</label>
+            <input class="field-input" id="confirm-password" type="password" required minlength="8" autocomplete="new-password">
+          </div>
+          <label class="remember-row"><input type="checkbox" id="accept-terms" required><span>I agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</span></label>
+          <div class="auth-error" id="signup-error" role="alert" aria-live="polite"></div>
+          <button class="btn-submit" type="submit" id="signup-btn">Create client account</button>
+        </form>
+        <div class="auth-footer">
+          <span>Already on Gearsh? <a href="/auth.html">Sign in</a></span>
+          <span>Offering creative services? <a href="/join-gig.html">Join as a creative</a></span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="g-footer join-footer">
+    <div class="g-footer-inner">
+      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="The Gearsh"> <span>© 2026 THE GEARSH (Pty) Ltd. All rights reserved.<br><span style="display:inline-block;margin-top:6px;font-size:12px">Registration No. 2019/309372/07 · Registered in South Africa<br>Founder: Nhlanhla Collins Mahlangu</span></span></div>
+      <ul class="g-footer-links"><li><a href="/terms">Terms</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/">Home</a></li></ul>
+    </div>
+  </footer>
+
+  <script src="gearsh-auth.js"></script>
+  <script>
+    const joinMenuButton = document.getElementById('join-menu-button');
+    const joinMobileMenu = document.getElementById('join-mobile-menu');
+    joinMenuButton.addEventListener('click', function() {
+      const open = joinMobileMenu.hidden;
+      joinMobileMenu.hidden = !open;
+      joinMenuButton.setAttribute('aria-expanded', String(open));
+      joinMenuButton.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      joinMenuButton.textContent = open ? '×' : '☰';
+    });
+    joinMobileMenu.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        joinMobileMenu.hidden = true;
+        joinMenuButton.setAttribute('aria-expanded', 'false');
+        joinMenuButton.setAttribute('aria-label', 'Open menu');
+        joinMenuButton.textContent = '☰';
+      });
+    });
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && !joinMobileMenu.hidden) {
+        joinMobileMenu.hidden = true;
+        joinMenuButton.setAttribute('aria-expanded', 'false');
+        joinMenuButton.setAttribute('aria-label', 'Open menu');
+        joinMenuButton.textContent = '☰';
+        joinMenuButton.focus();
+      }
+    });
+  </script>
+  <script src="client-signup.js"></script>
+</body>
+</html>

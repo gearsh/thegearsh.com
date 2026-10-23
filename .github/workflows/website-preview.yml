@@ -16,7 +16,7 @@ jobs:
           node-version: 24
 
       - name: Test password recovery
-        run: node --test tests/password-reset.test.mjs
+        run: node --test tests/password-reset.test.mjs tests/client-signup.test.mjs
 
       - name: Build preview site
         run: |
