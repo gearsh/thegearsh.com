@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="Browse all artists on Gearsh. Filter by genre, city, and availability. Book DJs, musicians, and creators for your next event.">
   <link rel="canonical" href="https://thegearsh.com/artists">
-  <meta name="theme-color" content="#0A0A0A">
+  <meta name="theme-color" content="#020617">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Gearsh">
   <meta property="og:title" content="All Artists | Gearsh">
@@ -34,6 +34,7 @@
     }
     .dir-search:focus { outline: none; border-color: rgba(0,191,255,0.4); }
   </style>
+  <link rel="stylesheet" href="artists-revamp.css">
 </head>
 <body>
 
@@ -43,28 +44,29 @@
     <div class="g-nav-inner">
       <a href="./" class="g-nav-logo"><img src="icons/Icon-512.png" alt="The Gearsh"></a>
       <div class="g-nav-right">
-        <a href="/auth.html" class="g-nav-mobile-login">Login</a>
-        <button class="g-nav-menu-btn" type="button" aria-label="Open menu" aria-expanded="false"><i class="ti ti-menu-2"></i></button>
+        <a href="/auth.html" class="g-nav-mobile-login">Sign In</a>
+        <button class="g-nav-menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="artists-navigation"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
       </div>
-      <ul class="g-nav-links">
-        <li><a href="/search">Search</a></li>
-        <li><a href="/artists" class="active">Artists</a></li>
+      <ul class="g-nav-links" id="artists-navigation">
+        <li><a href="/">Home</a></li>
+        <li><a href="/search">Find Talent</a></li>
+        <li><a href="/artists" class="active" aria-current="page">All Artists</a></li>
         <li><a href="/gigs">Gig Guide</a></li>
-        <li class="g-nav-secondary"><a href="/glog">G-Log</a></li>
-        <li class="g-nav-secondary"><a href="./#how">How it works</a></li>
-        <li class="g-nav-menu-auth"><a href="/auth.html">Login</a></li>
-        <li class="g-nav-menu-auth"><a href="join-gig.html" class="g-nav-cta">List your gig</a></li>
+        <li><a href="/join-client">Join to book</a></li>
+        <li><a href="/join-gig.html">For Creatives</a></li>
+        <li class="g-nav-menu-auth"><a href="/auth.html" class="g-nav-cta">Sign In</a></li>
       </ul>
     </div>
   </nav>
 
   <main id="main" class="g-page">
     <div class="g-page-hero">
-      <h1>Discover <em>artists</em></h1>
-      <p>Browse South Africa's finest. Filter by genre, city, and availability. Book directly. No middleman.</p>
+      <span class="directory-eyebrow">THE CREATIVE MARKETPLACE</span>
+      <h1>All artists.<br><em>Find your next creative.</em></h1>
+      <p>Explore artists and creative professionals across South Africa. Search by name, category, genre or city to find talent for your event or project.</p>
     </div>
 
-    <div class="filters-bar">
+    <div class="filters-bar" role="search" aria-label="Filter artists">
       <div class="dir-search-wrap">
         <input type="search" class="dir-search" id="dir-search" placeholder="Search by name…" aria-label="Filter by name">
       </div>
@@ -133,9 +135,9 @@
 
   <footer class="g-footer">
     <div class="g-footer-inner">
-      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="Gearsh" width="24" height="24"> &copy; 2026 Gearsh (Pty) Ltd.</div>
+      <div class="g-footer-left"><img src="icons/Icon-512.png" alt="Gearsh" width="24" height="24"><span>© 2026 THE GEARSH (Pty) Ltd. All rights reserved.<br>Registration No. 2019/309372/07 · Registered in South Africa<br>Founder: Nhlanhla Collins Mahlangu</span></div>
       <ul class="g-footer-links">
-        <li><a href="/glog">G-Log</a></li>
+        <li><a href="/">Home</a></li><li><a href="/terms">Terms</a></li><li><a href="/privacy">Privacy</a></li>
         <li><a href="/search">Search</a></li>
         <li><a href="claim-profile.html">Claim profile</a></li>
         <li><a href="join-gig.html">List your gig</a></li>
