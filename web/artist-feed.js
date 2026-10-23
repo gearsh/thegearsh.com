@@ -6,7 +6,7 @@
   'use strict';
 
   var API_BASE = '/api';
-  var CACHE_KEY = 'gearsh_feed_cache_v7';
+  var CACHE_KEY = 'gearsh_feed_cache_v8';
   var CACHE_TTL = 5 * 60 * 1000;
 
   // Tonight helper — reads from day-genre-schedule.js when present.
@@ -134,6 +134,8 @@
   }
 
   function showcaseMinPrice(showcase) {
+    var prices = (showcase.bookingServices || []).map(function(s) { return Number(s.price); }).filter(function(p) { return p > 0; });
+    if (prices.length) return Math.min.apply(null, prices);
     return minPriceFromFee(showcaseBaseFee(showcase), showcase.category);
   }
 
