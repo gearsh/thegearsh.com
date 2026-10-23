@@ -45,6 +45,8 @@ export function getBookingFee(artist) {
     return VERIFIED_BOOKING_RATES[username];
   }
 
+  if (Number(artist.agreedBookingFee) > 0) return Number(artist.agreedBookingFee);
+
   if (Number(artist.estimatedBookingFee) > 0) return Number(artist.estimatedBookingFee);
 
   const hours = Number(artist.masteryHours || 0);
@@ -442,7 +444,7 @@ export function buildShowcaseArtistResponse(artist) {
     profile_url: buildProfileUrl(artist.username),
     claim_url: `/claim-profile.html?artist=${encodeURIComponent(String(artist.username).toLowerCase())}`,
     booking_fee: fee,
-    booking_fee_source: VERIFIED_BOOKING_RATES[String(artist.username || '').toLowerCase()]
+    booking_fee_source: artist.agreedBookingFee ? 'artist-agreed' : VERIFIED_BOOKING_RATES[String(artist.username || '').toLowerCase()]
       ? 'published'
       : 'estimated',
   };

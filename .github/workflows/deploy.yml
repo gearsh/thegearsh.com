@@ -117,7 +117,9 @@ jobs:
           cp web/master-profile.js build/web/master-profile.js 2>/dev/null || true
           cp web/gig-guide.html build/web/gig-guide.html 2>/dev/null || true
           cp web/gig-guide.css build/web/gig-guide.css 2>/dev/null || true
-          cp web/gig-guide.js build/web/gig-guide.js 2>/dev/null || true
+          cp web/gig-guide.js build/web/gig-guide.js
+          cp web/gig-guide-data.js build/web/gig-guide-data.js
+          cp web/assets/images/yello-friday-poster.svg build/web/assets/images/yello-friday-poster.svg
           cp web/gig-detail.html build/web/gig-detail.html 2>/dev/null || true
           cp web/my-bookings.html build/web/my-bookings.html 2>/dev/null || true
           cp web/my-bookings.js build/web/my-bookings.js 2>/dev/null || true
@@ -148,7 +150,7 @@ jobs:
         run: |
           VERSION=$(git rev-parse --short HEAD)
           echo "Asset version: $VERSION"
-          ASSETS="day-genre-schedule sa-showcase-data artist-feed gearsh-auth marketplace-data marketplace-feed gearsh-ui search-page artists-page glog-data glog-page glog-post activity-feed activity-create gearsh-brand discovery glog"
+          ASSETS="gig-guide gig-guide-data day-genre-schedule sa-showcase-data artist-feed gearsh-auth marketplace-data marketplace-feed gearsh-ui search-page artists-page glog-data glog-page glog-post activity-feed activity-create gearsh-brand discovery glog"
           for html in build/web/*.html; do
             [ -f "$html" ] || continue
             for asset in $ASSETS; do

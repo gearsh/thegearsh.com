@@ -1,109 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Discover gigs across South Africa. Buy tickets in seconds on Gearsh — the easiest way to find live music, festivals, and tech events.">
-  <link rel="canonical" href="https://thegearsh.com/gigs">
-  <meta name="theme-color" content="#0A0A0A">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Gearsh">
-  <meta property="og:title" content="Gig Guide | Find & Buy Tickets | Gearsh">
-  <meta property="og:description" content="Discover gigs and buy tickets in seconds. Music, festivals, tech events across SA.">
-  <meta property="og:url" content="https://thegearsh.com/gigs">
-  <meta property="og:image" content="https://thegearsh.com/icons/og-banner.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@thegearsh">
-  <meta name="twitter:title" content="Gig Guide | Find & Buy Tickets | Gearsh">
-  <meta name="twitter:description" content="Discover gigs and buy tickets in seconds on Gearsh.">
-  <meta name="twitter:image" content="https://thegearsh.com/icons/og-banner.png">
-  <title>Gig Guide | Buy Tickets | Gearsh</title>
-  <link rel="icon" type="image/png" href="/icons/Icon-192.png">
-  <link rel="stylesheet" href="/gearsh-brand.css">
-  <link rel="stylesheet" href="/gig-guide.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-</head>
-<body>
-  <a class="skip-link" href="#main">Skip to main content</a>
-  <nav class="g-nav">
-    <div class="g-nav-inner">
-      <a href="/" class="g-nav-logo"><img src="/icons/Icon-512.png" alt="Gearsh" width="40" height="40"></a>
-      <ul class="g-nav-links">
-        <li><a href="/gigs" class="active">Gig Guide</a></li>
-        <li><a href="/search">Artists</a></li>
-        <li><a href="/my-tickets">My tickets</a></li>
-        <li><a href="/auth.html">Login</a></li>
-      </ul>
-    </div>
-  </nav>
-
-  <main id="main" class="gg-page">
-    <section class="gg-hero" id="gg-hero" aria-label="Featured gigs"></section>
-
-    <div class="gg-sticky">
-      <div class="gg-sticky-inner">
-        <div class="gg-search-row">
-          <div class="gg-search" role="search">
-            <i class="ti ti-search"></i>
-            <input type="search" id="gg-search" placeholder="Search artist, city, venue…" autocomplete="off" aria-label="Search gigs">
-          </div>
-          <select class="gg-city-select" id="gg-city" aria-label="Filter by city">
-            <option value="">All cities</option>
-          </select>
-        </div>
-        <div class="gg-chips" id="gg-chips">
-          <button type="button" class="gg-chip active" data-filter="">All</button>
-          <button type="button" class="gg-chip" data-filter="weekend">This weekend</button>
-          <button type="button" class="gg-chip" data-filter="popular">Popular</button>
-          <button type="button" class="gg-chip" data-filter="vip">VIP available</button>
-          <button type="button" class="gg-chip" data-filter="free">Free</button>
-          <button type="button" class="gg-chip" data-filter="following" id="gg-chip-following">Following</button>
-        </div>
-        <div class="gg-tabs" id="gg-tabs" role="tablist">
-          <button type="button" class="gg-tab active" data-category="all">All Gigs</button>
-          <button type="button" class="gg-tab" data-category="music">Music</button>
-          <button type="button" class="gg-tab" data-category="tech">Tech Events</button>
-          <button type="button" class="gg-tab" data-category="cultural">Cultural</button>
-          <button type="button" class="gg-tab" data-category="festival">Festivals</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="gg-pull-hint" id="gg-pull">Pull to refresh</div>
-
-    <div class="gg-body">
-      <section id="gg-following-section" hidden>
-        <div class="gg-section-head"><h2 class="gg-section-title">From artists you follow</h2></div>
-        <div class="gg-grid" id="gg-following-grid"></div>
-      </section>
-
-      <div class="gg-section-head">
-        <h2 class="gg-section-title" id="gg-list-title">Upcoming gigs</h2>
-        <div class="gg-view-toggle">
-          <button type="button" class="gg-view-btn active" data-view="grid" aria-label="Grid view"><i class="ti ti-layout-grid"></i></button>
-          <button type="button" class="gg-view-btn" data-view="list" aria-label="List view"><i class="ti ti-list"></i></button>
-        </div>
-      </div>
-      <div class="gg-grid" id="gg-grid">
-        <div class="gg-skeleton"></div><div class="gg-skeleton"></div><div class="gg-skeleton"></div>
-      </div>
-      <div class="gg-sentinel" id="gg-sentinel"></div>
-    </div>
-  </main>
-
-  <footer class="g-footer">
-    <div class="g-footer-inner">
-      <div class="g-footer-left"><img src="/icons/Icon-512.png" alt=""> &copy; 2025 Gearsh (Pty) Ltd.</div>
-      <ul class="g-footer-links">
-        <li><a href="/gearsh">Book The Gearsh</a></li>
-        <li><a href="/terms">Terms</a></li>
-        <li><a href="/">Home</a></li>
-      </ul>
-    </div>
-  </footer>
-
-  <script src="/gig-guide.js"></script>
-</body>
-</html>
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Discover local gigs, artists and venues with The Gearsh. Starting in Vhembe with Yello Friday at The Yello Village, featuring DJ Myles.">
+<meta name="theme-color" content="#020617"><title>Gig Guide | The Gearsh</title>
+<link rel="canonical" href="https://www.thegearsh.com/gig-guide"><link rel="icon" href="/icons/Icon-192.png"><link rel="stylesheet" href="/gig-guide.css">
+</head><body><a class="skip-link" href="#main">Skip to gigs</a>
+<header class="wrap nav"><a href="/" aria-label="Gearsh home"><img class="logo" src="/assets/images/gearsh-logo.png" alt="Gearsh"></a><nav aria-label="Main navigation"><a href="/search">Find Talent</a><a href="/gigs" aria-current="page">Gig Guide</a><a href="/join-gig.html">For Creatives</a><a href="/auth.html">Sign In</a></nav></header>
+<main id="main" class="wrap"><section class="guide-intro"><p class="eyebrow">THE GEARSH · GIG GUIDE</p><h1>Good music.<br><span>Closer to home.</span></h1><p class="intro">Discover the people, places and nights bringing our creative scene to life. Starting here in Vhembe.</p><p class="gratitude">Our first listing is a thank-you to The Yello Village and DJ Myles for inspiring this Gig Guide.</p></section>
+<form class="guide-filters" role="search" onsubmit="return false"><label>Find a gig<input id="gig-search" type="search" placeholder="Artist, event or venue…"></label><label>When<select id="gig-dates"><option value="all">All dates</option><option value="upcoming">Today &amp; upcoming</option><option value="past">Past gigs</option></select></label></form>
+<p id="gig-count" class="muted" aria-live="polite"></p><div id="gig-list"></div>
+<noscript><article class="gig"><img class="poster" src="/assets/images/yello-friday-poster.svg" alt="Yello Friday poster"><div class="gig-copy"><h2>Yello Friday</h2><p>Friday, 23 October 2026 · Free entrance</p><p>The Yello Village · Ha Rathidili, Brambos Road · Vhembe</p><p>Guest DJ Myles, supported by Mlalas, DJ Longstory, DJ Tower, DJ Cloudz and DJ Xtreasure. MC Mufasa.</p><p>Start time not listed on the poster.</p><a class="btn" href="/book/dj-myles">View DJ Myles</a></div></article></noscript>
+<p class="listing-note">Event information is taken from the organiser’s poster. Confirm the start time and any changes with the venue. Free entrance does not require a Gearsh ticket.</p></main>
+<footer class="wrap footer"><div>© 2026 THE GEARSH (Pty) Ltd. All rights reserved.<br><span>Registration No. 2019/309372/07 · Registered in South Africa<br>Founder: Nhlanhla Collins Mahlangu</span></div><nav aria-label="Footer"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/">Home</a></nav></footer>
+<script src="/gig-guide-data.js"></script><script src="/gig-guide.js"></script></body></html>

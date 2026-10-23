@@ -233,6 +233,22 @@ export const SA_SHOWCASE_ARTISTS = [
     skills: ['Fashion', 'Live Performance'],
   },
   {
+    name: 'DJ Myles', username: 'dj-myles',
+    image: 'assets/images/artists/dj-myles.svg',
+    category: 'DJ', genre: 'House · Amapiano', genreSlug: 'amapiano',
+    location: 'Makhado Park, Vhembe, Limpopo', country: 'South Africa',
+    masteryHours: 0, badge: 'Listed', badgeClass: 'fb-new',
+    hourlyRate: 5000, agreedBookingFee: 5000,
+    isVerified: false, rating: 0, reviewCount: 0,
+    bio: 'DJ Myles is a House and Amapiano DJ from Makhado Park in Vhembe, Limpopo. Book a one-hour DJ set for R5,000. Featured guest at Yello Friday, presented by The Yello Village.',
+    skills: ['House Music', 'Amapiano', 'DJ'],
+    bookingServices: [{
+      name: 'House / Amapiano DJ set (1 hour)',
+      description: 'One-hour DJ set. Artist-agreed performance fee; travel and production requirements to be confirmed for the event.',
+      price: 5000, duration_hours: 1, marketplace_category: 'djs',
+    }],
+  },
+  {
     name: 'Hvdini Mxgic',
     username: 'hvdini-mxgic',
     image: 'assets/images/artists/artists.png',
