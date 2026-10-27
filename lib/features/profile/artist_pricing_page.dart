@@ -178,7 +178,7 @@ class _ArtistPricingPageState extends State<ArtistPricingPage>
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 520),
           child: Text(
-            'Join South Africa\'s fastest-growing creative marketplace. Choose the plan that fits your hustle.',
+            'Join a marketplace built for African creatives and clients. Choose the plan that fits your hustle.',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16, fontWeight: FontWeight.w300,
@@ -687,8 +687,8 @@ class _ArtistPricingPageState extends State<ArtistPricingPage>
             'We accept all major South African bank cards, EFT, and mobile payment methods through our secure payment partner.',
           ),
           _faqItem(
-            'Do I need to be in South Africa?',
-            'We\'re launching in South Africa first but expanding globally. Artists from any country can sign up — you\'ll be featured as we roll out in your region.',
+            'Can I join from elsewhere in Africa?',
+            'The Gearsh is building a marketplace for creatives across Africa, starting in South Africa. Availability of bookings, payments and other features depends on your location.',
           ),
           _faqItem(
             'Can I cancel my subscription?',
