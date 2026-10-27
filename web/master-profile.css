@@ -318,3 +318,17 @@
 .g-nav-logo { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
 .g-nav-logo .g-founder-brand-title { color: var(--g-white); font-family: var(--g-font); font-size: 16px; font-weight: 700; letter-spacing: .09em; line-height: 1; white-space: nowrap; }
 @media (max-width: 480px) { .g-nav-logo { gap: 8px; } .g-nav-logo .g-founder-brand-title { font-size: 12px; letter-spacing: .05em; } }
+
+/* Always display founder wordmark next to logo at phone widths. */
+.g-nav .g-nav-inner { min-width: 0; }
+.g-nav .g-nav-logo { display: inline-flex; align-items: center; justify-content: flex-start; flex: 0 1 auto; min-width: 0; gap: 10px; }
+.g-nav .g-nav-logo .g-founder-brand-title { display: inline-block !important; visibility: visible !important; opacity: 1 !important; flex: 0 0 auto; color: #FAFAF9; font-family: var(--g-font); font-style: normal; font-weight: 800; font-size: 17px; letter-spacing: .055em; white-space: nowrap; line-height: 1.2; }
+@media (max-width: 768px) {
+  .g-nav .g-nav-inner { padding-inline: 14px; }
+  .g-nav .g-nav-logo { gap: 8px; }
+  .g-nav .g-nav-logo img { width: 36px; height: 36px; flex: 0 0 36px; }
+  .g-nav .g-nav-logo .g-founder-brand-title { font-size: 14px; letter-spacing: .025em; }
+}
+@media (max-width: 360px) {
+  .g-nav .g-nav-logo .g-founder-brand-title { font-size: 12px; }
+}
