@@ -5,24 +5,24 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700&family=Instrument+Serif:ital@0;1&display=swap');
 
 :root {
-  --g-black: #0A0A0A;
+  --g-black: #07111D;
   --g-accent: #00BFFF;
   --g-accent-dim: #009AD6;
   --g-accent-dark: #007AA3;
   --g-accent-light: rgba(0,191,255,0.10);
   --g-accent-glow: rgba(0,191,255,0.05);
-  --g-surface: #111111;
-  --g-surface-2: #181818;
-  --g-surface-3: #1E1E1E;
-  --g-surface-4: #252525;
+  --g-surface: #0E1D2E;
+  --g-surface-2: #10263A;
+  --g-surface-3: #17324A;
+  --g-surface-4: #1C3B55;
   --g-border: rgba(255,255,255,0.06);
   --g-border-light: rgba(255,255,255,0.12);
-  --g-text: #E8E6E1;
+  --g-text: #EDF5FA;
   /* AA-compliant body-text muted (~5.4:1 on #0A0A0A) */
-  --g-text-muted: #A8A59E;
+  --g-text-muted: #B4C8D8;
   /* For meta/captions only; not used for body copy (~3.5:1) */
-  --g-text-dim: #7A776F;
-  --g-white: #FAFAF9;
+  --g-text-dim: #97B1C5;
+  --g-white: #FFFFFF;
   --g-focus: #66D6FF;
   --g-font: 'DM Sans', system-ui, -apple-system, sans-serif;
   --g-serif: 'Instrument Serif', Georgia, serif;

@@ -122,21 +122,14 @@ class _SwipeBackNavigatorState extends State<SwipeBackNavigator> {
                 child: Container(
                   width: 4,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        const Color(0xFF0EA5E9).withAlpha((progress * 200).toInt()),
-                        const Color(0xFF06B6D4).withAlpha((progress * 200).toInt()),
-                      ],
-                    ),
+                    color: const Color(0xFF00BFFF).withAlpha((progress * 200).toInt()),
                     borderRadius: const BorderRadius.only(
                       topRight: Radius.circular(4),
                       bottomRight: Radius.circular(4),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF0EA5E9).withAlpha((progress * 100).toInt()),
+                        color: const Color(0xFF00BFFF).withAlpha((progress * 100).toInt()),
                         blurRadius: 12,
                         spreadRadius: 2,
                       ),
