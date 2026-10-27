@@ -125,6 +125,7 @@ jobs:
           cp web/gig-guide.js build/web/gig-guide.js
           cp web/gig-guide-data.js build/web/gig-guide-data.js
           cp web/assets/images/yello-friday-poster.svg build/web/assets/images/yello-friday-poster.svg
+          cp web/assets/images/gearsh-founder-avatar.svg build/web/assets/images/gearsh-founder-avatar.svg
           cp web/gig-detail.html build/web/gig-detail.html 2>/dev/null || true
           cp web/my-bookings.html build/web/my-bookings.html 2>/dev/null || true
           cp web/my-bookings.js build/web/my-bookings.js 2>/dev/null || true
