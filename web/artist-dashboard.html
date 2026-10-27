@@ -590,7 +590,8 @@
       if (data.profile_url) {
         var shareCard = document.getElementById('share-card');
         var shareInput = document.getElementById('dash-share-link');
-        shareInput.value = window.location.origin + data.profile_url;
+        var founder = String(user.email || '').toLowerCase() === 'nhlanhla@thegearsh.com' || String(user.username || '').toLowerCase() === 'gearsh';
+        shareInput.value = window.location.origin + (founder ? '/gearsh' : data.profile_url);
         shareCard.style.display = 'block';
       }
 

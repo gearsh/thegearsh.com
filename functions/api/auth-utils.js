@@ -337,7 +337,9 @@ export async function ensureUniqueUsername(db, base) {
 
 export function buildProfileUrl(username) {
   if (!username) return null;
-  return `/book/${encodeURIComponent(String(username).toLowerCase())}`;
+  const normalized = String(username).trim().replace(/^@/, '').toLowerCase();
+  if (normalized === 'gearsh') return '/gearsh';
+  return `/book/${encodeURIComponent(normalized)}`;
 }
 
 export function isArtistId(value) {
