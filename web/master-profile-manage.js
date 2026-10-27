@@ -30,7 +30,7 @@
       '<h2 class="card-title">Manage <em>@gearsh</em></h2>' +
       '<p class="card-sub">Edit your public master profile, services, and booking settings.</p>' +
       '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">' +
-        '<a href="/gearsh" class="btn-main" target="_blank"><i class="ti ti-external-link"></i> View live profile</a>' +
+        '<a href="/gearsh" class="btn-main"><i class="ti ti-external-link"></i> View live profile</a>' +
         '<a href="/gearsh#book" class="btn-ghost" target="_blank">Test booking form</a>' +
       '</div>' +
       '<div class="card" style="margin-bottom:20px;padding:20px">' +
