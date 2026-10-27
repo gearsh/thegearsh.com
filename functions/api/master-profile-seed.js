@@ -39,13 +39,8 @@ export async function ensureGearshLoginReady(db, env) {
     `).bind(GEARSH_USERNAME, GEARSH_DEFAULT.name, now, user.id).run();
   }
 
-  const bootstrapPassword = env?.GEARSH_LOGIN_PASSWORD;
-  if (bootstrapPassword && user) {
-    const passwordHash = await hashPassword(String(bootstrapPassword));
-    await db.prepare(`
-      UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?
-    `).bind(passwordHash, now, user.id).run();
-  }
+  // Never overwrite a user's password on login. Password changes must only
+  // happen through authenticated account management or a verified reset token.
 
   await seedGearshMasterProfile(db, founderEmail);
   return user;
