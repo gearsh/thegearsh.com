@@ -45,14 +45,16 @@
       '<div class="mp-hero-grid"></div>' +
       '<div class="mp-hero-overlay"></div>' +
       '<div class="mp-hero-inner">' +
-        '<div class="mp-avatar-wrap">' +
-          '<div class="mp-avatar-glow"></div>' +
-          '<img class="mp-avatar" src="' + escapeHtml(avatar) + '" alt="The Gearsh">' +
-          '<span class="mp-master-badge">Founder</span>' +
-        '</div>' +
         '<div class="mp-hero-meta">' +
           '<div class="mp-eyebrow"><i class="ti ti-code"></i> Founder Profile · IT Support & Digital Services</div>' +
-          '<h1 class="mp-name">' + escapeHtml(p.name) + '</h1>' +
+          '<div class="mp-identity-row">' +
+            '<div class="mp-avatar-wrap">' +
+              '<div class="mp-avatar-glow"></div>' +
+              '<img class="mp-avatar" src="' + escapeHtml(avatar) + '" alt="The Gearsh">' +
+              '<span class="mp-master-badge">Founder</span>' +
+            '</div>' +
+            '<h1 class="mp-name">' + escapeHtml(p.name) + '</h1>' +
+          '</div>' +
           '<div class="mp-username"><span>@</span>' + escapeHtml(p.username) +
             '</div>' +
           '<p class="mp-tagline">' + escapeHtml(p.tagline) + '</p>' +
