@@ -19,10 +19,8 @@ export async function onRequestPatch(context) {
     `).bind(auth.userId).first();
 
     const isGearsh = profile && profile.username?.toLowerCase() === GEARSH_USERNAME;
-    const isAdmin = auth.user.user_type === 'admin';
-    const isMaster = profile && isMasterProfile(profile);
-
-    if (!profile || (!isMaster && !isGearsh && !isAdmin)) {
+    // A founder's public profile can only be edited by its own authenticated account.
+    if (!profile || !isGearsh) {
       return jsonResponse({ success: false, error: 'Master profile access required' }, 403);
     }
 
