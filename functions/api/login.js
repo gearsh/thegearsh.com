@@ -15,7 +15,6 @@ import {
   formatUserResponse,
 } from './auth-utils.js';
 import { ensureOnboardingTables } from './onboarding-utils.js';
-import { ensureGearshLoginReady } from './master-profile-seed.js';
 
 export async function onRequestPost(context) {
   try {
@@ -30,13 +29,6 @@ export async function onRequestPost(context) {
     const rawIdentifier = (body.identifier || body.email || '').trim();
     const { value: identifier } = normalizeLoginIdentifier(rawIdentifier);
 
-    try {
-      if (rawIdentifier.replace(/^@/, '').toLowerCase() === 'gearsh') {
-        await ensureGearshLoginReady(context.env.DB, context.env);
-      }
-    } catch (gearErr) {
-      console.error('Gearsh login bootstrap failed:', gearErr);
-    }
     const { password, remember } = body;
 
     if (!identifier || !password) {
@@ -46,7 +38,11 @@ export async function onRequestPost(context) {
       );
     }
 
-    const user = await findUserByIdentifier(context.env.DB, identifier);
+    // @gearsh is a login alias for the founder's verified email record.
+    // Do not resolve it through a potentially different username row or mutate accounts.
+    const lookupIdentifier = identifier.toLowerCase() === 'gearsh'
+      ? 'nhlanhla@thegearsh.com' : identifier;
+    const user = await findUserByIdentifier(context.env.DB, lookupIdentifier);
     if (!user) {
       return jsonResponse({ success: false, error: 'Invalid credentials' }, 401);
     }
