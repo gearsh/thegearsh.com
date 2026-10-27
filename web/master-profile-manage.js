@@ -36,6 +36,8 @@
       '<div class="card" style="margin-bottom:20px;padding:20px">' +
         '<div class="section-label">Profile copy</div>' +
         '<form id="mp-edit-form">' +
+          '<div class="field-group"><label class="field-label">Display name</label><input class="field-input" id="mp-name" maxlength="100"></div>' +
+          '<div class="field-group"><label class="field-label">Profile image URL</label><input class="field-input" id="mp-image" placeholder="/assets/images/your-photo.png"></div>' +
           '<div class="field-group"><label class="field-label">Tagline</label><input class="field-input" name="tagline" id="mp-tagline"></div>' +
           '<div class="field-group"><label class="field-label">Long bio</label><textarea class="field-textarea" name="long_bio" id="mp-long-bio" rows="6"></textarea></div>' +
           '<div class="field-group"><label class="field-label">Cover image URL</label><input class="field-input" name="cover_image_url" id="mp-cover"></div>' +
@@ -86,6 +88,10 @@
       .then(function (d) {
         if (!d.success) return;
         var p = d.data;
+        var name = document.getElementById('mp-name');
+        var image = document.getElementById('mp-image');
+        if (name) name.value = p.name || '';
+        if (image) image.value = p.image || '';
         var tagline = document.getElementById('mp-tagline');
         var bio = document.getElementById('mp-long-bio');
         var cover = document.getElementById('mp-cover');
@@ -102,6 +108,7 @@
       method: 'PATCH',
       headers: this.authHeaders(),
       body: JSON.stringify({
+        user: { name: document.getElementById('mp-name').value, image: document.getElementById('mp-image').value },
         profile: {
           tagline: document.getElementById('mp-tagline').value,
           long_bio: document.getElementById('mp-long-bio').value,
