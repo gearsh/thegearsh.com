@@ -134,7 +134,7 @@
             '<div class="aps-photo-row">' +
               '<div class="aps-photo-preview" id="aps-photo-preview">Photo</div>' +
               '<label class="btn-ghost aps-upload-btn"><i class="ti ti-camera"></i> Upload photo' +
-                '<input type="file" id="aps-photo-input" accept="image/*" capture="environment" hidden></label>' +
+                '<input type="file" id="aps-photo-input" accept="image/*" hidden></label>' +
             '</div></div>' +
           '<div id="aps-profile-msg" class="aps-msg"></div>' +
           '<button type="submit" class="btn-main" style="margin-top:8px">Save profile</button>' +
@@ -143,10 +143,10 @@
       '<div class="card aps-section" id="aps-section-portfolio" style="margin-bottom:20px;padding:20px">' +
         '<div class="section-label">Step 2</div>' +
         '<h3 style="font-size:16px;color:var(--g-white);margin-bottom:8px">Portfolio</h3>' +
-        '<p class="card-sub" style="margin-bottom:16px">Upload photos of your performances, studio work, or past gigs.</p>' +
+        '<p class="card-sub" style="margin-bottom:16px">Select several photos at once. Set your best photo first and rearrange your gallery anytime.</p>' +
         '<div class="aps-portfolio-grid" id="aps-portfolio-grid"></div>' +
         '<label class="btn-ghost aps-upload-btn" style="margin-top:12px;display:inline-flex">' +
-          '<i class="ti ti-photo-plus"></i> Add photo' +
+          '<i class="ti ti-photo-plus"></i> Add photos from gallery' +
           '<input type="file" id="aps-portfolio-input" accept="image/*" multiple hidden></label>' +
         '<div id="aps-portfolio-msg" class="aps-msg"></div></div>' +
 
@@ -237,19 +237,58 @@
     var self = this;
     var grid = document.getElementById('aps-portfolio-grid');
     if (!this.portfolio.length) {
-      grid.innerHTML = '<p class="card-sub" style="margin:0">No portfolio photos yet. Add your first one above.</p>';
+      grid.innerHTML = '<p class="card-sub" style="margin:0">No photos yet. Choose photos to showcase your work.</p>';
       return;
     }
     grid.innerHTML = this.portfolio.map(function (url, idx) {
-      return '<div class="aps-portfolio-item">' +
-        '<img src="' + escapeHtml(url) + '" alt="Portfolio">' +
-        '<button type="button" class="aps-remove-btn" data-idx="' + idx + '" title="Remove">&times;</button></div>';
+      return '<div class="aps-portfolio-item" style="aspect-ratio:4/5">' +
+        '<img src="' + escapeHtml(url) + '" loading="lazy" alt="Portfolio image ' + (idx + 1) + '">' +
+        (idx === 0 ? '<span class="aps-cover-label">Cover photo</span>' : '') +
+        '<div class="aps-photo-actions">' +
+          '<button type="button" data-view="' + idx + '" title="View full photo" aria-label="View photo">⤢</button>' +
+          (idx ? '<button type="button" data-move="' + idx + '" data-dir="-1" title="Move left" aria-label="Move photo left">←</button>' : '') +
+          (idx < self.portfolio.length - 1 ? '<button type="button" data-move="' + idx + '" data-dir="1" title="Move right" aria-label="Move photo right">→</button>' : '') +
+          '<button type="button" data-remove="' + idx + '" title="Remove photo" aria-label="Remove photo">×</button>' +
+        '</div></div>';
     }).join('');
-    grid.querySelectorAll('[data-idx]').forEach(function (btn) {
+    grid.querySelectorAll('[data-view]').forEach(function (btn) {
+      btn.addEventListener('click', function () { window.open(self.portfolio[Number(btn.dataset.view)], '_blank', 'noopener'); });
+    });
+    grid.querySelectorAll('[data-move]').forEach(function (btn) {
+      btn.addEventListener('click', function () { self.movePortfolio(Number(btn.dataset.move), Number(btn.dataset.dir)); });
+    });
+    grid.querySelectorAll('[data-remove]').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        self.removePortfolio(Number(btn.getAttribute('data-idx')));
+        if (confirm('Remove this photo from your portfolio?')) self.removePortfolio(Number(btn.dataset.remove));
       });
     });
+  };
+
+  ArtistProfileSetup.prototype.persistPortfolio = function (successMessage, previous) {
+    var self = this;
+    return fetch(API + '/onboarding/save', {
+      method: 'POST', headers: this.authHeaders(true),
+      body: JSON.stringify({ portfolio: this.portfolio })
+    }).then(function (r) { return r.json(); }).then(function (d) {
+      if (!d.success) throw new Error(d.error || 'Could not save gallery');
+      self.renderPortfolio();
+      self.setMsg('aps-portfolio-msg', successMessage, true);
+      if (self.onChange) self.onChange();
+    }).catch(function (err) {
+      if (previous) self.portfolio = previous;
+      self.renderPortfolio();
+      self.setMsg('aps-portfolio-msg', err.message || 'Could not save gallery', false);
+    });
+  };
+
+  ArtistProfileSetup.prototype.movePortfolio = function (index, direction) {
+    var next = index + direction;
+    if (next < 0 || next >= this.portfolio.length) return;
+    var previous = this.portfolio.slice();
+    var item = this.portfolio.splice(index, 1)[0];
+    this.portfolio.splice(next, 0, item);
+    this.renderPortfolio();
+    this.persistPortfolio('Photo order saved.', previous);
   };
 
   ArtistProfileSetup.prototype.renderVerification = function (data) {
@@ -351,10 +390,14 @@
 
   ArtistProfileSetup.prototype.uploadPortfolioFiles = function (files) {
     var self = this;
-    this.setMsg('aps-portfolio-msg', 'Uploading…');
+    this.setMsg('aps-portfolio-msg', 'Preparing photos…');
+    var current = 0;
+    var total = files.length;
+    var previous = this.portfolio.slice();
     var chain = Promise.resolve();
     Array.prototype.forEach.call(files, function (file) {
       chain = chain.then(function () {
+        self.setMsg('aps-portfolio-msg', 'Uploading photo ' + (++current) + ' of ' + total + '…');
         return prepareUploadBlob(file).then(function (blob) {
           if (blob.size > 3 * 1024 * 1024) {
             return compressImageFile(blob, 1200, 0.75);
@@ -375,6 +418,7 @@
         }).then(function (d) {
           if (!d.success) throw new Error(d.error || 'Upload failed');
           self.portfolio.push(d.data.photo_url);
+          self.renderPortfolio();
         });
       });
     });
@@ -395,28 +439,17 @@
         if (self.onChange) self.onChange();
       })
       .catch(function (err) {
+        self.portfolio = previous;
+        self.renderPortfolio();
         self.setMsg('aps-portfolio-msg', err.message, false);
       });
   };
 
   ArtistProfileSetup.prototype.removePortfolio = function (idx) {
-    var self = this;
+    var previous = this.portfolio.slice();
     this.portfolio.splice(idx, 1);
-    fetch(API + '/onboarding/save', {
-      method: 'POST',
-      headers: this.authHeaders(true),
-      body: JSON.stringify({ portfolio: this.portfolio }),
-    })
-      .then(function (r) { return r.json(); })
-      .then(function (d) {
-        if (!d.success) throw new Error(d.error || 'Could not update portfolio');
-        self.renderPortfolio();
-        self.setMsg('aps-portfolio-msg', 'Photo removed.', true);
-        if (self.onChange) self.onChange();
-      })
-      .catch(function (err) {
-        self.setMsg('aps-portfolio-msg', err.message, false);
-      });
+    this.renderPortfolio();
+    this.persistPortfolio('Photo removed.', previous);
   };
 
   ArtistProfileSetup.prototype.resendEmail = function () {
