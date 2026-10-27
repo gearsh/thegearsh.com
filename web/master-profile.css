@@ -31,11 +31,11 @@
 .mp-hero-inner {
   position: relative; z-index: 2; width: 100%; max-width: 1140px;
   margin: 0 auto; padding: 100px 20px 48px;
-  display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: end;
+  display: block;
 }
 .mp-avatar-wrap {
   position: relative; flex-shrink: 0;
-  align-self: start; margin-top: 30px;
+  margin: 0;
 }
 .mp-avatar {
   width: 120px; height: 120px; border-radius: 24px; object-fit: cover;
@@ -304,3 +304,12 @@
 
 /* Founder head-and-torso avatar */
 .mp-avatar { border-radius: 50%; object-fit: cover; }
+
+/* Keep portrait and heading aligned inside the same identity row. */
+.mp-identity-row { display: flex; align-items: center; gap: 28px; margin-bottom: 10px; }
+.mp-identity-row .mp-avatar-wrap { width: 120px; height: 120px; flex: 0 0 120px; margin: 0; }
+.mp-identity-row .mp-name { margin: 0; }
+@media (max-width: 768px) {
+  .mp-identity-row { flex-direction: column; gap: 20px; justify-content: center; }
+  .mp-identity-row .mp-avatar-wrap { margin: 0 auto; }
+}
