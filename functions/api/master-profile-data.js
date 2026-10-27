@@ -116,7 +116,7 @@ export function mapMasterProfileResponse(row, services, overrides) {
     category: row?.category || base.category,
     location: row?.location || base.location,
     country: row?.country || base.country,
-    image: GEARSH_DEFAULT.image,
+    image: row?.image || base.image || GEARSH_DEFAULT.image,
     cover_image_url: row?.cover_image_url || base.cover_image_url,
     bio: row?.bio || base.bio,
     long_bio: row?.long_bio || base.long_bio,

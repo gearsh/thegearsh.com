@@ -123,34 +123,9 @@ export async function seedGearshMasterProfile(db, founderEmail) {
       now
     ).run();
     profile = { id: artistId };
-  } else {
-    await db.prepare(`
-      UPDATE artist_profiles SET
-        profile_type = 'master',
-        tagline = ?,
-        cover_image_url = ?,
-        long_bio = ?,
-        stats_json = ?,
-        testimonials_json = ?,
-        portfolio_projects_json = ?,
-        availability_json = ?,
-        category = ?,
-        updated_at = ?
-      WHERE id = ?
-    `).bind(
-      GEARSH_DEFAULT.tagline,
-      GEARSH_DEFAULT.cover_image_url,
-      GEARSH_DEFAULT.long_bio,
-      JSON.stringify(GEARSH_DEFAULT.stats),
-      JSON.stringify(GEARSH_DEFAULT.testimonials),
-      JSON.stringify(GEARSH_DEFAULT.portfolio_projects),
-      JSON.stringify({ slots: buildAvailabilitySlots() }),
-      GEARSH_DEFAULT.category,
-      now,
-      profile.id
-    ).run();
   }
 
+  // Existing founder profile data is owner-managed; do not reset edits on each login/read.
   for (let i = 0; i < GEARSH_DEFAULT.services.length; i += 1) {
     const svc = GEARSH_DEFAULT.services[i];
     const existing = await db.prepare(`

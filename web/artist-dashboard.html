@@ -837,11 +837,12 @@
 
     function initMasterProfileManage(data) {
       var username = (data.user && data.user.username || '').toLowerCase();
-      var isMaster = username === 'gearsh' || data.user.user_type === 'admin';
+      var isMaster = username === 'gearsh';
       if (!isMaster) return;
 
       var tab = document.getElementById('dash-tab-master');
       if (tab) tab.style.display = '';
+      if (location.hash === '#master') switchTab('master');
 
       var token = localStorage.getItem('gearsh_token');
       function boot() {

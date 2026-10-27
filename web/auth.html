@@ -108,6 +108,10 @@
     var API_BASE = '/api';
 
     function redirectAfterAuth(user) {
+      if (String(user.username || '').toLowerCase() === 'gearsh') {
+        window.location.replace('/artist-dashboard.html#master');
+        return;
+      }
       var path = user.redirect_path;
       if (!path) {
         path = (user.has_artist_dashboard || user.user_type === 'artist')
