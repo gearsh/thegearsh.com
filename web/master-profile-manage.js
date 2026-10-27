@@ -37,6 +37,7 @@
         '<div class="section-label">Profile copy</div>' +
         '<form id="mp-edit-form">' +
           '<div class="field-group"><label class="field-label">Display name</label><input class="field-input" id="mp-name" maxlength="100"></div>' +
+          '<div class="field-group"><label class="field-label">Profile photo</label><div class="aps-photo-row"><img id="mp-photo-preview" alt="Profile preview" style="width:88px;height:88px;border-radius:50%;object-fit:cover;background:#111"/><label class="btn-ghost aps-upload-btn">Choose picture<input id="mp-photo-upload" type="file" accept="image/*" hidden></label></div><small style="color:var(--g-text-muted)">Choose a photo from your phone or computer. Keep your face centred.</small></div>' +
           '<div class="field-group"><label class="field-label">Profile image URL</label><input class="field-input" id="mp-image" placeholder="/assets/images/your-photo.png"></div>' +
           '<div class="field-group"><label class="field-label">Tagline</label><input class="field-input" name="tagline" id="mp-tagline"></div>' +
           '<div class="field-group"><label class="field-label">Long bio</label><textarea class="field-textarea" name="long_bio" id="mp-long-bio" rows="6"></textarea></div>' +
@@ -64,6 +65,9 @@
 
     this.loadProfile();
     this.loadServices();
+    document.getElementById('mp-photo-upload').addEventListener('change', function (event) {
+      if (event.target.files[0]) self.uploadFounderPhoto(event.target.files[0]);
+    });
 
     document.getElementById('mp-edit-form').addEventListener('submit', function (e) {
       e.preventDefault();
@@ -92,6 +96,8 @@
         var image = document.getElementById('mp-image');
         if (name) name.value = p.name || '';
         if (image) image.value = p.image || '';
+        var picture = document.getElementById('mp-photo-preview');
+        if (picture && p.image) picture.src = p.image;
         var tagline = document.getElementById('mp-tagline');
         var bio = document.getElementById('mp-long-bio');
         var cover = document.getElementById('mp-cover');
@@ -121,6 +127,44 @@
         msg.textContent = d.success ? 'Profile saved.' : (d.error || 'Failed');
         msg.className = 'mp-msg ' + (d.success ? 'success' : 'error');
       });
+  };
+
+  MasterProfileManage.prototype.uploadFounderPhoto = function (file) {
+    var self = this;
+    var msg = document.getElementById('mp-edit-msg');
+    if (!file || !file.type.startsWith('image/')) { msg.textContent = 'Choose a photo file.'; return; }
+    msg.textContent = 'Preparing photo…';
+    var source = URL.createObjectURL(file);
+    var picture = new Image();
+    picture.onload = function () {
+      URL.revokeObjectURL(source);
+      var scale = Math.min(1, 1200 / Math.max(picture.naturalWidth, picture.naturalHeight));
+      var canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(picture.naturalWidth * scale));
+      canvas.height = Math.max(1, Math.round(picture.naturalHeight * scale));
+      canvas.getContext('2d').drawImage(picture, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(function (blob) {
+        if (!blob) { msg.textContent = 'Could not process photo. Try JPG or PNG.'; return; }
+        var reader = new FileReader();
+        reader.onload = function () {
+          msg.textContent = 'Uploading photo…';
+          fetch(API + '/upload-profile-photo', {
+            method: 'POST', headers: self.authHeaders(),
+            body: JSON.stringify({ image_data: String(reader.result).split(',')[1], mime_type: 'image/jpeg', type: 'profile' })
+          }).then(function (r) { return r.json(); }).then(function (d) {
+            if (!d.success || !d.data || !d.data.photo_url) throw new Error(d.error || 'Photo upload failed');
+            var url = d.data.photo_url;
+            document.getElementById('mp-image').value = url;
+            document.getElementById('mp-photo-preview').src = url;
+            msg.textContent = 'Photo uploaded. Save profile to publish your changes.';
+            msg.className = 'mp-msg success';
+          }).catch(function (error) { msg.textContent = error.message; msg.className = 'mp-msg error'; });
+        };
+        reader.readAsDataURL(blob);
+      }, 'image/jpeg', 0.86);
+    };
+    picture.onerror = function () { URL.revokeObjectURL(source); msg.textContent = 'Cannot read this photo. Try JPG or PNG.'; };
+    picture.src = source;
   };
 
   MasterProfileManage.prototype.loadServices = function () {

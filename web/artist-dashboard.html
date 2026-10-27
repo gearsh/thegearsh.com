@@ -272,6 +272,12 @@
       .grid-2 { grid-template-columns: 1fr; }
       .nav-user span { display: none; }
     }
+    /* Portfolio gallery: clear cover marker and usable touch controls */
+    .aps-portfolio-item { position:relative; overflow:hidden; }
+    .aps-cover-label { position:absolute; top:8px; left:8px; background:rgba(2,6,23,.85);color:white;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700; }
+    .aps-photo-actions { position:absolute;bottom:0;left:0;right:0;display:flex;gap:4px;justify-content:flex-end;padding:8px;background:rgba(2,6,23,.78); }
+    .aps-photo-actions button { min-width:32px;min-height:32px;border:1px solid rgba(255,255,255,.25);border-radius:7px;background:#182439;color:white;cursor:pointer;font-size:17px; }
+    .aps-photo-actions button:focus-visible {outline:2px solid #38bdf8;outline-offset:2px;}
   </style>
   <link rel="stylesheet" href="dashboard-revamp.css">
 </head>
