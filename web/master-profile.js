@@ -38,7 +38,7 @@
   function renderHero(p) {
     var cover = p.cover_image_url || '/icons/og-image.png';
     var avatar = p.image || '/icons/Icon-512.png';
-    var stats = p.stats || {};
+    var stats = {};
 
     return '<section class="mp-hero">' +
       '<div class="mp-hero-cover"><img src="' + escapeHtml(cover) + '" alt=""></div>' +
@@ -48,23 +48,17 @@
         '<div class="mp-avatar-wrap">' +
           '<div class="mp-avatar-glow"></div>' +
           '<img class="mp-avatar" src="' + escapeHtml(avatar) + '" alt="The Gearsh">' +
-          '<span class="mp-master-badge">Master</span>' +
+          '<span class="mp-master-badge">Founder</span>' +
         '</div>' +
         '<div class="mp-hero-meta">' +
-          '<div class="mp-eyebrow"><i class="ti ti-code"></i> Master Profile · Tech & Product</div>' +
+          '<div class="mp-eyebrow"><i class="ti ti-code"></i> Founder Profile · IT Support & Digital Services</div>' +
           '<h1 class="mp-name">' + escapeHtml(p.name) + '</h1>' +
           '<div class="mp-username"><span>@</span>' + escapeHtml(p.username) +
-            '<span class="mp-verified"><i class="ti ti-rosette-discount-check"></i> Verified</span></div>' +
+            '</div>' +
           '<p class="mp-tagline">' + escapeHtml(p.tagline) + '</p>' +
           '<div class="mp-hero-actions">' +
             '<a href="#book" class="btn-main"><i class="ti ti-calendar-plus"></i> Book The Gearsh</a>' +
             '<a href="#services" class="btn-ghost">View gigs</a>' +
-          '</div>' +
-          '<div class="mp-stats-bar">' +
-            '<div class="mp-stat"><div class="mp-stat-num accent">' + Number(stats.projects_completed || 0) + '+</div><div class="mp-stat-lbl">Projects</div></div>' +
-            '<div class="mp-stat"><div class="mp-stat-num">' + Number(stats.clients_served || 0) + '+</div><div class="mp-stat-lbl">Clients</div></div>' +
-            '<div class="mp-stat"><div class="mp-stat-num accent">' + Number(stats.hours_coded || 0).toLocaleString() + '</div><div class="mp-stat-lbl">Hours coded</div></div>' +
-            '<div class="mp-stat"><div class="mp-stat-num">' + escapeHtml(stats.satisfaction || '98%') + '</div><div class="mp-stat-lbl">Satisfaction</div></div>' +
           '</div>' +
         '</div>' +
       '</div></section>';
@@ -74,10 +68,7 @@
     var links = [
       { href: '#about', label: 'About' },
       { href: '#services', label: 'Gigs' },
-      { href: '#portfolio', label: 'Portfolio' },
       { href: '#activity', label: 'Activity' },
-      { href: '#testimonials', label: 'Reviews' },
-      { href: '#availability', label: 'Availability' },
       { href: '#book', label: 'Book' },
     ];
     return '<nav class="mp-nav-sticky" aria-label="Profile sections"><div class="mp-nav-inner">' +
@@ -102,12 +93,12 @@
         return '<span class="mp-deliverable-tag">' + escapeHtml(d) + '</span>';
       }).join('');
       return '<article class="mp-service-card' + (svc.is_featured ? ' featured' : '') + '">' +
-        (svc.is_featured ? '<div class="mp-service-featured">Popular</div>' : '') +
+        (svc.is_featured ? '<div class="mp-service-featured">Featured</div>' : '') +
         '<div class="mp-service-name">' + escapeHtml(svc.name) + '</div>' +
         '<div class="mp-service-desc">' + escapeHtml(svc.description) + '</div>' +
         (tags ? '<div class="mp-deliverables">' + tags + '</div>' : '') +
         '<div class="mp-service-meta">' +
-          '<div class="mp-service-price">From ' + formatMoney(svc.price) + '</div>' +
+          '<div class="mp-service-price">' + (Number(svc.price) > 0 ? 'From ' + formatMoney(svc.price) : 'Request a quote') + '</div>' +
           '<div class="mp-service-delivery">' + (svc.delivery_days ? svc.delivery_days + ' days' : '') + '</div>' +
         '</div>' +
         '<button type="button" class="mp-service-book" data-service="' + escapeHtml(svc.id) + '">Book this gig</button>' +
@@ -170,19 +161,19 @@
 
     return '<section class="mp-section" id="availability">' +
       '<div class="mp-section-head"><div><div class="mp-section-label">Calendar</div><h2 class="mp-section-title">Open <em>slots</em></h2></div></div>' +
-      '<div class="mp-card"><p style="font-size:13px;color:var(--g-text-muted);margin-bottom:16px">Select a preferred date for your discovery call or kickoff session.</p>' +
+      '<div class="mp-card"><p style="font-size:13px;color:var(--g-text-muted);margin-bottom:16px">Suggest a preferred date. Availability will be confirmed.</p>' +
       '<div class="mp-calendar-grid">' + days + '</div></div></section>';
   }
 
   function renderBooking(p) {
     var serviceOptions = (p.services || []).map(function (s) {
-      return '<option value="' + escapeHtml(s.id) + '">' + escapeHtml(s.name) + ' · from ' + formatMoney(s.price) + '</option>';
+      return '<option value="' + escapeHtml(s.id) + '">' + escapeHtml(s.name) + (Number(s.price) > 0 ? ' · from ' + formatMoney(s.price) : ' · quote required') + '</option>';
     }).join('');
 
     return '<section class="mp-section" id="book">' +
       '<div class="mp-section-head"><div><div class="mp-section-label">Get started</div><h2 class="mp-section-title">Book <em>The Gearsh</em></h2></div></div>' +
       '<div class="mp-book-panel">' +
-        '<p style="font-size:14px;color:var(--g-text-muted);margin-bottom:20px">Tell me about your project. I will review your brief and respond within 24 hours with next steps or a custom quote.</p>' +
+        '<p style="font-size:14px;color:var(--g-text-muted);margin-bottom:20px">Tell me about your project. I will review your request and get back to you to discuss scope, availability and a quotation.</p>' +
         '<form id="mp-book-form">' +
           '<div class="mp-book-grid">' +
             '<div class="mp-field"><label>Your name *</label><input name="client_name" required placeholder="Full name"></div>' +
@@ -199,8 +190,8 @@
           '<div class="mp-trust-row">' +
             '<span><i class="ti ti-lock"></i> Secure & confidential</span>' +
             '<span><i class="ti ti-shield-check"></i> Verified founder profile</span>' +
-            '<span><i class="ti ti-clock"></i> Response within 24 hrs</span>' +
-            '<span><i class="ti ti-credit-card"></i> Deposit via PayFast after quote</span>' +
+            '<span><i class="ti ti-clock"></i> Response time confirmed on enquiry</span>' +
+            '<span><i class="ti ti-credit-card"></i> Payment method agreed after quote</span>' +
           '</div>' +
         '</form></div></section>';
   }
@@ -266,7 +257,7 @@
       .then(function (r) { return r.json(); })
       .then(function (d) {
         if (!d.success) throw new Error(d.error || 'Could not send inquiry');
-        msg.textContent = d.message || 'Inquiry sent! The Gearsh will respond within 24 hours.';
+        msg.textContent = d.message || 'Inquiry submitted. I will get back to you about the next steps.';
         msg.className = 'mp-msg success';
         form.reset();
       })
@@ -294,10 +285,10 @@
         renderNav() +
         renderAbout(p) +
         renderServices(p) +
-        renderPortfolio(p) +
+        ((p.portfolio_projects || []).length ? renderPortfolio(p) : '') +
         renderActivity() +
-        renderTestimonials(p) +
-        renderAvailability(p) +
+        '' +
+        '' +
         renderBooking(p) +
       '</div>';
     bindEvents();

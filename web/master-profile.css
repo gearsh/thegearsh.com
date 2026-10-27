@@ -300,3 +300,6 @@
 @media print {
   .mp-nav-sticky, .g-nav, .mp-hero-actions { display: none; }
 }
+
+/* Founder head-and-torso avatar */
+.mp-avatar { border-radius: 50%; object-fit: cover; }
