@@ -190,7 +190,8 @@ export async function onRequestGet(context) {
         checklist,
         checklist_complete: checklistComplete,
         checklist_total: checklist.length,
-        profile_url: buildProfileUrl(username),
+        profile_url: (String(user.email || '').toLowerCase() === 'nhlanhla@thegearsh.com' || String(username).toLowerCase() === 'gearsh')
+          ? '/gearsh' : buildProfileUrl(username),
         bookings,
         services,
         activity,
