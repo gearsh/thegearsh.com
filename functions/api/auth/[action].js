@@ -147,14 +147,9 @@ async function handleLogin(context, body) {
     return jsonResponse({ success: false, error: 'Email/username and password required' }, 400);
   }
 
-  try {
-    if (rawIdentifier.replace(/^@/, '').toLowerCase() === 'gearsh') {
-      const { ensureGearshLoginReady } = await import('../master-profile-seed.js');
-      await ensureGearshLoginReady(context.env.DB, context.env);
-    }
-  } catch (_) {}
-
-  const user = await findUserByIdentifier(context.env.DB, rawIdentifier);
+  const lookupIdentifier = rawIdentifier.replace(/^@/, '').toLowerCase() === 'gearsh'
+    ? 'nhlanhla@thegearsh.com' : rawIdentifier;
+  const user = await findUserByIdentifier(context.env.DB, lookupIdentifier);
   if (!user) {
     return jsonResponse({ success: false, error: 'Invalid credentials' }, 401);
   }
