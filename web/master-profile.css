@@ -313,3 +313,8 @@
   .mp-identity-row { flex-direction: column; gap: 20px; justify-content: center; }
   .mp-identity-row .mp-avatar-wrap { margin: 0 auto; }
 }
+
+/* Founder page navbar brand wordmark */
+.g-nav-logo { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
+.g-nav-logo .g-founder-brand-title { color: var(--g-white); font-family: var(--g-font); font-size: 16px; font-weight: 700; letter-spacing: .09em; line-height: 1; white-space: nowrap; }
+@media (max-width: 480px) { .g-nav-logo { gap: 8px; } .g-nav-logo .g-founder-brand-title { font-size: 12px; letter-spacing: .05em; } }
