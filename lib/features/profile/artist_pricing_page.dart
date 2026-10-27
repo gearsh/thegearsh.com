@@ -688,7 +688,7 @@ class _ArtistPricingPageState extends State<ArtistPricingPage>
           ),
           _faqItem(
             'Can I join from elsewhere in Africa?',
-            'We\'re launching in South Africa first but expanding globally. Artists from any country can sign up — you\'ll be featured as we roll out in your region.',
+            'The Gearsh is building a marketplace for creatives across Africa, starting in South Africa. Availability of bookings, payments and other features depends on your location.',
           ),
           _faqItem(
             'Can I cancel my subscription?',
