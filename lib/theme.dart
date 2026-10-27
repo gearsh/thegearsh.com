@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 // ── Gearsh Design System ──────────────────────────────────
 // Palette: slate-950 bg, sky/cyan accents, Syne headings
-const Color primaryColor = Color(0xFF0EA5E9);     // sky-500
-const Color lightBlueAccent = Color(0xFF38BDF8);   // sky-400
+const Color primaryColor = Color(0xFF00BFFF);     // sky-500
+const Color lightBlueAccent = Color(0xFF00BFFF);   // sky-400
 const Color darkBackgroundColor = Color(0xFF020617); // slate-950
 const Color cardBackgroundColor = Color(0xFF111827); // gray-900
 const Color secondaryTextColor = Color(0xFFE2E8F0); // slate-200
@@ -19,8 +19,8 @@ final appTheme = ThemeData(
     primary: primaryColor,
     secondary: lightBlueAccent,
     surface: cardBackgroundColor,
-    onPrimary: Colors.white,
-    onSecondary: Colors.white,
+    onPrimary: darkBackgroundColor,
+    onSecondary: darkBackgroundColor,
     onSurface: Colors.white,
   ),
   appBarTheme: const AppBarTheme(
@@ -70,7 +70,7 @@ final appTheme = ThemeData(
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: primaryColor,
-      foregroundColor: Colors.white,
+      foregroundColor: darkBackgroundColor,
       padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
