@@ -33,6 +33,12 @@
       background-repeat: no-repeat; background-position: 12px center;
     }
     .dir-search:focus { outline: none; border-color: rgba(0,191,255,0.4); }
+
+    .upcoming-creatives{margin:26px 0 42px;padding:28px;border:1px solid rgba(0,191,255,.25);border-radius:22px;background:#0E1D2E}
+    .upcoming-heading{text-align:center;margin-bottom:22px}.upcoming-heading h2{margin:4px 0 10px;color:#fff;font-size:clamp(25px,3.5vw,36px)}
+    .upcoming-heading p{margin:0 auto;color:#B4C8D8;max-width:680px;line-height:1.6}
+    .upcoming-grid{margin-top:20px}.upcoming-grid .feed-card{min-width:0}
+    @media(max-width:600px){.upcoming-creatives{padding:20px 14px;margin:22px 0 32px}.upcoming-heading{text-align:center}.upcoming-grid{gap:12px}}
   </style>
   <link rel="stylesheet" href="artists-revamp.css">
 </head>
@@ -65,6 +71,12 @@
       <h1>All artists.<br><em>Find your next creative.</em></h1>
       <p>Explore artists and creative professionals across Africa. Search by name, category, genre or city to find talent for your event or project.</p>
     </div>
+
+
+    <section class="upcoming-creatives" id="upcoming-creatives" aria-labelledby="upcoming-title">
+      <div class="upcoming-heading"><div><span class="directory-eyebrow">DISCOVER NEW TALENT</span><h2 id="upcoming-title">Upcoming creatives</h2><p>Meet emerging creatives building their presence on The Gearsh. Explore their services and support their journey.</p></div></div>
+      <div class="artist-grid upcoming-grid" id="upcoming-grid" aria-live="polite"></div>
+    </section>
 
     <div class="filters-bar" role="search" aria-label="Filter artists">
       <div class="dir-search-wrap">
