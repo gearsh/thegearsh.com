@@ -629,9 +629,20 @@
     var tonightCatId = tonight ? 'genre-' + tonight.slug : null;
 
     var htmlParts = [];
+    var shownOnPage = {};
+    function uniqueHomeCards(cards) {
+      if (!opts.dedupeAcrossCategories) return cards;
+      return cards.filter(function(card) {
+        var key = normalizeName(card.name || card.username || card.artist_id || '');
+        if (!key || shownOnPage[key]) return false;
+        shownOnPage[key] = true;
+        return true;
+      });
+    }
     var nearYouRail = buildNearYouRail(apiArtists, index, opts.cardsPerCategory || 16);
     if (nearYouRail) {
-      htmlParts.push({ category: nearYouRail.category, cards: nearYouRail.cards, priority: true, isTonight: false });
+      nearYouRail.cards = uniqueHomeCards(nearYouRail.cards);
+      if (nearYouRail.cards.length) htmlParts.push({ category: nearYouRail.category, cards: nearYouRail.cards, priority: true, isTonight: false });
     }
 
     if (opts.buildNav !== false && !opts.hideNav) {
@@ -647,6 +658,7 @@
         cards = GearshLocation.enrichCards(cards);
         cards.sort(function (a, b) { return compareFeedCards(a, b, null); });
       }
+      cards = uniqueHomeCards(cards);
       cards.slice(0, 8).forEach(function (card) {
         var storyKey = card.artist_id || normalizeName(card.name);
         if (seenStories[storyKey]) return;
@@ -654,7 +666,7 @@
         storyCards.push(card);
       });
       var isTonight = !!(tonightCatId && category.id === tonightCatId);
-      htmlParts.push({ category: category, cards: cards, priority: idx < 2, isTonight: isTonight });
+      if (cards.length || !opts.dedupeAcrossCategories) htmlParts.push({ category: category, cards: cards, priority: idx < 2, isTonight: isTonight });
 
       // Splice the secondary location rail (e.g. "More from Limpopo") directly
       // below tonight's headline rail when configured.
@@ -662,7 +674,8 @@
         var excludeUsernames = cards.map(function (c) { return c.username; });
         var locationRail = buildLocationRail(tonight.secondaryLocation, excludeUsernames, apiArtists, index);
         if (locationRail) {
-          htmlParts.push({ category: locationRail.category, cards: locationRail.cards, priority: true, isTonight: false });
+          locationRail.cards = uniqueHomeCards(locationRail.cards);
+          if (locationRail.cards.length) htmlParts.push({ category: locationRail.category, cards: locationRail.cards, priority: true, isTonight: false });
         }
       }
     });
