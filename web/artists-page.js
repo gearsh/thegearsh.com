@@ -86,6 +86,12 @@
   function applyFilters() {
     filtered = GearshFeed.filterCards(allCards, filters);
     filtered = GearshFeed.sortCards(filtered, filters.sort, filters.genre);
+    // On the directory, complete profiles with actual photos should appear
+    // before default-avatar profiles, regardless of the secondary sort.
+    filtered.sort(function (a, b) {
+      return Number(GearshFeed.cardHasSoloPortrait(b)) -
+        Number(GearshFeed.cardHasSoloPortrait(a));
+    });
     page = 1;
     renderPage();
     writeUrlState();
