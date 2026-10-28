@@ -97,10 +97,10 @@ export async function onRequestPost(context) {
         const recipient = await db.prepare(`SELECT email, display_name, email_verified
           FROM users WHERE id=? AND is_active=1`).bind(artist.id).first();
         const address = String(recipient?.email || '').trim();
-        if (recipient?.email_verified && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(address)
+        if (recipient?.email_verified && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)
             && !address.toLowerCase().startsWith('unclaimed+')) {
           // One provider request per newly created message, keyed by its stable ID.
-          const firstName = String(recipient.display_name || 'there').split(/\\s+/)[0]
+          const firstName = String(recipient.display_name || 'there').split(/\s+/)[0]
             .replace(/[&<>"']/g, '');
           const mail = {
             from: context.env.EMAIL_FROM,
