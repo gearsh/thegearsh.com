@@ -348,6 +348,7 @@
         <button class="dash-tab" type="button" data-tab="profile">Profile setup</button>
         <button class="dash-tab" type="button" data-tab="gigs">Gigs &amp; tickets</button>
         <button class="dash-tab" type="button" data-tab="master" id="dash-tab-master" style="display:none">Master profile</button>
+        <button class="dash-tab" type="button" data-tab="messages" id="dash-tab-messages">Messages</button>
         <button class="dash-tab" type="button" data-tab="activity">Activity</button>
         <button class="dash-tab" type="button" data-tab="bookings">Bookings</button>
         <button class="dash-tab" type="button" data-tab="calendar">Calendar</button>
@@ -415,6 +416,8 @@
           <div class="card" id="gig-create-root"></div>
         </div>
       </div>
+
+      <div class="dash-panel" id="panel-messages"><div class="card" id="founder-messages-root" style="padding:20px"></div></div>
 
       <div class="dash-panel" id="panel-activity">
         <div class="grid-2" style="grid-template-columns:1fr;gap:20px">
@@ -506,6 +509,7 @@
     };
 
     function switchTab(id) {
+      if (id === 'messages' && window.initFounderMessages) window.initFounderMessages();
       document.querySelectorAll('.dash-tab').forEach(function(t) {
         t.classList.toggle('active', t.getAttribute('data-tab') === id);
       });
@@ -960,6 +964,7 @@
   <script defer src="activity-create.js"></script>
   <script defer src="gig-create.js"></script>
   <script defer src="master-profile-manage.js"></script>
+  <script defer src="founder-messages.js"></script>
   <script defer src="artist-profile-setup.js"></script>
   <script defer src="marketplace-data.js"></script>
   <script defer src="artist-services-manage.js"></script>
