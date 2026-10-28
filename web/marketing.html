@@ -566,7 +566,7 @@
       <a href="/artists" class="home-zone__link">View all artists <i class="ti ti-arrow-right" style="font-size:14px"></i></a>
     </header>
 
-    <section class="headliners-section" id="headliners-section" hidden>
+    <section class="headliners-section" id="headliners-section" hidden style="display:none">
       <div class="headliners-header">
         <div>
           <h3 class="headliners-title"><em id="headliners-title-text">Artists of the day</em></h3>
@@ -798,13 +798,12 @@
       GearshFeed.loadArtistFeed({
         maxCategories: 4,
         cardsPerCategory: 10,
+        dedupeAcrossCategories: true,
         hideNav: true,
         hideStories: true,
         buildNav: false,
       });
-      if (typeof GearshFeed.renderHeadlinersRail === 'function') {
-        GearshFeed.renderHeadlinersRail();
-      }
+      // Homepage keeps one artist appearance per section group; do not add a second headliners rail.
     });
   </script>
 </body>
