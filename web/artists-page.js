@@ -125,6 +125,15 @@
         return card.artist_id && String(card.username || '').toLowerCase() === username;
       });
     }).filter(Boolean);
+    // Sort by actual service starting price; cards with no published price follow.
+    function startingPrice(card) {
+      var raw = String(card.price || '').replace(/[^\d.,]/g, '').replace(/,/g, '');
+      var value = Number(raw);
+      return raw && Number.isFinite(value) && value > 0 ? value : Infinity;
+    }
+    selected.sort(function (a, b) {
+      return startingPrice(a) - startingPrice(b);
+    });
     if (!selected.length) { section.hidden = true; return; }
     section.hidden = false;
     root.innerHTML = selected.map(function (card) { return GearshFeed.renderFeedCard(card); }).join('');
