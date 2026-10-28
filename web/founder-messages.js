@@ -4,6 +4,7 @@ var root=document.getElementById('founder-messages-root');
 if(!root)return;
 var token=localStorage.getItem('gearsh_token')||'';
 var selected='';
+var lastSendStatus='';
 var isFounder=false;
 function el(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;}
 function headers(){return {'Authorization':'Bearer '+token,'Content-Type':'application/json'};}
@@ -41,8 +42,9 @@ async function load(){
   chat.append(messages);messages.scrollTop=messages.scrollHeight;
   var form=el('form');var textarea=el('textarea');textarea.placeholder=isFounder?'Write a welcome message…':'Reply to the founder…';textarea.maxLength=2000;textarea.required=true;
   var send=el('button','btn-main','Send message');send.type='submit';send.style.marginTop='10px';form.append(textarea,send);
-  form.onsubmit=async function(e){e.preventDefault();send.disabled=true;status('Sending…');try{await api('POST',{artist:selected,message:textarea.value});textarea.value='';status('Message sent.');await load();}catch(err){status(err.message);}finally{send.disabled=false;}};
+  form.onsubmit=async function(e){e.preventDefault();send.disabled=true;status('Sending…');try{var result=await api('POST',{artist:selected,message:textarea.value});textarea.value='';lastSendStatus=result.notification==='sent'?'Message sent and email notification accepted by provider.':result.notification==='not_configured'?'Message saved. Email notifications need configuration.':result.notification==='failed'?'Message saved, but the email notification failed.':result.notification==='not_eligible'?'Message saved. Recipient has no verified deliverable email.':'Message sent.';await load();}catch(err){status(err.message);}finally{send.disabled=false;}};
   chat.append(form);
+  if(lastSendStatus)status(lastSendStatus);
  }catch(err){status(err.message);}
 }
 window.initFounderMessages=function(){if(root.dataset.loaded)return;root.dataset.loaded='1';setup();load();};
