@@ -112,6 +112,25 @@
     }
   }
 
+
+  // Curated early artist accounts, matched only against live API records.
+  // Never create static/fake cards when an artist is missing or unavailable.
+  function renderUpcomingCreatives() {
+    var root = document.getElementById('upcoming-grid');
+    var section = document.getElementById('upcoming-creatives');
+    if (!root || !section) return;
+    var usernames = ['hope-mkhway', 'mercy_kingsa', 'bonitaklish', 'luxolo-wendlela'];
+    var selected = usernames.map(function (username) {
+      return allCards.find(function (card) {
+        return card.artist_id && String(card.username || '').toLowerCase() === username;
+      });
+    }).filter(Boolean);
+    if (!selected.length) { section.hidden = true; return; }
+    section.hidden = false;
+    root.innerHTML = selected.map(function (card) { return GearshFeed.renderFeedCard(card); }).join('');
+    if (global.GearshUI && GearshUI.initLazyImages) GearshUI.initLazyImages(root);
+  }
+
   function populateSelects() {
     var cats = {};
     var genres = {};
@@ -230,6 +249,7 @@
     var data = await GearshFeed.fetchFeedData();
     var index = GearshFeed.buildArtistIndex(data.apiArtists);
     allCards = GearshFeed.buildAllArtistCards(data.apiArtists, index);
+    renderUpcomingCreatives();
 
     populateSelects();
     cloneSelectOptions('filter-genre', 'filter-genre-mobile');
