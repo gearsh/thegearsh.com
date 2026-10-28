@@ -501,14 +501,9 @@
           apiArtists.push(a);
         });
       });
-    } else {
-      try {
-        var fb = await fetch(API_BASE + '/artists?limit=100');
-        var fbData = await fb.json();
-        if (fb.ok && fbData.success) apiArtists = fbData.data || [];
-      } catch (_) {}
     }
-
+    // An empty real-artist feed must not fall back to a legacy endpoint
+    // that may still include unclaimed seeded demo accounts.
     var result = { categories: categories, apiArtists: apiArtists };
     writeCache(result);
     return result;
