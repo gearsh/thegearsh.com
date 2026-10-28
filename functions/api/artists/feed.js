@@ -169,7 +169,7 @@ function scheduleShowcaseSeed(context) {
 
 export async function onRequestGet(context) {
   try {
-    scheduleShowcaseSeed(context);
+    // Discovery is restricted to real, activated accounts; never seed demo artists on read.
 
     const query = `
       SELECT
@@ -201,6 +201,8 @@ export async function onRequestGet(context) {
       FROM artist_profiles ap
       JOIN users u ON ap.user_id = u.id
       WHERE u.is_active = 1
+        AND COALESCE(u.is_demo, 0) = 0
+        AND LOWER(u.email) NOT LIKE 'unclaimed+%@thegearsh.com'
     `;
 
     const result = await context.env.DB.prepare(query).all();
@@ -210,7 +212,7 @@ export async function onRequestGet(context) {
       .filter(function (artist) {
         return !removed.has(String(artist.username || '').toLowerCase());
       })
-      .map(applyShowcaseMetadata);
+      .map(function (artist) { return artist; });
     const categories = buildCategories(artists);
 
     return new Response(JSON.stringify({
