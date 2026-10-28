@@ -88,7 +88,51 @@ export async function onRequestPost(context) {
     await db.prepare(`INSERT INTO founder_artist_messages
       (id,founder_id,artist_id,sender_id,body,created_at)
       VALUES (?,?,?,?,?,?)`).bind(id,owner.id,artist.id,auth.userId,message,new Date().toISOString()).run();
-    return jsonResponse({success:true,data:{id}},201);
+    // Notification is best-effort: saving the in-app message is authoritative.
+    // Only notify an artist for a founder-originated message.
+    let notification = 'not_applicable';
+    if (isFounder) {
+      notification = 'not_configured';
+      if (context.env.RESEND_API_KEY && context.env.EMAIL_FROM) {
+        const recipient = await db.prepare(`SELECT email, display_name, email_verified
+          FROM users WHERE id=? AND is_active=1`).bind(artist.id).first();
+        const address = String(recipient?.email || '').trim();
+        if (recipient?.email_verified && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address)
+            && !address.toLowerCase().startsWith('unclaimed+')) {
+          // One provider request per newly created message, keyed by its stable ID.
+          const firstName = String(recipient.display_name || 'there').split(/\s+/)[0]
+            .replace(/[&<>"']/g, '');
+          const mail = {
+            from: context.env.EMAIL_FROM,
+            to: [address],
+            subject: 'You have a new message from The Gearsh',
+            html: '<p>Hi ' + firstName + ',</p>' +
+              '<p>You have a new private message from the founder of The Gearsh.</p>' +
+              '<p><a href="https://thegearsh.com/artist-dashboard.html#messages">Read and reply on The Gearsh</a></p>' +
+              '<p>This notification does not contain the private message itself.</p>'
+          };
+          try {
+            const response = await fetch('https://api.resend.com/emails', {
+              method: 'POST',
+              headers: {
+                Authorization: 'Bearer ' + context.env.RESEND_API_KEY,
+                'Content-Type': 'application/json',
+                'Idempotency-Key': id
+              },
+              body: JSON.stringify(mail)
+            });
+            notification = response.ok ? 'sent' : 'failed';
+            if (!response.ok) console.error('Founder message notification failed',response.status);
+          } catch(e) {
+            notification = 'failed';
+            console.error('Founder message notification unavailable');
+          }
+        } else {
+          notification = 'not_eligible';
+        }
+      }
+    }
+    return jsonResponse({success:true,data:{id,notification}},201);
   } catch(e) {console.error('Founder messages send failed',e);return jsonResponse({success:false,error:'Unable to send message'},500);}
 }
 export async function onRequestOptions(){return corsPreflightResponse();}
