@@ -6,7 +6,7 @@
   'use strict';
 
   var API_BASE = '/api';
-  var CACHE_KEY = 'gearsh_feed_cache_v8';
+  var CACHE_KEY = 'gearsh_feed_cache_real_profiles_v9';
   var CACHE_TTL = 5 * 60 * 1000;
 
   // Tonight helper — reads from day-genre-schedule.js when present.
@@ -362,19 +362,20 @@
   }
 
   function buildAllArtistCards(apiArtists, index) {
-    var cards = (apiArtists || []).map(apiArtistToCard);
-    var usedNames = {};
-    cards.forEach(function (c) { usedNames[normalizeName(c.name)] = true; });
-
-    getShowcase().forEach(function (item) {
-      var key = normalizeName(item.name);
-      if (usedNames[key]) return;
-      var match = findArtistMatch(item.name, index);
-      cards.push(showcaseToCard(item, match));
-      usedNames[key] = true;
-    });
-
-    return cards.sort(function (a, b) {
+    // Public directory must only contain real API artist accounts. Showcase
+    // profiles are unclaimed examples, not verified, confirmed bookable artists.
+    var seen = {};
+    return (apiArtists || []).filter(function (artist) {
+      if (!artist || !artist.artist_id) return false;
+      var id = String(artist.artist_id).toLowerCase();
+      var username = String(artist.username || '').toLowerCase();
+      var name = normalizeName(artist.name);
+      var key = username || name || id;
+      if (seen[key] || seen[id]) return false;
+      seen[key] = true;
+      seen[id] = true;
+      return true;
+    }).map(apiArtistToCard).sort(function (a, b) {
       return compareFeedCards(a, b, null);
     });
   }
@@ -491,8 +492,14 @@
     } catch (_) {}
 
     if (categories.length) {
+      var discovered = {};
       categories.forEach(function (cat) {
-        (cat.artists || []).forEach(function (a) { apiArtists.push(a); });
+        (cat.artists || []).forEach(function (a) {
+          var key = String(a.artist_id || a.username || '').toLowerCase();
+          if (!key || discovered[key]) return;
+          discovered[key] = true;
+          apiArtists.push(a);
+        });
       });
     } else {
       try {
