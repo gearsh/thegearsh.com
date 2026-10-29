@@ -62,6 +62,7 @@ jobs:
           cp web/gearsh-brand.css build/web/gearsh-brand.css 2>/dev/null || true
           cp web/discovery.css build/web/discovery.css 2>/dev/null || true
           cp web/artist-feed.js build/web/artist-feed.js 2>/dev/null || true
+          cp web/site-header.js web/site-header.css build/web/
           cp web/gearsh-ui.js build/web/gearsh-ui.js 2>/dev/null || true
           cp web/gearsh-auth.js build/web/gearsh-auth.js 2>/dev/null || true
           cp web/marketplace-data.js build/web/marketplace-data.js 2>/dev/null || true
