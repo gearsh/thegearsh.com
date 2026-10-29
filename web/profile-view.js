@@ -3,7 +3,12 @@
   var activeProfile = null, initialized = false, followState = false, followBusy = false, followReady = false;
   function el(tag, className, text) { var n = document.createElement(tag); if (className) n.className = className; if (text != null) n.textContent = text; return n; }
   function safeImage(value) {
-    try { var u = new URL(String(value), location.href); return /^https?:$/.test(u.protocol) ? u.href : ''; } catch (_) { return ''; }
+    if (typeof value !== 'string' || !value.trim()) return '';
+    var source = value.trim();
+    // Dashboard uploads can be stored inline when object storage is unavailable.
+    // Permit raster image data only; never inline SVG or HTML.
+    if (/^data:image\/(?:jpeg|png|gif|webp|avif);base64,[a-z0-9+/=\r\n]+$/i.test(source)) return source;
+    try { var u = new URL(source, location.href); return /^https?:$/.test(u.protocol) ? u.href : ''; } catch (_) { return ''; }
   }
   function token() { try { return window.GearshAuth ? window.GearshAuth.getToken() : localStorage.getItem('gearsh_token'); } catch (_) { return ''; } }
   function headers() { var t = token(); return t ? { Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' }; }
