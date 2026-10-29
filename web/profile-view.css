@@ -10,3 +10,6 @@ body{--p-bg:#0b0c0e;--p-surface:#15171a;--p-line:#292c31;--p-muted:#a2a6ae;--p-a
 .profile-main [hidden]{display:none!important}
 
 body:before{background:#0b0c0e}.profile-main .profile-stats strong{font-size:20px;font-weight:600}
+
+/* Keep introductions compact; full biographies stay in the About section. */
+.profile-hero{align-items:start}.profile-hero .bio{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;margin-bottom:8px}.profile-bio-more{display:inline-block;border:0;background:transparent;padding:4px 0;color:#00bfff;font:600 13px/1.5 Inter,system-ui,sans-serif;cursor:pointer;text-decoration:none}.profile-bio-more:hover{text-decoration:underline}#about-copy{white-space:pre-line;overflow-wrap:anywhere}.profile-hero .meta{overflow-wrap:anywhere;min-width:0}.profile-hero>div{min-width:0}

@@ -48,8 +48,30 @@
     var work = document.getElementById('work'); nav.after(work); document.getElementById('services').after(document.getElementById('about')); work.querySelector('h2').textContent = 'My work';
     var dialog = el('dialog', 'profile-lightbox'); dialog.id = 'profile-lightbox'; dialog.setAttribute('aria-label', 'Portfolio image'); dialog.innerHTML='<div class="profile-lightbox-top"><span id="profile-lightbox-label">Selected work</span><button type="button">Close</button></div><img alt="">'; document.body.appendChild(dialog); dialog.querySelector('button').onclick=function(){dialog.close();};dialog.onclick=function(e){if(e.target===dialog)dialog.close();};
   }
+  function limitWords(value, limit) {
+    var words = String(value || '').trim().split(/\s+/).filter(Boolean);
+    return { text: words.slice(0, limit).join(' ') + (words.length > limit ? '…' : ''), truncated: words.length > limit };
+  }
+  function renderBio(value) {
+    var full = String(value || '').trim(), intro = limitWords(full, 30), about = limitWords(full, 120);
+    if (intro.text.length > 180) { var cut = intro.text.slice(0, 180), boundary = cut.lastIndexOf(' '); intro.text = (boundary > 0 ? cut.slice(0, boundary) : cut) + '…'; intro.truncated = true; }
+    document.getElementById('bio').textContent = intro.text;
+    var jump = document.getElementById('profile-bio-more');
+    if (!jump) { jump = el('a', 'profile-bio-more', 'Read full bio'); jump.id = 'profile-bio-more'; jump.href = '#about'; document.getElementById('bio').after(jump); }
+    jump.hidden = !intro.truncated;
+    var copy = document.getElementById('about-copy'); copy.textContent = about.text || 'Explore this creative professional and the services available through Gearsh.';
+    var toggle = document.getElementById('profile-about-toggle');
+    if (!toggle) { toggle = el('button', 'profile-bio-more', 'Read more'); toggle.id = 'profile-about-toggle'; toggle.type = 'button'; toggle.setAttribute('aria-controls', 'about-copy'); copy.after(toggle); }
+    toggle.hidden = !about.truncated; toggle.textContent = 'Read more'; toggle.setAttribute('aria-expanded', 'false');
+    toggle.onclick = function () {
+      var expanded = toggle.getAttribute('aria-expanded') === 'true';
+      copy.textContent = expanded ? about.text : full;
+      toggle.textContent = expanded ? 'Read more' : 'Show less'; toggle.setAttribute('aria-expanded', String(!expanded));
+    };
+  }
   function render(d) {
     init(); activeProfile = d; followReady = false;
+    renderBio(d.bio);
     document.getElementById('profile-verified').hidden = !d.is_verified || !!d.is_demo;
     var photo = document.getElementById('photo'); photo.onerror = function(){photo.onerror=null;photo.src='/icons/Icon-512.png';};
     var services = d.services || [], portfolio = (d.portfolio_urls || []).map(safeImage).filter(Boolean);
