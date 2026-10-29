@@ -159,7 +159,7 @@ jobs:
         run: |
           VERSION=$(git rev-parse --short HEAD)
           echo "Asset version: $VERSION"
-          ASSETS="join-revamp artists-revamp password-visibility gig-guide gig-guide-data day-genre-schedule sa-showcase-data artist-feed gearsh-auth marketplace-data marketplace-feed gearsh-ui search-page artists-page glog-data glog-page glog-post activity-feed activity-create gearsh-brand discovery glog master-profile"
+          ASSETS="profile-view site-header profile-theme join-revamp artists-revamp password-visibility gig-guide gig-guide-data day-genre-schedule sa-showcase-data artist-feed gearsh-auth marketplace-data marketplace-feed gearsh-ui search-page artists-page glog-data glog-page glog-post activity-feed activity-create gearsh-brand discovery glog master-profile"
           for html in build/web/*.html; do
             [ -f "$html" ] || continue
             for asset in $ASSETS; do
