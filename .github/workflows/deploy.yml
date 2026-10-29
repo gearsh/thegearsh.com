@@ -95,6 +95,7 @@ jobs:
           cp web/book-gig.html build/web/book-gig.html
           cp web/creative-profile.html build/web/creative-profile.html
           cp web/profile.html build/web/profile.html
+          cp web/profile-view.css web/profile-view.js build/web/
           cp web/profile-theme.css build/web/profile-theme.css
           cp web/claim-profile.html build/web/claim-profile.html
           node scripts/sync-showcase-data.mjs
