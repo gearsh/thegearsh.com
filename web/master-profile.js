@@ -37,7 +37,7 @@
 
   function renderHero(p) {
     var cover = p.cover_image_url || '/icons/og-image.png';
-    var avatar = p.image || '/assets/images/gearsh-founder-avatar.svg';
+    var avatar = p.image || '/assets/images/gearsh-founder-portrait.webp';
 
 
     return '<section class="mp-hero">' +

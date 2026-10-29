@@ -12,7 +12,7 @@ export const GEARSH_DEFAULT = {
   is_verified: true,
   profile_type: 'master',
   cover_image_url: '/assets/images/gearsh-cover.jpg',
-  image: '/assets/images/gearsh-founder-avatar.svg',
+  image: '/assets/images/gearsh-founder-portrait.webp',
   bio: 'I help small businesses solve technology problems, maintain their IT systems, improve connectivity and build a stronger digital presence.',
   long_bio: `I'm Nhlanhla Collins Mahlangu, founder of The Gearsh (Pty) Ltd. I work with small businesses on practical technology problems, from computer and network troubleshooting to websites and Google Business Profile setup.
 
