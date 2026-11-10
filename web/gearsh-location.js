@@ -8,6 +8,7 @@
   var position = null;
   var label = '';
   var initPromise = null;
+  var DISABLED_KEY = 'gearsh_loc_disabled';
 
   var CITY_DISPLAY_ALIASES = {
     'makhado': 'Louis Trichardt',
@@ -184,6 +185,7 @@
   }
 
   async function init() {
+    try { if (sessionStorage.getItem(DISABLED_KEY) === '1') return null; } catch (_) {}
     if (position) return position;
     if (initPromise) return initPromise;
 
@@ -220,6 +222,7 @@
 
   /** Returns cached/Cloudflare geo immediately; refines with browser GPS in background. */
   function initFast() {
+    try { if (sessionStorage.getItem(DISABLED_KEY) === '1') return Promise.resolve(null); } catch (_) {}
     if (position) return Promise.resolve(position);
     if (initPromise) return initPromise;
 
@@ -320,6 +323,7 @@
   /** Called only from a clear, user-initiated location action. */
   async function requestPreciseLocation() {
     var precise = await requestBrowserPosition(10000);
+    try { sessionStorage.removeItem(DISABLED_KEY); } catch (_) {}
     position = { lat: precise.lat, lng: precise.lng };
     label = resolveLabelFromCoords(precise.lat, precise.lng) || 'your area';
     writeCache({ lat: position.lat, lng: position.lng, label: label, source: 'browser' });
@@ -333,6 +337,7 @@
       return p.keys.some(function(k) { return normalizePlaceText(k) === key; });
     });
     if (!found || key === 'south africa' || key === 'za' || key === 'rsa') return false;
+    try { sessionStorage.removeItem(DISABLED_KEY); } catch (_) {}
     position = { lat: found.lat, lng: found.lng };
     label = found.label;
     writeCache({ lat: position.lat, lng: position.lng, label: label, source: 'city' });
@@ -344,7 +349,7 @@
     position = null;
     label = '';
     initPromise = null;
-    try { sessionStorage.removeItem(CACHE_KEY); } catch (_) {}
+    try { sessionStorage.removeItem(CACHE_KEY); sessionStorage.setItem(DISABLED_KEY, '1'); } catch (_) {}
     try { global.dispatchEvent(new CustomEvent('gearsh:location-updated')); } catch (_) {}
   }
 
