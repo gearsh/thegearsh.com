@@ -206,12 +206,7 @@
         writeCache({ lat: position.lat, lng: position.lng, label: label, source: cfGeo.source });
       }
 
-      try {
-        var precise = await requestBrowserPosition(6000);
-        position = { lat: precise.lat, lng: precise.lng };
-        label = pickLabelForPosition(precise.lat, precise.lng, cfGeo);
-        writeCache({ lat: position.lat, lng: position.lng, label: label, source: precise.source });
-      } catch (_) {}
+      // Precise GPS is requested only after an explicit user action.
 
       if (!label && position) {
         label = resolveLabelFromCoords(position.lat, position.lng);
@@ -247,14 +242,7 @@
         writeCache({ lat: position.lat, lng: position.lng, label: label, source: cfGeo.source });
       }
 
-      requestBrowserPosition(4000).then(function (precise) {
-        position = { lat: precise.lat, lng: precise.lng };
-        label = pickLabelForPosition(precise.lat, precise.lng, cfGeo);
-        writeCache({ lat: position.lat, lng: position.lng, label: label, source: precise.source });
-        try {
-          global.dispatchEvent(new CustomEvent('gearsh:location-updated'));
-        } catch (_) {}
-      }).catch(function () {});
+      // Never prompt for browser GPS during automatic page initialization.
 
       if (!label && position) {
         label = resolveLabelFromCoords(position.lat, position.lng);
@@ -328,7 +316,42 @@
     return 0;
   }
 
+
+  /** Called only from a clear, user-initiated location action. */
+  async function requestPreciseLocation() {
+    var precise = await requestBrowserPosition(10000);
+    position = { lat: precise.lat, lng: precise.lng };
+    label = resolveLabelFromCoords(precise.lat, precise.lng) || 'your area';
+    writeCache({ lat: position.lat, lng: position.lng, label: label, source: 'browser' });
+    try { global.dispatchEvent(new CustomEvent('gearsh:location-updated')); } catch (_) {}
+    return { position: position, label: label };
+  }
+
+  function setCity(city) {
+    var key = normalizePlaceText(city);
+    var found = SA_PLACES.find(function(p) {
+      return p.keys.some(function(k) { return normalizePlaceText(k) === key; });
+    });
+    if (!found || key === 'south africa' || key === 'za' || key === 'rsa') return false;
+    position = { lat: found.lat, lng: found.lng };
+    label = found.label;
+    writeCache({ lat: position.lat, lng: position.lng, label: label, source: 'city' });
+    try { global.dispatchEvent(new CustomEvent('gearsh:location-updated')); } catch (_) {}
+    return true;
+  }
+
+  function clearLocation() {
+    position = null;
+    label = '';
+    initPromise = null;
+    try { sessionStorage.removeItem(CACHE_KEY); } catch (_) {}
+    try { global.dispatchEvent(new CustomEvent('gearsh:location-updated')); } catch (_) {}
+  }
+
   global.GearshLocation = {
+    requestPreciseLocation: requestPreciseLocation,
+    setCity: setCity,
+    clearLocation: clearLocation,
     init: init,
     initFast: initFast,
     hasPosition: hasPosition,
