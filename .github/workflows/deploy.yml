@@ -224,6 +224,13 @@ jobs:
         env:
           HEADER_CHECK_URL: https://thegearsh.com/
         run: |
+          # GitHub-hosted Ubuntu runner already ships Google Chrome.
+          # Avoid Playwright apt install: GitHub mirror DNS was unavailable.
           npm install --no-save --no-package-lock playwright@1.56.1
-          npx playwright install --with-deps chromium
-          node scripts/verify-production-header.mjs
+          CHROME_BIN=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)
+          if [ -z "$CHROME_BIN" ]; then
+            echo "::error::System Chrome missing; cannot verify computed CSS"
+            exit 1
+          fi
+          echo "Using system Chrome: $CHROME_BIN"
+          CHROME_BIN="$CHROME_BIN" node scripts/verify-production-header.mjs
