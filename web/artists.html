@@ -39,6 +39,10 @@
     .upcoming-heading p{margin:0 auto;color:#B4C8D8;max-width:680px;line-height:1.6}
     .upcoming-grid{margin:20px auto 0;display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;gap:18px;max-width:1120px}.upcoming-grid .feed-card{flex:0 1 240px;min-width:0;width:100%;max-width:260px}
     @media(max-width:600px){.upcoming-creatives{padding:20px 14px;margin:22px 0 32px}.upcoming-heading{text-align:center}.upcoming-grid{gap:12px}.upcoming-grid .feed-card{flex-basis:calc(50% - 6px);max-width:260px}}
+    .selected-service-filter{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 18px;padding:13px 16px;border:1px solid rgba(0,191,255,.32);border-radius:12px;background:#101b2d;color:#e2e8f0;font-weight:650}
+  .selected-service-filter[hidden]{display:none}
+  .selected-service-filter a{color:#00BFFF;text-decoration:underline;text-underline-offset:3px}
+  .selected-service-filter a:focus-visible{outline:2px solid #00BFFF;outline-offset:3px}
   </style>
   <link rel="stylesheet" href="artists-revamp.css">
 </head>
@@ -104,6 +108,7 @@
       <span class="filter-count" id="artist-count">Loading…</span>
     </div>
 
+    <div id="selected-service-filter" class="selected-service-filter" hidden aria-live="polite"></div>
     <div class="artist-grid" id="artist-grid"></div>
 
     <div class="load-more-wrap">
@@ -163,6 +168,7 @@
   <script defer src="artist-feed.js?v=revamp-route-2"></script>
   <script defer src="gearsh-auth.js"></script>
   <script defer src="gearsh-ui.js"></script>
+  <script defer src="service-directory-filter.js"></script>
   <script defer src="artists-page.js"></script>
   <script src="/site-header.js" defer></script>
 </body>
