@@ -9,14 +9,15 @@
   // Distinctive, honest artwork for creatives who have not uploaded a photograph.
   // Never substitute the Gearsh company logo for someone's identity.
   function isPlaceholderImage(value) {
-    var src = String(value || '').trim().toLowerCase();
-    return !src || /(?:^|\\/)(?:icon-192|icon-512|artists)\\.(?:png|webp|jpg|jpeg)(?:[?#].*)?$/.test(src);
+    var src = String(value || '').trim().toLowerCase().split('?')[0].split('#')[0];
+    var filename = src.split('/').pop();
+    return !src || ['icon-192.png', 'icon-512.png', 'artists.png', 'artists.webp', 'artists.jpg', 'artists.jpeg'].indexOf(filename) !== -1;
   }
 
   function portraitSrc(name, category) {
     var label = String(name || 'Creative').trim().slice(0, 60) || 'Creative';
     var categoryLabel = String(category || 'CREATIVE PROFILE').trim().slice(0, 34).toUpperCase();
-    var tokens = label.split(/\\s+/).filter(Boolean);
+    var tokens = label.split(' ').filter(Boolean);
     var initials = (tokens.length > 1 ? tokens[0][0] + tokens[tokens.length - 1][0] : label.slice(0, 2)).toUpperCase();
     var hash = Array.from(label.toLowerCase()).reduce(function (h, ch) { return ((h * 31) + ch.charCodeAt(0)) >>> 0; }, 7);
     var shades = ['#00BFFF', '#40C9A2', '#A78BFA', '#F5B44C', '#58A6FF', '#F28CB1'];
