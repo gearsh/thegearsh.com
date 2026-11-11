@@ -6,9 +6,11 @@ import { chromium } from 'playwright';
 const url = process.env.HEADER_CHECK_URL || 'https://thegearsh.com/';
 const expected = 'rgb(0, 191, 255)';
 const white = 'rgb(255, 255, 255)';
-const retries = 5;
+const retries = 3;
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-const browser = await chromium.launch({ headless: true });
+const chromePath = process.env.CHROME_BIN;
+if (!chromePath) throw new Error('CHROME_BIN not set; use the preinstalled system Chrome on GitHub runners');
+const browser = await chromium.launch({ headless: true, executablePath: chromePath, args: ['--no-sandbox'] });
 let lastFailure = null;
 let verified = false;
 try {
@@ -22,9 +24,9 @@ try {
         const address = new URL(url);
         address.searchParams.set('verify_header', process.env.GITHUB_SHA?.slice(0, 8) || Date.now().toString());
         address.searchParams.set('attempt', String(attempt));
-        const response = await page.goto(address.toString(), { waitUntil: 'domcontentloaded', timeout: 30000 });
+        const response = await page.goto(address.toString(), { waitUntil: 'domcontentloaded', timeout: 16000 });
         if (!response || !response.ok()) throw new Error('Homepage HTTP ' + (response?.status() ?? 'missing'));
-        await page.locator('.gh-header').waitFor({ state: 'visible', timeout: 12000 });
+        await page.locator('.gh-header').waitFor({ state: 'visible', timeout: 9000 });
         const result = await page.evaluate(() => {
           const header = document.querySelector('.gh-header');
           const book = document.getElementById('gh-book');
