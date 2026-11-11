@@ -18,6 +18,9 @@ jobs:
       - name: Test password recovery
         run: node --test tests/password-reset.test.mjs tests/client-signup.test.mjs
 
+      - name: Test homepage category routing
+        run: node --test tests/service-directory-filter.test.mjs
+
       - name: Build preview site
         run: |
           rm -rf preview-site
