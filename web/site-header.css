@@ -18,3 +18,11 @@
 .gh-header .gh-panel a:hover,.gh-header .gh-panel button:hover{background:#173b50}
 .gh-header .gh-status{color:#08273d}
 .gh-header :focus-visible{outline:3px solid #062d43;outline-offset:3px}
+
+/* White brand lettering on the flat DeepSkyBlue header. Keep the dark Book
+   outline and discreet dark text shadow for visual separation. */
+.gh-header{color:#fff}
+.gh-header .gh-brand{color:#fff;text-shadow:0 1px 2px rgba(0,19,38,.75)}
+.gh-header .gh-row>.gh-icon:first-child{color:#fff}
+.gh-header #gh-book{color:#fff;text-shadow:0 1px 2px rgba(0,19,38,.8)}
+.gh-header #gh-book:hover{background:#007fae;color:#fff}
