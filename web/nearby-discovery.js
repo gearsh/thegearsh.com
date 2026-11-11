@@ -44,9 +44,9 @@
   function safeArtistImage(a) {
     var value = String(a && a.image || '').trim();
     if (!value) return '';
-    if (/^https:\/\/[^\\s]+$/i.test(value)) return value;
-    if (/^\/(?!\/)[^\\s]*$/i.test(value)) return value;
-    if (/^(?:assets\/|images\/)[^\\s]*$/i.test(value)) return '/' + value;
+    if (/^https:\/\//i.test(value) && !/\s/.test(value)) return value;
+    if (/^\/(?!\/)/.test(value) && !/\s/.test(value)) return value;
+    if (/^(?:assets\/|images\/)/i.test(value) && !/\s/.test(value)) return '/' + value;
     if (/^data:image\/(?:png|jpeg|jpg|webp|gif);base64,[a-z0-9+/=]+$/i.test(value)) return value;
     return '';
   }
