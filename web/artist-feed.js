@@ -33,7 +33,7 @@
 
   function resolveCardImage(source, showcase) {
     var record = showcase || findShowcaseRecord(source);
-    var image = (source && source.image) || (record && record.image) || 'icons/Icon-512.png';
+    var image = (source && source.image) || (record && record.image) || '';
     return image;
   }
 
@@ -380,8 +380,8 @@
     });
   }
 
-  function lazyImgTag(src, alt) {
-    return '<img src="' + PLACEHOLDER + '" data-src="' + escapeHtml(src) + '" alt="' + escapeHtml(alt) + '" loading="lazy" decoding="async" class="lazy-img" width="168" height="168">';
+  function lazyImgTag(src, alt, category) {
+    return '<img src="' + PLACEHOLDER + '" data-src="' + escapeHtml(src) + '" data-portrait-name="' + escapeHtml(alt) + '" data-portrait-category="' + escapeHtml(category || 'Creative profile') + '" alt="' + escapeHtml(alt) + '" loading="lazy" decoding="async" class="lazy-img" width="168" height="168">';
   }
 
   function renderFeedCard(item, opts) {
@@ -398,7 +398,7 @@
 
     var inner =
       '<div class="feed-card-media">' +
-        lazyImgTag(item.image, item.name) +
+        lazyImgTag(item.image, item.name, item.category || item.genre) +
         '<span class="feed-card-badge ' + item.badgeClass + '">' + escapeHtml(item.badge) + '</span>' +
         (item.bookable && href
           ? '<div class="feed-card-action"><span>' + actionLabel + '</span></div>'

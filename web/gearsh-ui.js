@@ -6,39 +6,69 @@
 
   var lazyObserver = null;
 
+  // Distinctive, honest artwork for creatives who have not uploaded a photograph.
+  // Never substitute the Gearsh company logo for someone's identity.
+  function isPlaceholderImage(value) {
+    var src = String(value || '').trim().toLowerCase().split('?')[0].split('#')[0];
+    var filename = src.split('/').pop();
+    return !src || ['icon-192.png', 'icon-512.png', 'artists.png', 'artists.webp', 'artists.jpg', 'artists.jpeg'].indexOf(filename) !== -1;
+  }
+
+  function portraitSrc(name, category) {
+    var label = String(name || 'Creative').trim().slice(0, 60) || 'Creative';
+    var categoryLabel = String(category || 'CREATIVE PROFILE').trim().slice(0, 34).toUpperCase();
+    var tokens = label.split(' ').filter(Boolean);
+    var initials = (tokens.length > 1 ? tokens[0][0] + tokens[tokens.length - 1][0] : label.slice(0, 2)).toUpperCase();
+    var hash = Array.from(label.toLowerCase()).reduce(function (h, ch) { return ((h * 31) + ch.charCodeAt(0)) >>> 0; }, 7);
+    var shades = ['#00BFFF', '#40C9A2', '#A78BFA', '#F5B44C', '#58A6FF', '#F28CB1'];
+    var accent = shades[hash % shades.length];
+    function xml(value) { return String(value).replace(/[&<>"']/g, function (ch) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[ch]; }); }
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="640" height="800" viewBox="0 0 640 800">'
+      + '<rect width="640" height="800" fill="#101b2d"/>'
+      + '<path d="M-130 620L650 -160M-120 840L780 -60" stroke="' + accent + '" stroke-opacity=".13" stroke-width="90"/>'
+      + '<circle cx="520" cy="120" r="190" fill="' + accent + '" fill-opacity=".12"/>'
+      + '<path d="M44 64h85M44 64v85" stroke="' + accent + '" stroke-width="5" fill="none"/>'
+      + '<text x="50%" y="49%" fill="#ffffff" font-family="Arial,Helvetica,sans-serif" font-size="194" font-weight="800" letter-spacing="-10" text-anchor="middle" dominant-baseline="middle">' + xml(initials) + '</text>'
+      + '<rect x="44" y="656" width="54" height="5" rx="2" fill="' + accent + '"/>'
+      + '<text x="44" y="714" fill="#f8fafc" font-family="Arial,Helvetica,sans-serif" font-size="29" font-weight="700">' + xml(label.length > 29 ? label.slice(0, 28) + '…' : label) + '</text>'
+      + '<text x="44" y="751" fill="' + accent + '" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="600" letter-spacing="2">' + xml(categoryLabel) + '</text>'
+      + '</svg>';
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  }
+
+  function applyPortraitFallback(img) {
+    if (!img) return;
+    var name = img.getAttribute('data-portrait-name') || img.getAttribute('alt') || 'Creative';
+    var category = img.getAttribute('data-portrait-category') || 'Creative profile';
+    img.onerror = null;
+    img.src = portraitSrc(name, category);
+    img.classList.add('is-loaded', 'is-portrait-fallback');
+  }
+
   function initLazyImages(root) {
     root = root || document;
     var imgs = root.querySelectorAll('img.lazy-img[data-src]:not(.is-loaded)');
     if (!imgs.length) return;
-
+    function loadOne(img) {
+      var src = img.getAttribute('data-src');
+      img.removeAttribute('data-src');
+      if (isPlaceholderImage(src)) { applyPortraitFallback(img); return; }
+      img.onload = function () { img.classList.add('is-loaded'); };
+      img.onerror = function () { applyPortraitFallback(img); };
+      img.src = src;
+    }
     if (!lazyObserver && 'IntersectionObserver' in window) {
       lazyObserver = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
           if (!entry.isIntersecting) return;
-          var img = entry.target;
-          var src = img.getAttribute('data-src');
-          if (!src) return;
-          img.onload = function () {
-            img.classList.add('is-loaded');
-          };
-          img.onerror = function () {
-            img.src = 'icons/Icon-512.png';
-            img.classList.add('is-loaded');
-          };
-          img.src = src;
-          img.removeAttribute('data-src');
-          lazyObserver.unobserve(img);
+          lazyObserver.unobserve(entry.target);
+          loadOne(entry.target);
         });
       }, { rootMargin: '200px 0px', threshold: 0.01 });
     }
-
     imgs.forEach(function (img) {
-      if (lazyObserver) {
-        lazyObserver.observe(img);
-      } else {
-        img.src = img.getAttribute('data-src') || img.src;
-        img.classList.add('is-loaded');
-      }
+      if (lazyObserver) lazyObserver.observe(img);
+      else loadOne(img);
     });
   }
 
@@ -192,6 +222,9 @@
 
   global.GearshUI = {
     initLazyImages: initLazyImages,
+    portraitSrc: portraitSrc,
+    isPlaceholderImage: isPlaceholderImage,
+    applyPortraitFallback: applyPortraitFallback,
     initNav: initNav,
     initReveal: initReveal,
     debounce: debounce,

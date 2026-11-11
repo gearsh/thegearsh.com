@@ -116,7 +116,7 @@
     suggestions.innerHTML = items.map(function (item, i) {
       var href = GearshFeed.bookUrl(item) || (item.username ? 'creative-profile.html?artist=' + encodeURIComponent(item.username) : '#');
       return '<a class="search-suggestion" href="' + href + '" data-idx="' + i + '" role="option">' +
-        '<img src="' + (item.image || 'icons/Icon-512.png') + '" alt="" loading="lazy">' +
+        '<img src="' + GearshUI.portraitSrc(item.name, item.category || item.genre) + '" data-portrait-name="' + GearshFeed.escapeHtml(item.name) + '" data-portrait-category="' + GearshFeed.escapeHtml(item.category || item.genre || 'Creative') + '" alt="" loading="lazy" class="suggestion-portrait">' +
         '<div class="search-suggestion-meta">' +
           '<div class="search-suggestion-name">' + GearshFeed.escapeHtml(item.name) + '</div>' +
           '<div class="search-suggestion-sub">' + GearshFeed.escapeHtml(item.genre) + '</div>' +
@@ -124,6 +124,12 @@
         '<span class="search-suggestion-tag">' + (item.bookable !== false ? 'Book' : 'Artist') + '</span>' +
       '</a>';
     }).join('');
+    suggestions.querySelectorAll('img.suggestion-portrait').forEach(function(img, index) {
+      var item = items[index];
+      if (!item || GearshUI.isPlaceholderImage(item.image)) return;
+      img.onerror = function() { GearshUI.applyPortraitFallback(img); };
+      img.src = item.image;
+    });
     suggestions.classList.add('is-open');
     input.setAttribute('aria-expanded', 'true');
   }
