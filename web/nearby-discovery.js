@@ -39,6 +39,29 @@
     var locationScore = km == null ? -20 : (km <= 30 ? 30 : km <= 100 ? 20 : km <= 250 ? 10 : 0);
     return {fit:fit,km:km,value:fit+locationScore};
   }
+  // Only use a photo supplied by this artist's profile. Avoid unrelated stock
+  // imagery or guessing portraits based on names.
+  function safeArtistImage(a) {
+    var value = String(a && a.image || '').trim();
+    if (!value) return '';
+    if (/^https:\/\//i.test(value) && !/\s/.test(value)) return value;
+    if (/^\/(?!\/)/.test(value) && !/\s/.test(value)) return value;
+    if (/^(?:assets\/|images\/)/i.test(value) && !/\s/.test(value)) return '/' + value;
+    if (/^data:image\/(?:png|jpeg|jpg|webp|gif);base64,[a-z0-9+/=]+$/i.test(value)) return value;
+    return '';
+  }
+  function initials(value) {
+    return String(value || 'Creative').trim().split(/\s+/).slice(0,2)
+      .map(function(part) { return part.charAt(0).toUpperCase(); }).join('');
+  }
+  function portrait(a) {
+    var name = a.name || a.username || 'Creative';
+    var src = safeArtistImage(a);
+    var fallback = '<span class="nearby-photo-fallback" aria-hidden="true">' + esc(initials(name)) + '</span>';
+    return '<span class="nearby-photo">' +
+      (src ? '<img class="nearby-portrait" src="'+esc(src)+'" alt="Portrait of '+esc(name)+'" loading="lazy" decoding="async">' : '') +
+      fallback + '</span>';
+  }
   function link(a) {
     var user = String(a.username||'').trim();
     return user ? '/creative-profile.html?artist='+encodeURIComponent(user) : '/artists';
@@ -80,12 +103,18 @@
       cardsEl.innerHTML = rows.map(function(x) {
         var a=x.artist, place=a.location || a.country || 'Location not listed';
         var category=a.category || a.genre || 'Creative';
-        return '<a class="nearby-card" href="'+esc(link(a))+'"><span class="nearby-category">'+esc(category)+'</span><strong>'+esc(a.name||a.username||'Creative')+'</strong><span>'+esc(place)+' · ~'+Math.round(x.match.km)+' km from selected area</span><small>View creative profile →</small></a>';
+        return '<a class="nearby-card" href="'+esc(link(a))+'">'+portrait(a)+'<span class="nearby-card-body"><span class="nearby-category">'+esc(category)+'</span><strong>'+esc(a.name||a.username||'Creative')+'</strong><span class="nearby-card-location">'+esc(place)+' · ~'+Math.round(x.match.km)+' km from selected area</span><small>View creative profile →</small></span></a>';
       }).join('');
     } catch (_) {
       cardsEl.innerHTML = '<p class="nearby-empty">Local listings are temporarily unavailable. <a href="/artists">Browse all creatives</a>.</p>';
     }
   }
+  cardsEl.addEventListener('error', function(event) {
+    var img = event.target;
+    if (!img || !img.classList || !img.classList.contains('nearby-portrait')) return;
+    // A broken profile-photo URL must not leave an empty or broken image.
+    img.remove();
+  }, true);
   interestsEl.addEventListener('click',function(e) {
     var button=e.target.closest('[data-interest]');
     if (!button) return;
