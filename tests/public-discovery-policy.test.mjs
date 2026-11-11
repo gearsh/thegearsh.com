@@ -13,7 +13,7 @@ test('business, founder and legitimate creative accounts are not automatically h
   }
 });
 
-test('deduplicates by artist ID or user ID while preserving the original rows', () => {
+test('deduplicates repeated artist IDs without collapsing separate user-owned profiles', () => {
   const rows = [
     {artist_id:1,user_id:10,name:'DJELLE'},
     {artist_id:1,user_id:10,name:'DJELLE'},
@@ -24,7 +24,7 @@ test('deduplicates by artist ID or user ID while preserving the original rows', 
   ];
   const snapshot = JSON.stringify(rows);
   const visible = uniquePublicArtists(rows);
-  assert.deepEqual(visible.map(a=>a.artist_id), [1,3,5]);
+  assert.deepEqual(visible.map(a=>a.artist_id), [1,2,3,5]);
   assert.equal(JSON.stringify(rows), snapshot);
 });
 
