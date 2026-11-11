@@ -19,15 +19,11 @@ export function isPublicDiscoveryCandidate(artist) {
 
 export function uniquePublicArtists(artists) {
   const seenArtists = new Set();
-  const seenUsers = new Set();
   return (artists || []).filter(function (artist) {
     if (!isPublicDiscoveryCandidate(artist)) return false;
     const artistId = String(artist.artist_id || '').trim();
-    const userId = String(artist.user_id || '').trim();
     if (artistId && seenArtists.has(artistId)) return false;
-    if (userId && seenUsers.has(userId)) return false;
     if (artistId) seenArtists.add(artistId);
-    if (userId) seenUsers.add(userId);
     return true;
   });
 }
