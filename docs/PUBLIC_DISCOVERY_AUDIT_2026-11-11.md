@@ -24,7 +24,7 @@ Scope: `/api/artists/feed`, `/api/search`, and `/api/artists`. This is a **visib
 ## Changes proposed
 
 - A shared policy hides only the two *exact* test display names observed in the audit, case/whitespace-insensitively. This is a stopgap; preferred long-term solution is an explicit admin-controlled `discovery_visibility` or `account_type` field with audit logs.
-- Deduplicate rows by `artist_id` and `user_id`, never by artist name alone. No database mutation.
+- Deduplicate repeated rows by `artist_id` only, never by user ID or artist name. One user may legitimately own multiple distinct profiles. No database mutation.
 - Apply the shared policy to the feed, artist list, and search results.
 
 ## Limitations / release checks
