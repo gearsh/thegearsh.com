@@ -1,10 +1,17 @@
 /* Shared Gearsh discovery header. No fabricated notification counts. */
 (function () {
   'use strict';
+  // The deployment versions site-header.js in HTML. Propagate its release
+  // version to the dynamically injected CSS instead of reusing stale caches.
+  var headerScript = document.currentScript;
+  var headerVersion = '';
+  try {
+    headerVersion = new URL(headerScript && headerScript.src || '', location.href).searchParams.get('v') || '';
+  } catch (_) {}
   function init() {
     var old = document.querySelector('header.top, header.nav, nav.g-nav');
     if (!old) return;
-    var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = '/site-header.css'; document.head.appendChild(css);
+    var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = '/site-header.css' + (headerVersion ? '?v=' + encodeURIComponent(headerVersion) : ''); document.head.appendChild(css);
     old.hidden = true;
     ['mobileMenu','searchMobileMenu'].forEach(function(id){var el=document.getElementById(id);if(el)el.hidden=true;});
     var paths = {
