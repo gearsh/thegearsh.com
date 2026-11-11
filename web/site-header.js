@@ -25,6 +25,16 @@
     function button(name,label,panel){return '<button type="button" class="gh-icon" title="'+label+'" aria-label="'+label+'" aria-expanded="false" aria-controls="gh-'+panel+'" data-panel="'+panel+'">'+icon(name)+'</button>';}
     var header=document.createElement('header');header.className='gh-header';
     header.innerHTML='<div class="gh-row">'+button('menu','Open navigation','nav')+'<a class="gh-brand" href="/" aria-label="Gearsh home"><img src="/icons/Icon-512.png" alt=""><span>GEARSH</span></a><form class="gh-search" action="/search" role="search"><label class="gh-sr" for="gh-query">Search creatives, services and locations</label><input id="gh-query" name="q" type="search" maxlength="200" placeholder="Search creatives, services, locations" required><button class="gh-submit" aria-label="Search">'+icon('search')+'</button></form><button type="button" id="gh-voice" class="gh-icon" title="Search by voice" aria-label="Search by voice">'+icon('mic')+'</button><div class="gh-actions"><button type="button" class="gh-create" id="gh-book">Book</button>'+button('bell','Notifications','notifications')+button('user','Your account','account')+'</div></div><nav id="gh-nav" class="gh-panel gh-nav" aria-label="Main navigation" hidden><a href="/search">Find talent</a><a href="/artists">All artists</a><a href="/gig-guide">Gig guide</a><a href="/collaborate">Collaborate</a><a href="/lessons">Lessons</a><a href="/glog">G-Log</a><a href="/#how-it-works">How it works</a><a href="/#about">About Gearsh</a></nav><section id="gh-notifications" class="gh-panel" aria-label="Notifications" hidden><h2>Notifications</h2><p>Live notifications are not available yet. Check your bookings for updates.</p><a href="/my-bookings">View my bookings</a></section><nav id="gh-account" class="gh-panel" aria-label="Your account" hidden><a href="/auth.html">Sign in</a><a href="/join-client">Join to book</a><a href="/join-gig.html">Join as a creative</a></nav><p id="gh-status" class="gh-status" role="status" hidden></p>';
+    // Keep the brand surface stable even if another global stylesheet or an
+    // older cached component stylesheet overrides .gh-header declarations.
+    header.style.setProperty('background', '#00BFFF', 'important');
+    header.style.setProperty('color', '#061929', 'important');
+    var bookControl = header.querySelector('#gh-book');
+    if (bookControl) {
+      bookControl.style.setProperty('background', '#00BFFF', 'important');
+      bookControl.style.setProperty('color', '#061929', 'important');
+      bookControl.style.setProperty('border', '2px solid #06354c', 'important');
+    }
     old.before(header);
     header.querySelector("#gh-book").addEventListener("click", function () { location.assign("/search"); });
     header.querySelector('input').value=new URLSearchParams(location.search).get('q')||'';
