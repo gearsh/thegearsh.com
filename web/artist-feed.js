@@ -33,7 +33,7 @@
 
   function resolveCardImage(source, showcase) {
     var record = showcase || findShowcaseRecord(source);
-    var image = (source && source.image) || (record && record.image) || 'icons/Icon-512.png';
+    var image = (source && source.image) || (record && record.image) || '';
     return image;
   }
 
