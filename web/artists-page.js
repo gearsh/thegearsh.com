@@ -20,6 +20,7 @@
 
   var filters = {
     q: '',
+    service: 'all',
     genre: 'all',
     category: 'all',
     location: 'all',
@@ -38,6 +39,8 @@
   function readUrlState() {
     var p = new URLSearchParams(window.location.search);
     filters.q = p.get('q') || '';
+    var requestedService = p.get('service') || 'all';
+    filters.service = global.GearshServiceFilter && GearshServiceFilter.isValid(requestedService) ? requestedService : 'all';
     filters.genre = p.get('genre') || 'all';
     filters.category = p.get('category') || 'all';
     filters.location = p.get('location') || 'all';
@@ -50,6 +53,7 @@
   function writeUrlState() {
     var p = new URLSearchParams();
     if (filters.q) p.set('q', filters.q);
+    if (filters.service !== 'all') p.set('service', filters.service);
     if (filters.genre !== 'all') p.set('genre', filters.genre);
     if (filters.category !== 'all') p.set('category', filters.category);
     if (filters.location !== 'all') p.set('location', filters.location);
@@ -85,6 +89,7 @@
 
   function applyFilters() {
     filtered = GearshFeed.filterCards(allCards, filters);
+    if (global.GearshServiceFilter) filtered = filtered.filter(function(card) { return GearshServiceFilter.matches(card, filters.service); });
     filtered = GearshFeed.sortCards(filtered, filters.sort, filters.genre);
     // On the directory, complete profiles with actual photos should appear
     // before default-avatar profiles, regardless of the secondary sort.
@@ -93,8 +98,27 @@
         Number(GearshFeed.cardHasSoloPortrait(a));
     });
     page = 1;
+    updateServiceSelection();
     renderPage();
     writeUrlState();
+  }
+
+  function updateServiceSelection() {
+    var container = document.getElementById('selected-service-filter');
+    if (!container) return;
+    if (filters.service === 'all' || !global.GearshServiceFilter) {
+      container.hidden = true;
+      container.replaceChildren();
+      return;
+    }
+    container.hidden = false;
+    container.replaceChildren();
+    var label = document.createElement('span');
+    label.textContent = 'Browsing: ' + GearshServiceFilter.label(filters.service);
+    var clear = document.createElement('a');
+    clear.href = '/artists.html';
+    clear.textContent = 'View all artists';
+    container.append(label, clear);
   }
 
   function renderPage() {
