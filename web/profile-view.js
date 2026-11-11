@@ -78,7 +78,13 @@
     init(); activeProfile = d; followReady = false;
     renderBio(d.bio);
     document.getElementById('profile-verified').hidden = !d.is_verified || !!d.is_demo;
-    var photo = document.getElementById('photo'); photo.onerror = function(){photo.onerror=null;photo.src='/icons/Icon-512.png';};
+    var photo = document.getElementById('photo');
+    if (window.GearshUI) {
+      photo.setAttribute('data-portrait-name', d.name || 'Creative');
+      photo.setAttribute('data-portrait-category', d.category || 'Creative profile');
+      photo.onerror = function(){ GearshUI.applyPortraitFallback(photo); };
+      if (GearshUI.isPlaceholderImage(d.image)) GearshUI.applyPortraitFallback(photo);
+    }
     var services = d.services || [], portfolio = (d.portfolio_urls || []).map(safeImage).filter(Boolean);
     document.getElementById('profile-services-count').textContent = services.length;
     document.getElementById('profile-services-count').nextElementSibling.textContent = services.length===1?'Service':'Services';
