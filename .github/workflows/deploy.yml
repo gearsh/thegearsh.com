@@ -7,7 +7,9 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    # Playwright 1.56 Chromium supports Ubuntu 24.04 (Noble); ubuntu-latest
+    # migrated to Ubuntu 26.04, which this pinned Playwright cannot install on.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
