@@ -181,7 +181,9 @@ jobs:
           test ! -f build/web/app/index.html
           grep -q "flutter_bootstrap" build/web/gearsh-app.html
           grep -q "gearsh-app.html" build/web/_redirects
-          grep -q "Find the right talent" build/web/index.html
+          grep -q "Go Beyond" build/web/index.html
+          grep -q "Your Talent." build/web/index.html
+          grep -q "What do you need?" build/web/index.html
           echo "Deployment bundle OK"
 
       - name: Validate Pages Functions bundle
