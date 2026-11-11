@@ -28,11 +28,11 @@
     // Keep the brand surface stable even if another global stylesheet or an
     // older cached component stylesheet overrides .gh-header declarations.
     header.style.setProperty('background', '#00BFFF', 'important');
-    header.style.setProperty('color', '#061929', 'important');
+    header.style.setProperty('color', '#FFFFFF', 'important');
     var bookControl = header.querySelector('#gh-book');
     if (bookControl) {
       bookControl.style.setProperty('background', '#00BFFF', 'important');
-      bookControl.style.setProperty('color', '#061929', 'important');
+      bookControl.style.setProperty('color', '#FFFFFF', 'important');
       bookControl.style.setProperty('border', '2px solid #06354c', 'important');
     }
     old.before(header);
