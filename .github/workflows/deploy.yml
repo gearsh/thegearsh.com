@@ -194,6 +194,7 @@ jobs:
         run: npx wrangler@3 pages functions build build/web/functions --outdir /tmp/gearsh-functions-bundle
 
       - name: Deploy to Cloudflare Pages
+        id: publish_pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -222,11 +223,18 @@ jobs:
       - name: Verify real production header colors in Chromium (desktop + mobile)
         timeout-minutes: 10
         env:
-          HEADER_CHECK_URL: https://thegearsh.com/
+          # The exact immutable production deployment; custom domain blocks
+          # GitHub Actions browser traffic with HTTP 403 (WAF). Do not bypass it.
+          HEADER_CHECK_URL: ${{ steps.publish_pages.outputs.deployment-url }}
         run: |
           # GitHub-hosted Ubuntu runner already ships Google Chrome.
           # Avoid Playwright apt install: GitHub mirror DNS was unavailable.
           npm install --no-save --no-package-lock playwright@1.56.1
+          if [ -z "$HEADER_CHECK_URL" ]; then
+            echo "::error::Cloudflare deploy did not expose deployment-url output"
+            exit 1
+          fi
+          echo "Verifying deployed Cloudflare Pages artifact at $HEADER_CHECK_URL"
           CHROME_BIN=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)
           if [ -z "$CHROME_BIN" ]; then
             echo "::error::System Chrome missing; cannot verify computed CSS"
