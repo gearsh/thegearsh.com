@@ -36,6 +36,14 @@
 /join-gig.html
   Cache-Control: no-store, max-age=0
 
+# Shared nav assets are injected dynamically on multiple routes.
+# Revalidate them so style updates cannot be hidden by long-lived caches.
+/site-header.css
+  Cache-Control: no-cache, max-age=0, must-revalidate
+
+/site-header.js
+  Cache-Control: no-cache, max-age=0, must-revalidate
+
 /*.js
   Cache-Control: public, max-age=3600, must-revalidate
 
