@@ -1,6 +1,7 @@
 // GET /api/artists/feed — categorized artist rows for the homepage
 
 import { parseSkills, buildProfileUrl } from '../auth-utils.js';
+import { uniquePublicArtists } from '../public-discovery-policy.js';
 import { seedShowcaseArtistsBatch, SA_SHOWCASE_ARTISTS } from '../sa-showcase-artists.js';
 import { GENRE_FEED_CATEGORIES, resolveArtistGenreSlug, compareArtistsForGenre, artistHasSoloPortrait } from '../sa-showcase-data.js';
 import { getBookingFee, getShowcaseMinPrice } from '../showcase-profile.js';
@@ -208,7 +209,7 @@ export async function onRequestGet(context) {
     const result = await context.env.DB.prepare(query).all();
     await ensureRemovalRequestsTable(context.env.DB);
     const removed = await getRemovedUsernames(context.env.DB);
-    const artists = (result.results || [])
+    const artists = uniquePublicArtists(result.results || [])
       .filter(function (artist) {
         return !removed.has(String(artist.username || '').toLowerCase());
       })
