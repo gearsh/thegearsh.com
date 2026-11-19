@@ -12,6 +12,13 @@
     var old = document.querySelector('header.top, header.nav, nav.g-nav');
     if (!old) return;
     var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = '/site-header.css' + (headerVersion ? '?v=' + encodeURIComponent(headerVersion) : ''); document.head.appendChild(css);
+    var themeCss = document.createElement('link');
+    themeCss.rel = 'stylesheet';
+    themeCss.href = '/gearsh-theme.css' + (headerVersion ? '?v=' + encodeURIComponent(headerVersion) : '');
+    document.head.appendChild(themeCss);
+    var theme = 'dark';
+    try { theme = localStorage.getItem('gearsh_theme') === 'light' ? 'light' : 'dark'; } catch (_) {}
+    document.documentElement.setAttribute('data-gearsh-theme', theme);
     old.hidden = true;
     ['mobileMenu','searchMobileMenu'].forEach(function(id){var el=document.getElementById(id);if(el)el.hidden=true;});
     var paths = {
@@ -19,12 +26,14 @@
       search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
       mic: '<rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8"/>',
       bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9M10 21h4"/>',
-      user: '<circle cx="12" cy="8" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3"/>'
+      user: '<circle cx="12" cy="8" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3"/>',
+      sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/>',
+      moon: '<path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/>'
     };
     function icon(name){return '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+paths[name]+'</svg>';}
     function button(name,label,panel){return '<button type="button" class="gh-icon" title="'+label+'" aria-label="'+label+'" aria-expanded="false" aria-controls="gh-'+panel+'" data-panel="'+panel+'">'+icon(name)+'</button>';}
     var header=document.createElement('header');header.className='gh-header';
-    header.innerHTML='<div class="gh-row">'+button('menu','Open navigation','nav')+'<a class="gh-brand" href="/" aria-label="Gearsh home"><img src="/icons/Icon-512.png" alt=""><span>GEARSH</span></a><form class="gh-search" action="/search" role="search"><label class="gh-sr" for="gh-query">Search creatives, services and locations</label><input id="gh-query" name="q" type="search" maxlength="200" placeholder="Search creatives, services, locations" required><button class="gh-submit" aria-label="Search">'+icon('search')+'</button></form><button type="button" id="gh-voice" class="gh-icon" title="Search by voice" aria-label="Search by voice">'+icon('mic')+'</button><div class="gh-actions"><button type="button" class="gh-create" id="gh-book">Book</button>'+button('bell','Notifications','notifications')+button('user','Your account','account')+'</div></div><nav id="gh-nav" class="gh-panel gh-nav" aria-label="Main navigation" hidden><a href="/search">Find talent</a><a href="/artists">All artists</a><a href="/gig-guide">Gig guide</a><a href="/collaborate">Collaborate</a><a href="/lessons">Lessons</a><a href="/glog">G-Log</a><a href="/#how-it-works">How it works</a><a href="/#about">About Gearsh</a></nav><section id="gh-notifications" class="gh-panel" aria-label="Notifications" hidden><h2>Notifications</h2><p>Live notifications are not available yet. Check your bookings for updates.</p><a href="/my-bookings">View my bookings</a></section><nav id="gh-account" class="gh-panel" aria-label="Your account" hidden><a href="/auth.html">Sign in</a><a href="/join-client">Join to book</a><a href="/join-gig.html">Join as a creative</a></nav><p id="gh-status" class="gh-status" role="status" hidden></p>';
+    header.innerHTML='<div class="gh-row">'+button('menu','Open navigation','nav')+'<a class="gh-brand" href="/" aria-label="Gearsh home"><img src="/icons/Icon-512.png" alt=""><span>GEARSH</span></a><form class="gh-search" action="/search" role="search"><label class="gh-sr" for="gh-query">Search creatives, services and locations</label><input id="gh-query" name="q" type="search" maxlength="200" placeholder="Search creatives, services, locations" required><button class="gh-submit" aria-label="Search">'+icon('search')+'</button></form><button type="button" id="gh-voice" class="gh-icon" title="Search by voice" aria-label="Search by voice">'+icon('mic')+'</button><div class="gh-actions"><button type="button" class="gh-create" id="gh-book">Book</button><button type="button" class="gh-icon" id="gh-theme" aria-label="Switch to light mode" title="Switch to light mode" aria-pressed="false"></button>'+button('bell','Notifications','notifications')+button('user','Your account','account')+'</div></div><nav id="gh-nav" class="gh-panel gh-nav" aria-label="Main navigation" hidden><a href="/search">Find talent</a><a href="/artists">All artists</a><a href="/gig-guide">Gig guide</a><a href="/collaborate">Collaborate</a><a href="/lessons">Lessons</a><a href="/glog">G-Log</a><a href="/#how-it-works">How it works</a><a href="/#about">About Gearsh</a></nav><section id="gh-notifications" class="gh-panel" aria-label="Notifications" hidden><h2>Notifications</h2><p>Live notifications are not available yet. Check your bookings for updates.</p><a href="/my-bookings">View my bookings</a></section><nav id="gh-account" class="gh-panel" aria-label="Your account" hidden><a href="/auth.html">Sign in</a><a href="/join-client">Join to book</a><a href="/join-gig.html">Join as a creative</a></nav><p id="gh-status" class="gh-status" role="status" hidden></p>';
     // Keep the brand surface stable even if another global stylesheet or an
     // older cached component stylesheet overrides .gh-header declarations.
     header.style.setProperty('background', '#00BFFF', 'important');
@@ -35,6 +44,21 @@
       bookControl.style.setProperty('color', '#FFFFFF', 'important');
       bookControl.style.setProperty('border', '2px solid #06354c', 'important');
     }
+    var themeButton = header.querySelector('#gh-theme');
+    function renderTheme() {
+      var light = theme === 'light';
+      document.documentElement.setAttribute('data-gearsh-theme', theme);
+      themeButton.innerHTML = icon(light ? 'moon' : 'sun');
+      themeButton.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
+      themeButton.title = light ? 'Dark mode' : 'Light mode';
+      themeButton.setAttribute('aria-pressed', String(light));
+    }
+    themeButton.addEventListener('click', function () {
+      theme = theme === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem('gearsh_theme', theme); } catch (_) {}
+      renderTheme();
+    });
+    renderTheme();
     old.before(header);
     var primaryAction = header.querySelector('#gh-book');
     var primaryActionUrl = '/search';
