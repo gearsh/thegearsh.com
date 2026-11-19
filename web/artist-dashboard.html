@@ -314,13 +314,8 @@
 
   <div class="dash-page">
     <section class="dash-hero">
-      <div class="dash-hero-bg">
-        <img src="assets/images/artists/empress-ngqama.jpg" alt="">
-        <img src="assets/images/artists/ZJ90.jpg" alt="">
-        <img src="assets/images/artists/dripmaker.png" alt="">
-        <img src="assets/images/artists/yde.png" alt="">
-        <img src="assets/images/artists/rixelton.jpg" alt="">
-        <img src="assets/images/artists/empress-ngqama.jpg" alt="">
+      <div class="dash-hero-bg" aria-hidden="true">
+        <img id="dash-cover-image" alt="" hidden>
       </div>
       <div class="dash-hero-overlay"></div>
       <div class="dash-hero-inner">
@@ -329,9 +324,9 @@
             <div class="dash-badge" id="tier-badge"><i class="ti ti-seedling" style="font-size:14px"></i> Loading…</div>
             <h1 class="dash-title">Welcome, <em id="welcome-name">…</em></h1>
             <p class="dash-sub" id="welcome-sub">Loading your dashboard…</p>
-            <p class="dash-sub" style="margin-top:12px;font-size:13px">
-              Need someone for your next show? <a href="/search" style="color:var(--g-accent);font-weight:600">Search &amp; book artists</a>
-              · <a href="/my-bookings" style="color:var(--g-text-muted)">Bookings you made</a>
+            <p class="dash-sub dash-hero-secondary" style="margin-top:12px;font-size:13px">
+              <a href="/search">Explore creatives</a>
+              · <a href="/my-bookings">Your bookings as a client</a>
             </p>
           </div>
           <div class="dash-avatar" id="hero-initials">…</div>
@@ -618,6 +613,27 @@
         data.checklist_complete < data.checklist_total
           ? 'Your profile is live. Complete the steps below to start getting booked.'
           : 'Your profile is ready. Keep an eye out for booking requests.';
+
+      // Each artist's banner uses their own portfolio; never reuse another creative's photo.
+      var coverImage = document.getElementById('dash-cover-image');
+      var portfolioValue = data.artist_profile && data.artist_profile.portfolio_urls;
+      var coverPhotos = [];
+      try {
+        var portfolioParsed = typeof portfolioValue === 'string' ? JSON.parse(portfolioValue) : portfolioValue;
+        if (Array.isArray(portfolioParsed)) coverPhotos = portfolioParsed;
+      } catch (_) {}
+      // Only use verified image schemes. Inline raster photos are supported by existing uploads.
+      var coverUrl = coverPhotos.find(function(value) {
+        return typeof value === 'string' && (/^https?:\\/\\//i.test(value) ||
+          /^\\/(?!\\/)/.test(value) ||
+          /^data:image\\/(?:jpeg|png|webp|gif|avif);base64,/i.test(value));
+      }) || '';
+      if (!coverUrl && typeof user.profile_picture_url === 'string') {
+        coverUrl = user.profile_picture_url;
+      }
+      coverImage.hidden = !coverUrl;
+      if (coverUrl) coverImage.src = coverUrl;
+      else coverImage.removeAttribute('src');
 
       var ini = initials(name);
       var heroAvatar = document.getElementById('hero-initials');
