@@ -1,0 +1,92 @@
+/* Gearsh theme switch: dark is the default. Activated by the shared header. */
+html[data-gearsh-theme="light"] {
+  color-scheme: light;
+  --g-black: #f5f8fc;
+  --g-surface: #ffffff;
+  --g-surface-2: #edf3f9;
+  --g-surface-3: #e4eef7;
+  --g-surface-4: #d8e7f4;
+  --g-border: rgba(15,35,54,.14);
+  --g-border-light: rgba(15,35,54,.22);
+  --g-text: #142638;
+  --g-text-muted: #43586c;
+  --g-text-dim: #50677b;
+  --g-white: #142638;
+  --g-accent: #007eac;
+  --g-accent-dim: #006f99;
+  --g-accent-light: rgba(0,126,172,.10);
+  --g-accent-glow: rgba(0,126,172,.04);
+  --g-focus: #006f99;
+}
+html[data-gearsh-theme="light"] body,
+html[data-gearsh-theme="light"] .dash-page,
+html[data-gearsh-theme="light"] .dash-body { background: #f5f8fc !important; color: var(--g-text) !important; }
+html[data-gearsh-theme="light"] .card,
+html[data-gearsh-theme="light"] .stat-item,
+html[data-gearsh-theme="light"] .list-row,
+html[data-gearsh-theme="light"] .calendar-day,
+html[data-gearsh-theme="light"] .mastery-card,
+html[data-gearsh-theme="light"] .auth-card,
+html[data-gearsh-theme="light"] .aps-section {
+  background: #fff !important;
+  border-color: rgba(15,35,54,.15) !important;
+  color: #142638 !important;
+}
+html[data-gearsh-theme="light"] .dash-hero,
+html[data-gearsh-theme="light"] .dash-hero-overlay { background: #eaf3fb !important; }
+html[data-gearsh-theme="light"] .dash-hero-bg { opacity: .055 !important; }
+html[data-gearsh-theme="light"] .dash-title,
+html[data-gearsh-theme="light"] .card-title,
+html[data-gearsh-theme="light"] .empty-state h3,
+html[data-gearsh-theme="light"] .mastery-name,
+html[data-gearsh-theme="light"] .check-body h3,
+html[data-gearsh-theme="light"] .list-row-title,
+html[data-gearsh-theme="light"] .stat-value,
+html[data-gearsh-theme="light"] .g-nav-logo { color: #142638 !important; }
+html[data-gearsh-theme="light"] .dash-sub,
+html[data-gearsh-theme="light"] .card-sub,
+html[data-gearsh-theme="light"] .check-body p,
+html[data-gearsh-theme="light"] .list-row-sub,
+html[data-gearsh-theme="light"] .stat-label,
+html[data-gearsh-theme="light"] .mastery-desc,
+html[data-gearsh-theme="light"] .empty-state p,
+html[data-gearsh-theme="light"] .calendar-day-name,
+html[data-gearsh-theme="light"] .field-label { color: #43586c !important; }
+html[data-gearsh-theme="light"] .dash-tab,
+html[data-gearsh-theme="light"] .g-nav-links a { color: #43586c !important; }
+html[data-gearsh-theme="light"] .dash-tab.active,
+html[data-gearsh-theme="light"] .dash-tab:hover,
+html[data-gearsh-theme="light"] .g-nav-links a.active { color: #006f99 !important; }
+html[data-gearsh-theme="light"] .dash-tabs,
+html[data-gearsh-theme="light"] .check-item,
+html[data-gearsh-theme="light"] .dash-hero { border-color: rgba(15,35,54,.15) !important; }
+html[data-gearsh-theme="light"] .field-input,
+html[data-gearsh-theme="light"] .field-select,
+html[data-gearsh-theme="light"] .field-textarea,
+html[data-gearsh-theme="light"] #dash-share-link,
+html[data-gearsh-theme="light"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-gearsh-theme="light"] textarea,
+html[data-gearsh-theme="light"] select {
+  background: #fff !important; color: #142638 !important;
+  border-color: rgba(15,35,54,.22) !important;
+}
+html[data-gearsh-theme="light"] .gh-header .gh-search,
+html[data-gearsh-theme="light"] .gh-header .gh-search input {
+  background: #071826 !important; color: #fff !important; border-color: #005e86 !important;
+}
+html[data-gearsh-theme="light"] .gh-header .gh-search input::placeholder { color: #c1d0dd !important; }
+html[data-gearsh-theme="light"] .g-footer { background: #eaf3fb !important; border-color: rgba(15,35,54,.14) !important; }
+html[data-gearsh-theme="light"] .g-nav { background: #f5f8fc !important; border-color: rgba(15,35,54,.14) !important; }
+html[data-gearsh-theme="light"] .gh-header { background: #00BFFF !important; color: #fff !important; }
+html[data-gearsh-theme="light"] .gh-header .gh-brand { color: #fff !important; }
+html[data-gearsh-theme="light"] .gh-header #gh-theme { background: #078fc0; color: #fff; }
+html[data-gearsh-theme="light"] .gh-header #gh-theme:hover { background: #006e97; }
+html[data-gearsh-theme="light"] .gh-header .gh-panel { background: #fff; color: #142638; border-color: #cbd9e5; }
+html[data-gearsh-theme="light"] .gh-header .gh-panel a,
+html[data-gearsh-theme="light"] .gh-header .gh-panel button { color: #142638; }
+html[data-gearsh-theme="light"] .gh-header .gh-panel a:hover,
+html[data-gearsh-theme="light"] .gh-header .gh-panel button:hover { background: #eaf3fb; }
+html[data-gearsh-theme="light"] .dash-portfolio-empty { background: #edf3f9 !important; color: #43586c !important; }
+@media (max-width:600px) {
+  .gh-header #gh-theme { min-width:40px; width:40px; height:40px; }
+}
