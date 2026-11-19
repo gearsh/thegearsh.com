@@ -101,6 +101,7 @@ jobs:
           cp web/creative-profile.html build/web/creative-profile.html
           cp web/profile.html build/web/profile.html
           cp web/profile-view.css web/profile-view.js build/web/
+          cp web/profile-focus.css build/web/profile-focus.css
           cp web/profile-theme.css build/web/profile-theme.css
           cp web/claim-profile.html build/web/claim-profile.html
           node scripts/sync-showcase-data.mjs
@@ -164,7 +165,7 @@ jobs:
         run: |
           VERSION=$(git rev-parse --short HEAD)
           echo "Asset version: $VERSION"
-          ASSETS="profile-view site-header profile-theme join-revamp artists-revamp password-visibility gig-guide gig-guide-data day-genre-schedule sa-showcase-data artist-feed service-directory-filter gearsh-auth marketplace-data marketplace-feed gearsh-ui search-page artists-page glog-data glog-page glog-post activity-feed activity-create gearsh-brand discovery glog master-profile"
+          ASSETS="profile-focus profile-view site-header profile-theme join-revamp artists-revamp password-visibility gig-guide gig-guide-data day-genre-schedule sa-showcase-data artist-feed service-directory-filter gearsh-auth marketplace-data marketplace-feed gearsh-ui search-page artists-page glog-data glog-page glog-post activity-feed activity-create gearsh-brand discovery glog master-profile"
           for html in build/web/*.html; do
             [ -f "$html" ] || continue
             for asset in $ASSETS; do
