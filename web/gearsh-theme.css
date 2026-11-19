@@ -90,3 +90,11 @@ html[data-gearsh-theme="light"] .dash-portfolio-empty { background: #edf3f9 !imp
 @media (max-width:600px) {
   .gh-header #gh-theme { min-width:40px; width:40px; height:40px; }
 }
+
+/* Keep real portfolio cover visible even when the artist selects Light mode. */
+html[data-gearsh-theme="light"] .dash-hero .dash-hero-bg { opacity:1!important;background:#cbdce9!important; }
+html[data-gearsh-theme="light"] .dash-hero .dash-hero-overlay { background:linear-gradient(90deg,rgba(3,12,22,.83),rgba(3,12,22,.42))!important; }
+html[data-gearsh-theme="light"] .dash-welcome .dash-title,
+html[data-gearsh-theme="light"] .dash-welcome .dash-sub { color:#fff!important; }
+html[data-gearsh-theme="light"] .dash-welcome .dash-badge { color:#d4f3ff!important;background:rgba(4,31,49,.72)!important; }
+html[data-gearsh-theme="light"] .dash-hero .stat-value { color:#142638!important; }
