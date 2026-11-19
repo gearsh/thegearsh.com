@@ -35,3 +35,29 @@ body{background:#020617;color:#f8fafc}
   .stats-row{grid-template-columns:repeat(2,minmax(0,1fr))}
   .stat-item{padding:16px 10px}
 }
+
+/* Artist career banner: portfolio-backed cover ends above the stats cards. */
+.dash-hero { position:relative;padding:0!important;background:var(--g-black); }
+.dash-hero-bg { position:absolute;inset:0 0 auto 0;display:block!important;height:285px;opacity:1!important;overflow:hidden;background:#142c41; }
+.dash-hero-bg img { display:block;width:100%;height:100%;object-fit:cover;object-position:center 35%; }
+.dash-hero-bg img[hidden] { display:none!important; }
+.dash-hero-overlay { position:absolute;inset:0 0 auto 0;height:285px;background:linear-gradient(90deg,rgba(3,12,22,.86) 0%,rgba(3,12,22,.62) 55%,rgba(3,12,22,.36) 100%)!important;pointer-events:none; }
+.dash-hero-inner { position:relative;z-index:2;max-width:1120px;padding:32px 0 34px; }
+.dash-welcome { min-height:220px;align-items:center;margin-bottom:24px;flex-wrap:nowrap;gap:28px; }
+.dash-welcome>div:first-child { min-width:0; }
+.dash-welcome .dash-title { color:#fff!important;text-shadow:0 2px 14px rgba(0,0,0,.65); }
+.dash-welcome .dash-title em { color:#00bfff!important; }
+.dash-welcome .dash-sub { color:#e7f1f9!important;text-shadow:0 1px 5px rgba(0,0,0,.6); }
+.dash-welcome .dash-badge { color:#c3efff;background:rgba(0,36,58,.72);border-color:rgba(255,255,255,.35); }
+.dash-hero-secondary a { color:#e7f1f9!important;font-weight:600;text-decoration:underline;text-underline-offset:3px; }
+.dash-welcome .dash-avatar { width:124px!important;height:124px!important;min-width:124px;border:4px solid #fff!important;border-radius:50%;box-shadow:0 8px 28px rgba(0,0,0,.35);background-color:#18354b;font-size:35px; }
+.dash-welcome .dash-avatar.has-photo { background-size:cover;background-position:center; }
+.dash-hero .stats-row { margin-top:8px;position:relative; }
+@media (max-width:768px) {
+  .dash-hero-bg,.dash-hero-overlay { height:290px; }
+  .dash-hero-inner { padding:24px 0 28px; }
+  .dash-welcome { min-height:244px;gap:12px;align-items:center;margin-bottom:18px; }
+  .dash-welcome .dash-title { font-size:clamp(26px,6vw,38px); }
+  .dash-welcome .dash-avatar { width:88px!important;height:88px!important;min-width:88px;border-width:3px!important;font-size:27px; }
+  .dash-welcome .dash-sub { font-size:13px; }
+}
