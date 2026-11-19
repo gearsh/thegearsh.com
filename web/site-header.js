@@ -36,7 +36,9 @@
       bookControl.style.setProperty('border', '2px solid #06354c', 'important');
     }
     old.before(header);
-    header.querySelector("#gh-book").addEventListener("click", function () { location.assign("/search"); });
+    var primaryAction = header.querySelector('#gh-book');
+    var primaryActionUrl = '/search';
+    primaryAction.addEventListener('click', function () { location.assign(primaryActionUrl); });
     header.querySelector('input').value=new URLSearchParams(location.search).get('q')||'';
     function close(){header.querySelectorAll('.gh-panel').forEach(function(p){p.hidden=true;});header.querySelectorAll('[data-panel]').forEach(function(b){b.setAttribute('aria-expanded','false');});}
     header.querySelectorAll('[data-panel]').forEach(function(b){b.addEventListener('click',function(){var p=document.getElementById('gh-'+b.dataset.panel),open=p.hidden;close();p.hidden=!open;b.setAttribute('aria-expanded',String(open));if(open){var a=p.querySelector('a');if(a)a.focus();}});});
@@ -61,9 +63,26 @@
         var token=window.GearshAuth?window.GearshAuth.getToken():localStorage.getItem('gearsh_token');if(!token)return;
         var res=await fetch('/api/session',{headers:{Authorization:'Bearer '+token}});if(!res.ok)return;
         var data=await res.json();if(!data.success)return;var s=data.data;
+        var isArtist = Boolean(s.has_artist_dashboard || s.user_type === 'artist');
+        if (isArtist) {
+          primaryAction.textContent = 'Career';
+          primaryAction.title = 'Manage your creative career';
+          primaryAction.setAttribute('aria-label', 'Manage your creative career');
+          primaryActionUrl = '/artist-dashboard.html';
+          var nav = header.querySelector('#gh-nav');
+          var careerLink = document.createElement('a');
+          careerLink.href = '/artist-dashboard.html';
+          careerLink.textContent = 'My career';
+          nav.prepend(careerLink);
+          var notificationLink = header.querySelector('#gh-notifications a');
+          if (notificationLink) {
+            notificationLink.href = '/artist-dashboard.html';
+            notificationLink.textContent = 'View booking requests';
+          }
+        }
         var account=header.querySelector('#gh-account');account.replaceChildren();
         [['/my-bookings','My bookings'],['/my-tickets','My tickets']].forEach(function(item){var a=document.createElement('a');a.href=item[0];a.textContent=item[1];account.appendChild(a);});
-        if(s.has_artist_dashboard||s.user_type==='artist'||s.user_type==='admin'){var a=document.createElement('a');a.href=s.user_type==='admin'?'/gearsh-god.html':'/artist-dashboard.html';a.textContent=s.user_type==='admin'?'Dashboard':'Manage Profile';account.prepend(a);}
+        if(s.has_artist_dashboard||s.user_type==='artist'||s.user_type==='admin'){var a=document.createElement('a');a.href=s.user_type==='admin'?'/gearsh-god.html':'/artist-dashboard.html';a.textContent=s.user_type==='admin'?'Dashboard':'My career';account.prepend(a);}
         var out=document.createElement('button');out.type='button';out.textContent='Sign out';out.onclick=function(){if(window.GearshAuth&&window.GearshAuth.clearSession)window.GearshAuth.clearSession();else{['gearsh_token','gearsh_remember_me','gearsh_user','gearsh_user_id','gearsh_user_name','gearsh_user_type','gearsh_skills','gearsh_artist_id','gearsh_profile_url','gearsh_username'].forEach(function(key){localStorage.removeItem(key);});}location.assign('/auth.html');};account.appendChild(out);
       }catch(e){/* Public navigation remains usable if the session is unavailable. */}
     }
