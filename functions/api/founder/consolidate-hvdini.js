@@ -21,6 +21,10 @@ export async function onRequestPost(context) {
     const demo = found.find(x => String(x.username).toLowerCase()==='hvdini-mxgic'
       && x.is_demo && String(x.email).toLowerCase().startsWith('unclaimed+'));
     if (!registered) return jsonResponse({success:false,error:'Registered Hvdini account not found or identity mismatch. No changes made.'},409);
+    const legacyAccount = found.find(x => String(x.username).toLowerCase()==='hvdini-mxgic');
+    if (legacyAccount && !demo) return jsonResponse({
+      success:false,error:'Legacy slug belongs to a claimed or non-demo account. Manual review required; no changes made.'
+    },409);
     if (demo) {
       const bookings = await db.prepare('SELECT COUNT(*) AS n FROM bookings WHERE artist_id=?').bind(demo.artist_id).first();
       const reviews = await db.prepare('SELECT COUNT(*) AS n FROM reviews WHERE artist_id=?').bind(demo.artist_id).first();
