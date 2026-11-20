@@ -270,6 +270,7 @@
         <button class="god-nav-item" type="button" data-view="artists"><i class="ti ti-users"></i><span class="label">Artists</span><span class="god-nav-badge hidden" id="badge-artists">0</span></button>
         <button class="god-nav-item" type="button" data-view="bookings"><i class="ti ti-calendar-event"></i><span class="label">Bookings</span></button>
         <button class="god-nav-item" type="button" data-view="payments"><i class="ti ti-cash"></i><span class="label">Payments</span></button>
+        <button class="god-nav-item" type="button" data-view="emails"><i class="ti ti-mail"></i><span class="label">Artist email</span></button>
         <button class="god-nav-item" type="button" data-view="outreach"><i class="ti ti-send"></i><span class="label">Outreach</span><span class="god-nav-badge hidden" id="badge-outreach">0</span></button>
         <button class="god-nav-item" type="button" data-view="disputes"><i class="ti ti-alert-triangle"></i><span class="label">Disputes</span><span class="god-nav-badge hidden" id="badge-disputes">0</span></button>
         <button class="god-nav-item" type="button" data-view="content"><i class="ti ti-file-text"></i><span class="label">Content</span></button>
@@ -430,6 +431,25 @@
               <button type="submit">Record bank transfer</button>
             </form>
             <p id="payout-message" role="status"></p>
+          </div>
+        </section>
+
+        <!-- FOUNDER ARTIST EMAIL: GMAIL INBOX + RESEND OUTBOUND LOG -->
+        <section class="god-view" data-view="emails">
+          <div class="god-view-head">
+            <h2>Artist email</h2>
+            <p>Artist correspondence from thegearsh@gmail.com and forwarded @thegearsh.com addresses.</p>
+          </div>
+          <div class="god-panel">
+            <div class="god-toolbar" style="gap:10px;align-items:center;flex-wrap:wrap">
+              <button class="god-btn primary" type="button" id="ge-mail-inbox">Inbox</button>
+              <button class="god-btn" type="button" id="ge-mail-sent">Sent history</button>
+              <button class="god-btn" type="button" id="ge-mail-refresh"><i class="ti ti-refresh"></i> Refresh</button>
+              <span class="sub">Company-domain outbound via Resend. Gmail inbox requires read-only OAuth.</span>
+            </div>
+            <p class="sub" id="ge-mail-status" role="status" aria-live="polite">Select Inbox to load artist correspondence.</p>
+            <div id="ge-mail-list" class="god-list" style="margin-top:14px"></div>
+            <article id="ge-mail-detail" class="god-panel hidden" style="margin-top:16px;white-space:pre-wrap;overflow-wrap:anywhere" aria-live="polite"></article>
           </div>
         </section>
 
@@ -662,8 +682,67 @@
       for (var j = 0; j < views.length; j++) {
         views[j].classList.toggle('active', views[j].getAttribute('data-view') === name);
       }
+      if (name === 'emails') loadGearshEmail();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+
+    var gearshEmailMode = 'inbox';
+    function mailStatus(message) { document.getElementById('ge-mail-status').textContent = message; }
+    async function loadGearshEmail() {
+      var list = document.getElementById('ge-mail-list');
+      var detail = document.getElementById('ge-mail-detail');
+      detail.classList.add('hidden');
+      detail.replaceChildren();
+      list.replaceChildren();
+      mailStatus('Loading ' + gearshEmailMode + '…');
+      try {
+        var result = await founderFetch('/founder/email-inbox?mode=' + gearshEmailMode);
+        if (result.configured === false) {
+          mailStatus('Inbox connection not configured. Add GEARSH_GMAIL_CLIENT_ID, GEARSH_GMAIL_CLIENT_SECRET and GEARSH_GMAIL_REFRESH_TOKEN in Cloudflare production secrets.');
+          return;
+        }
+        var rows = result.messages || [];
+        mailStatus(rows.length ? rows.length + ' artist-related ' + (gearshEmailMode === 'inbox' ? 'inbox messages' : 'outgoing messages') : 'No artist-related messages found in this view.');
+        rows.forEach(function(m) {
+          var card = document.createElement('div');
+          card.style.cssText = 'padding:15px;margin:8px 0;background:var(--g-surface);border:1px solid var(--g-border-light);border-radius:12px';
+          var title = document.createElement('strong');
+          title.textContent = (m.unread ? '● ' : '') + (m.artist_name || 'Artist') + ' · ' + (m.subject || '(No subject)');
+          card.appendChild(title);
+          var subtitle = document.createElement('p');
+          subtitle.className = 'sub';
+          subtitle.textContent = gearshEmailMode === 'sent' ?
+            ((m.recipient || '') + ' · ' + (m.status || '') + ' · ' + (m.created_at || '')) :
+            ((m.sender || '') + ' · ' + (m.date || '') + ' · ' + (m.snippet || ''));
+          card.appendChild(subtitle);
+          if (gearshEmailMode === 'inbox') {
+            var read = document.createElement('button');
+            read.type = 'button';read.className='god-btn';read.textContent='Read message';
+            read.addEventListener('click', async function() {
+              read.disabled=true;
+              mailStatus('Opening artist email…');
+              try {
+                var d=await founderFetch('/founder/email-inbox?mode=message&id='+encodeURIComponent(m.id));
+                detail.replaceChildren();
+                var h=document.createElement('h3');h.textContent=d.subject||'(No subject)';
+                var sender=document.createElement('p');sender.className='sub';sender.textContent='From: '+d.from+' | To: '+d.to+' | '+d.date;
+                var body=document.createElement('p');body.style.cssText='white-space:pre-wrap;overflow-wrap:anywhere';body.textContent=d.text||'(No plain text body available)';
+                detail.append(h,sender,body);
+                detail.classList.remove('hidden');
+                mailStatus('Message opened. To reply, use Email beside this artist in Artists.');
+                detail.scrollIntoView({behavior:'smooth',block:'nearest'});
+              } catch(e){mailStatus(e.message||'Unable to open message');}finally{read.disabled=false;}
+            });
+            card.appendChild(read);
+          }
+          list.appendChild(card);
+        });
+      } catch(err) {mailStatus(err.message || 'Could not access the artist email workspace.');}
+    }
+    document.getElementById('ge-mail-inbox').addEventListener('click',function(){gearshEmailMode='inbox';loadGearshEmail();});
+    document.getElementById('ge-mail-sent').addEventListener('click',function(){gearshEmailMode='sent';loadGearshEmail();});
+    document.getElementById('ge-mail-refresh').addEventListener('click',loadGearshEmail);
 
     function setNavBadge(id, count) {
       var el = document.getElementById(id);
