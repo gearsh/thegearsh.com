@@ -62,6 +62,12 @@
     old.before(header);
     var primaryAction = header.querySelector('#gh-book');
     var primaryActionUrl = '/search';
+    // On the artist dashboard, navigation must not briefly display the client Book CTA.
+    if (/^\/artist-dashboard(?:\.html)?\/?$/.test(location.pathname)) {
+      primaryAction.textContent = 'Career';
+      primaryAction.title = 'Manage your creative career';
+      primaryActionUrl = '/artist-dashboard.html';
+    }
     primaryAction.addEventListener('click', function () { location.assign(primaryActionUrl); });
     header.querySelector('input').value=new URLSearchParams(location.search).get('q')||'';
     function close(){header.querySelectorAll('.gh-panel').forEach(function(p){p.hidden=true;});header.querySelectorAll('[data-panel]').forEach(function(b){b.setAttribute('aria-expanded','false');});}
