@@ -285,7 +285,7 @@
     .aps-photo-actions button { min-width:32px;min-height:32px;border:1px solid rgba(255,255,255,.25);border-radius:7px;background:#182439;color:white;cursor:pointer;font-size:17px; }
     .aps-photo-actions button:focus-visible {outline:2px solid #38bdf8;outline-offset:2px;}
   </style>
-  <link rel="stylesheet" href="dashboard-revamp.css?v=artist-cover-1">
+  <link rel="stylesheet" href="dashboard-revamp.css?v=artist-cover-fix-2">
 </head>
 <body>
 
@@ -624,9 +624,10 @@
       } catch (_) {}
       // Only use verified image schemes. Inline raster photos are supported by existing uploads.
       var coverUrl = coverPhotos.find(function(value) {
-        return typeof value === 'string' && (/^https?:\\/\\//i.test(value) ||
-          /^\\/(?!\\/)/.test(value) ||
-          /^data:image\\/(?:jpeg|png|webp|gif|avif);base64,/i.test(value));
+        if (typeof value !== 'string') return false;
+        return value.startsWith('https://') || value.startsWith('http://') ||
+          (value.startsWith('/') && !value.startsWith('//')) ||
+          /^data:image\/(jpeg|png|webp|gif|avif);base64,/i.test(value);
       }) || '';
       if (!coverUrl && typeof user.profile_picture_url === 'string') {
         coverUrl = user.profile_picture_url;
@@ -1000,16 +1001,15 @@
         return;
       }
 
-      if (window.GearshAuth) {
-        var sessionOk = await GearshAuth.ensureSession();
-        if (sessionOk === false) {
-          signOut();
-          return;
-        }
-        token = GearshAuth.getToken();
-      }
-
       try {
+        if (window.GearshAuth) {
+          var sessionOk = await GearshAuth.ensureSession();
+          if (sessionOk === false) {
+            signOut();
+            return;
+          }
+          token = GearshAuth.getToken();
+        }
         var res = await fetch(API_BASE + '/dashboard', {
           headers: { Authorization: 'Bearer ' + token }
         });
