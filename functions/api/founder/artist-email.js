@@ -2,7 +2,7 @@
 import { requireFounder } from '../founder-auth.js';
 import { jsonResponse, corsPreflightResponse } from '../auth-utils.js';
 
-const validEmail = value => /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value);
+const validEmail = value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 const esc = value => String(value).replace(/[&<>"']/g, ch => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
 })[ch]);
@@ -54,13 +54,14 @@ export async function onRequestPost(context) {
     await db.prepare(`INSERT INTO founder_artist_email_log
       (id,founder_id,artist_id,recipient,subject,status,created_at)
       VALUES (?,?,?,?,?,'pending',?)`).bind(id,auth.user.id,artistId,address,subject,now).run();
-    const name = String(artist.display_name || 'artist').split(/\\s+/)[0];
-    const safeBody = esc(message).replace(/\\r?\\n/g,'<br>');
+    const name = String(artist.display_name || 'artist').split(/\s+/)[0];
+    const safeBody = esc(message).replace(/\r?\n/g,'<br>');
     const payload = {
       from: env.EMAIL_FROM,
       to: [address],
+      reply_to: env.GEARSH_REPLY_TO || 'thegearsh@gmail.com',
       subject,
-      text: 'Hi '+name+',\\n\\n'+message+'\\n\\nThe Gearsh',
+      text: 'Hi '+name+',\n\n'+message+'\n\nThe Gearsh',
       html: '<p>Hi '+esc(name)+',</p><p>'+safeBody+'</p><p>The Gearsh</p>'
     };
     let response;
