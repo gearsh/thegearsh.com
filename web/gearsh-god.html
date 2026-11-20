@@ -335,6 +335,24 @@
               </select>
               <button class="god-btn primary" type="button" onclick="loadArtists()"><i class="ti ti-search"></i> Search</button>
             </div>
+            <p class="sub">Registered artist email addresses appear beneath each name. Choose Email to compose a direct message.</p>
+            <div id="artist-email-composer" class="god-panel hidden" style="margin:16px 0;padding:18px;border:1px solid var(--g-border-light)">
+              <h3 style="margin:0 0 8px">Email an artist</h3>
+              <p class="sub" id="artist-email-recipient"></p>
+              <form id="artist-email-form">
+                <input type="hidden" id="artist-email-id">
+                <div class="god-field"><label for="artist-email-subject">Subject</label>
+                  <input id="artist-email-subject" maxlength="140" minlength="3" required placeholder="Your message subject"></div>
+                <div class="god-field"><label for="artist-email-body">Message</label>
+                  <textarea id="artist-email-body" rows="7" maxlength="4000" minlength="3" required style="width:100%;background:var(--g-black);border:1px solid var(--g-border-light);color:var(--g-text);border-radius:10px;padding:12px;font:inherit" placeholder="Write to this artist…"></textarea></div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+                  <button class="god-btn primary" id="artist-email-send" type="submit">Review & send</button>
+                  <button class="god-btn" id="artist-email-cancel" type="button">Cancel</button>
+                </div>
+                <p class="sub" id="artist-email-status" role="status" aria-live="polite" style="margin-top:10px"></p>
+              </form>
+              <p class="sub">Individual operational messages only. Bulk campaigns and automated marketing are not enabled.</p>
+            </div>
             <div class="god-table-wrap">
               <table class="god-table">
                 <thead>
@@ -961,23 +979,72 @@
       await loadStats();
     }
 
+    var artistEmailRecipients = {};
+    function openArtistEmail(id) {
+      var artist = artistEmailRecipients[id];
+      if (!artist || !artist.is_active || !artist.email ||
+          artist.email.toLowerCase().indexOf('unclaimed+') === 0) return;
+      document.getElementById('artist-email-id').value = id;
+      document.getElementById('artist-email-recipient').textContent =
+        'To: ' + (artist.name || 'Artist') + ' <' + artist.email + '>';
+      document.getElementById('artist-email-subject').value = '';
+      document.getElementById('artist-email-body').value = '';
+      document.getElementById('artist-email-status').textContent = '';
+      document.getElementById('artist-email-composer').classList.remove('hidden');
+      document.getElementById('artist-email-composer').scrollIntoView({behavior:'smooth',block:'center'});
+      document.getElementById('artist-email-subject').focus();
+    }
+    document.getElementById('artist-email-cancel').addEventListener('click',function(){
+      document.getElementById('artist-email-composer').classList.add('hidden');
+    });
+    document.getElementById('artist-email-form').addEventListener('submit',async function(e){
+      e.preventDefault();
+      var id = document.getElementById('artist-email-id').value;
+      var artist = artistEmailRecipients[id];
+      if (!artist) return;
+      var subject = document.getElementById('artist-email-subject').value.trim();
+      var message = document.getElementById('artist-email-body').value.trim();
+      if (!subject || !message) return;
+      if (!confirm('Send this email to ' + artist.email + '?')) return;
+      var button = document.getElementById('artist-email-send');
+      var status = document.getElementById('artist-email-status');
+      button.disabled = true;
+      status.textContent = 'Sending…';
+      try {
+        var requestId = crypto.randomUUID();
+        var data = await founderFetch('/founder/artist-email',{
+          method:'POST',
+          body:JSON.stringify({artist_id:id,subject:subject,message:message,request_id:requestId})
+        });
+        status.textContent = 'Email accepted by the provider for ' + data.recipient + '.';
+        document.getElementById('artist-email-body').value = '';
+      } catch(err) {
+        status.textContent = err.message || 'Could not send email.';
+      } finally {
+        button.disabled = false;
+      }
+    });
+
     async function loadArtists() {
       var q = document.getElementById('artist-search').value.trim();
       var status = document.getElementById('artist-status').value;
       var query = '/founder/artists?status=' + encodeURIComponent(status) + '&limit=100';
       if (q) query += '&q=' + encodeURIComponent(q);
       var artists = await founderFetch(query);
+      artistEmailRecipients = {};
+      (artists || []).forEach(function(row) { artistEmailRecipients[row.artist_id] = row; });
       document.getElementById('artists-body').innerHTML = (artists || []).map(function(row) {
         var skills = Array.isArray(row.skills) ? row.skills.join(', ') : (row.skills || '');
         var link = row.profile_url ? ('<a href="' + row.profile_url + '" target="_blank" rel="noopener" style="color:var(--g-accent)">Open</a>') : 'N/A';
         var actions = '<div class="row-actions">';
+        if (row.is_active && row.email && !String(row.email).toLowerCase().startsWith('unclaimed+')) actions += '<button type="button" onclick="openArtistEmail(\\'' + escapeHtmlGod(row.artist_id) + '\\')">Email</button>';
         if (!row.is_verified && row.is_active) actions += '<button class="approve" type="button" onclick="updateArtist(\'' + row.artist_id + '\', \'approve\')">Approve</button>';
         if (row.is_active) actions += '<button class="remove" type="button" onclick="updateArtist(\'' + row.artist_id + '\', \'remove\')">Remove</button>';
         if (!row.is_active) actions += '<button type="button" onclick="updateArtist(\'' + row.artist_id + '\', \'restore\')">Restore</button>';
         if (row.is_verified) actions += '<button type="button" onclick="updateArtist(\'' + row.artist_id + '\', \'unverify\')">Unverify</button>';
         actions += '</div>';
         return '<tr>' +
-          '<td><strong>' + row.name + '</strong><br><span style="font-size:12px">' + row.email + '</span></td>' +
+          '<td><strong>' + escapeHtmlGod(row.name) + '</strong><br><span style="font-size:12px">' + escapeHtmlGod(row.email) + '</span></td>' +
           '<td>' + [row.location, row.country].filter(Boolean).join(', ') + '</td>' +
           '<td>' + (row.category || skills || 'N/A') + '</td>' +
           '<td>' + (row.total_bookings || 0) + '</td>' +
