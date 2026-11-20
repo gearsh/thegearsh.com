@@ -694,7 +694,9 @@
         if (typeof raw === 'string') photos = raw.split(',').map(function(url) { return url.trim(); });
       }
       photos = photos.filter(function(url) {
-        return typeof url === 'string' && (url.startsWith('https://') || url.startsWith('http://') || url.startsWith('/'));
+        return typeof url === 'string' && (url.startsWith('https://') ||
+          url.startsWith('http://') || (url.startsWith('/') && !url.startsWith('//')) ||
+          /^data:image\/(jpeg|png|webp|gif|avif);base64,/i.test(url));
       });
       grid.replaceChildren();
       if (!photos.length) {
