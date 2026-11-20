@@ -71,3 +71,44 @@ html[data-gearsh-theme="light"] .profile-subnav a { color:#26435a!important; }
   .profile-subnav a { padding:10px 12px!important; }
   .profile-main .work-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
+
+/* Public profile palette is self-contained: prevent light-theme header tokens
+   from turning text dark on the still-dark profile body. */
+.profile-main .section h2,
+.profile-main .service-name,
+.profile-main .name,
+.profile-main .booking-card h3,
+.profile-main #book h2,
+.profile-main .profile-stat strong { color:#f5faff!important; }
+.profile-main .service { color:#f5faff!important; }
+.profile-main .service-desc,
+.profile-main .service-choose,
+.profile-main .section-copy,
+.profile-main .booking-note,
+.profile-main #about-copy,
+.profile-main .work-empty { color:#c3cdd9!important; }
+.profile-main .skill { color:#d6e2ef!important; }
+html[data-gearsh-theme="light"] body:has(.profile-main) { background:#f5f8fc!important;color:#142638!important; }
+html[data-gearsh-theme="light"] body:has(.profile-main):before { background:#f5f8fc!important; }
+html[data-gearsh-theme="light"] body:has(.profile-main) .profile-main { color:#142638!important; }
+html[data-gearsh-theme="light"] .profile-main .section h2,
+html[data-gearsh-theme="light"] .profile-main .name,
+html[data-gearsh-theme="light"] .profile-main .service-name,
+html[data-gearsh-theme="light"] .profile-main .booking-card h3,
+html[data-gearsh-theme="light"] .profile-main #book h2,
+html[data-gearsh-theme="light"] .profile-main .profile-stat strong { color:#142638!important; }
+html[data-gearsh-theme="light"] .profile-main .service,
+html[data-gearsh-theme="light"] .profile-main .booking-card { background:#fff!important;border-color:#d6e3ee!important;color:#142638!important; }
+html[data-gearsh-theme="light"] .profile-main .service-desc,
+html[data-gearsh-theme="light"] .profile-main .service-choose,
+html[data-gearsh-theme="light"] .profile-main .section-copy,
+html[data-gearsh-theme="light"] .profile-main .booking-note,
+html[data-gearsh-theme="light"] .profile-main #about-copy,
+html[data-gearsh-theme="light"] .profile-main .work-empty { color:#43586c!important; }
+html[data-gearsh-theme="light"] .profile-main .skill { background:#edf3f9!important;border-color:#d6e3ee!important;color:#26435a!important; }
+html[data-gearsh-theme="light"] .profile-main .profile-subnav a { color:#26435a!important; }
+html[data-gearsh-theme="light"] .profile-main .field input,
+html[data-gearsh-theme="light"] .profile-main .field textarea,
+html[data-gearsh-theme="light"] .profile-main .field select { background:#fff!important;color:#142638!important;border-color:#ccdce9!important; }
+html[data-gearsh-theme="light"] .profile-main .field label { color:#43586c!important; }
+html[data-gearsh-theme="light"] .profile-main .service-price { color:#007eac!important; }
