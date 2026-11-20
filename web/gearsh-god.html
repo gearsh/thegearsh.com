@@ -1025,6 +1025,11 @@
       }
     });
 
+    document.getElementById('artists-body').addEventListener('click',function(e) {
+      var button = e.target.closest('button.artist-email-open');
+      if (button) openArtistEmail(button.getAttribute('data-email-id'));
+    });
+
     async function loadArtists() {
       var q = document.getElementById('artist-search').value.trim();
       var status = document.getElementById('artist-status').value;
@@ -1037,7 +1042,7 @@
         var skills = Array.isArray(row.skills) ? row.skills.join(', ') : (row.skills || '');
         var link = row.profile_url ? ('<a href="' + row.profile_url + '" target="_blank" rel="noopener" style="color:var(--g-accent)">Open</a>') : 'N/A';
         var actions = '<div class="row-actions">';
-        if (row.is_active && row.email && !String(row.email).toLowerCase().startsWith('unclaimed+')) actions += '<button type="button" onclick="openArtistEmail(\\'' + escapeHtmlGod(row.artist_id) + '\\')">Email</button>';
+        if (row.is_active && row.email && !String(row.email).toLowerCase().startsWith('unclaimed+')) actions += '<button type="button" class="artist-email-open" data-email-id="' + escapeHtmlGod(row.artist_id) + '">Email</button>';
         if (!row.is_verified && row.is_active) actions += '<button class="approve" type="button" onclick="updateArtist(\'' + row.artist_id + '\', \'approve\')">Approve</button>';
         if (row.is_active) actions += '<button class="remove" type="button" onclick="updateArtist(\'' + row.artist_id + '\', \'remove\')">Remove</button>';
         if (!row.is_active) actions += '<button type="button" onclick="updateArtist(\'' + row.artist_id + '\', \'restore\')">Restore</button>';
