@@ -6,6 +6,7 @@ import {
   compareArtistsByDistance,
 } from './location-utils.js';
 import { searchMarketplaceServices } from './marketplace-service-utils.js';
+import { uniquePublicArtists } from './public-discovery-policy.js';
 
 export async function onRequestGet(context) {
   const url = new URL(context.request.url);
@@ -160,7 +161,7 @@ async function runSearch(context, body) {
     const result = await context.env.DB.prepare(sql).bind(...params).all();
 
     // Calculate relevance scores
-    const artists = result.results.map(artist => {
+    const artists = uniquePublicArtists(result.results).map(artist => {
       let score = 0;
       const queryLower = query.toLowerCase();
 

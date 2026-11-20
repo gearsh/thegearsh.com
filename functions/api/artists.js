@@ -2,6 +2,7 @@
 // GET /api/artists?category=DJ&minRating=4.0&verified=true
 
 import { parseSkills, buildProfileUrl } from './auth-utils.js';
+import { uniquePublicArtists } from './public-discovery-policy.js';
 
 export async function onRequestGet(context) {
   try {
@@ -65,7 +66,7 @@ export async function onRequestGet(context) {
     const result = await stmt.bind(...params).all();
 
     // Parse JSON fields
-    const artists = result.results.map(artist => ({
+    const artists = uniquePublicArtists(result.results).map(artist => ({
       ...artist,
       profile_url: buildProfileUrl(artist.username),
       skills: parseSkills(artist.skills),
