@@ -336,6 +336,12 @@
               </select>
               <button class="god-btn primary" type="button" onclick="loadArtists()"><i class="ti ti-search"></i> Search</button>
             </div>
+            <div class="god-panel" id="hvdini-consolidate-panel" style="margin:16px 0;padding:16px;border:1px solid var(--g-border-light)">
+              <h3 style="margin:0 0 6px">Hvdini Mxgic: complete profile consolidation</h3>
+              <p class="sub">Keep the registered account (hvdinigotmxgic@gmail.com), replace its generic services with three live performances, and retire the unclaimed demo. Existing login, portfolio and history are preserved. This will stop if the demo has booking or review records needing review.</p>
+              <button class="god-btn primary" type="button" id="hvdini-consolidate-run">Apply Hvdini's three services and retire demo</button>
+              <p class="sub" id="hvdini-consolidate-result" role="status" aria-live="polite" style="margin-top:10px"></p>
+            </div>
             <p class="sub">Registered artist email addresses appear beneath each name. Choose Email to compose a direct message.</p>
             <div id="artist-email-composer" class="god-panel hidden" style="margin:16px 0;padding:18px;border:1px solid var(--g-border-light)">
               <h3 style="margin:0 0 8px">Email an artist</h3>
@@ -1057,6 +1063,28 @@
       await loadArtists();
       await loadStats();
     }
+
+    document.getElementById('hvdini-consolidate-run').addEventListener('click', async function() {
+      var button = this, output = document.getElementById('hvdini-consolidate-result');
+      var accepted = confirm('Keep Hvdini Mxgic\'s registered account and retire ONLY the unclaimed duplicate demo? The registered services will become R1,350 / R2,250 / R3,000. Existing historic rows will not be deleted.');
+      if (!accepted) return;
+      button.disabled = true;
+      output.textContent = 'Checking and updating both profiles…';
+      try {
+        var result = await founderFetch('/founder/consolidate-hvdini', {
+          method:'POST',
+          body:JSON.stringify({confirm:'CONSOLIDATE_HVDINI'})
+        });
+        output.textContent = 'Completed: ' + result.retained_username +
+          '. Demo retired: ' + (result.retired_demo ? 'Yes' : 'Already absent') +
+          '. Three live performance services installed.';
+        await loadArtists();
+        await loadStats();
+      } catch(err) {
+        output.textContent = (err.message || 'Could not consolidate profiles') +
+          ' No duplicate was intentionally deleted. Resolve the blocker before retrying.';
+      } finally { button.disabled = false; }
+    });
 
     var artistEmailRecipients = {};
     function openArtistEmail(id) {
