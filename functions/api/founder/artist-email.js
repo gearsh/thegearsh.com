@@ -44,9 +44,9 @@ export async function onRequestPost(context) {
     const existing = await db.prepare('SELECT status FROM founder_artist_email_log WHERE id=?').bind(id).first();
     if (existing) return jsonResponse({success:false,error:'This email request was already submitted. Check delivery status before trying again.'},409);
     const lastHour = await db.prepare(`SELECT COUNT(*) AS n FROM founder_artist_email_log
-      WHERE founder_id=? AND created_at>datetime('now','-1 hour')`).bind(auth.user.id).first();
+      WHERE founder_id=? AND datetime(created_at)>datetime('now','-1 hour')`).bind(auth.user.id).first();
     const todayToArtist = await db.prepare(`SELECT COUNT(*) AS n FROM founder_artist_email_log
-      WHERE artist_id=? AND created_at>datetime('now','-1 day')`).bind(artistId).first();
+      WHERE artist_id=? AND datetime(created_at)>datetime('now','-1 day')`).bind(artistId).first();
     if (Number(lastHour?.n || 0)>=20 || Number(todayToArtist?.n || 0)>=3) {
       return jsonResponse({success:false,error:'Email sending limit reached. Please try later.'},429);
     }
