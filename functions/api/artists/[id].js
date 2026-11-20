@@ -55,7 +55,9 @@ function enrichFromShowcase(artistData, showcase) {
 
 export async function onRequestGet(context) {
   try {
-    const identifier = context.params.id;
+    // Preserve old links while serving the registered, artist-owned account.
+    const requestedId = String(context.params.id || '').toLowerCase();
+    const identifier = requestedId === 'hvdini-mxgic' ? 'hvdini_mxgic' : context.params.id;
     await ensureRemovalRequestsTable(context.env.DB);
     if (await isUsernameRemoved(context.env.DB, identifier)) {
       return new Response(JSON.stringify({
